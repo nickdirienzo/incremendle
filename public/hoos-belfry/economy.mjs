@@ -4,24 +4,22 @@
 // Bramble Ward. A bell is tuned by how far its band is stretched: pitch is a number of semitones
 // above C (0..11). The six whole-tone lines (C D E F# G# A#) are the notes; exactly between two
 // lines a bell clonks one of the other six (the hidden mechanic). Each prank (a blueprint sheet)
-// needs bells on given notes. The first half runs on pennies and Hoo's clipboard (a priority queue
-// of chores); Matron's Budget Review stops the money, and the night staff volunteer for favours.
+// needs bells on given notes; the last bell sets the prank off. The first half runs on pennies and
+// Hoo's clipboard (a priority list of chores); Matron's Budget Review stops the money, and the
+// night staff volunteer for favours.
 
 export const NIGHT = 150;                 // seconds per night shift (for the count and the Toy Fund)
 export const TOY_FUND = 3;                // pence a night, until the Budget Review
 export const OFFLINE_CAP = 3 * 3600, OFFLINE_RATE = 0.1;
-export const WAKE_AT = 26;                // seconds a call light glows before the child wakes up
-export const HUSH_MAX = 3;
-export const MATRON_ROUND = 22;
 export const MAX_STAFF = 12;
 export const GIVE_FAVOURS = 40;           // the last purchase also needs this many favours (it takes them all)
 // Tunables (the sim can override them with --T='{...}').
 export const T = {
-  chair: [24, 20, 16.5, 14, 12, 10], callGap: 70, cover: [55, 44, 35, 28], lost: 65, tune: [10, 7.5, 5.5],
-  scrounge: 340, staffTune: 65, staffCover: 160, smile: 240, favBell: 2, drift: 560,
+  chair: [24, 20, 16.5, 14, 12, 10], cover: 55, lost: 65, tune: [10, 8, 6.5, 5.5],
+  scrounge: 600, staffTune: 100, staffCover: 280, smile: 360, favBell: 3,
   recruit: 4, recruitStep: 3, grow: 1, fgrow: 1,
-  fit: [0, 5, 12, 24, 40, 14, 18, 22, 26, 30, 32],
 };
+export const BUY_KEEP = 2;                // the buy chore keeps this many untuned bells on the bench
 export const NOTE = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
 export const isClonk = n => n % 2 === 1;
 
@@ -44,9 +42,8 @@ export const REVIEW_AT = 5;               // the Budget Review follows plan 5 (M
 
 // Hoo's clipboard: chores she does by herself, first ticked one that can be done wins.
 export const TASKS = {
-  call:   { name: 'Answer call lights', icon: '💡' },
   chairs: { name: 'Return wheelchairs', icon: '♿' },
-  buy:    { name: 'Buy bells', icon: '🔔' },
+  buy:    { name: 'Buy bells (keeps 2)', icon: '🔔' },
   tune:   { name: 'Tune bells by feel', icon: '🎚' },
   lost:   { name: 'Check lost property', icon: '🧺' },
   cover:  { name: 'Cover a break', icon: '☕' },
@@ -54,7 +51,6 @@ export const TASKS = {
 export const JOBS = {
   scrounge: { name: 'Scrounge', icon: '🔔', desc: 'find bells in cupboards, slipper toes and drains' },
   tune:     { name: 'Tune', icon: '🎚', desc: 'tune bells by ear for the current sheet' },
-  hush:     { name: 'Hush', icon: '🤫', desc: 'answer call lights before anyone wakes' },
   cover:    { name: 'Cover', icon: '☕', desc: 'cover each other’s breaks for favours' },
 };
 
@@ -62,18 +58,18 @@ export function newState() {
   return {
     t: 0, night: 1, nightT: 0,
     pence: 3, favours: 0, raw: 2, rack: Array(12).fill(0),
-    plan: 0, slots: [], stars: 0, installed: 0, perfect: 0, tuned: 0, clonks: 0, wheels: 0, callsAnswered: 0,
+    plan: 0, slots: [], stars: 0, installed: 0, perfect: 0, tuned: 0, clonks: 0, wheels: 0,
     lv: {},
-    queue: [{ id: 'call', on: true }, { id: 'chairs', on: true, upto: 20 }, { id: 'buy', on: true, stock: 2 }],
+    queue: [{ id: 'buy', on: true }, { id: 'chairs', on: true }],
     qTask: null, qProg: 0,
-    calls: [], callT: 20, hush: HUSH_MAX, hushT: 0, matron: 0, rounds: 0,
-    review: false, staff: 0, jobs: { scrounge: 0, tune: 0, hush: 0, cover: 0 }, jobProg: { scrounge: 0, tune: 0, hush: 0, cover: 0 },
-    clonk: false, clonkWait: 0, pipAsked: 0,
-    ready: false, fitting: false, flats: [], flatT: 0, repaired: 0,
+    review: false, staff: 0, jobs: { scrounge: 0, tune: 0, cover: 0 }, jobProg: { scrounge: 0, tune: 0, cover: 0 },
+    clonk: false, clonkWait: 0,
     ended: false, given: null, seen: [], shopTab: 'p', lastSeen: Date.now(),
   };
 }
 // Saves from the first morning, when the bells were rubber ducks and the ward had call bells.
+// Saves from before the game was simplified still carry call lights, flats and the fitting step.
+const GONE = ['calls', 'callT', 'callsAnswered', 'hush', 'hushT', 'matron', 'rounds', 'pipAsked', 'ready', 'fitting', 'flats', 'flatT', 'repaired'];
 const RENAMED = { bells: 'calls', bellT: 'callT', bellsAnswered: 'callsAnswered', honk: 'clonk', honks: 'clonks', honkWait: 'clonkWait', honkHinted: 'clonkHinted' };
 export function load(raw) {
   raw = { ...(raw || {}) };
@@ -81,15 +77,17 @@ export function load(raw) {
   if (Array.isArray(raw.queue)) raw.queue = raw.queue.map(q => q && q.id === 'bell' ? { ...q, id: 'call' } : q);
   if (raw.qTask === 'bell') raw.qTask = 'call';
   if (raw.given && raw.given.bells == null && raw.given.ducks != null) raw.given = { ...raw.given, bells: raw.given.ducks };
+  for (const k of GONE) delete raw[k];
   const S = Object.assign(newState(), raw);
   S.rack = Array.from({ length: 12 }, (_, i) => (raw && raw.rack && raw.rack[i]) || 0);
   S.lv = S.lv || {};
-  S.jobs = Object.assign({ scrounge: 0, tune: 0, hush: 0, cover: 0 }, S.jobs || {});
-  S.jobProg = Object.assign({ scrounge: 0, tune: 0, hush: 0, cover: 0 }, S.jobProg || {});
-  S.calls = Array.isArray(S.calls) ? S.calls : [];
-  S.flats = Array.isArray(S.flats) ? S.flats : [];
+  const J = S.jobs || {};
+  S.jobs = { scrounge: J.scrounge || 0, tune: J.tune || 0, cover: (J.cover || 0) + (J.hush || 0) };
+  S.jobProg = { scrounge: 0, tune: 0, cover: 0 };
   if (!Array.isArray(S.queue)) S.queue = newState().queue;
-  for (const id of knownTasks(S)) if (!S.queue.some(q => q.id === id)) S.queue.push({ id, on: false, stock: id === 'buy' ? 2 : undefined });
+  S.queue = S.queue.filter(q => q && TASKS[q.id]).map(q => ({ id: q.id, on: !!q.on }));
+  for (const id of knownTasks(S)) if (!S.queue.some(q => q.id === id)) S.queue.push({ id, on: false });
+  if (S.qTask && !TASKS[S.qTask]) S.qTask = null;
   if (S.ended) { S.plan = PLANS.length; S.installed = TOTAL_BELLS; S.review = true; }
   if (S.plan >= REVIEW_AT) S.review = true;
   if (S.plan < PLANS.length && S.slots.length !== PLANS[S.plan].notes.length) S.slots = PLANS[S.plan].notes.map(() => 0);
@@ -104,23 +102,19 @@ export const plan = S => PLANS[S.plan] || null;
 export function stats(S) {
   const fork = L(S, 'fork');
   return {
-    lines: 2 + L(S, 'clip'),
     chairTime: T.chair[L(S, 'oil')],
-    deposit: 1 + L(S, 'spanner'),
+    deposit: 1,
     fund: TOY_FUND + L(S, 'memo'),
-    smile: T.smile / (1 + 0.25 * L(S, 'polish') + 0.3 * L(S, 'cushion')),
-    giftChance: 0.22 + 0.1 * L(S, 'pull'),
+    smile: T.smile / (1 + 0.3 * L(S, 'polish')),
     price: S.review ? T.favBell : L(S, 'card') ? 2 : 3,
-    tuneTime: T.tune[L(S, 'quick')],
+    tuneTime: T.tune[L(S, 'ear')],
     ear: Math.min(0.92, 0.5 + 0.14 * L(S, 'ear')),
-    lostTime: T.lost, coverTime: T.cover[L(S, 'kettle')],
+    lostTime: T.lost, coverTime: T.cover / Math.pow(1.25, L(S, 'biscuits')),
     noteTol: [0.3, 0.37, 0.42, 0.46][fork],
     perfectTol: 0.1 + 0.035 * fork,
     clonkTol: L(S, 'whistle') ? 0.24 : 0.13,
-    callGap: T.callGap * Math.pow(1.4, L(S, 'lamp')),
-    wakeAt: WAKE_AT + (L(S, 'slippers') ? 14 : 0),
     // Night staff
-    scroungeRate: (1 / T.scrounge) * Math.pow(1.35, L(S, 'bags')) * Math.pow(1.3, L(S, 'torch')) * (L(S, 'map') ? 1.5 : 1),
+    scroungeRate: (1 / T.scrounge) * Math.pow(1.5, L(S, 'bags')),
     staffTune: (1 / T.staffTune) * Math.pow(1.3, L(S, 'sonar')),
     staffEar: Math.min(0.95, 0.6 + 0.08 * L(S, 'sonar')),
     coverRate: (1 / T.staffCover) * Math.pow(1.35, L(S, 'biscuits')),
@@ -139,19 +133,18 @@ export function rates(S) {
     tune: S.review ? (J.tune || 0) * st.staffTune * st.staffEar * 60 : 0,
   };
 }
-export const knownTasks = S => ['call', 'chairs', 'buy', ...(L(S, 'feel') ? ['tune'] : []), ...(L(S, 'lostkey') ? ['lost'] : []), ...(S.review ? ['cover'] : [])];
+export const knownTasks = S => ['buy', 'chairs', ...(L(S, 'feel') ? ['tune'] : []), ...(L(S, 'lostkey') ? ['lost'] : []), ...(S.review ? ['cover'] : [])];
 export function taskTime(S, id) {
   const st = stats(S);
-  return { call: 3, chairs: st.chairTime, buy: 2, tune: st.tuneTime, lost: st.lostTime, cover: st.coverTime }[id];
+  return { chairs: st.chairTime, buy: 2, tune: st.tuneTime, lost: st.lostTime, cover: st.coverTime }[id];
 }
 // Why a ticked chore can't run right now (null when it can).
 export function taskBlock(S, q) {
   const st = stats(S);
   switch (q.id) {
-    case 'call': return S.calls.length ? null : 'no calls';
-    case 'chairs': return S.review ? 'no coin locks' : S.pence >= (q.upto ?? 20) ? `have ${q.upto ?? 20}p` : null;
-    case 'buy': return S.raw >= (q.stock ?? 2) ? `have ${q.stock ?? 2}` : have(S, bellCur(S)) < st.price ? (S.review ? 'no favours' : 'no pennies') : null;
-    case 'tune': return S.matron > 0 ? 'Matron' : S.raw < 1 ? 'no bells' : autoNote(S, false) == null ? 'nothing to tune' : null;
+    case 'chairs': return S.review ? 'no coin locks' : null;
+    case 'buy': return S.plan >= PLANS.length ? 'all done' : S.raw >= BUY_KEEP ? `have ${BUY_KEEP}` : have(S, bellCur(S)) < st.price ? (S.review ? 'no favours' : 'no pennies') : null;
+    case 'tune': return S.raw < 1 ? 'no bells' : autoNote(S, false) == null ? 'nothing to tune' : null;
     case 'lost': return null;
     case 'cover': return S.review ? null : 'no favours yet';
   }
@@ -163,7 +156,6 @@ export function wanted(S) {
   for (let k = S.plan; k < Math.min(PLANS.length, S.plan + 2); k++) {
     PLANS[k].notes.forEach((n, i) => { if (!(k === S.plan && S.slots[i])) want[n]++; });
   }
-  for (const [k, i] of S.flats) want[PLANS[k].notes[i]]++;
   for (let n = 0; n < 12; n++) want[n] = Math.max(0, want[n] - S.rack[n]);
   return want;
 }
@@ -185,30 +177,10 @@ function place(S, note, perfect, out) {
     S.slots[i] = perfect ? 2 : 1; S.installed++; if (perfect) S.stars++;
     out.push({ type: 'slot', note, i, perfect });
     checkPlan(S, out);
-  } else {
-    // A flat bell in a fitted prank wants this note: swap it for the fresh one.
-    const f = S.flats.findIndex(([k, j]) => PLANS[k].notes[j] === note);
-    if (f >= 0) { const [k, j] = S.flats.splice(f, 1)[0]; S.repaired++; out.push({ type: 'repair', plan: k, i: j, note }); }
-    else { S.rack[note]++; out.push({ type: 'rack', note, perfect }); }
-  }
+  } else { S.rack[note]++; out.push({ type: 'rack', note, perfect }); }
 }
-// After the Budget Review nothing gets replaced, and old bands go slack and ring flat.
-export const flatPlans = S => new Set(S.flats.map(f => f[0]));
-// Fitted pranks that aren't flat: each one makes somebody smile every stats(S).smile seconds.
-export const smilers = S => Math.max(0, Math.min(S.plan, PLANS.length) - flatPlans(S).size);
-function drift(S, dt, out) {
-  const fitted = Math.min(S.plan, PLANS.length);
-  S.flatT += dt * fitted / T.drift;
-  while (S.flatT >= 1) {
-    S.flatT--;
-    const k = Math.floor(Math.random() * fitted), i = Math.floor(Math.random() * PLANS[k].notes.length);
-    if (S.flats.some(f => f[0] === k && f[1] === i)) continue;
-    S.flats.push([k, i]); out.push({ type: 'flat', plan: k, i, note: PLANS[k].notes[i] });
-    // A rack bell on the same note goes straight in.
-    const n = PLANS[k].notes[i];
-    if (S.rack[n] > 0) { S.rack[n]--; S.flats.pop(); S.repaired++; out.push({ type: 'repair', plan: k, i, note: n, fromRack: true }); }
-  }
-}
+// Fitted pranks make somebody smile every stats(S).smile seconds each.
+export const smilers = S => Math.min(S.plan, PLANS.length);
 function fillFromRack(S, out) {
   const p = plan(S); if (!p) return;
   p.notes.forEach((n, i) => { if (!S.slots[i] && S.rack[n] > 0) { S.rack[n]--; S.slots[i] = 1; S.installed++; out.push({ type: 'slot', note: n, i, fromRack: true }); } });
@@ -217,8 +189,6 @@ function fillFromRack(S, out) {
 function checkPlan(S, out) {
   const p = plan(S);
   if (!p || S.slots.some(x => !x)) return;
-  if (fitCost(S) > 0 && !S.fitting) { if (!S.ready) { S.ready = true; out.push({ type: 'ready', plan: S.plan }); } return; }
-  S.ready = false; S.fitting = false;
   const k = S.plan, stars = S.stars;
   const bonus = S.review || k + 1 >= REVIEW_AT ? 0 : 3 + stars;
   const fav = S.review ? 4 + stars : 0;
@@ -229,19 +199,11 @@ function checkPlan(S, out) {
   if (S.plan < PLANS.length) { S.slots = PLANS[S.plan].notes.map(() => 0); fillFromRack(S, out); }
   else S.slots = [];
 }
-// Fitting a finished sheet costs tape and screws (pence), later favours: a goal on the meter.
-export const fitCost = S => S.plan < PLANS.length ? T.fit[S.plan] : 0;
-export const fitCur = S => S.plan >= REVIEW_AT ? 'f' : 'p';
-export const canFit = S => !!S.ready && have(S, fitCur(S)) >= fitCost(S);
-export function fit(S, out = []) {
-  if (!canFit(S)) return false;
-  if (fitCur(S) === 'p') S.pence -= fitCost(S); else S.favours -= fitCost(S);
-  S.fitting = true; checkPlan(S, out);
-  return true;
-}
+// A save whose sheet is already full (from before fitting was free) goes off on load.
+export function settle(S, out = []) { const p = plan(S); if (!S.ended && p && S.slots.length === p.notes.length) checkPlan(S, out); return out; }
 // The rule change: no more money. The staff were at handover too.
 function budgetReview(S, out) {
-  S.review = true; S.staff = 3; S.jobs = { scrounge: 1, tune: 1, hush: 0, cover: 1 }; S.favours += 15;
+  S.review = true; S.staff = 3; S.jobs = { scrounge: 1, tune: 1, cover: 1 }; S.favours += 15;
   // The wheelchair line is no use now; covering breaks takes its place on the clipboard.
   const ch = S.queue.find(q => q.id === 'chairs'); if (ch) ch.on = false;
   if (!S.queue.some(q => q.id === 'cover')) S.queue.splice(Math.max(0, S.queue.indexOf(ch)), 0, { id: 'cover', on: true });
@@ -261,7 +223,7 @@ export function judge(S, pitch) {
   return { kind: 'off', note, d };
 }
 export function tune(S, pitch, out = []) {
-  if (S.raw < 1 || S.matron > 0 || S.ended) return null;
+  if (S.raw < 1 || S.ended) return null;
   const r = judge(S, pitch);
   if (r.kind === 'off') { out.push({ type: 'off', ...r }); return r; }
   S.raw--;
@@ -269,17 +231,6 @@ export function tune(S, pitch, out = []) {
   if (r.kind === 'clonk' && !S.clonk) { S.clonk = true; out.push({ type: 'discover' }); }
   place(S, r.note, r.perfect, out);
   return r;
-}
-export function answerCall(S, i = 0, out = []) {
-  const b = S.calls.splice(i, 1)[0];
-  if (!b) return null;
-  S.callsAnswered++;
-  // Sleepy children sometimes hand over a bell off their slippers or dressing gown. Pip in Bed 4 only ever asks.
-  const gift = b.bed !== 4 && b.seed < stats(S).giftChance;
-  if (gift) S.raw++;
-  if (b.bed === 4) S.pipAsked++;
-  out.push({ type: 'answer', bed: b.bed, gift, pip: b.bed === 4 });
-  return b;
 }
 export const bellCur = S => S.review ? 'f' : 'p';
 export function buyBell(S, out = []) {
@@ -296,38 +247,24 @@ export function buyBell(S, out = []) {
 const ITEMS = [
   { id: 'glasses', name: 'Reading Glasses', cur: 'p', cost: 4, at: 1, kind: 'odd', desc: 'Half-moon reading glasses for Hoo. Owls can see in the dark. Hoo just thinks they look professional.' },
   { id: 'oil', name: 'Wheel Oil', cur: 'p', cost: 5, grow: 1.6, max: 5, at: 1, desc: 'Oiled wheelchairs roll back to the bay quicker, so Hoo returns them faster.' },
-  { id: 'clip', name: 'Bigger Clipboard', cur: 'p', cost: 7, grow: 2, max: 4, at: 1, desc: 'Room for one more ticked chore on Hoo’s clipboard.' },
-  { id: 'lamp', name: 'Night Lights', cur: 'p', cost: 8, grow: 2, max: 3, at: 2, desc: 'Little lights by every bed. Fewer children wake up wanting something, so call lights go on less often.' },
   { id: 'feel', name: 'Tune by Feel', cur: 'p', cost: 10, at: 3, kind: 'one', desc: 'Adds “Tune bells by feel” to the clipboard: Hoo tunes bells by herself for the current sheet. Slower than your hands, and she misses.' },
   { id: 'lostkey', name: 'Lost Property Key', cur: 'p', cost: 9, at: 3, kind: 'one', desc: 'Adds “Check lost property” to the clipboard. A free bell every time, if you don’t mind the wait.' },
   { id: 'fork', name: 'Tuning Fork', cur: 'p', cost: 9, grow: 1.8, max: 3, at: 2, desc: 'Each level widens the lines on the gauge, so near enough counts more often, and dead-on (★) is easier.' },
   { id: 'tag', name: 'Name-Tag Gun', cur: 'p', cost: 8, at: 2, kind: 'odd', desc: 'Prints tiny name tags. Hoo labels every bell with a child’s name. For inventory, she says.' },
-  { id: 'slippers', name: 'Quiet Slippers', cur: 'p', cost: 11, at: 3, kind: 'one', desc: 'Hoo pads about without a sound, so a child with their light on takes longer to wake up properly.' },
-  { id: 'ear', name: 'A Good Ear', cur: 'p', cost: 12, grow: 1.7, max: 3, at: 3, req: 'feel', desc: 'Hoo’s tuning by feel hits the note more often.' },
-  { id: 'quick', name: 'Quick Talons', cur: 'p', cost: 14, grow: 1.9, max: 2, at: 3, req: 'feel', desc: 'Hoo tunes bells by feel faster.' },
+  { id: 'ear', name: 'A Good Ear', cur: 'p', cost: 12, grow: 1.7, max: 3, at: 3, req: 'feel', desc: 'Hoo’s tuning by feel gets quicker and hits the note more often.' },
   { id: 'chart', name: 'Bed Chart of Notes', cur: 'p', cost: 12, at: 4, kind: 'odd', desc: 'Hoo writes each child’s favourite note at the foot of their bed, beside their temperature. Nobody asked her to.' },
   { id: 'card', name: 'Gift Shop Loyalty Card', cur: 'p', cost: 20, at: 4, kind: 'one', desc: 'Bells cost 2p instead of 3p. The tenth stamp is a free stamp.' },
-  { id: 'spanner', name: 'Coin-Lock Spanner', cur: 'p', cost: 18, grow: 2.3, max: 2, at: 4, desc: 'Some wheelchairs take two pence. Then three. Hoo knows which ones now.' },
   { id: 'memo', name: 'A Strongly Worded Memo', cur: 'p', cost: 10, grow: 2.2, max: 3, at: 2, desc: 'Hoo writes to Matron Bramble asking for a bigger Toy Fund. Each memo gets one more penny a night. Matron underlines things.' },
-  { id: 'pull', name: 'Longer Call Cords', cur: 'p', cost: 13, grow: 2, max: 2, at: 4, desc: 'Children can reach the call button without sitting up, so they’re half asleep when Hoo comes, and more likely to hand over the jingle bell off their slippers.' },
   { id: 'polish', name: 'Brass Polish', cur: 'p', cost: 15, grow: 1.8, max: 4, at: 4, desc: 'Shiny bells catch the eye. Every fitted prank makes people smile more often, and smiles pay.' },
-  { id: 'kazoo', name: 'Hospital Radio Request', cur: 'p', cost: 6, at: 3, kind: 'odd', desc: 'Hoo phones in a request for “anything with a tuba in it”. They play the shipping forecast.' },
   { id: 'wrap', name: 'Gift Wrap, Just in Case', cur: 'p', cost: 16, at: 4, kind: 'odd', desc: 'A roll of paper with bells on it. Hoo is not planning anything. It was on offer.' },
-  { id: 'accordion', name: 'A Very Small Accordion', cur: 'p', cost: 22, at: 4, kind: 'odd', desc: 'It has four buttons and plays one chord. Hoo practises in the sluice room.' },
-  // After the Budget Review: favours.
+
   { id: 'recruit', name: 'Recruit a Volunteer', cur: 'f', cost: 5, at: REVIEW_AT, kind: 'staff', desc: 'Another night-shift volunteer joins the plan. Assign them a job under the clipboard.' },
   { id: 'bags', name: 'Laundry Bags', cur: 'f', cost: 6, grow: 1.5, max: 5, at: REVIEW_AT, desc: 'Scroungers carry more: each level finds bells half as fast again.' },
   { id: 'sonar', name: 'Bat Sonar', cur: 'f', cost: 8, grow: 1.5, max: 5, at: REVIEW_AT, desc: 'Staff on Tune work faster and miss less. Bats hear overtones you can’t.' },
-  { id: 'biscuits', name: 'Staff Room Biscuits', cur: 'f', cost: 6, grow: 1.5, max: 5, at: REVIEW_AT, desc: 'Breaks are longer and better, so staff on Cover earn favours faster.' },
-  { id: 'kettle', name: 'A Bigger Kettle', cur: 'f', cost: 6, grow: 1.6, max: 3, at: REVIEW_AT, desc: 'Hoo covers breaks faster: the tea is ready before anyone has finished saying “I’ll just pop the kettle on”.' },
-  { id: 'map', name: 'Map of Every Cupboard', cur: 'f', cost: 12, at: REVIEW_AT + 1, kind: 'one', desc: 'The porters draw Hoo a map of every cupboard in the building. Scroungers find bells half as fast again.' },
-  { id: 'hat', name: "The Night Porter's Hat", cur: 'f', cost: 4, at: REVIEW_AT + 1, kind: 'odd', desc: 'He lends it to Hoo for luck. It is much too big. It has a small bell sewn inside the brim, from a previous night shift, long ago.' },
-  { id: 'rota', name: 'A Polka Rota', cur: 'f', cost: 5, at: REVIEW_AT, kind: 'odd', desc: 'The night staff now take their breaks in two-four time.' },
+  { id: 'biscuits', name: 'Staff Room Biscuits', cur: 'f', cost: 6, grow: 1.5, max: 5, at: REVIEW_AT, desc: 'Breaks are longer and better, so everyone on Cover (Hoo too) earns favours faster.' },
   { id: 'whistle', name: 'Clonk Mallet', cur: 'f', cost: 7, at: REVIEW_AT, kind: 'one', reqClonk: true, desc: 'Widens the gap between the lines where a bell clonks, so clonks are easier to hit.' },
   { id: 'lessons', name: 'Clonking Lessons', cur: 'f', cost: 14, at: REVIEW_AT + 1, kind: 'one', reqClonk: true, desc: 'Staff on Tune learn to clonk, so they can fill the “?” slots too.' },
-  { id: 'torch', name: 'Head Torches', cur: 'f', cost: 9, grow: 1.6, max: 3, at: REVIEW_AT + 1, desc: 'Scroungers can see under the radiators now. More bells than you’d think roll under radiators.' },
-  { id: 'cushion', name: 'Felt Pads', cur: 'f', cost: 10, grow: 1.6, max: 3, at: REVIEW_AT + 2, desc: 'Little felt pads under every prank, so they sit straight and look loved. Fitted pranks make people smile more often.' },
-  { id: 'specs', name: "Matron's Spare Glasses", cur: 'f', cost: 9, at: REVIEW_AT + 2, kind: 'odd', desc: 'Found in the lift. Hoo hands them in. Matron says thank you, which she has never said before.' },
+  { id: 'hat', name: "The Night Porter's Hat", cur: 'f', cost: 4, at: REVIEW_AT + 1, kind: 'odd', desc: 'He lends it to Hoo for luck. It is much too big. It has a small bell sewn inside the brim, from a previous night shift, long ago.' },
   { id: 'drawing', name: "Pip's Drawing", cur: 'f', cost: 3, at: REVIEW_AT + 2, kind: 'odd', desc: 'Pip in Bed 4 drew a bell and wrote “PIP’S” on it. Hoo pins it to the clipboard.' },
   { id: 'ribbon', name: 'A Lot of Ribbon', cur: 'f', cost: 18, at: REVIEW_AT + 4, kind: 'odd', desc: 'Ninety-eight lengths of ribbon, all the same, all curled. Hoo says it’s for the pool.' },
 ];
@@ -377,8 +314,7 @@ export function giveAway(S) {
 }
 
 // ---------- Time ----------
-const ticked = S => { const n = stats(S).lines; return S.queue.filter(q => q.on).slice(0, n); };
-export const activeLines = ticked;
+const ticked = S => S.queue.filter(q => q.on);
 function startTask(S) {
   for (const q of ticked(S)) if (!taskBlock(S, q)) { S.qTask = q.id; S.qProg = 0; return; }
   S.qTask = null;
@@ -386,10 +322,9 @@ function startTask(S) {
 function finishTask(S, id, out) {
   const st = stats(S);
   switch (id) {
-    case 'call': if (S.calls.length) answerCall(S, 0, out); break;
     case 'chairs': if (!S.review) { S.pence += st.deposit; S.wheels++; out.push({ type: 'wheel', pence: st.deposit }); } break;
-    case 'buy': { const q = S.queue.find(x => x.id === 'buy'); if (S.raw < (q?.stock ?? 2)) buyBell(S, out); break; }
-    case 'tune': if (S.raw > 0 && S.matron <= 0) {
+    case 'buy': if (S.raw < BUY_KEEP) buyBell(S, out); break;
+    case 'tune': if (S.raw > 0) {
       const n = autoNote(S, false);
       if (n != null) {
         if (Math.random() < st.ear) { S.raw--; place(S, n, false, out); out.push({ type: 'autotune', who: 'hoo', note: n }); }
@@ -401,7 +336,7 @@ function finishTask(S, id, out) {
     case 'cover': if (S.review) { S.favours++; out.push({ type: 'cover', who: 'hoo' }); } break;
   }
 }
-export function step(S, dt, out = [], { offline = false } = {}) {
+export function step(S, dt, out = []) {
   if (S.ended) return out;
   const st = stats(S);
   S.t += dt;
@@ -411,35 +346,14 @@ export function step(S, dt, out = [], { offline = false } = {}) {
     if (!S.review) S.pence += st.fund;
     out.push({ type: 'night', n: S.night, fund: !S.review, pence: S.review ? 0 : st.fund });
   }
-  // Matron's round: no tuning while she's looking.
-  if (S.matron > 0) { S.matron -= dt; if (S.matron <= 0) { S.matron = 0; S.hush = HUSH_MAX; out.push({ type: 'matronEnd' }); } }
-  // Call lights (not while you're away: the ward sleeps through).
-  if (!offline) {
-    S.callT -= dt;
-    if (S.callT <= 0) {
-      S.callT = st.callGap * (0.7 + Math.random() * 0.6);
-      const free = [1, 2, 3, 4, 5, 6, 7, 8].filter(b => !S.calls.some(x => x.bed === b));
-      if (free.length && S.calls.length < 3) { const bed = free[Math.floor(Math.random() * free.length)]; S.calls.push({ bed, age: 0, seed: Math.random() }); out.push({ type: 'call', bed }); }
-    }
-    for (let i = S.calls.length - 1; i >= 0; i--) {
-      const b = S.calls[i]; b.age += dt;
-      if (b.age >= st.wakeAt) {
-        S.calls.splice(i, 1); S.hush--;
-        out.push({ type: 'wake', bed: b.bed });
-        if (S.hush <= 0 && S.matron <= 0) { S.matron = MATRON_ROUND; S.rounds++; out.push({ type: 'matron' }); }
-      }
-    }
-    if (S.hush < HUSH_MAX && !S.calls.length) { S.hushT += dt; if (S.hushT > 60) { S.hushT = 0; S.hush++; } } else S.hushT = 0;
-  } else S.calls = [];
   // Fitted pranks make people smile: pennies in the lift, later favours.
   const fitted = smilers(S);
-  if (S.review) drift(S, dt, out);
   if (fitted > 0) {
     S.smileT = (S.smileT || 0) + dt * fitted / st.smile;
     while (S.smileT >= 1) { S.smileT--; if (S.review) S.favours++; else S.pence++; out.push({ type: 'smile' }); }
   }
   // Hoo's clipboard.
-  if (S.qTask && taskBlock(S, S.queue.find(q => q.id === S.qTask) || { id: S.qTask }) && S.qTask !== 'call') S.qTask = null;
+  if (S.qTask && taskBlock(S, S.queue.find(q => q.id === S.qTask) || { id: S.qTask })) S.qTask = null;
   if (!S.qTask) startTask(S);
   if (S.qTask) {
     S.qProg += dt / taskTime(S, S.qTask);
@@ -452,20 +366,14 @@ export function step(S, dt, out = [], { offline = false } = {}) {
     while (P.scrounge >= 1) { P.scrounge--; S.raw++; out.push({ type: 'scrounge' }); }
     P.cover += J.cover * st.coverRate * dt;
     while (P.cover >= 1) { P.cover--; S.favours++; out.push({ type: 'cover', who: 'staff' }); }
-    if (S.matron <= 0) {
-      P.tune += J.tune * st.staffTune * dt;
-      while (P.tune >= 1) {
-        const n = autoNote(S, st.staffClonk);
-        if (S.raw < 1 || n == null) { P.tune = Math.min(P.tune, 1); break; }
-        P.tune--;
-        if (Math.random() < st.staffEar) { S.raw--; place(S, n, false, out); out.push({ type: 'autotune', who: 'staff', note: n }); }
-        else out.push({ type: 'automiss', who: 'staff' });
-      }
+    P.tune += J.tune * st.staffTune * dt;
+    while (P.tune >= 1) {
+      const n = autoNote(S, st.staffClonk);
+      if (S.raw < 1 || n == null) { P.tune = Math.min(P.tune, 1); break; }
+      P.tune--;
+      if (Math.random() < st.staffEar) { S.raw--; place(S, n, false, out); out.push({ type: 'autotune', who: 'staff', note: n }); }
+      else out.push({ type: 'automiss', who: 'staff' });
     }
-    if (J.hush > 0 && S.calls.length) {
-      P.hush += dt * J.hush / 4;
-      while (P.hush >= 1 && S.calls.length) { P.hush--; answerCall(S, 0, out); }
-    } else P.hush = 0;
   }
   // The hidden mechanic, if nobody's found it: the “?” slots sit between the lines.
   const p = plan(S);
@@ -483,16 +391,13 @@ export function assign(S, job, d) {
   S.jobs[job] += d; return true;
 }
 
-// While you were away: the clipboard and the staff keep going, at a gentler pace, with no call lights.
+// While you were away: the clipboard and the staff keep going, at a gentler pace.
 export function offline(S, secs) {
   if (S.ended || secs < 60) return null;
   const credit = Math.min(secs, OFFLINE_CAP) * OFFLINE_RATE;
   const before = { pence: S.pence, favours: S.favours, raw: S.raw, installed: S.installed, plan: S.plan };
   const out = [];
-  const keepCalls = S.calls; S.calls = [];
-  for (let t = 0; t < credit; t += 1) step(S, 1, out, { offline: true });
-  S.calls = [];
-  void keepCalls;
+  for (let t = 0; t < credit; t += 1) step(S, 1, out);
   return {
     secs: credit, pence: S.pence - before.pence, favours: S.favours - before.favours, raw: S.raw - before.raw,
     installed: S.installed - before.installed, pranks: S.plan - before.plan, review: out.some(e => e.type === 'review'),

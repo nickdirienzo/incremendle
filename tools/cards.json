@@ -634,40 +634,28 @@
   "tuned": 58,
   "clonks": 3,
   "wheels": 120,
-  "callsAnswered": 40,
   "lv": {
    "glasses": 1,
    "oil": 3,
-   "clip": 2,
-   "lamp": 1,
    "fork": 2,
    "tag": 1,
    "memo": 2,
    "feel": 1,
    "lostkey": 1,
-   "slippers": 1,
    "ear": 2,
-   "quick": 1,
    "chart": 1,
    "card": 1,
-   "kazoo": 1,
    "bags": 1,
-   "biscuits": 1,
-   "rota": 1
+   "biscuits": 1
   },
   "queue": [
-   {
-    "id": "call",
-    "on": true
-   },
    {
     "id": "tune",
     "on": true
    },
    {
     "id": "buy",
-    "on": true,
-    "stock": 2
+    "on": true
    },
    {
     "id": "cover",
@@ -679,84 +667,44 @@
    },
    {
     "id": "chairs",
-    "on": false,
-    "upto": 20
+    "on": false
    }
   ],
   "qTask": "cover",
   "qProg": 0.4,
-  "calls": [
-   {
-    "bed": 3,
-    "age": 8,
-    "seed": 0.5
-   },
-   {
-    "bed": 6,
-    "age": 2,
-    "seed": 0.9
-   }
-  ],
-  "callT": 30,
-  "hush": 2,
-  "matron": 0,
   "review": true,
   "staff": 6,
   "jobs": {
    "scrounge": 2,
    "tune": 2,
-   "hush": 1,
-   "cover": 1
+   "cover": 2
   },
   "jobProg": {
    "scrounge": 0,
    "tune": 0,
-   "hush": 0,
    "cover": 0
   },
   "clonk": true,
-  "flats": [
-   [
-    2,
-    1
-   ],
-   [
-    4,
-    3
-   ]
-  ],
   "seen": [
    "glasses",
    "oil",
-   "clip",
-   "lamp",
    "fork",
    "tag",
    "memo",
    "feel",
    "lostkey",
-   "slippers",
-   "kazoo",
    "ear",
-   "quick",
    "chart",
    "card",
-   "spanner",
-   "pull",
    "polish",
    "wrap",
-   "accordion",
    "recruit",
    "bags",
    "sonar",
    "biscuits",
-   "kettle",
-   "rota",
    "whistle",
    "lessons",
-   "map",
-   "hat",
-   "torch"
+   "hat"
   ],
   "shopTab": "f",
   "lastSeen": 0

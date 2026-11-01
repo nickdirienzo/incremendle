@@ -10,7 +10,7 @@
 <meta property="og:title" content="Hoo's Belfry">
 <meta property="og:description" content="An owl on the night shift tunes little brass bells to prank the whole hospital, on a Toy Fund of three pence a night.">
 <meta property="og:url" content="https://incremendle.com/hoos-belfry/">
-<meta property="og:image" content="https://incremendle.com/hoos-belfry/og.png?v=07602a20">
+<meta property="og:image" content="https://incremendle.com/hoos-belfry/og.png?v=4931d240">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Hoo's Belfry: An owl on the night shift tunes little brass bells to prank the whole hospital, on a Toy Fund of three pence a night.">
@@ -55,7 +55,6 @@
   canvas#stage:focus-visible { outline: 2px dashed var(--orange); outline-offset: 3px; }
   .stats { display: flex; flex-wrap: wrap; gap: 2px 16px; margin: 8px 2px 0; font: 15px var(--mono); color: var(--peach); }
   .stats b { color: var(--cream); font-weight: 400; }
-  .stats .hush b { color: var(--orange); letter-spacing: 2px; }
   .stats small { font-size: 12px; color: var(--mauve); }
   .stats .tipped { cursor: help; }
   .stats .tipped:focus-visible { outline: 2px dashed var(--orange); outline-offset: 2px; }
@@ -72,9 +71,8 @@
   .desk .tabs button.fresh::after { content: " •"; color: var(--orange); }
   .desk .tabs button:focus-visible { outline: 2px dashed var(--orange); }
   .desk .note { font-size: 13px; color: var(--peach); margin: 0 0 3px; }
-  .row { display: grid; grid-template-columns: 50px 22px minmax(0, 1fr) auto minmax(78px, auto); align-items: center; gap: 6px; font-size: 14px; min-height: 27px; }
+  .row { display: grid; grid-template-columns: 50px 22px minmax(0, 1fr) minmax(78px, auto); align-items: center; gap: 6px; font-size: 14px; min-height: 27px; }
   .row.off { opacity: .55; }
-  .row.noroom .name::after { content: " (no room)"; color: var(--rust); font-size: 12px; }
   .row .mv { display: flex; gap: 2px; }
   .mini { font: 13px/1 var(--mono); color: var(--cream); background: none; border: 1px solid #ffecd666; border-radius: 3px; width: 23px; height: 22px; padding: 0; cursor: pointer; }
   .mini:hover { border-color: var(--orange); color: var(--orange); }
@@ -82,16 +80,9 @@
   .mini:focus-visible { outline: 2px dashed var(--orange); outline-offset: 1px; }
   .row input[type=checkbox] { width: 17px; height: 17px; accent-color: var(--orange); margin: 0; cursor: pointer; }
   .row .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .row .param { display: flex; align-items: center; gap: 3px; font: 12px var(--mono); color: var(--peach); white-space: nowrap; }
   .row .st { font: 12px var(--mono); color: var(--mauve); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .row .st.go { color: var(--orange); }
-  @media (max-width: 560px) {
-    .row { grid-template-columns: 50px 22px minmax(0, 1fr) auto; grid-template-areas: "mv cb name st" "mv cb param param"; row-gap: 2px; padding: 2px 0; }
-    .row .mv { grid-area: mv; } .row input[type=checkbox] { grid-area: cb; } .row .name { grid-area: name; } .row .st { grid-area: st; } .row .param { grid-area: param; }
-    .row .param:empty { display: none; }
-  }
-  .jobs .row { grid-template-columns: 22px minmax(0, 1fr) 82px; grid-template-areas: none; }
-  .jobs .row > * { grid-area: auto; }
+  .jobs .row { grid-template-columns: 22px minmax(0, 1fr) 82px; }
   .jobs .ct { display: flex; align-items: center; gap: 4px; justify-content: flex-end; font: 14px var(--mono); }
   .jobs .ct b { min-width: 18px; text-align: center; font-weight: 400; color: var(--orange); }
   .jobs .what { font-size: 12px; color: var(--peach); }
@@ -192,7 +183,6 @@
         <span id="penceBox" class="tipped" tabindex="0" aria-describedby="tip">Toy Fund <b id="pence">0</b>p <small id="penceRate"></small></span>
         <span id="favBox" class="tipped" tabindex="0" aria-describedby="tip" hidden>Favours <b id="fav">0</b> <small id="favRate"></small></span>
         <span>Night <b id="night">1</b></span>
-        <span class="hush">Hush <b id="hush">●●●</b></span>
       </div>
       <div class="meter">
         <div class="label"><span id="meterLabel"></span><span id="meterVal"></span></div>
@@ -211,7 +201,6 @@
     <aside id="side">
       <div class="actions">
         <button class="btn" id="giveBtn" type="button" hidden>🎁 Discharge morning<small id="giveSub"></small></button>
-        <button class="btn" id="fitBtn" type="button" hidden>🔧 <span id="fitName">Fit it</span><small id="fitSub"></small></button>
         <button class="btn" id="bellBtn" type="button" hidden>🔔 Buy a bell<small id="bellSub"></small></button>
       </div>
       <h2 id="shopHead" hidden>Supplies <span id="afford"></span></h2>
@@ -265,7 +254,6 @@ const sfx = {
   off() { A.tone({ type: 'triangle', freq: N(-2), dur: 0.08, vol: 0.12 }); A.tone({ type: 'triangle', freq: N(-3), dur: 0.14, vol: 0.1, at: A.now + 0.08 }); },
   slot(n = 0) { A.tone({ type: 'bell', freq: midiToHz(72 + n), dur: 0.12, vol: 0.09, at: A.now + 0.45 }); },
   rack() { A.tone({ type: 'pluck', freq: N(4), dur: 0.08, vol: 0.12, at: A.now + 0.45 }); },
-  ready() { [0, 2, 4].forEach((d, i) => A.tone({ type: 'bell', freq: N(d + 6), dur: 0.2, vol: 0.08, at: A.now + 0.5 + i * 0.09 })); },
   // A finished prank plays its own little tune.
   prank(notes = [0, 4, 8]) {
     notes.slice(0, 16).forEach((n, i) => A.tone({ type: E.isClonk(n) ? 'triangle' : 'pluck', freq: midiToHz(72 + n), dur: 0.12, vol: 0.14, at: A.now + 0.05 + i * 0.13 }));
@@ -276,13 +264,7 @@ const sfx = {
   bell() { A.tone({ type: 'pluck', freq: N(5), dur: 0.08, vol: 0.12 }); A.tone({ type: 'pluck', freq: N(8), dur: 0.1, vol: 0.1, at: A.now + 0.06 }); },
   unlock() { A.tone({ type: 'bell', freq: N(8), dur: 0.3, vol: 0.08 }); A.tone({ type: 'bell', freq: N(10), dur: 0.35, vol: 0.07, at: A.now + 0.12 }); },
   deny() { A.tone({ type: 'triangle', freq: N(1), dur: 0.07, vol: 0.11 }); A.tone({ type: 'triangle', freq: N(0), dur: 0.11, vol: 0.1, at: A.now + 0.08 }); },
-  call() { A.tone({ type: 'bell', freq: N(9), dur: 0.25, vol: 0.06 }); A.tone({ type: 'bell', freq: N(9), dur: 0.3, vol: 0.05, at: A.now + 0.16 }); },
-  answer() { A.tone({ type: 'keys', freq: N(4), dur: 0.12, vol: 0.1 }); A.tone({ type: 'keys', freq: N(2), dur: 0.2, vol: 0.08, at: A.now + 0.1 }); },
   coin() { A.tone({ type: 'bell', freq: N(12), dur: 0.05, vol: 0.04, cutoff: 3000 }); },
-  wake() { A.tone({ type: 'pad', freq: N(-4), dur: 0.7, vol: 0.06, attack: 0.1 }); },
-  matron() { A.tone({ type: 'keys', freq: N(-3), dur: 0.35, vol: 0.12 }); A.tone({ type: 'keys', freq: N(-6), dur: 0.5, vol: 0.11, at: A.now + 0.3 }); },
-  flat() { A.tone({ type: 'triangle', freq: N(3), dur: 0.12, vol: 0.09 }); A.tone({ type: 'triangle', freq: midiToHz(65), dur: 0.22, vol: 0.08, at: A.now + 0.12 }); },
-  repair() { A.tone({ type: 'bell', freq: N(7), dur: 0.15, vol: 0.07, at: A.now + 0.45 }); A.tone({ type: 'bell', freq: N(9), dur: 0.2, vol: 0.06, at: A.now + 0.55 }); },
   discover() { [1, 3, 5, 7, 9, 11].forEach((s, i) => A.tone({ type: 'triangle', freq: midiToHz(72 + s), dur: 0.14, vol: 0.1, at: A.now + 0.3 + i * 0.09 })); },
   review() { [0, -2, -4].forEach((d, i) => A.tone({ type: 'keys', freq: N(d), dur: 0.45, vol: 0.11, at: A.now + i * 0.35 })); A.tone({ type: 'pad', freq: N(-6), dur: 1.6, vol: 0.06, attack: 0.3, at: A.now + 1 }); },
   recruit() { [2, 4, 6].forEach((d, i) => A.tone({ type: 'pluck', freq: N(d), dur: 0.1, vol: 0.12, at: A.now + i * 0.08 })); A.tone({ type: 'bell', freq: N(9), dur: 0.3, vol: 0.06, at: A.now + 0.26 }); },
@@ -294,10 +276,10 @@ const sfx = {
   },
 };
 // Per-effect levels, measured with npm run mix so every effect peaks near -10 dBFS.
-// The rapid ones (the band ratchet, the penny, the call light) sit a few dB under the rest on purpose.
+// The rapid ones (the band ratchet, the penny) sit a few dB under the rest on purpose.
 const LEVEL = {
-  stretch: 5, ting: 2.3, clonk: 2.85, off: 4.1, slot: 7.4, rack: 5, ready: 3.6, prank: 1.55, buy: 1, bell: 5.9, unlock: 4.5, deny: 4.5,
-  call: 6.5, answer: 2, coin: 4, wake: 8.4, matron: 2.1, flat: 5.6, repair: 5.1, discover: 2.5, review: 1.4, recruit: 3.8, finale: 1.8,
+  stretch: 5, ting: 2.3, clonk: 2.85, off: 4.1, slot: 4.1, rack: 3.6, prank: 1.55, buy: 1, bell: 3.8, unlock: 4.5, deny: 4.5,
+  coin: 4, discover: 2.5, review: 1.4, recruit: 3.8, finale: 1.8,
 };
 for (const k of Object.keys(sfx)) {
   const fn = sfx[k];
@@ -310,9 +292,9 @@ for (const k of Object.keys(sfx)) {
 if (DEBUG) window.__game = { A, sfx, long: ['finale', 'prank', 'review'], S: () => S, E };
 
 // The game owns playback; music.mjs arranges the composed polka per phase.
-function musicKey() { return S.ended ? 'finale' : S.matron > 0 ? 'matron' : E.phase(S) === 3 ? 'dawn' : S.review ? 'staff' : 'clipboard'; }
+function musicKey() { return S.ended ? 'finale' : E.phase(S) === 3 ? 'dawn' : S.review ? 'staff' : 'clipboard'; }
 let music = null, soundtrack = null, lastKey = musicKey();
-// Fuller phases measure louder (npm run mix): bring them back to about -24 dBFS. Matron's tiptoe stays quieter.
+// Fuller phases measure louder (npm run mix): bring them back to about -24 dBFS.
 const PHASE_GAIN = { staff: 0.8, dawn: 0.73 };
 const phased = new Map();
 function song() {
@@ -335,7 +317,7 @@ function fit() {
 addEventListener('resize', fit);
 // Layout (canvas units).
 const BEDS = [1, 2, 3, 4, 5, 6, 7, 8].map(b => ({ b, x: 30 + ((b - 1) % 4) * 66, y: b <= 4 ? 52 : 252, w: 46, h: 70 }));
-const PLACES = { idle: [154, 186], call: null, chairs: [36, 342], buy: [36, 148], tune: [268, 210], lost: [268, 148], cover: [268, 330] };
+const PLACES = { idle: [154, 186], chairs: [36, 342], buy: [36, 148], tune: [268, 210], lost: [268, 148], cover: [268, 330] };
 const FORK = [452, 300], GX = 604, G0 = 366, GPX = 14.6; // gauge: pitch 0 at y=G0, GPX px per semitone
 const gy = p => G0 - p * GPX;
 const SLOT = (i, n) => { const per = n > 8 ? Math.ceil(n / 2) : n, row = Math.floor(i / per), col = i % per; return [400 + col * (n > 8 ? 26 : 28), n > 8 ? 62 + row * 40 : 78]; };
@@ -373,17 +355,6 @@ function drawBell(x, cx, cy, fill, k = 1, flat = false) {
   x.fillStyle = C.rust; x.strokeStyle = C.cream; x.beginPath(); x.arc(0, 11, 2.6, 0, 7); x.fill(); x.stroke();
   if (flat) { x.fillStyle = C.cream; x.font = `bold 11px ${MONO}`; x.textAlign = 'center'; x.fillText('♭', 12, -10); }
   x.restore();
-}
-// A call light over a bed: a round lamp with a glow, drawn in blueprint line.
-function callLight() {
-  const c = Sprites.canvas(48, 48), x = c.getContext('2d');
-  x.translate(24, 24); x.lineWidth = 2; x.strokeStyle = C.orange;
-  x.fillStyle = '#ffaa5e55'; x.beginPath(); x.arc(0, 2, 9, 0, 7); x.fill(); x.stroke();
-  x.fillStyle = C.orange; x.beginPath(); x.arc(0, 2, 4, 0, 7); x.fill();
-  x.beginPath(); x.moveTo(-6, -8); x.lineTo(6, -8); x.moveTo(0, -8); x.lineTo(0, -14); x.stroke();
-  x.lineWidth = 1.6;
-  for (const a of [-2.4, -1.6, -0.8, 0.8, 1.6, 2.4].map(a => a + Math.PI / 2)) { x.beginPath(); x.moveTo(Math.cos(a) * 13, 2 + Math.sin(a) * 13); x.lineTo(Math.cos(a) * 18, 2 + Math.sin(a) * 18); x.stroke(); }
-  return c;
 }
 // Nurse Hoo: a tawny owl in a starched cap, drawn in blueprint line. `look` turns the head.
 function drawHoo(x, cx, cy, { k = 1, look = 0, blink = false, wing = 0 } = {}) {
@@ -470,9 +441,7 @@ async function makeSprites() {
   spr.bell = Sprites.register('bell (tuned)', bellSprite(C.orange));
   spr.clonk = Sprites.register('bell (clonk)', bellSprite(C.rust));
   spr.raw = Sprites.register('bell (untuned)', bellSprite(C.slate));
-  spr.flat = Sprites.register('bell (gone flat)', bellSprite(C.mauve));
   spr.bed = Sprites.register('bed (blueprint)', await bp('./art/mdi--bed.svg', 40));
-  spr.call = Sprites.register('call light', callLight());
   spr.chair = Sprites.register('wheelchair (blueprint)', await bp('./art/mdi--wheelchair.svg', 22, C.peach));
   spr.picto = {};
   for (const [id, f] of Object.entries(PICTO)) spr.picto[id] = Sprites.register(`sheet: ${id}`, await bp(f, 60, C.cream, 0.1));
@@ -488,16 +457,11 @@ let kbPitch = null;          // keyboard aiming
 const fx = [];
 const cssToCanvas = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height]; };
 const PX_PER_SEMI = 17;      // CSS pixels of pull per semitone, the same on every screen
-const canTune = () => !S.ended && S.raw > 0 && S.matron <= 0;
+const canTune = () => !S.ended && S.raw > 0;
 cv.addEventListener('pointerdown', e => {
-  const [px, py] = cssToCanvas(e);
-  // A bed with its call light on: answer it.
-  for (const b of S.calls) {
-    const bd = BEDS[b.bed - 1];
-    if (px > bd.x - 12 && px < bd.x + bd.w + 12 && py > bd.y - 26 && py < bd.y + bd.h + 6) { answer(S.calls.indexOf(b)); return; }
-  }
+  const [px] = cssToCanvas(e);
   if (px < 300) return;
-  if (!canTune()) { if (!S.ended) { sfx.deny(); say(S.matron > 0 ? 'Not with Matron on the ward. Hoo looks extremely busy with a thermometer.' : S.review ? 'No bells to tune. Ask a porter for one, or put someone on Scrounge.' : 'No bells to tune. Buy one from the gift shop: they’re three pence.'); } return; }
+  if (!canTune()) { if (!S.ended) { sfx.deny(); say(S.review ? 'No bells to tune. Ask a porter for one, or put someone on Scrounge.' : 'No bells to tune. Buy one from the gift shop: they’re three pence.'); } return; }
   pull = { x0: e.clientX, y0: e.clientY, pitch: -1, last: -9, dx: 0, dy: 1 };
   try { cv.setPointerCapture(e.pointerId); } catch (_) {}
   cv.style.cursor = 'grabbing';
@@ -524,7 +488,7 @@ cv.addEventListener('keydown', e => {
   } else if ((e.key === 'Enter' || e.key === ' ') && kbPitch != null) {
     e.preventDefault();
     if (canTune()) release(kbPitch); else sfx.deny();
-  } else if (e.key === 'b' && S.calls.length) answer(0);
+  }
 });
 cv.addEventListener('blur', () => { kbPitch = null; });
 function release(pitch) {
@@ -534,7 +498,6 @@ function release(pitch) {
   handle(out, { pitch });
   save();
 }
-function answer(i) { const out = []; E.answerCall(S, i, out); handle(out); }
 
 // ---------- Log ----------
 let logT = 0, ambT = 0;
@@ -558,8 +521,10 @@ const AMBIENT = [
   'A moth bumps against the night light by Bed 2 and apologises.',
   'Matron Bramble’s office light is off. Hoo checks twice.',
 ];
+// Pip in Bed 4 has something to say after each of the early pranks (not the chair: that's the Budget Review).
+const PIP_AFTER = { 0: 0, 1: 1, 2: 2, 3: 3, 5: 4, 7: 5 };
 const PIP = [
-  'Bed 4. Pip, wide awake, whispers: “Is that a bell? Is there a bell for me?” Hoo says it’s for the hospital. Pip nods slowly, like that’s not a no.',
+  'Bed 4. Pip is wide awake, and heard that. Pip whispers: “Is that a bell? Is there a bell for me?” Hoo says it’s for the hospital. Pip nods slowly, like that’s not a no.',
   'Pip in Bed 4 wants to know if owls live in bell towers. Hoo says some of them live in hospitals.',
   'Pip in Bed 4 wants to know what the bells are for. Hoo says inventory.',
   'Pip in Bed 4 heard the lift play “going up” all the way down. Pip has decided it was a dream, and is delighted.',
@@ -567,7 +532,7 @@ const PIP = [
   'Pip in Bed 4 goes home soon. Pip mentions this, then mentions bells, then mentions going home again.',
 ];
 const MATRON_LINES = [
-  'Matron Bramble has written “Call lights: ANSWER THEM” on the whiteboard and underlined it three times.',
+  'Matron Bramble has written “NO BELLS” on the whiteboard and underlined it three times.',
   'Matron Bramble is humming something on her way past. She stops when she sees Hoo.',
   'Matron Bramble checks the stationery cupboard. It jingles. She closes it without a word.',
 ];
@@ -576,37 +541,23 @@ const STAFF_NAMES = ['Wendell, a bat porter', 'Hettie, a hedgehog cleaner', 'Pim
 const BUY_LINES = {
   glasses: 'Hoo puts on the reading glasses. She can see exactly as well as before. She looks extremely qualified.',
   oil: 'A drop of oil on every wheelchair wheel. They roll back to the bay like they’ve been waiting to.',
-  clip: 'A bigger clipboard. Hoo can remember one more chore, and writes it in very small handwriting.',
-  lamp: 'Night lights by the beds. Fewer children wake up wanting a drink, a story, or to discuss bears.',
   feel: 'Hoo learns to tune by feel. She is slower than you and she misses, but she does it with her eyes shut.',
   lostkey: 'The lost property key. Inside: an umbrella, a single shoe, and nine jingle bells off nine cat collars nobody has ever claimed.',
   fork: 'A tuning fork, struck on the edge of the desk. The lines on the gauge seem wider. Near enough is nearer.',
   tag: 'The Name-Tag Gun goes click. Hoo labels a bell “BED 1”. Then “BED 2”. For inventory, she says.',
-  slippers: 'Quiet slippers. Hoo moves through the ward like a rumour.',
-  ear: 'Hoo practises listening. The bell rings; Hoo’s head tilts; the bell rings again, but righter.',
-  quick: 'Quick talons. Hoo can tune a bell in the time it takes to say “just a quick one”.',
+  ear: 'Hoo practises listening. The bell rings; Hoo’s head tilts; the bell rings again, but righter, and sooner.',
   chart: 'Hoo writes each child’s favourite note at the foot of their bed. Pip’s is E. Pip chose it personally.',
   card: 'The gift shop loyalty card. The volunteer behind the till stamps it with a bell stamp. He has been waiting years to use it.',
-  spanner: 'The coin-lock spanner. Some wheelchairs, it turns out, take bigger coins.',
   memo: 'Hoo writes a strongly worded memo about the Toy Fund. Matron writes back “NOTED.” One more penny a night.',
-  pull: 'Longer call cords. Half-asleep children are much more generous with the jingle bells off their slippers.',
   polish: 'Brass polish. Every prank gleams, and people stop to look, and smile.',
-  kazoo: 'Hoo phones Hospital Radio for “anything with a tuba in it”. They play the shipping forecast. Hoo listens to the whole thing anyway.',
   wrap: 'A roll of gift wrap with bells on it, just in case. Hoo puts it at the back of the cupboard, where it can wait.',
-  accordion: 'A very small accordion. Hoo practises in the sluice room. The sluice room has excellent acoustics.',
   recruit: '',
-  bags: 'Laundry bags for the scroungers. The bags come back full of bells, and one sock.',
+  bags: 'Laundry bags for the scroungers. The bags come back full of bells, and one sock. Under the radiators: a whole drift of bells, like snow.',
   sonar: 'The bats practise sonar on the bells. They can hear a flat ting from three wards away.',
   biscuits: 'Better biscuits in the staff room. Breaks get longer, and everyone owes everyone more.',
-  kettle: 'A bigger kettle. Hoo covers breaks at twice the tea.',
-  map: 'The porters draw a map of every cupboard in the building. Some of the cupboards are not on the plans. Some of them are full of bells.',
   hat: 'Hoo wears the night porter’s hat. It jingles when she nods. She nods a lot.',
-  rota: 'The polka rota goes up on the staff room door. Breaks now go: one-two, one-two.',
   whistle: 'A clonk mallet, wrapped in a sock. The gaps between the lines feel roomier. The bells seem pleased about it.',
   lessons: 'Clonking lessons in the boiler room. By the end, everyone on Tune can clonk on purpose.',
-  torch: 'Head torches. Under the radiators: dust, a lost pen, and a whole drift of bells, like snow.',
-  cushion: 'Felt pads under every prank. They sit up straight, like they mean it.',
-  specs: 'Hoo hands in Matron’s spare glasses. Matron says “thank you”. Hoo has to sit down for a bit.',
   drawing: 'Pip’s drawing goes on the clipboard: a bell, very orange, with “PIP’S” written on it in large letters.',
   ribbon: 'Ninety-eight lengths of ribbon, curled. Hoo says it’s for the pool. Nobody asks which pool.',
 };
@@ -645,14 +596,6 @@ function handle(out, ctx = {}) {
           say(`That one rang ${NOTE[ev.note]}, so it goes on the spares rack for a later sheet. The ward door wants ${want}: let go when the orange line on the gauge sits on ${want.includes(' and ') ? 'one of those' : 'it'}.${S.raw < 1 ? ' Out of bells? The gift shop sells them, top of the column.' : ''}`, 10);
         }
         break;
-      case 'repair': {
-        if (!ev.fromRack) flyTo(E.isClonk(ev.note) ? 'clonk' : 'bell', tabPos(ev.plan), ev.note);
-        if (ctx.pitch != null) { (E.isClonk(ev.note) ? sfx.clonk : sfx.ting)(ev.note); sfx.repair(); }
-        else if (!ev.fromRack) sfx.repair();
-        pop(tabPos(ev.plan)[0], 368, 'retuned');
-        break;
-      }
-      case 'ready': sfx.ready(); say(`Sheet ${ev.plan + 1} is full: every bell in place for ${E.PLANS[ev.plan].name.replace(/^The /, 'the ')}. Now it needs fitting: ${E.fitCost(S)}${E.fitCur(S) === 'p' ? 'p of tape and screws' : ' favours (somebody has to hold the ladder)'}.`); break;
       case 'prank': {
         const P = E.PLANS[ev.plan];
         sfx.prank(P.notes);
@@ -660,6 +603,7 @@ function handle(out, ctx = {}) {
         if (ev.pence) line += ` (+${ev.pence}p in the lift by morning.)`;
         if (ev.favours) line += ` (+${ev.favours} favours.)`;
         say(line, 7);
+        if (PIP_AFTER[ev.plan] != null) setTimeout(() => say(PIP[PIP_AFTER[ev.plan]], 6), 7600);
         if (S.plan === E.PLANS.length) setTimeout(() => say('Every sheet is fitted. The hospital is one big, quiet instrument. Hoo looks at Bed 4, where Pip is asleep, and at the Gift Wrap, Just in Case.'), 9000);
         if (music) music.update();
         break;
@@ -667,19 +611,9 @@ function handle(out, ctx = {}) {
       case 'review':
         sfx.review();
         setTimeout(() => say('Matron Bramble, scarlet, cuts the Toy Fund to nothing and pulls the coin locks off every wheelchair. But the porters were at handover too. It was the funniest thing they’d seen all year, and they’d like to help. They pay in favours.', 12), 7200);
-        setTimeout(() => say('No more pennies. From now on, favours buy everything: bells, fitting each sheet, the whole shop. Put the night staff on Cover to earn them, and on Scrounge and Tune to fill the sheets.', 14), 19500);
+        setTimeout(() => say('No more pennies. From now on, favours buy everything: bells and the whole shop. Put the night staff on Cover to earn them, and on Scrounge and Tune to fill the sheets.', 14), 19500);
         deskTab = 'staff'; renderDesk(); if (music) music.update();
         break;
-      case 'answer':
-        sfx.answer();
-        if (ev.pip) say(PIP[Math.min(PIP.length - 1, S.pipAsked - 1)], 6);
-        else if (ev.gift) { say(pick([`Bed ${ev.bed} only wanted a sip of water, and hands Hoo the jingle bell off their slipper on the way back to sleep.`, `Bed ${ev.bed} called to say there was a bell in their bed. There was. Hoo takes it for tuning.`, `Bed ${ev.bed} is half asleep and very generous. One bell, with thanks.`])); sfx.bell(); }
-        else if (logT > 6) say(pick([`Bed ${ev.bed} needed their pillow turned to the cool side.`, `Bed ${ev.bed} wanted to know if owls sleep. Hoo says later.`, `Bed ${ev.bed} had a bad dream about a goose. Hoo sits with them until it goes.`, `Bed ${ev.bed} just wanted someone to say goodnight again.`]));
-        break;
-      case 'call': sfx.call(); break;
-      case 'wake': sfx.wake(); say(`Nobody answered Bed ${ev.bed}. They’re awake now and singing. Hush ${'●'.repeat(Math.max(0, S.hush))}${'○'.repeat(E.HUSH_MAX - Math.max(0, S.hush))}.`); break;
-      case 'matron': sfx.matron(); say('Matron Bramble’s office light goes on. She comes out to see who’s singing. Hoo hides the bench under a towel and takes everyone’s temperature, very slowly.'); if (music) music.update(); break;
-      case 'matronEnd': say(pick(['Matron Bramble goes back to her office. The towel comes off the bench.', 'Matron Bramble’s door clicks shut. Hoo breathes out.'])); if (music) music.update(); break;
       case 'wheel': earned('chairs', 'p', ev.pence); sfx.coin(); if (Math.random() < 0.08 && logT > 10) say('Hoo returns a wheelchair from the car park. The coin lock gives back its deposit with a satisfied clunk.'); break;
       case 'night': if (ev.fund) { sfx.coin(); if (logT > 6) say(`Night ${ev.n}. Matron drops the Toy Fund in the tin: ${ev.pence}p.`); } break;
       case 'lost': sfx.bell(); if (logT > 8) say(pick(['Lost property yields a bell off a bicycle.', 'Lost property: one sleigh bell, slightly dented, much loved.', 'A bell from lost property. Its tag says “PROPERTY OF BELL”.'])); break;
@@ -688,7 +622,6 @@ function handle(out, ctx = {}) {
       case 'buybell': break;
       case 'scrounge': if (soft('scrounge', 2)) sfx.slot(4); if (logT > 16 && Math.random() < 0.25) say(pick(['A scrounger comes back with a bell from the boiler room.', 'One bell, found in a slipper in lost-and-found-again.', 'The scroungers tip out a laundry bag: a bell, a sock, a bell.'])); break;
       case 'cover': if (ev.who === 'hoo') earned('cover', 'f', 1); if (soft('cover', 1.5)) sfx.coin(); if (logT > 16 && Math.random() < 0.25) say(ev.who === 'hoo' ? 'Hoo covers a tea break. One favour, owed with feeling.' : pick(['Somebody covers a break on Ward 3. One favour in the book.', 'A porter covers for a nurse’s tea. The favour comes back to Hoo.', 'Two volunteers swap breaks and both owe Hoo one.'])); break;
-      case 'flat': sfx.flat(); if (logT > 6) say(`A bell in ${E.PLANS[ev.plan].name.replace(/^The /, 'the ')} has gone flat (♭). Its band went slack. It wants a fresh ${NOTE[ev.note]}, and won’t make anyone smile until it gets one.`); break;
       case 'clonkhint': say('The “?” slots on this sheet sit between the lines on the gauge, not on them. Hoo squints at the gauge, then at the bell.'); break;
     }
   }
@@ -759,7 +692,7 @@ const STAT_TIPS = {
       `Wheelchairs on Hoo’s clipboard: ${st.deposit}p each · ${perMin(chairs)}/min lately`,
       'Each prank pays a little extra when it goes off.',
     ];
-    return { id: 'stat:p', name: 'Toy Fund', desc: 'Pennies for bells, fitting each sheet and the shop.\n\n' + lines.join('\n'), foot: `about +${perMin(income().p)}p a minute in all` };
+    return { id: 'stat:p', name: 'Toy Fund', desc: 'Pennies for bells and the shop.\n\n' + lines.join('\n'), foot: `about +${perMin(income().p)}p a minute in all` };
   },
   favBox: () => {
     const { R, hooCover } = income(), n = E.smilers(S), st = E.stats(S);
@@ -767,9 +700,9 @@ const STAT_TIPS = {
       `Staff on Cover (${S.jobs.cover}): ${perMin(R.cover)}/min`,
       `Hoo covering breaks: ${perMin(hooCover)}/min lately`,
       n ? `Smiles at ${n} fitted prank${n > 1 ? 's' : ''}: one each every ${mmss(st.smile)} · ${perMin(R.smile)}/min` : 'Smiles: fitted pranks earn favours too.',
-      'Each prank you fit pays 4 favours, more for ★.',
+      'Each prank pays 4 favours when it goes off, more for ★.',
     ];
-    return { id: 'stat:f', name: 'Favours', desc: `The pennies are gone. Favours buy everything now: bells (${st.price} each), fitting each sheet, every upgrade, and, at the very end, Discharge morning.\n\n` + lines.join('\n'), foot: `about +${perMin(income().f)} favours a minute in all` };
+    return { id: 'stat:f', name: 'Favours', desc: `The pennies are gone. Favours buy everything now: bells (${st.price} each), every upgrade, and, at the very end, Discharge morning.\n\n` + lines.join('\n'), foot: `about +${perMin(income().f)} favours a minute in all` };
   },
 };
 for (const [id, tipOf] of Object.entries(STAT_TIPS)) tipWire($(id), tipOf, () => {});
@@ -778,24 +711,14 @@ const pct = x => `${Math.round(x * 100)}%`;
 const per = (rate, unit) => `${perMin(rate * 60)} ${unit}/min`;
 const EFFECT = {
   oil: ['a wheelchair takes', st => `${st.chairTime}s`],
-  clip: ['chores at once:', st => `${st.lines}`],
-  lamp: ['a call light about every', st => `${Math.round(st.callGap)}s`],
   fork: ['near enough', st => `±${st.noteTol.toFixed(2)} (★ ±${st.perfectTol.toFixed(2)})`],
-  slippers: ['a child wakes after', st => `${st.wakeAt}s`],
-  ear: ['Hoo hits the note', st => pct(st.ear)],
-  quick: ['Hoo tunes a bell in', st => `${st.tuneTime}s`],
+  ear: ['Hoo tunes', st => `in ${st.tuneTime}s, ${pct(st.ear)} hit`],
   card: ['a bell costs', st => `${st.price}p`],
-  spanner: ['a wheelchair pays', st => `${st.deposit}p`],
   memo: ['the Toy Fund pays', st => `${st.fund}p a night`],
-  pull: ['gift bell chance', st => pct(st.giftChance)],
   polish: ['each prank smiles every', st => mmss(st.smile)],
-  cushion: ['each prank smiles every', st => mmss(st.smile)],
   bags: ['each scrounger finds', st => per(st.scroungeRate, '🔔')],
-  torch: ['each scrounger finds', st => per(st.scroungeRate, '🔔')],
-  map: ['each scrounger finds', st => per(st.scroungeRate, '🔔')],
   sonar: ['each tuner', st => `${per(st.staffTune, '🔔')}, ${pct(st.staffEar)} hit`],
-  biscuits: ['each on Cover earns', st => per(st.coverRate, 'favours')],
-  kettle: ['Hoo covers a break in', st => `${st.coverTime}s`],
+  biscuits: ['each on Cover earns', st => `${per(st.coverRate, 'favours')} (Hoo: one per ${Math.round(st.coverTime)}s)`],
   whistle: ['clonk gap', st => `±${st.clonkTol.toFixed(2)}`],
 };
 function effectLine(it) {
@@ -864,7 +787,6 @@ document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .tip
 // The buttons at the top of the column explain themselves; on touch, the first tap of the session explains.
 const ACTION_TIPS = {
   bellBtn: () => ({ id: 'bell', name: S.review ? 'Ask a porter for a bell' : 'Buy a bell', desc: S.review ? 'The gift shop won’t take pennies from Bramble Ward any more, but the porters know a man. One untuned bell for the bench.' : 'One untuned bell from the gift shop, for the bench. The Toy Fund is three pence a night, and so is a bell.', foot: `${E.stats(S).price} ${S.review ? 'favours' : 'pence'} · you have ${S.raw} to tune` }),
-  fitBtn: () => ({ id: 'fit', name: `Fit ${E.plan(S)?.name || 'it'}`, desc: 'Every bell is in place on the sheet. Fitting them where they go takes tape, screws and somebody to hold the ladder. Then the prank goes off.', foot: `${E.fitCost(S)} ${E.fitCur(S) === 'p' ? 'pence' : 'favours'}` }),
   giveBtn: () => ({ id: 'give', name: 'Discharge morning', desc: `Unhook every bell from every prank in the hospital, and every spare one, and give them all away to the children going home. It costs everything: all ${E.TOTAL_BELLS} fitted bells, every favour and every penny. This ends the game.`, foot: E.canGive(S) ? `Everything: ${E.TOTAL_BELLS} bells · ${S.favours} favours · ${S.pence}p` : `Needs at least ${E.GIVE_FAVOURS} favours (it takes them all) · you have ${S.favours}` }),
 };
 const explained = new Set();
@@ -884,11 +806,6 @@ $('bellBtn').addEventListener('click', () => {
   if (!E.buyBell(S, out)) { sfx.deny(); return; }
   sfx.bell(); hud(); save();
   if (tipFor === 'bell') showTip($('bellBtn'), ACTION_TIPS.bellBtn());
-});
-$('fitBtn').addEventListener('click', () => {
-  const out = [];
-  if (!E.fit(S, out)) { sfx.deny(); return; }
-  hideTip(); handle(out); hud(); renderShop(); save();
 });
 $('giveBtn').addEventListener('click', () => {
   if (!E.canGive(S)) { sfx.deny(); return; }
@@ -945,7 +862,7 @@ function doBuy(id) {
     say(`${who}, joins the plan. They start on Scrounge; move them in the Night staff tab.`);
     renderDesk();
   } else { sfx.buy(); say(BUY_LINES[id] || `Bought: ${out[0].name}.`); }
-  if (id === 'feel' || id === 'lostkey' || id === 'clip') renderDesk();
+  if (id === 'feel' || id === 'lostkey') renderDesk();
   save(); renderShop(); hud();
 }
 
@@ -963,39 +880,25 @@ function renderDesk() {
   $('tabStaff').setAttribute('aria-selected', String(deskTab === 'staff'));
   $('clip').hidden = deskTab !== 'clip'; $('staff').hidden = deskTab !== 'staff';
   const known = E.knownTasks(S);
-  const sig = deskTab + '|' + S.queue.map(q => `${q.id}${q.on ? 1 : 0}${q.stock ?? ''}${q.upto ?? ''}`).join(',') + '|' + st.lines + '|' + known.join(',') + '|' + S.staff + JSON.stringify(S.jobs) + S.review + JSON.stringify(S.lv);
+  const sig = deskTab + '|' + S.queue.map(q => `${q.id}${q.on ? 1 : 0}`).join(',') + '|' + known.join(',') + '|' + S.staff + JSON.stringify(S.jobs) + S.review + JSON.stringify(S.lv);
   if (sig === deskSig) return;
   deskSig = sig;
-  $('clipNote').textContent = `Hoo does the first ticked chore she can, top to bottom. She can remember ${st.lines} at once.`;
+  $('clipNote').textContent = 'Hoo does the first ticked chore she can, top to bottom.';
   const rows = [];
   const visible = S.queue.filter(q => known.includes(q.id));
-  let ticks = 0;
   visible.forEach((q, i) => {
     const T = E.TASKS[q.id];
     const r = document.createElement('div');
-    if (q.on) ticks++;
-    r.className = 'row' + (q.on ? '' : ' off') + (q.on && ticks > st.lines ? ' noroom' : '');
+    r.className = 'row' + (q.on ? '' : ' off');
     r.dataset.id = q.id;
     r.innerHTML = `<span class="mv"><button type="button" class="mini" aria-label="Move up">▲</button><button type="button" class="mini" aria-label="Move down">▼</button></span>
-      <input type="checkbox" aria-label="${T.name}"><span class="name">${T.icon} ${T.name}</span><span class="param"></span><span class="st"></span>`;
+      <input type="checkbox" aria-label="${T.name}"><span class="name">${T.icon} ${T.name}</span><span class="st"></span>`;
     const [up, down] = r.querySelectorAll('.mini');
     up.disabled = i === 0; down.disabled = i === visible.length - 1;
     const move = d => { const a = S.queue.indexOf(q), other = visible[i + d], b = S.queue.indexOf(other); S.queue[a] = other; S.queue[b] = q; renderDesk(); save(); };
     up.addEventListener('click', () => move(-1)); down.addEventListener('click', () => move(1));
     const cb = r.querySelector('input'); cb.checked = !!q.on;
     cb.addEventListener('change', () => { q.on = cb.checked; renderDesk(); save(); });
-    const param = r.querySelector('.param');
-    const stepper = (label, key, step, min, max, unit) => {
-      const minus = document.createElement('button'), plus = document.createElement('button'), v = document.createElement('span');
-      minus.type = plus.type = 'button'; minus.className = plus.className = 'mini'; minus.textContent = '−'; plus.textContent = '+';
-      minus.setAttribute('aria-label', `${label}: less`); plus.setAttribute('aria-label', `${label}: more`);
-      v.textContent = `${label} ${q[key]}${unit}`;
-      minus.addEventListener('click', () => { q[key] = Math.max(min, q[key] - step); renderDesk(); save(); });
-      plus.addEventListener('click', () => { q[key] = Math.min(max, q[key] + step); renderDesk(); save(); });
-      param.append(minus, v, plus);
-    };
-    if (q.id === 'buy') { q.stock ??= 2; stepper('keep', 'stock', 1, 0, 9, ''); }
-    if (q.id === 'chairs' && !S.review) { q.upto ??= 20; stepper('until', 'upto', 5, 5, 95, 'p'); }
     rows.push(r);
   });
   $('clipRows').replaceChildren(...rows);
@@ -1022,19 +925,14 @@ function jobRate(id, st) {
   if (id === 'scrounge') return `≈${per(n * st.scroungeRate, '🔔')}`;
   if (id === 'tune') return `≈${per(n * st.staffTune * st.staffEar, '🔔 tuned')}`;
   if (id === 'cover') return `≈${per(n * st.coverRate, 'favours')}`;
-  if (id === 'hush') return `answers a call light in ≈${Math.round(4 / n)}s`;
   return '';
 }
 function deskStatus() {
-  const st = E.stats(S);
-  let ticks = 0;
   for (const r of $('clipRows').children) {
     const q = S.queue.find(x => x.id === r.dataset.id); if (!q) continue;
     const el = r.querySelector('.st');
-    if (q.on) ticks++;
     let text = '', go = false;
     if (!q.on) text = '';
-    else if (ticks > st.lines) text = '';
     else if (S.qTask === q.id) { text = `doing ${Math.floor(S.qProg * 100)}%`; go = true; }
     else { const b = E.taskBlock(S, q); text = b || 'waiting'; }
     if (el.textContent !== text) el.textContent = text;
@@ -1052,7 +950,6 @@ function hud() {
   const inc = income();
   $('penceRate').textContent = !S.review && inc.p > 0 ? `+${perMin(inc.p)}/min` : '';
   $('favRate').textContent = S.review && inc.f > 0 ? `+${perMin(inc.f)}/min` : '';
-  $('hush').textContent = '●'.repeat(Math.max(0, S.hush)) + '○'.repeat(E.HUSH_MAX - Math.max(0, S.hush));
   const P = E.plan(S);
   if (S.ended || !P) {
     $('meterLabel').innerHTML = '<b>Every sheet fitted</b>';
@@ -1062,8 +959,7 @@ function hud() {
     const filled = S.slots.filter(Boolean).length;
     $('meterLabel').innerHTML = `Sheet ${S.plan + 1} of ${E.PLANS.length}: <b></b>`;
     $('meterLabel').querySelector('b').textContent = P.name;
-    const fitTxt = `${E.fitCost(S)}${E.fitCur(S) === 'p' ? 'p' : ' favours'}`;
-    $('meterVal').textContent = S.ready ? `ready to fit · ${fitTxt}` : E.fitCost(S) ? `${filled}/${P.notes.length} bells · then ${fitTxt} to fit` : `${filled}/${P.notes.length} bells · ${S.installed}/${E.TOTAL_BELLS} in all`;
+    $('meterVal').textContent = `${filled}/${P.notes.length} bells · ${S.installed}/${E.TOTAL_BELLS} in all`;
     $('meterFill').style.width = `${(S.installed / E.TOTAL_BELLS) * 100}%`;
   }
   // Column actions
@@ -1075,13 +971,6 @@ function hud() {
     $('bellBtn').firstChild.textContent = S.review ? '🔔 Ask a porter for a bell' : '🔔 Buy a bell';
     $('bellSub').textContent = `${st.price}${S.review ? ' favours' : 'p'} · ${S.raw} to tune`;
     $('bellBtn').setAttribute('aria-disabled', String(!can));
-  }
-  $('fitBtn').hidden = !S.ready || S.ended;
-  if (S.ready) {
-    $('fitName').textContent = `Fit ${P.name.replace(/^The /, 'the ')}`;
-    $('fitSub').textContent = `${E.fitCost(S)}${E.fitCur(S) === 'p' ? 'p' : ' favours'} · the prank goes off`;
-    const can = E.canFit(S);
-    $('fitBtn').setAttribute('aria-disabled', String(!can)); $('fitBtn').classList.toggle('ring', can);
   }
   $('giveBtn').hidden = S.ended || S.plan < E.PLANS.length;
   if (!$('giveBtn').hidden) {
@@ -1156,29 +1045,20 @@ function draw() {
   }
 }
 function drawWard(done) {
-  const st = E.stats(S);
   for (const bd of BEDS) {
     g.drawImage(spr.bed, bd.x - 1, bd.y + 14, bd.w + 4, bd.w + 4);
     g.strokeStyle = '#ffecd6aa'; g.lineWidth = 1.2; g.strokeRect(bd.x, bd.y, bd.w, bd.h);
     g.fillStyle = '#ffecd618'; g.fillRect(bd.x + 6, bd.y + 4, bd.w - 12, 14);
-    const call = S.calls.find(b => b.bed === bd.b);
-    const awake = !!call;
-    if (!done) drawKid(g, bd.x + bd.w / 2, bd.y + 13, EARS[bd.b - 1], awake || (bd.b === 4 && Math.sin(T * 0.4) > 0.6), T);
+    const awake = bd.b === 4 && Math.sin(T * 0.4) > 0.6;
+    if (!done) drawKid(g, bd.x + bd.w / 2, bd.y + 13, EARS[bd.b - 1], awake, T);
     else { g.fillStyle = C.orange; g.font = `10px ${MONO}`; g.textAlign = 'center'; g.fillText('HOME ✓', bd.x + bd.w / 2, bd.y + 15); g.textAlign = 'left'; }
     g.fillStyle = C.peach; g.font = `11px ${MONO}`; g.fillText(String(bd.b), bd.x + 2, bd.y + bd.h + 11);
     if (L('chart') && !done) { g.fillStyle = C.orange; g.fillText([4, 8, 0, 4, 6, 2, 10, 8][bd.b - 1] != null ? NOTE[[4, 8, 0, 4, 6, 2, 10, 8][bd.b - 1]] : '', bd.x + bd.w - 12, bd.y + bd.h + 11); }
     if (!awake && !done) { g.fillStyle = '#ffecd666'; g.font = `10px ${HAND}`; g.fillText('z', bd.x + bd.w - 8, bd.y + 6 - ((T * 6 + bd.b * 3) % 8)); }
-    if (call) {
-      const wob = reduced ? 0 : Math.sin(T * 18) * 0.25;
-      const bx = bd.x + bd.w / 2, by = bd.y - 12;
-      g.save(); g.translate(bx, by); g.rotate(wob); g.drawImage(spr.call, -12, -12, 24, 24); g.restore();
-      g.strokeStyle = C.orange; g.lineWidth = 2; g.beginPath(); g.arc(bx, by, 15, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (1 - call.age / st.wakeAt)); g.stroke(); g.lineWidth = 1;
-    }
   }
   // Hoo walks to her current chore.
   let tgt = PLACES.idle;
   if (done) tgt = [110, 196];
-  else if (S.qTask === 'call' && S.calls[0]) { const bd = BEDS[S.calls[0].bed - 1]; tgt = [bd.x + bd.w / 2, bd.y <= 52 ? 150 : 222]; }
   else if (S.qTask && PLACES[S.qTask]) tgt = PLACES[S.qTask];
   const sp = reduced ? 1 : Math.min(1, 0.05);
   hoo.x += (tgt[0] - hoo.x) * sp; hoo.y += (tgt[1] - hoo.y) * sp;
@@ -1195,16 +1075,11 @@ function drawWard(done) {
   // Night staff about the ward, by job.
   if (S.review && !done) {
     let n = 0;
-    const spots = { scrounge: (i) => [40 + ((T * 18 + i * 70) % 220), 236], hush: (i) => [60 + i * 50, 140], tune: (i) => [282, 240 - i * 14], cover: (i) => [250 - i * 16, 344] };
+    const spots = { scrounge: (i) => [40 + ((T * 18 + i * 70) % 220), 236], tune: (i) => [282, 240 - i * 14], cover: (i) => [250 - i * 16, 344] };
     for (const [job, count] of Object.entries(S.jobs)) for (let i = 0; i < count; i++) { const [x, y] = spots[job](i); drawStaff(g, x, y, STAFF_KINDS[n++ % 3], T + n); }
   }
   // Matron, humming, in the empty ward.
   if (done) { drawMatron(g, 210, 232, { face: -1, t: 0 }); g.fillStyle = C.peach; g.font = `14px ${HAND}`; g.fillText('♪ hm hm', 222, 150 + Math.sin(T * 2) * 3); }
-  // Matron on her round.
-  if (S.matron > 0 && !done) {
-    const u = 1 - S.matron / E.MATRON_ROUND, x = 30 + 240 * (u < 0.5 ? u * 2 : 2 - u * 2);
-    drawMatron(g, x, 236, { face: u < 0.5 ? 1 : -1, dashed: true, t: T });
-  }
 }
 const L = id => E.L(S, id);
 function drawSheet(done) {
@@ -1234,7 +1109,6 @@ function drawSheet(done) {
     if (f === 2) { g.fillStyle = C.orange; g.fillText('★', x + 10, y - 8); }
     g.textAlign = 'left';
   });
-  if (S.ready) { g.fillStyle = C.orange; g.font = `13px ${HAND}`; g.fillText('ready to fit →', 530, 146); }
 }
 function drawRack(done) {
   g.fillStyle = C.peach; g.font = `10px ${MONO}`; g.fillText('SPARES', 312, 164);
@@ -1252,7 +1126,6 @@ function drawBench(done) {
   const want = E.wanted(S), openNow = Array(12).fill(0);
   const P = E.plan(S);
   if (P) P.notes.forEach((n, i) => { if (!S.slots[i]) openNow[n]++; });
-  for (const [k, i] of S.flats) openNow[E.PLANS[k].notes[i]]++;
   g.strokeStyle = '#ffecd6aa'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(GX, G0 + 6); g.lineTo(GX, gy(11.5)); g.stroke();
   for (let n = 0; n < 12; n++) {
     const y = gy(n), clonk = E.isClonk(n), hot = openNow[n] > 0 && !done;
@@ -1279,7 +1152,7 @@ function drawBench(done) {
   else if (kbPitch != null) { dy = Math.min(70, 8 + kbPitch * 5.5); }
   const bx = fx0 + dx, by = fy0 + dy;
   g.strokeStyle = C.rust; g.lineWidth = 2; g.beginPath(); g.moveTo(fx0 - 16, fy0 - 4); g.lineTo(bx - 6, by + 4); g.moveTo(fx0 + 16, fy0 - 4); g.lineTo(bx + 6, by + 4); g.stroke(); g.lineWidth = 1; g.lineCap = 'butt';
-  if (!done && S.raw > 0 && S.matron <= 0) drawBell(g, bx, by - 4, C.slate, 1.15);
+  if (!done && S.raw > 0) drawBell(g, bx, by - 4, C.slate, 1.15);
   // The crate of untuned bells.
   g.strokeStyle = '#ffecd6aa'; g.strokeRect(326, 300, 64, 40);
   for (let i = 0; i < Math.min(6, done ? 0 : S.raw); i++) drawBell(g, 340 + (i % 3) * 18, 312 + Math.floor(i / 3) * 4 - (i >= 3 ? 10 : 0), C.slate, 0.55);
@@ -1291,17 +1164,12 @@ function drawBench(done) {
     g.beginPath(); g.moveTo(GX - 52, y - 6); g.lineTo(GX - 42, y); g.lineTo(GX - 52, y + 6); g.closePath(); g.fill();
     g.strokeStyle = g.fillStyle; g.setLineDash([2, 3]); g.beginPath(); g.moveTo(bx + 14, by - 6); g.lineTo(GX - 54, y); g.stroke(); g.setLineDash([]);
   }
-  if (S.matron > 0 && !done) {
-    g.fillStyle = '#0d2b45dd'; g.fillRect(310, 214, 280, 150);
-    g.fillStyle = C.orange; g.font = `16px ${HAND}`; g.textAlign = 'center';
-    g.fillText('MATRON ON THE WARD', 450, 270); g.font = `13px ${HAND}`; g.fillStyle = C.peach; g.fillText('look busy · back in a moment', 450, 292);
-    g.textAlign = 'left';
-  } else if (!done && S.raw < 1) {
+  if (!done && S.raw < 1) {
     g.fillStyle = C.peach; g.font = `13px ${HAND}`; g.textAlign = 'center';
     g.fillText(S.plan >= E.PLANS.length ? '' : S.review ? 'no bells: ask a porter, or Scrounge' : 'no bells: buy one (3p)', 452, 252); g.textAlign = 'left';
   }
   // Sheet 1 coaching: how to pull until a bell lands on the sheet, and when to let go whenever you pull.
-  if (S.plan === 0 && !done && S.matron <= 0 && S.raw > 0) {
+  if (S.plan === 0 && !done && S.raw > 0) {
     const need = P.notes.filter((n, i) => !S.slots[i]).map(n => NOTE[n]).join(' or ');
     const r = pull && p != null && p >= 0 ? E.judge(S, p) : null, on = r && r.kind === 'note' && openNow[r.note] > 0;
     g.fillStyle = C.orange; g.font = `14px ${HAND}`; g.textAlign = 'center';
@@ -1313,13 +1181,13 @@ function drawBench(done) {
 function drawTabs(done) {
   for (let k = 0; k < E.PLANS.length; k++) {
     const [cx, cy] = tabPos(k), P = E.PLANS[k];
-    const fitted = done || k < S.plan, cur = k === S.plan && !done, flat = S.flats.some(f => f[0] === k);
-    g.strokeStyle = flat ? C.rust : fitted ? C.cream : cur ? C.orange : '#ffecd644'; g.setLineDash(cur ? [3, 2] : []);
+    const fitted = done || k < S.plan, cur = k === S.plan && !done;
+    g.strokeStyle = fitted ? C.cream : cur ? C.orange : '#ffecd644'; g.setLineDash(cur ? [3, 2] : []);
     g.strokeRect(cx - 26, cy - 9, 52, 16); g.setLineDash([]);
-    if (fitted) { g.fillStyle = flat ? '#d0815933' : '#ffecd61a'; g.fillRect(cx - 26, cy - 9, 52, 16); }
-    g.fillStyle = flat ? C.orange : fitted ? C.cream : cur ? C.orange : '#ffecd666'; g.font = `9px ${MONO}`; g.textAlign = 'center';
+    if (fitted) { g.fillStyle = '#ffecd61a'; g.fillRect(cx - 26, cy - 9, 52, 16); }
+    g.fillStyle = fitted ? C.cream : cur ? C.orange : '#ffecd666'; g.font = `9px ${MONO}`; g.textAlign = 'center';
     const short = P.name.replace(/^(The|Matron's) /, '').replace("Porters' ", '').replace('Pharmacy ', '').replace('Car Park ', '').replace('Linen ', '').replace('Fire ', '').replace('Dawn ', '').toUpperCase();
-    g.fillText((flat ? '♭ ' : '') + short.slice(0, 8), cx, cy + 3); g.textAlign = 'left';
+    g.fillText(short.slice(0, 8), cx, cy + 3); g.textAlign = 'left';
   }
 }
 
@@ -1384,6 +1252,7 @@ else {
     say(`You were away ${t}${away > E.OFFLINE_CAP ? ' (Hoo only counts the first three)' : ''}. The ward slept through. Hoo kept to her clipboard${S.review ? ' and the night staff kept at it' : ''}: ${bits.join(', ')}.`);
   } else say(S.t > 5 ? 'Bramble Ward, still night. Hoo straightens her cap.' : 'Bramble Ward, 2am. Nurse Hoo has two bells and a plan. The ward door needs a C and an E. Drag back from the bell on the bench: the further you pull, the higher it rings. Let go when it’s on an orange line.');
 }
+if (!S.ended) handle(E.settle(S));
 if (DEBUG) Object.assign(window.__game, { hud, renderShop });
 hud(); renderShop(); renderDesk();
 requestAnimationFrame(frame);
