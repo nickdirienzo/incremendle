@@ -127,6 +127,18 @@ export function stats(S) {
     staffClonk: L(S, 'lessons') > 0,
   };
 }
+// Steady income per minute, by source. Hoo's chores (wheelchairs, covering breaks) come in as she
+// does them, so index.html counts those as they happen instead.
+export function rates(S) {
+  const st = stats(S), J = S.jobs || {};
+  return {
+    smile: smilers(S) * 60 / st.smile,
+    fund: S.review ? 0 : st.fund * 60 / NIGHT,
+    cover: S.review ? (J.cover || 0) * st.coverRate * 60 : 0,
+    scrounge: S.review ? (J.scrounge || 0) * st.scroungeRate * 60 : 0,
+    tune: S.review ? (J.tune || 0) * st.staffTune * st.staffEar * 60 : 0,
+  };
+}
 export const knownTasks = S => ['call', 'chairs', 'buy', ...(L(S, 'feel') ? ['tune'] : []), ...(L(S, 'lostkey') ? ['lost'] : []), ...(S.review ? ['cover'] : [])];
 export function taskTime(S, id) {
   const st = stats(S);
@@ -298,7 +310,7 @@ const ITEMS = [
   { id: 'spanner', name: 'Coin-Lock Spanner', cur: 'p', cost: 18, grow: 2.3, max: 2, at: 4, desc: 'Some wheelchairs take two pence. Then three. Hoo knows which ones now.' },
   { id: 'memo', name: 'A Strongly Worded Memo', cur: 'p', cost: 10, grow: 2.2, max: 3, at: 2, desc: 'Hoo writes to Matron Bramble asking for a bigger Toy Fund. Each memo gets one more penny a night. Matron underlines things.' },
   { id: 'pull', name: 'Longer Call Cords', cur: 'p', cost: 13, grow: 2, max: 2, at: 4, desc: 'Children can reach the call button without sitting up, so they’re half asleep when Hoo comes, and more likely to hand over the jingle bell off their slippers.' },
-  { id: 'polish', name: 'Brass Polish', cur: 'p', cost: 15, grow: 1.8, max: 4, at: 4, desc: 'Shiny bells ring brighter, and every fitted prank makes people smile more often.' },
+  { id: 'polish', name: 'Brass Polish', cur: 'p', cost: 15, grow: 1.8, max: 4, at: 4, desc: 'Shiny bells catch the eye. Every fitted prank makes people smile more often, and smiles pay.' },
   { id: 'kazoo', name: 'Hospital Radio Request', cur: 'p', cost: 6, at: 3, kind: 'odd', desc: 'Hoo phones in a request for “anything with a tuba in it”. They play the shipping forecast.' },
   { id: 'wrap', name: 'Gift Wrap, Just in Case', cur: 'p', cost: 16, at: 4, kind: 'odd', desc: 'A roll of paper with bells on it. Hoo is not planning anything. It was on offer.' },
   { id: 'accordion', name: 'A Very Small Accordion', cur: 'p', cost: 22, at: 4, kind: 'odd', desc: 'It has four buttons and plays one chord. Hoo practises in the sluice room.' },
@@ -314,7 +326,7 @@ const ITEMS = [
   { id: 'whistle', name: 'Clonk Mallet', cur: 'f', cost: 7, at: REVIEW_AT, kind: 'one', reqClonk: true, desc: 'Widens the gap between the lines where a bell clonks, so clonks are easier to hit.' },
   { id: 'lessons', name: 'Clonking Lessons', cur: 'f', cost: 14, at: REVIEW_AT + 1, kind: 'one', reqClonk: true, desc: 'Staff on Tune learn to clonk, so they can fill the “?” slots too.' },
   { id: 'torch', name: 'Head Torches', cur: 'f', cost: 9, grow: 1.6, max: 3, at: REVIEW_AT + 1, desc: 'Scroungers can see under the radiators now. More bells than you’d think roll under radiators.' },
-  { id: 'cushion', name: 'Felt Pads', cur: 'f', cost: 10, grow: 1.6, max: 3, at: REVIEW_AT + 2, desc: 'Little felt pads under every prank so they ring warmer. Fitted pranks make people smile more often.' },
+  { id: 'cushion', name: 'Felt Pads', cur: 'f', cost: 10, grow: 1.6, max: 3, at: REVIEW_AT + 2, desc: 'Little felt pads under every prank, so they sit straight and look loved. Fitted pranks make people smile more often.' },
   { id: 'specs', name: "Matron's Spare Glasses", cur: 'f', cost: 9, at: REVIEW_AT + 2, kind: 'odd', desc: 'Found in the lift. Hoo hands them in. Matron says thank you, which she has never said before.' },
   { id: 'drawing', name: "Pip's Drawing", cur: 'f', cost: 3, at: REVIEW_AT + 2, kind: 'odd', desc: 'Pip in Bed 4 drew a bell and wrote “PIP’S” on it. Hoo pins it to the clipboard.' },
   { id: 'ribbon', name: 'A Lot of Ribbon', cur: 'f', cost: 18, at: REVIEW_AT + 4, kind: 'odd', desc: 'Ninety-eight lengths of ribbon, all the same, all curled. Hoo says it’s for the pool.' },
@@ -397,7 +409,7 @@ export function step(S, dt, out = [], { offline = false } = {}) {
   if (S.nightT >= NIGHT) {
     S.nightT -= NIGHT; S.night++;
     if (!S.review) S.pence += st.fund;
-    out.push({ type: 'night', n: S.night, fund: !S.review });
+    out.push({ type: 'night', n: S.night, fund: !S.review, pence: S.review ? 0 : st.fund });
   }
   // Matron's round: no tuning while she's looking.
   if (S.matron > 0) { S.matron -= dt; if (S.matron <= 0) { S.matron = 0; S.hush = HUSH_MAX; out.push({ type: 'matronEnd' }); } }
