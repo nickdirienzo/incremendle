@@ -182,6 +182,8 @@ function place(S, note, perfect, out) {
 }
 // After the Budget Review nothing gets replaced, and old bands go slack and ring flat.
 export const flatPlans = S => new Set(S.flats.map(f => f[0]));
+// Fitted pranks that aren't flat: each one makes somebody smile every stats(S).smile seconds.
+export const smilers = S => Math.max(0, Math.min(S.plan, PLANS.length) - flatPlans(S).size);
 function drift(S, dt, out) {
   const fitted = Math.min(S.plan, PLANS.length);
   S.flatT += dt * fitted / T.drift;
@@ -418,7 +420,7 @@ export function step(S, dt, out = [], { offline = false } = {}) {
     if (S.hush < HUSH_MAX && !S.calls.length) { S.hushT += dt; if (S.hushT > 60) { S.hushT = 0; S.hush++; } } else S.hushT = 0;
   } else S.calls = [];
   // Fitted pranks make people smile: pennies in the lift, later favours.
-  const fitted = Math.min(S.plan, PLANS.length) - flatPlans(S).size;
+  const fitted = smilers(S);
   if (S.review) drift(S, dt, out);
   if (fitted > 0) {
     S.smileT = (S.smileT || 0) + dt * fitted / st.smile;

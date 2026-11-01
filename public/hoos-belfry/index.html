@@ -185,6 +185,7 @@
         <span>🔔 to tune <b id="raw">0</b></span>
         <span id="penceBox">Toy Fund <b id="pence">0</b>p</span>
         <span id="favBox" hidden>Favours <b id="fav">0</b></span>
+        <span id="smileBox" hidden>Smiles <b id="smile">0</b>/min</span>
         <span>Night <b id="night">1</b></span>
         <span class="hush">Hush <b id="hush">●●●</b></span>
       </div>
@@ -674,6 +675,7 @@ function handle(out, ctx = {}) {
       case 'night': if (ev.fund) sfx.coin(); break;
       case 'lost': sfx.bell(); if (logT > 8) say(pick(['Lost property yields a bell off a bicycle.', 'Lost property: one sleigh bell, slightly dented, much loved.', 'A bell from lost property. Its tag says “PROPERTY OF BELL”.'])); break;
       case 'autotune': if (ev.who === 'hoo' && logT > 12) say(`Hoo tunes a bell by feel: ${NOTE[ev.note]}. Close enough to count.`); break;
+      case 'smile': sfx.coin(); if (logT > 14 && Math.random() < 0.35) say(S.review ? pick(['A porter laughs at a prank on the way past and owes Hoo a favour.', 'Somebody on the night bus home is still humming one of the pranks. One favour.']) : pick(['A visitor smiles at a prank on the way past and drops a penny in the Toy Fund tin.', 'Somebody laughs at a prank in the corridor. A penny for the tin.', 'A cleaner hums along with a prank and leaves a penny on the bench.'])); break;
       case 'buybell': break;
       case 'scrounge': break;
       case 'cover': break;
@@ -723,11 +725,16 @@ function renderShop() {
   $('afford').textContent = n ? `· ${n} affordable` : '';
   renderShelf();
 }
+const mmss = t => `${Math.floor(t / 60)}:${String(Math.round(t % 60)).padStart(2, '0')}`;
 function upTip(it) {
   let foot = it.cur === 'p' ? `${it.cost} pence` : `${it.cost} favours`;
   if (it.max > 1) foot += ` · level ${it.l} of ${it.max}`;
   if (it.kind === 'staff') foot += ` · ${S.staff} of ${E.MAX_STAFF} staff`;
   if (it.kind === 'odd') foot += ' · does very little';
+  if ((it.id === 'polish' || it.id === 'cushion') && it.l < it.max) {
+    const now = E.stats(S).smile, next = E.stats({ ...S, lv: { ...S.lv, [it.id]: it.l + 1 } }).smile;
+    foot += ` · each prank smiles every ${mmss(now)} → ${mmss(next)}`;
+  }
   return { id: it.id, name: it.name, desc: it.desc, foot };
 }
 let tipFor = null, tipMoved = 0;
@@ -956,6 +963,8 @@ function hud() {
   $('penceBox').hidden = S.review && S.pence === 0;
   $('favBox').hidden = !S.review; $('fav').textContent = S.favours;
   $('night').textContent = S.night;
+  const smilers = E.smilers(S); $('smileBox').hidden = !smilers || S.ended;
+  $('smile').textContent = (smilers * 60 / E.stats(S).smile).toFixed(1).replace(/\.0$/, '');
   $('hush').textContent = '●'.repeat(Math.max(0, S.hush)) + '○'.repeat(E.HUSH_MAX - Math.max(0, S.hush));
   const P = E.plan(S);
   if (S.ended || !P) {
