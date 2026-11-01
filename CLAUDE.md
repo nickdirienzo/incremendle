@@ -79,6 +79,17 @@ Every game should have these bones:
     or a trimmed name, the silly marker kept) open the same tooltip as the shop with the name,
     what it did and the purchase joke. On touch one tap shows it; there's nothing to buy.
 - **Straightforward.** One core action you get within five seconds. No tutorial walls.
+- **Simple enough to explain in two sentences.** Each rolled part becomes one mechanic, and
+  mechanics the roll didn't ask for count against the budget: at most one, and only if it feeds
+  the core action. Hoo's Belfry shipped with call lights, a Matron timer, bells going flat, a
+  fitting fee on top of each sheet's bells, a clipboard with a line limit and per-line settings,
+  and 37 upgrades. The feedback was "very very complicated", and cutting all of it lost nothing.
+  Before adding a system, ask what it gives that the rolled ones don't. If the answer is another
+  timer to babysit, another sink for the same currency or another dial to set, leave it out. At
+  any moment the screen shows one core action, at most two resources and at most three things to
+  manage. A story game has about 20 upgrades, shorter games fewer, and two upgrades that move the
+  same number become one. Long games get their length from more of the same systems (more
+  sheets, places, recipes), not from more systems.
 - **Fairly cute.** A small premise with a character or two and a joke or two. Flavor text in a
   log line under the play area.
 - **Timeless, mostly.** Games live in the archive forever, so they never riff on trending memes,
@@ -92,7 +103,7 @@ Every game should have these bones:
   numbers to snowball and the game to change shape. Whatever the length, there are no dead
   stretches where you wait with nothing to do, idle helpers arrive about a fifth of the way in, and
   there is a real ending. Length comes from content, not slower prices: phases or layers that
-  change what you're doing, something new every few minutes, and saves frequent enough that a
+  change what you're doing, something new every few minutes (within the complexity budget above), and saves frequent enough that a
   reload resumes mid-game. Games over an hour also need offline progress (capped, at a reduced
   rate) so they can be played across sittings.
 

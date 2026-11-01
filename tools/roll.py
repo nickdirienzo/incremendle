@@ -99,8 +99,9 @@ INITIALS = "ABCDEFGHIJKLMNOPRSTVW"
 # Modeled on real incrementals: jam-sized games, short complete ones (Spaceplan, Candy Box) and
 # story-driven ones (A Dark Room, Universal Paperclips).
 LENGTHS = ["mini (10–60 min)", "short (1–3 hours)", "story (3–10 hours, over several sittings)"]
-# How many structures each length combines; longer games have room to layer or chain several.
-STRUCTURE_COUNTS = {"mini": (1, 2), "short": (2, 3), "story": (2, 4)}
+# How many structures each length combines. Kept low on purpose: every structure is a system the
+# player has to learn (see "Simple enough to explain" in CLAUDE.md).
+STRUCTURE_COUNTS = {"mini": (1, 1), "short": (1, 2), "story": (2, 3)}
 
 STRUCTURES = [
     "straight line of upgrades", "reset loop (prestige for a permanent bonus)",
