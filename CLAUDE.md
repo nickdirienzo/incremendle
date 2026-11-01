@@ -125,8 +125,8 @@ doesn't become the only kind of satisfaction.
    the ending its own `#again` button (or calls `DailyGame.newRun()`), so the next finish counts.
 6. Add an entry to `public/games.json` with `n`, `slug`, `date` (YYYY-MM-DD, the day it goes live),
    `title`, `tagline`, `emoji` (one or two), `scale`, `minutes`, plus, if the theme was
-   rolled, `seed` and every field from `tools/roll.py` except subject, verb and object
-   (`interaction`, `arc`, `length`, `structure`, `twist`, `ending`, `look`, `music`, `tone`,
+   rolled, `seed` and every field from `tools/roll.py` (`subject`, `verb`, `object`,
+   `interaction`, `arc`, `length`, `structure`, `twist`, `ending`, `look`, `music`, `tone`,
    `context`, `palette`; for a calendar nod, add a `"topic"` saying what it was), so
    the next roll can avoid them. `minutes` comes from the rolled length.
 7. Run `npm run credits -- <slug>` to write the game's credits.

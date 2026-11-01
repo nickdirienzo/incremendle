@@ -11,7 +11,7 @@ export const phases = {
   matron:    { name: 'Matron',    bpm: 108 }, // Matron's round: tiptoe, plucked, lower, quieter
   staff:     { name: 'Staff',     bpm: 120 }, // night staff join: fuller, a counter-melody
   dawn:      { name: 'Dawn',      bpm: 120 }, // the dawn polka: brightest, motif doubled an octave up
-  finale:    { name: 'Finale',    bpm: 100 }, // ducks go home: slower, warm held chords
+  finale:    { name: 'Finale',    bpm: 100 }, // bells go home: slower, warm held chords
 };
 
 // The score's chord per bar (see .slopwave/work/squeak-shift/plan.json): C+ home, D+ away.
@@ -46,7 +46,7 @@ export function createSoundtrack(S) {
   const chordBreath = (p, f = 1) => p.mul(S.gain(cyc([1, 0.86, 0.94])))                   // 3
     .lpf(cyc([1600, 1400, 1750, 1500, 1300], f));                                         // 5
   const leadBreath = (p, g = [1, 0.82, 1, 0.68]) => p.mul(S.gain(cyc(g)));                // 4
-  // The tick, band-limited under ~3 kHz so it never competes with the squeaks.
+  // The tick, band-limited under ~3 kHz so it never competes with the bells.
   const softTick = (g = 1) => tick.hpf(1700).lpf(3000).mul(S.gain(cyc([1.6, 1, 1.35, 0.5], g))); // 4
   const counter = (bpm, level) => S.note(bars(COUNTER)).s('triangle')
     .attack(0.03).decay(0.35).sustain(0.55).release(0.3).lpf(1700).pan(0.36).room(0.3)
@@ -100,7 +100,7 @@ export function createSoundtrack(S) {
         counter(bpm, 0.12),
       ];
     } else {
-      // The ducks go home: slower, warm held chords, the bass on beats 1 and 3, the stabs barely
+      // The bells go home: slower, warm held chords, the bass on beats 1 and 3, the stabs barely
       // there, the motif gently with a soft sine an octave up. No percussion.
       layers = [
         bassBreath(bass, 0.85).mask('1 0 1 0').release(0.25).mul(S.gain(0.8)),

@@ -594,7 +594,7 @@
   "venusMet": true,
   "shopTab": "p"
  },
- "squeak-shift": {
+ "hoos-belfry": {
   "t": 4300,
   "night": 41,
   "nightT": 60,
@@ -632,9 +632,9 @@
   "installed": 35,
   "perfect": 12,
   "tuned": 58,
-  "honks": 3,
+  "clonks": 3,
   "wheels": 120,
-  "bellsAnswered": 40,
+  "callsAnswered": 40,
   "lv": {
    "glasses": 1,
    "oil": 3,
@@ -657,7 +657,7 @@
   },
   "queue": [
    {
-    "id": "bell",
+    "id": "call",
     "on": true
    },
    {
@@ -685,7 +685,7 @@
   ],
   "qTask": "cover",
   "qProg": 0.4,
-  "bells": [
+  "calls": [
    {
     "bed": 3,
     "age": 8,
@@ -697,7 +697,7 @@
     "seed": 0.9
    }
   ],
-  "bellT": 30,
+  "callT": 30,
   "hush": 2,
   "matron": 0,
   "review": true,
@@ -714,7 +714,7 @@
    "hush": 0,
    "cover": 0
   },
-  "honk": true,
+  "clonk": true,
   "flats": [
    [
     2,

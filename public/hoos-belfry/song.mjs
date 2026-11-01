@@ -1,4 +1,4 @@
-// The 3am Polka (Squeak Shift). Adapted from slopwave r-6ef10f0a499a; exposes stems without changing notes or envelopes.
+// The 3am Polka (Hoo’s Belfry). Adapted from slopwave r-6ef10f0a499a; exposes stems without changing notes or envelopes.
 // slopwave score SHA-256: d94419d2bfe80dae86a3c502a2ac486fc0046874c480603fb457febaca0722e3
 export const bpm = 116;
 export const beats = 128;

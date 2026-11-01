@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Squeak Shift · Incremendle</title>
-<meta name="description" content="An owl on the night shift tunes the ward's rubber ducks and hides them around the hospital, on a Toy Fund of three pence a night. Incremendle.">
+<title>Hoo's Belfry · Incremendle</title>
+<meta name="description" content="An owl on the night shift tunes little brass bells and hides them around the hospital, on a Toy Fund of three pence a night. Incremendle.">
 <meta property="og:site_name" content="Incremendle">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Squeak Shift">
-<meta property="og:description" content="An owl on the night shift tunes rubber ducks to prank the whole hospital, on a Toy Fund of three pence a night.">
-<meta property="og:url" content="https://incremendle.com/squeak-shift/">
-<meta property="og:image" content="https://incremendle.com/squeak-shift/og.png?v=412a248b">
+<meta property="og:title" content="Hoo's Belfry">
+<meta property="og:description" content="An owl on the night shift tunes little brass bells to prank the whole hospital, on a Toy Fund of three pence a night.">
+<meta property="og:url" content="https://incremendle.com/hoos-belfry/">
+<meta property="og:image" content="https://incremendle.com/hoos-belfry/og.png?v=07602a20">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Squeak Shift: An owl on the night shift tunes rubber ducks to prank the whole hospital, on a Toy Fund of three pence a night.">
+<meta property="og:image:alt" content="Hoo's Belfry: An owl on the night shift tunes little brass bells to prank the whole hospital, on a Toy Fund of three pence a night.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/shared/fonts/architects-daughter/font.css">
@@ -175,14 +175,14 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>Squeak Shift</h1>
-    <p>Pull the duck back on the bench, listen, let go on a line.</p>
+    <h1>Hoo’s Belfry</h1>
+    <p>Pull the bell back on the band, listen, let go on a line.</p>
   </header>
   <div class="game">
     <main>
-      <div class="stagebox sheet"><canvas id="stage" width="640" height="400" tabindex="0" aria-label="A blueprint of Bramble Ward at night: eight beds, Nurse Hoo the owl, and a tuning bench with a duck on a slingshot beside a gauge of notes. Drag back from the duck and let go on a line; arrow keys and Enter work too."></canvas></div>
+      <div class="stagebox sheet"><canvas id="stage" width="640" height="400" tabindex="0" aria-label="A blueprint of Bramble Ward at night: eight beds, Nurse Hoo the owl, and a tuning bench with a little bell on a slingshot beside a gauge of notes. Drag back from the bell and let go on a line; arrow keys and Enter work too."></canvas></div>
       <div class="stats">
-        <span>🦆 to tune <b id="raw">0</b></span>
+        <span>🔔 to tune <b id="raw">0</b></span>
         <span id="penceBox">Toy Fund <b id="pence">0</b>p</span>
         <span id="favBox" hidden>Favours <b id="fav">0</b></span>
         <span>Night <b id="night">1</b></span>
@@ -206,7 +206,7 @@
       <div class="actions">
         <button class="btn" id="giveBtn" type="button" hidden>🎁 Discharge morning<small id="giveSub"></small></button>
         <button class="btn" id="fitBtn" type="button" hidden>🔧 <span id="fitName">Fit it</span><small id="fitSub"></small></button>
-        <button class="btn" id="duckBtn" type="button" hidden>🦆 Buy a duck<small id="duckSub"></small></button>
+        <button class="btn" id="bellBtn" type="button" hidden>🔔 Buy a bell<small id="bellSub"></small></button>
       </div>
       <h2 id="shopHead" hidden>Supplies <span id="afford"></span></h2>
       <div id="shop"></div>
@@ -215,7 +215,7 @@
     </aside>
   </div>
   <section id="ending" class="sheet" hidden>
-    <h2>Every duck, given away.</h2>
+    <h2>Every bell, given away.</h2>
     <div class="stamp">ALL SHEETS COMPLETE · DISCHARGE MORNING</div>
     <p id="endText"></p>
     <p id="endStats"></p>
@@ -241,20 +241,20 @@ const HAND = "'Architects Daughter', cursive", MONO = "'Share Tech Mono', monosp
 const NOTE = E.NOTE;
 
 // ---------- Sound ----------
-// Everything on C whole tone (C D E F# G# A#), the soundtrack's scale. Honks are the other six.
+// Everything on C whole tone (C D E F# G# A#), the soundtrack's scale. Clonks are the other six.
 const A = createAudio({ sfxTrim: 1, musicTrim: 7.4 });
 const N = scale('whole tone', 60);
 const hz = p => midiToHz(72 + p);
 const sfx = {
-  // The reed stretching: a tiny squeak at the current (continuous) pitch.
+  // The band stretching: a tiny twang at the current (continuous) pitch.
   stretch(p = 0) { A.tone({ type: 'triangle', freq: hz(p), dur: 0.05, vol: 0.05, cutoff: 2600 }); },
-  squeak(n = 0) {
-    A.tone({ type: 'square', freq: hz(n), dur: 0.09, vol: 0.06, cutoff: 2200, attack: 0.008 });
-    A.tone({ type: 'triangle', freq: hz(n), dur: 0.16, vol: 0.16, attack: 0.01, at: A.now + 0.02 });
+  ting(n = 0) {
+    A.tone({ type: 'bell', freq: hz(n), dur: 0.5, vol: 0.13, attack: 0.003 });
+    A.tone({ type: 'triangle', freq: hz(n) * 2, dur: 0.12, vol: 0.04, attack: 0.003, cutoff: 3200 });
   },
-  honk(n = 1) {
-    A.tone({ type: 'sawtooth', freq: midiToHz(60 + n), dur: 0.2, vol: 0.07, cutoff: 900, attack: 0.02 });
-    A.tone({ type: 'square', freq: midiToHz(48 + n), dur: 0.22, vol: 0.05, cutoff: 700, attack: 0.02 });
+  clonk(n = 1) {
+    A.tone({ type: 'triangle', freq: midiToHz(60 + n), dur: 0.22, vol: 0.12, cutoff: 1100, attack: 0.002 });
+    A.tone({ type: 'square', freq: midiToHz(48 + n), dur: 0.09, vol: 0.05, cutoff: 600, attack: 0.002 });
   },
   off() { A.tone({ type: 'triangle', freq: N(-2), dur: 0.08, vol: 0.12 }); A.tone({ type: 'triangle', freq: N(-3), dur: 0.14, vol: 0.1, at: A.now + 0.08 }); },
   slot(n = 0) { A.tone({ type: 'bell', freq: midiToHz(72 + n), dur: 0.12, vol: 0.09, at: A.now + 0.45 }); },
@@ -262,15 +262,15 @@ const sfx = {
   ready() { [0, 2, 4].forEach((d, i) => A.tone({ type: 'bell', freq: N(d + 6), dur: 0.2, vol: 0.08, at: A.now + 0.5 + i * 0.09 })); },
   // A finished prank plays its own little tune.
   prank(notes = [0, 4, 8]) {
-    notes.slice(0, 16).forEach((n, i) => A.tone({ type: E.isHonk(n) ? 'triangle' : 'pluck', freq: midiToHz(72 + n), dur: 0.12, vol: 0.14, at: A.now + 0.05 + i * 0.13 }));
+    notes.slice(0, 16).forEach((n, i) => A.tone({ type: E.isClonk(n) ? 'triangle' : 'pluck', freq: midiToHz(72 + n), dur: 0.12, vol: 0.14, at: A.now + 0.05 + i * 0.13 }));
     const end = A.now + 0.12 + Math.min(16, notes.length) * 0.13;
     [0, 2, 4].forEach(d => A.tone({ type: 'keys', freq: N(d), dur: 0.5, vol: 0.06, at: end }));
   },
   buy() { [0, 2, 4].forEach((d, i) => A.tone({ type: 'keys', freq: N(d + 3), dur: 0.14, vol: 0.13, at: A.now + i * 0.065 })); },
-  duck() { A.tone({ type: 'pluck', freq: N(5), dur: 0.08, vol: 0.12 }); A.tone({ type: 'pluck', freq: N(8), dur: 0.1, vol: 0.1, at: A.now + 0.06 }); },
+  bell() { A.tone({ type: 'pluck', freq: N(5), dur: 0.08, vol: 0.12 }); A.tone({ type: 'pluck', freq: N(8), dur: 0.1, vol: 0.1, at: A.now + 0.06 }); },
   unlock() { A.tone({ type: 'bell', freq: N(8), dur: 0.3, vol: 0.08 }); A.tone({ type: 'bell', freq: N(10), dur: 0.35, vol: 0.07, at: A.now + 0.12 }); },
   deny() { A.tone({ type: 'triangle', freq: N(1), dur: 0.07, vol: 0.11 }); A.tone({ type: 'triangle', freq: N(0), dur: 0.11, vol: 0.1, at: A.now + 0.08 }); },
-  bell() { A.tone({ type: 'bell', freq: N(9), dur: 0.25, vol: 0.06 }); A.tone({ type: 'bell', freq: N(9), dur: 0.3, vol: 0.05, at: A.now + 0.16 }); },
+  call() { A.tone({ type: 'bell', freq: N(9), dur: 0.25, vol: 0.06 }); A.tone({ type: 'bell', freq: N(9), dur: 0.3, vol: 0.05, at: A.now + 0.16 }); },
   answer() { A.tone({ type: 'keys', freq: N(4), dur: 0.12, vol: 0.1 }); A.tone({ type: 'keys', freq: N(2), dur: 0.2, vol: 0.08, at: A.now + 0.1 }); },
   coin() { A.tone({ type: 'bell', freq: N(12), dur: 0.05, vol: 0.04, cutoff: 3000 }); },
   wake() { A.tone({ type: 'pad', freq: N(-4), dur: 0.7, vol: 0.06, attack: 0.1 }); },
@@ -282,16 +282,16 @@ const sfx = {
   recruit() { [2, 4, 6].forEach((d, i) => A.tone({ type: 'pluck', freq: N(d), dur: 0.1, vol: 0.12, at: A.now + i * 0.08 })); A.tone({ type: 'bell', freq: N(9), dur: 0.3, vol: 0.06, at: A.now + 0.26 }); },
   finale() {
     const tune = [0, 4, 8, 10, 8, 4, 0, 6, 2, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-    tune.forEach((s, i) => A.tone({ type: E.isHonk(s) ? 'triangle' : 'bell', freq: midiToHz(72 + s), dur: 0.2, vol: 0.08, at: A.now + i * 0.12 }));
+    tune.forEach((s, i) => A.tone({ type: E.isClonk(s) ? 'triangle' : 'bell', freq: midiToHz(72 + s), dur: 0.2, vol: 0.08, at: A.now + i * 0.12 }));
     [0, 4, 8].forEach(s => A.tone({ type: 'pad', freq: midiToHz(60 + s), dur: 3, vol: 0.05, attack: 0.6, at: A.now + 1.4 }));
     A.tone({ type: 'keys', freq: N(6), dur: 1.4, vol: 0.09, at: A.now + 2.8 });
   },
 };
 // Per-effect levels, measured with npm run mix so every effect peaks near -10 dBFS.
-// The rapid ones (the reed ratchet, the penny, the call bell) sit a few dB under the rest on purpose.
+// The rapid ones (the band ratchet, the penny, the call light) sit a few dB under the rest on purpose.
 const LEVEL = {
-  stretch: 5, squeak: 2.3, honk: 4.5, off: 4.1, slot: 7.4, rack: 5, ready: 3.6, prank: 1.55, buy: 1, duck: 5.9, unlock: 4.5, deny: 4.5,
-  bell: 6.5, answer: 2, coin: 4, wake: 8.4, matron: 2.1, flat: 5.6, repair: 5.1, discover: 2.5, review: 1.4, recruit: 3.8, finale: 1.8,
+  stretch: 5, ting: 2.3, clonk: 2.85, off: 4.1, slot: 7.4, rack: 5, ready: 3.6, prank: 1.55, buy: 1, bell: 5.9, unlock: 4.5, deny: 4.5,
+  call: 6.5, answer: 2, coin: 4, wake: 8.4, matron: 2.1, flat: 5.6, repair: 5.1, discover: 2.5, review: 1.4, recruit: 3.8, finale: 1.8,
 };
 for (const k of Object.keys(sfx)) {
   const fn = sfx[k];
@@ -329,7 +329,7 @@ function fit() {
 addEventListener('resize', fit);
 // Layout (canvas units).
 const BEDS = [1, 2, 3, 4, 5, 6, 7, 8].map(b => ({ b, x: 30 + ((b - 1) % 4) * 66, y: b <= 4 ? 52 : 252, w: 46, h: 70 }));
-const PLACES = { idle: [154, 186], bell: null, chairs: [36, 342], buy: [36, 148], tune: [268, 210], lost: [268, 148], cover: [268, 330] };
+const PLACES = { idle: [154, 186], call: null, chairs: [36, 342], buy: [36, 148], tune: [268, 210], lost: [268, 148], cover: [268, 330] };
 const FORK = [452, 300], GX = 604, G0 = 366, GPX = 14.6; // gauge: pitch 0 at y=G0, GPX px per semitone
 const gy = p => G0 - p * GPX;
 const SLOT = (i, n) => { const per = n > 8 ? Math.ceil(n / 2) : n, row = Math.floor(i / per), col = i % per; return [400 + col * (n > 8 ? 26 : 28), n > 8 ? 62 + row * 40 : 78]; };
@@ -348,26 +348,36 @@ async function bp(file, size, color = C.cream, fill = 0.12) {
   x.globalCompositeOperation = 'source-over'; x.globalAlpha = fill; x.drawImage(shape, pad, pad);
   return c;
 }
-function duckSprite(fill, s = 1) {
-  const c = Sprites.canvas(34 * s, 30 * s), x = c.getContext('2d');
-  x.scale(s, s); drawDuck(x, 17, 17, fill); return c;
+function bellSprite(fill, s = 1) {
+  const c = Sprites.canvas(34 * s, 34 * s), x = c.getContext('2d');
+  x.scale(s, s); drawBell(x, 17, 18, fill); return c;
 }
-function drawDuck(x, cx, cy, fill, k = 1, flat = false) {
+function drawBell(x, cx, cy, fill, k = 1, flat = false) {
   x.save(); x.translate(cx, cy); x.scale(k, k);
   x.lineWidth = 1.4; x.strokeStyle = C.cream; x.fillStyle = fill; x.lineJoin = 'round';
-  // body
-  x.beginPath(); x.moveTo(-12, 1); x.quadraticCurveTo(-13, 10, -2, 10); x.lineTo(7, 10); x.quadraticCurveTo(14, 9, 13, 1); x.quadraticCurveTo(8, 4, 3, 2); x.quadraticCurveTo(-4, -1, -12, 1); x.fill(); x.stroke();
-  // tail
-  x.beginPath(); x.moveTo(-12, 1); x.lineTo(-15, -3); x.lineTo(-9, 0); x.fill(); x.stroke();
-  // head
-  x.beginPath(); x.arc(4, -5, 6.5, 0, 7); x.fill(); x.stroke();
-  // beak
-  x.fillStyle = C.rust; x.beginPath(); x.moveTo(10, -6); x.quadraticCurveTo(16, -5, 15, -2); x.quadraticCurveTo(12, -2, 9.5, -3); x.fill(); x.stroke();
-  // eye and wing
-  x.fillStyle = C.navy; x.beginPath(); x.arc(5.5, -6.5, 1.2, 0, 7); x.fill();
-  x.beginPath(); x.moveTo(-5, 4); x.quadraticCurveTo(0, 7, 5, 4); x.stroke();
-  if (flat) { x.fillStyle = C.cream; x.font = `bold 11px ${MONO}`; x.textAlign = 'center'; x.fillText('♭', 0, -12); }
+  // the loop it hangs from
+  x.beginPath(); x.arc(0, -12, 3.2, Math.PI * 0.85, Math.PI * 2.15); x.stroke();
+  // body: a little dome flaring to a lip
+  x.beginPath(); x.moveTo(-3, -10); x.quadraticCurveTo(-9, -9, -9, 0); x.quadraticCurveTo(-9, 5, -13, 8); x.lineTo(13, 8);
+  x.quadraticCurveTo(9, 5, 9, 0); x.quadraticCurveTo(9, -9, 3, -10); x.closePath(); x.fill(); x.stroke();
+  // the lip and a shine
+  x.beginPath(); x.moveTo(-12, 8); x.lineTo(12, 8); x.stroke();
+  x.strokeStyle = '#ffecd6aa'; x.beginPath(); x.moveTo(-5, -5); x.quadraticCurveTo(-6, 0, -7, 3); x.stroke();
+  // clapper
+  x.fillStyle = C.rust; x.strokeStyle = C.cream; x.beginPath(); x.arc(0, 11, 2.6, 0, 7); x.fill(); x.stroke();
+  if (flat) { x.fillStyle = C.cream; x.font = `bold 11px ${MONO}`; x.textAlign = 'center'; x.fillText('♭', 12, -10); }
   x.restore();
+}
+// A call light over a bed: a round lamp with a glow, drawn in blueprint line.
+function callLight() {
+  const c = Sprites.canvas(48, 48), x = c.getContext('2d');
+  x.translate(24, 24); x.lineWidth = 2; x.strokeStyle = C.orange;
+  x.fillStyle = '#ffaa5e55'; x.beginPath(); x.arc(0, 2, 9, 0, 7); x.fill(); x.stroke();
+  x.fillStyle = C.orange; x.beginPath(); x.arc(0, 2, 4, 0, 7); x.fill();
+  x.beginPath(); x.moveTo(-6, -8); x.lineTo(6, -8); x.moveTo(0, -8); x.lineTo(0, -14); x.stroke();
+  x.lineWidth = 1.6;
+  for (const a of [-2.4, -1.6, -0.8, 0.8, 1.6, 2.4].map(a => a + Math.PI / 2)) { x.beginPath(); x.moveTo(Math.cos(a) * 13, 2 + Math.sin(a) * 13); x.lineTo(Math.cos(a) * 18, 2 + Math.sin(a) * 18); x.stroke(); }
+  return c;
 }
 // Nurse Hoo: a tawny owl in a starched cap, drawn in blueprint line. `look` turns the head.
 function drawHoo(x, cx, cy, { k = 1, look = 0, blink = false, wing = 0 } = {}) {
@@ -451,12 +461,12 @@ const PICTO = {
   stairs: './art/mdi--stairs.svg', office: './art/mdi--desk.svg', pool: './art/mdi--pool.svg',
 };
 async function makeSprites() {
-  spr.duck = Sprites.register('duck (tuned)', duckSprite(C.orange));
-  spr.honk = Sprites.register('duck (honk)', duckSprite(C.rust));
-  spr.raw = Sprites.register('duck (untuned)', duckSprite(C.slate));
-  spr.flat = Sprites.register('duck (gone flat)', duckSprite(C.mauve));
+  spr.bell = Sprites.register('bell (tuned)', bellSprite(C.orange));
+  spr.clonk = Sprites.register('bell (clonk)', bellSprite(C.rust));
+  spr.raw = Sprites.register('bell (untuned)', bellSprite(C.slate));
+  spr.flat = Sprites.register('bell (gone flat)', bellSprite(C.mauve));
   spr.bed = Sprites.register('bed (blueprint)', await bp('./art/mdi--bed.svg', 40));
-  spr.bell = Sprites.register('call bell', await bp('./art/mdi--bell.svg', 18, C.orange, 0.35));
+  spr.call = Sprites.register('call light', callLight());
   spr.chair = Sprites.register('wheelchair (blueprint)', await bp('./art/mdi--wheelchair.svg', 22, C.peach));
   spr.picto = {};
   for (const [id, f] of Object.entries(PICTO)) spr.picto[id] = Sprites.register(`sheet: ${id}`, await bp(f, 60, C.cream, 0.1));
@@ -475,13 +485,13 @@ const PX_PER_SEMI = 17;      // CSS pixels of pull per semitone, the same on eve
 const canTune = () => !S.ended && S.raw > 0 && S.matron <= 0;
 cv.addEventListener('pointerdown', e => {
   const [px, py] = cssToCanvas(e);
-  // A ringing bed: answer it.
-  for (const b of S.bells) {
+  // A bed with its call light on: answer it.
+  for (const b of S.calls) {
     const bd = BEDS[b.bed - 1];
-    if (px > bd.x - 12 && px < bd.x + bd.w + 12 && py > bd.y - 26 && py < bd.y + bd.h + 6) { answer(S.bells.indexOf(b)); return; }
+    if (px > bd.x - 12 && px < bd.x + bd.w + 12 && py > bd.y - 26 && py < bd.y + bd.h + 6) { answer(S.calls.indexOf(b)); return; }
   }
   if (px < 300) return;
-  if (!canTune()) { if (!S.ended) { sfx.deny(); say(S.matron > 0 ? 'Not with Matron on the ward. Hoo looks extremely busy with a thermometer.' : S.review ? 'No ducks to tune. Buy one with favours, or put someone on Scrounge.' : 'No ducks to tune. Buy one from the gift shop: they’re three pence.'); } return; }
+  if (!canTune()) { if (!S.ended) { sfx.deny(); say(S.matron > 0 ? 'Not with Matron on the ward. Hoo looks extremely busy with a thermometer.' : S.review ? 'No bells to tune. Ask a porter for one, or put someone on Scrounge.' : 'No bells to tune. Buy one from the gift shop: they’re three pence.'); } return; }
   pull = { x0: e.clientX, y0: e.clientY, pitch: -1, last: -9, dx: 0, dy: 1 };
   try { cv.setPointerCapture(e.pointerId); } catch (_) {}
   cv.style.cursor = 'grabbing';
@@ -508,7 +518,7 @@ cv.addEventListener('keydown', e => {
   } else if ((e.key === 'Enter' || e.key === ' ') && kbPitch != null) {
     e.preventDefault();
     if (canTune()) release(kbPitch); else sfx.deny();
-  } else if (e.key === 'b' && S.bells.length) answer(0);
+  } else if (e.key === 'b' && S.calls.length) answer(0);
 });
 cv.addEventListener('blur', () => { kbPitch = null; });
 function release(pitch) {
@@ -518,7 +528,7 @@ function release(pitch) {
   handle(out, { pitch });
   save();
 }
-function answer(i) { const out = []; E.answerBell(S, i, out); handle(out); }
+function answer(i) { const out = []; E.answerCall(S, i, out); handle(out); }
 
 // ---------- Log ----------
 let logT = 0, ambT = 0;
@@ -534,25 +544,25 @@ const AMBIENT = [
   'Bramble Ward is asleep. Somewhere a radiator ticks, very slightly flat.',
   'Hoo tunes with one wing and does her rounds with the other. It’s an owl thing.',
   'Bed 6 is talking in their sleep. Something about a pony who is also a bus.',
-  'The night is long and quiet, and full of things that squeak if you know where to press.',
+  'The night is long and quiet, and full of things that would ring if you hung a bell on them.',
   'Hoo checks the gauge she drew on the back of a fluid chart. Six lines. She drew them very carefully.',
   'A moth bumps against the night light by Bed 2 and apologises.',
   'Matron Bramble’s office light is off. Hoo checks twice.',
 ];
 const PIP = [
-  'Bed 4. Pip, wide awake, whispers: “Is that a duck? Is there a duck for me?” Hoo says it’s for the hospital. Pip nods slowly, like that’s not a no.',
-  'Pip in Bed 4 rang to ask if ducks can live in hospitals. Hoo says some of them work here.',
-  'Pip in Bed 4 wants to know what the ducks are for. Hoo says inventory.',
+  'Bed 4. Pip, wide awake, whispers: “Is that a bell? Is there a bell for me?” Hoo says it’s for the hospital. Pip nods slowly, like that’s not a no.',
+  'Pip in Bed 4 wants to know if owls live in bell towers. Hoo says some of them live in hospitals.',
+  'Pip in Bed 4 wants to know what the bells are for. Hoo says inventory.',
   'Pip in Bed 4 heard the lift play “going up” all the way down. Pip has decided it was a dream, and is delighted.',
   'Pip asks which note is Pip’s note. Hoo thinks about it for a long time and says E. Pip is very pleased with E.',
-  'Pip in Bed 4 goes home soon. Pip mentions this, then mentions ducks, then mentions going home again.',
+  'Pip in Bed 4 goes home soon. Pip mentions this, then mentions bells, then mentions going home again.',
 ];
 const MATRON_LINES = [
-  'Matron Bramble has written “Call bells: ANSWER THEM” on the whiteboard and underlined it three times.',
+  'Matron Bramble has written “Call lights: ANSWER THEM” on the whiteboard and underlined it three times.',
   'Matron Bramble is humming something on her way past. She stops when she sees Hoo.',
-  'Matron Bramble checks the duck cupboard. It is very full. She closes it without a word.',
+  'Matron Bramble checks the stationery cupboard. It jingles. She closes it without a word.',
 ];
-const STAFF_NAMES = ['Wendell, a bat porter', 'Hettie, a hedgehog cleaner', 'Pim, a mouse from the night kitchen', 'Bertil, a bat from the X-ray department', 'Mo, the hedgehog who mops the stairs', 'Squeaks, a pharmacy mouse (no relation)',
+const STAFF_NAMES = ['Wendell, a bat porter', 'Hettie, a hedgehog cleaner', 'Pim, a mouse from the night kitchen', 'Bertil, a bat from the X-ray department', 'Mo, the hedgehog who mops the stairs', 'Tinker, a pharmacy mouse',
   'Dora, a bat on switchboard', 'Prickles, a hedgehog porter', 'Tansy, a mouse from Records', 'Old Basil, a bat who has worked nights since 1962', 'Nib, a hedgehog in Linen', 'Crumb, a mouse from the café'];
 const BUY_LINES = {
   glasses: 'Hoo puts on the reading glasses. She can see exactly as well as before. She looks extremely qualified.',
@@ -560,35 +570,35 @@ const BUY_LINES = {
   clip: 'A bigger clipboard. Hoo can remember one more chore, and writes it in very small handwriting.',
   lamp: 'Night lights by the beds. Fewer children wake up wanting a drink, a story, or to discuss bears.',
   feel: 'Hoo learns to tune by feel. She is slower than you and she misses, but she does it with her eyes shut.',
-  lostkey: 'The lost property key. Inside: an umbrella, a single shoe, and nine ducks nobody has ever claimed.',
+  lostkey: 'The lost property key. Inside: an umbrella, a single shoe, and nine jingle bells off nine cat collars nobody has ever claimed.',
   fork: 'A tuning fork, struck on the edge of the desk. The lines on the gauge seem wider. Near enough is nearer.',
-  tag: 'The Name-Tag Gun goes click. Hoo labels a duck “BED 1”. Then “BED 2”. For inventory, she says.',
+  tag: 'The Name-Tag Gun goes click. Hoo labels a bell “BED 1”. Then “BED 2”. For inventory, she says.',
   slippers: 'Quiet slippers. Hoo moves through the ward like a rumour.',
-  ear: 'Hoo practises listening. The ducks squeak; Hoo’s head tilts; the duck squeaks again, but righter.',
-  quick: 'Quick talons. Hoo can tune a duck in the time it takes to say “just a quick one”.',
+  ear: 'Hoo practises listening. The bell rings; Hoo’s head tilts; the bell rings again, but righter.',
+  quick: 'Quick talons. Hoo can tune a bell in the time it takes to say “just a quick one”.',
   chart: 'Hoo writes each child’s favourite note at the foot of their bed. Pip’s is E. Pip chose it personally.',
-  card: 'The gift shop loyalty card. The volunteer behind the till stamps it with a duck stamp. He has been waiting years to use it.',
+  card: 'The gift shop loyalty card. The volunteer behind the till stamps it with a bell stamp. He has been waiting years to use it.',
   spanner: 'The coin-lock spanner. Some wheelchairs, it turns out, take bigger coins.',
   memo: 'Hoo writes a strongly worded memo about the Toy Fund. Matron writes back “NOTED.” One more penny a night.',
-  pull: 'Longer bell pulls. Half-asleep children are much more generous with their wash-bag ducks.',
-  polish: 'Duck polish. Every prank squeaks a little brighter, and people stop to listen.',
+  pull: 'Longer call cords. Half-asleep children are much more generous with the jingle bells off their slippers.',
+  polish: 'Brass polish. Every prank rings a little brighter, and people stop to listen.',
   kazoo: 'Hoo phones Hospital Radio for “anything with a tuba in it”. They play the shipping forecast. Hoo listens to the whole thing anyway.',
-  wrap: 'A roll of gift wrap with ducks on it, just in case. Hoo puts it at the back of the cupboard, where it can wait.',
+  wrap: 'A roll of gift wrap with bells on it, just in case. Hoo puts it at the back of the cupboard, where it can wait.',
   accordion: 'A very small accordion. Hoo practises in the sluice room. The sluice room has excellent acoustics.',
   recruit: '',
-  bags: 'Laundry bags for the scroungers. The bags come back full of ducks, and one sock.',
-  sonar: 'The bats practise sonar on the ducks. They can hear a flat squeak from three wards away.',
+  bags: 'Laundry bags for the scroungers. The bags come back full of bells, and one sock.',
+  sonar: 'The bats practise sonar on the bells. They can hear a flat ting from three wards away.',
   biscuits: 'Better biscuits in the staff room. Breaks get longer, and everyone owes everyone more.',
   kettle: 'A bigger kettle. Hoo covers breaks at twice the tea.',
-  map: 'The porters draw a map of every cupboard in the building. Some of the cupboards are not on the plans. Some of them are full of ducks.',
-  hat: 'Hoo wears the night porter’s hat. It squeaks when she nods. She nods a lot.',
+  map: 'The porters draw a map of every cupboard in the building. Some of the cupboards are not on the plans. Some of them are full of bells.',
+  hat: 'Hoo wears the night porter’s hat. It jingles when she nods. She nods a lot.',
   rota: 'The polka rota goes up on the staff room door. Breaks now go: one-two, one-two.',
-  whistle: 'A honk whistle. The gaps between the lines feel roomier. The ducks seem pleased about it.',
-  lessons: 'Honking lessons in the boiler room. By the end, everyone on Tune can honk on purpose.',
-  torch: 'Head torches. Under the radiators: dust, a lost pen, and an entire colony of ducks.',
-  cushion: 'Squeak cushions under every prank. They sound warmer, like they mean it.',
+  whistle: 'A clonk mallet, wrapped in a sock. The gaps between the lines feel roomier. The bells seem pleased about it.',
+  lessons: 'Clonking lessons in the boiler room. By the end, everyone on Tune can clonk on purpose.',
+  torch: 'Head torches. Under the radiators: dust, a lost pen, and a whole drift of bells, like snow.',
+  cushion: 'Felt pads under every prank. They ring warmer, like they mean it.',
   specs: 'Hoo hands in Matron’s spare glasses. Matron says “thank you”. Hoo has to sit down for a bit.',
-  drawing: 'Pip’s drawing goes on the clipboard: a duck, very orange, with “PIP’S” written on it in large letters.',
+  drawing: 'Pip’s drawing goes on the clipboard: a bell, very orange, with “PIP’S” written on it in large letters.',
   ribbon: 'Ninety-eight lengths of ribbon, curled. Hoo says it’s for the pool. Nobody asks which pool.',
 };
 
@@ -602,32 +612,32 @@ function handle(out, ctx = {}) {
   for (const ev of out) {
     switch (ev.type) {
       case 'off': sfx.off(); pop(GX - 18, gy(ctx.pitch ?? 0), Math.abs(ev.d) > 0.4 ? 'between' : 'not quite', C.mauve);
-        if (!S.honk && E.isHonk(ev.note) && S.review && Math.random() < 0.5) say('That one nearly did something odd. Between the lines, it sounded almost like a honk.');
+        if (!S.clonk && E.isClonk(ev.note) && S.review && Math.random() < 0.5) say('That one nearly did something odd. Between the lines, it sounded almost like a clonk.');
         break;
       case 'discover':
         sfx.discover();
-        say('HONK. That duck didn’t land on a line; it landed exactly between two, and honked. Not wrong, exactly. The other way right. There are six more notes on the gauge than Hoo drew.', 10);
-        pop(GX - 30, 120, 'HONK!', C.orange);
+        say('CLONK. That bell didn’t land on a line; it landed exactly between two, and clonked. Not wrong, exactly. The other way right. There are six more notes on the gauge than Hoo drew.', 10);
+        pop(GX - 30, 120, 'CLONK!', C.orange);
         break;
       case 'slot': {
         const t = SLOT(ev.i, E.PLANS[S.plan]?.notes.length ?? 1);
         if (ev.fromRack) { fx.push({ kind: 'spark', x: t[0], y: t[1], t: 0, life: 0.6 }); break; }
-        flyTo(E.isHonk(ev.note) ? 'honk' : 'duck', t, ev.note, ev.perfect);
-        if (ctx.pitch != null) { (E.isHonk(ev.note) ? sfx.honk : sfx.squeak)(ev.note); sfx.slot(ev.note); }
+        flyTo(E.isClonk(ev.note) ? 'clonk' : 'bell', t, ev.note, ev.perfect);
+        if (ctx.pitch != null) { (E.isClonk(ev.note) ? sfx.clonk : sfx.ting)(ev.note); sfx.slot(ev.note); }
         if (ev.perfect) pop(t[0], t[1] - 18, '★ dead on');
         break;
       }
-      case 'rack': flyTo(E.isHonk(ev.note) ? 'honk' : 'duck', RACK(ev.note), ev.note);
-        if (ctx.pitch != null) { (E.isHonk(ev.note) ? sfx.honk : sfx.squeak)(ev.note); sfx.rack(); pop(RACK(ev.note)[0], 158, 'spare ' + NOTE[ev.note]); }
+      case 'rack': flyTo(E.isClonk(ev.note) ? 'clonk' : 'bell', RACK(ev.note), ev.note);
+        if (ctx.pitch != null) { (E.isClonk(ev.note) ? sfx.clonk : sfx.ting)(ev.note); sfx.rack(); pop(RACK(ev.note)[0], 158, 'spare ' + NOTE[ev.note]); }
         break;
       case 'repair': {
-        if (!ev.fromRack) flyTo(E.isHonk(ev.note) ? 'honk' : 'duck', tabPos(ev.plan), ev.note);
-        if (ctx.pitch != null) { (E.isHonk(ev.note) ? sfx.honk : sfx.squeak)(ev.note); sfx.repair(); }
+        if (!ev.fromRack) flyTo(E.isClonk(ev.note) ? 'clonk' : 'bell', tabPos(ev.plan), ev.note);
+        if (ctx.pitch != null) { (E.isClonk(ev.note) ? sfx.clonk : sfx.ting)(ev.note); sfx.repair(); }
         else if (!ev.fromRack) sfx.repair();
         pop(tabPos(ev.plan)[0], 368, 'retuned');
         break;
       }
-      case 'ready': sfx.ready(); say(`Sheet ${ev.plan + 1} is full: every duck in place for ${E.PLANS[ev.plan].name.replace(/^The /, 'the ')}. Now it needs fitting: ${E.fitCost(S)}${E.fitCur(S) === 'p' ? 'p of tape and screws' : ' favours (somebody has to hold the ladder)'}.`); break;
+      case 'ready': sfx.ready(); say(`Sheet ${ev.plan + 1} is full: every bell in place for ${E.PLANS[ev.plan].name.replace(/^The /, 'the ')}. Now it needs fitting: ${E.fitCost(S)}${E.fitCur(S) === 'p' ? 'p of tape and screws' : ' favours (somebody has to hold the ladder)'}.`); break;
       case 'prank': {
         const P = E.PLANS[ev.plan];
         sfx.prank(P.notes);
@@ -647,22 +657,22 @@ function handle(out, ctx = {}) {
       case 'answer':
         sfx.answer();
         if (ev.pip) say(PIP[Math.min(PIP.length - 1, S.pipAsked - 1)], 6);
-        else if (ev.gift) { say(pick([`Bed ${ev.bed} only wanted a sip of water, and hands Hoo a duck from their wash bag on the way back to sleep.`, `Bed ${ev.bed} rang to say there was a duck in their bed. There was. Hoo takes it for tuning.`, `Bed ${ev.bed} is half asleep and very generous. One duck, with thanks.`])); sfx.duck(); }
+        else if (ev.gift) { say(pick([`Bed ${ev.bed} only wanted a sip of water, and hands Hoo the jingle bell off their slipper on the way back to sleep.`, `Bed ${ev.bed} called to say there was a bell in their bed. There was. Hoo takes it for tuning.`, `Bed ${ev.bed} is half asleep and very generous. One bell, with thanks.`])); sfx.bell(); }
         else if (logT > 6) say(pick([`Bed ${ev.bed} needed their pillow turned to the cool side.`, `Bed ${ev.bed} wanted to know if owls sleep. Hoo says later.`, `Bed ${ev.bed} had a bad dream about a goose. Hoo sits with them until it goes.`, `Bed ${ev.bed} just wanted someone to say goodnight again.`]));
         break;
-      case 'bell': sfx.bell(); break;
+      case 'call': sfx.call(); break;
       case 'wake': sfx.wake(); say(`Nobody answered Bed ${ev.bed}. They’re awake now and singing. Hush ${'●'.repeat(Math.max(0, S.hush))}${'○'.repeat(E.HUSH_MAX - Math.max(0, S.hush))}.`); break;
       case 'matron': sfx.matron(); say('Matron Bramble’s office light goes on. She comes out to see who’s singing. Hoo hides the bench under a towel and takes everyone’s temperature, very slowly.'); if (music) music.update(); break;
       case 'matronEnd': say(pick(['Matron Bramble goes back to her office. The towel comes off the bench.', 'Matron Bramble’s door clicks shut. Hoo breathes out.'])); if (music) music.update(); break;
       case 'wheel': sfx.coin(); if (Math.random() < 0.08 && logT > 10) say('Hoo returns a wheelchair from the car park. The coin lock gives back its deposit with a satisfied clunk.'); break;
       case 'night': if (ev.fund) sfx.coin(); break;
-      case 'lost': sfx.duck(); if (logT > 8) say(pick(['Lost property yields a duck in a sou’wester.', 'Lost property: one duck, slightly chewed, much loved.', 'A duck from lost property. Its tag says “PROPERTY OF DUCK”.'])); break;
-      case 'autotune': if (ev.who === 'hoo' && logT > 12) say(`Hoo tunes a duck by feel: ${NOTE[ev.note]}. Close enough to count.`); break;
-      case 'buyduck': break;
+      case 'lost': sfx.bell(); if (logT > 8) say(pick(['Lost property yields a bell off a bicycle.', 'Lost property: one sleigh bell, slightly dented, much loved.', 'A bell from lost property. Its tag says “PROPERTY OF BELL”.'])); break;
+      case 'autotune': if (ev.who === 'hoo' && logT > 12) say(`Hoo tunes a bell by feel: ${NOTE[ev.note]}. Close enough to count.`); break;
+      case 'buybell': break;
       case 'scrounge': break;
       case 'cover': break;
-      case 'flat': sfx.flat(); if (logT > 6) say(`A duck in ${E.PLANS[ev.plan].name.replace(/^The /, 'the ')} has gone flat (♭). Old rubber. It wants a fresh ${NOTE[ev.note]}, and won’t make anyone smile until it gets one.`); break;
-      case 'honkhint': say('The “?” slots on this sheet sit between the lines on the gauge, not on them. Hoo squints at the gauge, then at the duck.'); break;
+      case 'flat': sfx.flat(); if (logT > 6) say(`A bell in ${E.PLANS[ev.plan].name.replace(/^The /, 'the ')} has gone flat (♭). Its band went slack. It wants a fresh ${NOTE[ev.note]}, and won’t make anyone smile until it gets one.`); break;
+      case 'clonkhint': say('The “?” slots on this sheet sit between the lines on the gauge, not on them. Hoo squints at the gauge, then at the bell.'); break;
     }
   }
 }
@@ -763,9 +773,9 @@ document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .tip
 
 // The buttons at the top of the column explain themselves; on touch, the first tap of the session explains.
 const ACTION_TIPS = {
-  duckBtn: () => ({ id: 'duck', name: S.review ? 'Ask a porter for a duck' : 'Buy a duck', desc: S.review ? 'The gift shop won’t take pennies from Bramble Ward any more, but the porters know a man. One untuned duck for the bench.' : 'One untuned duck from the gift shop, for the bench. The Toy Fund is three pence a night, and so is a duck.', foot: `${E.stats(S).price} ${S.review ? 'favours' : 'pence'} · you have ${S.raw} to tune` }),
-  fitBtn: () => ({ id: 'fit', name: `Fit ${E.plan(S)?.name || 'it'}`, desc: 'Every duck is in place on the sheet. Fitting them where they go takes tape, screws and somebody to hold the ladder. Then the prank goes off.', foot: `${E.fitCost(S)} ${E.fitCur(S) === 'p' ? 'pence' : 'favours'}` }),
-  giveBtn: () => ({ id: 'give', name: 'Discharge morning', desc: `Unscrew every duck from every prank in the hospital, and every spare one, and give them all away to the children going home. It costs everything: all ${E.TOTAL_DUCKS} fitted ducks, every favour and every penny. This ends the game.`, foot: E.canGive(S) ? `Everything: ${E.TOTAL_DUCKS} ducks · ${S.favours} favours · ${S.pence}p` : `Needs at least ${E.GIVE_FAVOURS} favours (it takes them all) · you have ${S.favours}` }),
+  bellBtn: () => ({ id: 'bell', name: S.review ? 'Ask a porter for a bell' : 'Buy a bell', desc: S.review ? 'The gift shop won’t take pennies from Bramble Ward any more, but the porters know a man. One untuned bell for the bench.' : 'One untuned bell from the gift shop, for the bench. The Toy Fund is three pence a night, and so is a bell.', foot: `${E.stats(S).price} ${S.review ? 'favours' : 'pence'} · you have ${S.raw} to tune` }),
+  fitBtn: () => ({ id: 'fit', name: `Fit ${E.plan(S)?.name || 'it'}`, desc: 'Every bell is in place on the sheet. Fitting them where they go takes tape, screws and somebody to hold the ladder. Then the prank goes off.', foot: `${E.fitCost(S)} ${E.fitCur(S) === 'p' ? 'pence' : 'favours'}` }),
+  giveBtn: () => ({ id: 'give', name: 'Discharge morning', desc: `Unhook every bell from every prank in the hospital, and every spare one, and give them all away to the children going home. It costs everything: all ${E.TOTAL_BELLS} fitted bells, every favour and every penny. This ends the game.`, foot: E.canGive(S) ? `Everything: ${E.TOTAL_BELLS} bells · ${S.favours} favours · ${S.pence}p` : `Needs at least ${E.GIVE_FAVOURS} favours (it takes them all) · you have ${S.favours}` }),
 };
 const explained = new Set();
 for (const [id, tipOf] of Object.entries(ACTION_TIPS)) {
@@ -779,11 +789,11 @@ for (const [id, tipOf] of Object.entries(ACTION_TIPS)) {
     if (b.dataset.touch && !explained.has(id)) { explained.add(id); showTip(b, tipOf()); e.stopImmediatePropagation(); }
   }, { capture: true });
 }
-$('duckBtn').addEventListener('click', () => {
+$('bellBtn').addEventListener('click', () => {
   const out = [];
-  if (!E.buyDuck(S, out)) { sfx.deny(); return; }
-  sfx.duck(); hud(); save();
-  if (tipFor === 'duck') showTip($('duckBtn'), ACTION_TIPS.duckBtn());
+  if (!E.buyBell(S, out)) { sfx.deny(); return; }
+  sfx.bell(); hud(); save();
+  if (tipFor === 'bell') showTip($('bellBtn'), ACTION_TIPS.bellBtn());
 });
 $('fitBtn').addEventListener('click', () => {
   const out = [];
@@ -944,23 +954,23 @@ function hud() {
   const P = E.plan(S);
   if (S.ended || !P) {
     $('meterLabel').innerHTML = '<b>Every sheet fitted</b>';
-    $('meterVal').textContent = S.ended ? 'every duck given away' : `${E.TOTAL_DUCKS} ducks around the hospital`;
+    $('meterVal').textContent = S.ended ? 'every bell given away' : `${E.TOTAL_BELLS} bells around the hospital`;
     $('meterFill').style.width = '100%';
   } else {
     const filled = S.slots.filter(Boolean).length;
     $('meterLabel').innerHTML = `Sheet ${S.plan + 1} of ${E.PLANS.length}: <b></b>`;
     $('meterLabel').querySelector('b').textContent = P.name;
-    $('meterVal').textContent = S.ready ? `ready to fit · ${E.fitCost(S)}${E.fitCur(S) === 'p' ? 'p' : ' favours'}` : `${filled}/${P.notes.length} ducks · ${S.installed}/${E.TOTAL_DUCKS} in all`;
-    $('meterFill').style.width = `${(S.installed / E.TOTAL_DUCKS) * 100}%`;
+    $('meterVal').textContent = S.ready ? `ready to fit · ${E.fitCost(S)}${E.fitCur(S) === 'p' ? 'p' : ' favours'}` : `${filled}/${P.notes.length} bells · ${S.installed}/${E.TOTAL_BELLS} in all`;
+    $('meterFill').style.width = `${(S.installed / E.TOTAL_BELLS) * 100}%`;
   }
   // Column actions
-  const duckShow = !S.ended && S.plan >= 1 && S.plan < E.PLANS.length;
-  $('duckBtn').hidden = !duckShow;
-  if (duckShow) {
-    const st = E.stats(S), can = E.have(S, E.duckCur(S)) >= st.price;
-    $('duckBtn').firstChild.textContent = S.review ? '🦆 Ask a porter for a duck' : '🦆 Buy a duck';
-    $('duckSub').textContent = `${st.price}${S.review ? ' favours' : 'p'} · ${S.raw} to tune`;
-    $('duckBtn').setAttribute('aria-disabled', String(!can));
+  const bellShow = !S.ended && S.plan >= 1 && S.plan < E.PLANS.length;
+  $('bellBtn').hidden = !bellShow;
+  if (bellShow) {
+    const st = E.stats(S), can = E.have(S, E.bellCur(S)) >= st.price;
+    $('bellBtn').firstChild.textContent = S.review ? '🔔 Ask a porter for a bell' : '🔔 Buy a bell';
+    $('bellSub').textContent = `${st.price}${S.review ? ' favours' : 'p'} · ${S.raw} to tune`;
+    $('bellBtn').setAttribute('aria-disabled', String(!can));
   }
   $('fitBtn').hidden = !S.ready || S.ended;
   if (S.ready) {
@@ -971,7 +981,7 @@ function hud() {
   }
   $('giveBtn').hidden = S.ended || S.plan < E.PLANS.length;
   if (!$('giveBtn').hidden) {
-    $('giveSub').textContent = E.canGive(S) ? `costs everything: ${E.TOTAL_DUCKS} ducks · ${S.favours} favours · ${S.pence}p` : `needs ${E.GIVE_FAVOURS} favours · ${S.favours} so far`;
+    $('giveSub').textContent = E.canGive(S) ? `costs everything: ${E.TOTAL_BELLS} bells · ${S.favours} favours · ${S.pence}p` : `needs ${E.GIVE_FAVOURS} favours · ${S.favours} so far`;
     $('giveBtn').setAttribute('aria-disabled', String(!E.canGive(S))); $('giveBtn').classList.toggle('ring', E.canGive(S));
   }
 }
@@ -1033,7 +1043,7 @@ function draw() {
     const u = Math.min(1, f.t / f.life);
     if (f.kind === 'fly') {
       const x = f.from[0] + (f.to[0] - f.from[0]) * u, y = f.from[1] + (f.to[1] - f.from[1]) * u - Math.sin(u * Math.PI) * 60;
-      drawDuck(g, x, y, f.sprite === 'honk' ? C.rust : C.orange, 0.8 + 0.2 * Math.sin(u * Math.PI));
+      drawBell(g, x, y, f.sprite === 'clonk' ? C.rust : C.orange, 0.8 + 0.2 * Math.sin(u * Math.PI));
     } else if (f.kind === 'text') {
       g.globalAlpha = 1 - u; g.fillStyle = f.color; g.font = `14px ${HAND}`; g.textAlign = 'center'; g.fillText(f.text, f.x, f.y - u * 16); g.globalAlpha = 1; g.textAlign = 'left';
     } else if (f.kind === 'spark') {
@@ -1047,24 +1057,24 @@ function drawWard(done) {
     g.drawImage(spr.bed, bd.x - 1, bd.y + 14, bd.w + 4, bd.w + 4);
     g.strokeStyle = '#ffecd6aa'; g.lineWidth = 1.2; g.strokeRect(bd.x, bd.y, bd.w, bd.h);
     g.fillStyle = '#ffecd618'; g.fillRect(bd.x + 6, bd.y + 4, bd.w - 12, 14);
-    const bell = S.bells.find(b => b.bed === bd.b);
-    const awake = !!bell;
+    const call = S.calls.find(b => b.bed === bd.b);
+    const awake = !!call;
     if (!done) drawKid(g, bd.x + bd.w / 2, bd.y + 13, EARS[bd.b - 1], awake || (bd.b === 4 && Math.sin(T * 0.4) > 0.6), T);
     else { g.fillStyle = C.orange; g.font = `10px ${MONO}`; g.textAlign = 'center'; g.fillText('HOME ✓', bd.x + bd.w / 2, bd.y + 15); g.textAlign = 'left'; }
     g.fillStyle = C.peach; g.font = `11px ${MONO}`; g.fillText(String(bd.b), bd.x + 2, bd.y + bd.h + 11);
     if (L('chart') && !done) { g.fillStyle = C.orange; g.fillText([4, 8, 0, 4, 6, 2, 10, 8][bd.b - 1] != null ? NOTE[[4, 8, 0, 4, 6, 2, 10, 8][bd.b - 1]] : '', bd.x + bd.w - 12, bd.y + bd.h + 11); }
     if (!awake && !done) { g.fillStyle = '#ffecd666'; g.font = `10px ${HAND}`; g.fillText('z', bd.x + bd.w - 8, bd.y + 6 - ((T * 6 + bd.b * 3) % 8)); }
-    if (bell) {
+    if (call) {
       const wob = reduced ? 0 : Math.sin(T * 18) * 0.25;
       const bx = bd.x + bd.w / 2, by = bd.y - 12;
-      g.save(); g.translate(bx, by); g.rotate(wob); g.drawImage(spr.bell, -12, -12, 24, 24); g.restore();
-      g.strokeStyle = C.orange; g.lineWidth = 2; g.beginPath(); g.arc(bx, by, 15, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (1 - bell.age / st.wakeAt)); g.stroke(); g.lineWidth = 1;
+      g.save(); g.translate(bx, by); g.rotate(wob); g.drawImage(spr.call, -12, -12, 24, 24); g.restore();
+      g.strokeStyle = C.orange; g.lineWidth = 2; g.beginPath(); g.arc(bx, by, 15, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (1 - call.age / st.wakeAt)); g.stroke(); g.lineWidth = 1;
     }
   }
   // Hoo walks to her current chore.
   let tgt = PLACES.idle;
   if (done) tgt = [110, 196];
-  else if (S.qTask === 'bell' && S.bells[0]) { const bd = BEDS[S.bells[0].bed - 1]; tgt = [bd.x + bd.w / 2, bd.y <= 52 ? 150 : 222]; }
+  else if (S.qTask === 'call' && S.calls[0]) { const bd = BEDS[S.calls[0].bed - 1]; tgt = [bd.x + bd.w / 2, bd.y <= 52 ? 150 : 222]; }
   else if (S.qTask && PLACES[S.qTask]) tgt = PLACES[S.qTask];
   const sp = reduced ? 1 : Math.min(1, 0.05);
   hoo.x += (tgt[0] - hoo.x) * sp; hoo.y += (tgt[1] - hoo.y) * sp;
@@ -1101,7 +1111,7 @@ function drawSheet(done) {
     g.fillText(done ? 'SHEET 11/11 · DISCHARGE MORNING' : 'ALL SHEETS FITTED', 314, 34);
     g.drawImage(spr.picto.pool, 314, 44, 66, 66);
     g.font = `13px ${HAND}`; g.fillStyle = C.peach;
-    const lines = done ? ['Every duck unscrewed, tagged', 'and wrapped, and gone home', 'with somebody. Quiet again.'] : ['98 ducks, all in tune, all', 'over the hospital. And it’s', 'nearly discharge morning…'];
+    const lines = done ? ['Every bell unhooked, tagged', 'and wrapped, and gone home', 'with somebody. Quiet again.'] : ['98 bells, all in tune, all', 'over the hospital. And it’s', 'nearly discharge morning…'];
     lines.forEach((l, i) => g.fillText(l, 392, 66 + i * 20));
     return;
   }
@@ -1111,12 +1121,12 @@ function drawSheet(done) {
   const n = P.notes.length;
   P.notes.forEach((note, i) => {
     const [x, y] = SLOT(i, n), f = S.slots[i];
-    const honk = E.isHonk(note);
+    const clonk = E.isClonk(note);
     g.strokeStyle = f ? C.orange : '#ffecd699'; g.setLineDash(f ? [] : [3, 2]); g.lineWidth = 1.2;
     g.beginPath(); g.arc(x, y, 11, 0, 7); g.stroke(); g.setLineDash([]);
-    if (f) drawDuck(g, x, y + 1, honk ? C.rust : C.orange, 0.62);
-    g.fillStyle = honk && !S.honk ? C.orange : C.peach; g.font = `11px ${MONO}`; g.textAlign = 'center';
-    g.fillText(honk && !S.honk ? '?' : NOTE[note], x, y + 24);
+    if (f) drawBell(g, x, y + 1, clonk ? C.rust : C.orange, 0.62);
+    g.fillStyle = clonk && !S.clonk ? C.orange : C.peach; g.font = `11px ${MONO}`; g.textAlign = 'center';
+    g.fillText(clonk && !S.clonk ? '?' : NOTE[note], x, y + 24);
     if (f === 2) { g.fillStyle = C.orange; g.fillText('★', x + 10, y - 8); }
     g.textAlign = 'left';
   });
@@ -1125,8 +1135,8 @@ function drawSheet(done) {
 function drawRack(done) {
   g.fillStyle = C.peach; g.font = `10px ${MONO}`; g.fillText('SPARES', 312, 164);
   for (let n = 0; n < 12; n++) {
-    const [x, y] = RACK(n), c = S.rack[n], honk = E.isHonk(n);
-    if (honk && !S.honk && !c) continue;
+    const [x, y] = RACK(n), c = S.rack[n], clonk = E.isClonk(n);
+    if (clonk && !S.clonk && !c) continue;
     g.strokeStyle = c ? C.orange : '#ffecd633'; g.strokeRect(x, y, 24, 18);
     g.fillStyle = c ? C.cream : '#ffecd655'; g.font = `10px ${MONO}`; g.textAlign = 'center';
     g.fillText(c ? `${NOTE[n]}·${c}` : NOTE[n], x + 12, y + 13); g.textAlign = 'left';
@@ -1141,13 +1151,13 @@ function drawBench(done) {
   for (const [k, i] of S.flats) openNow[E.PLANS[k].notes[i]]++;
   g.strokeStyle = '#ffecd6aa'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(GX, G0 + 6); g.lineTo(GX, gy(11.5)); g.stroke();
   for (let n = 0; n < 12; n++) {
-    const y = gy(n), honk = E.isHonk(n), hot = openNow[n] > 0 && !done;
-    if (!honk) {
+    const y = gy(n), clonk = E.isClonk(n), hot = openNow[n] > 0 && !done;
+    if (!clonk) {
       g.fillStyle = hot ? '#ffaa5e33' : '#ffecd612'; g.fillRect(GX - 40, y - st.noteTol * GPX, 52, st.noteTol * GPX * 2);
       g.strokeStyle = hot ? C.orange : '#ffecd6bb'; g.lineWidth = hot ? 2 : 1.2; g.beginPath(); g.moveTo(GX - 40, y); g.lineTo(GX + 12, y); g.stroke(); g.lineWidth = 1;
       g.fillStyle = hot ? C.orange : C.cream; g.font = `12px ${MONO}`; g.fillText(NOTE[n], GX + 15, y + 4);
-    } else if (S.honk) {
-      g.fillStyle = hot ? '#d0815944' : '#d0815918'; g.fillRect(GX - 30, y - st.honkTol * GPX, 36, st.honkTol * GPX * 2);
+    } else if (S.clonk) {
+      g.fillStyle = hot ? '#d0815944' : '#d0815918'; g.fillRect(GX - 30, y - st.clonkTol * GPX, 36, st.clonkTol * GPX * 2);
       g.strokeStyle = hot ? C.rust : '#d0815988'; g.setLineDash([2, 2]); g.beginPath(); g.moveTo(GX - 30, y); g.lineTo(GX + 6, y); g.stroke(); g.setLineDash([]);
       g.fillStyle = hot ? C.rust : '#d08159aa'; g.font = `10px ${MONO}`; g.fillText(NOTE[n], GX + 15, y + 3);
     } else if (hot) {
@@ -1165,15 +1175,15 @@ function drawBench(done) {
   else if (kbPitch != null) { dy = Math.min(70, 8 + kbPitch * 5.5); }
   const bx = fx0 + dx, by = fy0 + dy;
   g.strokeStyle = C.rust; g.lineWidth = 2; g.beginPath(); g.moveTo(fx0 - 16, fy0 - 4); g.lineTo(bx - 6, by + 4); g.moveTo(fx0 + 16, fy0 - 4); g.lineTo(bx + 6, by + 4); g.stroke(); g.lineWidth = 1; g.lineCap = 'butt';
-  if (!done && S.raw > 0 && S.matron <= 0) drawDuck(g, bx, by - 4, C.slate, 1.15);
-  // The crate of untuned ducks.
+  if (!done && S.raw > 0 && S.matron <= 0) drawBell(g, bx, by - 4, C.slate, 1.15);
+  // The crate of untuned bells.
   g.strokeStyle = '#ffecd6aa'; g.strokeRect(326, 300, 64, 40);
-  for (let i = 0; i < Math.min(6, done ? 0 : S.raw); i++) drawDuck(g, 340 + (i % 3) * 18, 312 + Math.floor(i / 3) * 4 - (i >= 3 ? 10 : 0), C.slate, 0.55);
+  for (let i = 0; i < Math.min(6, done ? 0 : S.raw); i++) drawBell(g, 340 + (i % 3) * 18, 312 + Math.floor(i / 3) * 4 - (i >= 3 ? 10 : 0), C.slate, 0.55);
   g.fillStyle = C.peach; g.font = `11px ${MONO}`; g.fillText(done ? 'EMPTY' : `UNTUNED ×${S.raw}`, 326, 354);
   // The pitch marker.
   if (p != null && p >= 0) {
     const r = E.judge(S, p), y = gy(p);
-    g.fillStyle = r.kind === 'note' ? C.orange : r.kind === 'honk' ? C.rust : C.cream;
+    g.fillStyle = r.kind === 'note' ? C.orange : r.kind === 'clonk' ? C.rust : C.cream;
     g.beginPath(); g.moveTo(GX - 52, y - 6); g.lineTo(GX - 42, y); g.lineTo(GX - 52, y + 6); g.closePath(); g.fill();
     g.strokeStyle = g.fillStyle; g.setLineDash([2, 3]); g.beginPath(); g.moveTo(bx + 14, by - 6); g.lineTo(GX - 54, y); g.stroke(); g.setLineDash([]);
   }
@@ -1184,11 +1194,11 @@ function drawBench(done) {
     g.textAlign = 'left';
   } else if (!done && S.raw < 1) {
     g.fillStyle = C.peach; g.font = `13px ${HAND}`; g.textAlign = 'center';
-    g.fillText(S.plan === 0 || S.plan >= E.PLANS.length ? '' : S.review ? 'no ducks: ask a porter, or Scrounge' : 'no ducks: buy one (3p)', 452, 252); g.textAlign = 'left';
+    g.fillText(S.plan === 0 || S.plan >= E.PLANS.length ? '' : S.review ? 'no bells: ask a porter, or Scrounge' : 'no bells: buy one (3p)', 452, 252); g.textAlign = 'left';
   }
   if (S.t < 25 && S.plan === 0 && !pull && S.raw > 0) {
     g.fillStyle = C.orange; g.font = `14px ${HAND}`; g.textAlign = 'center';
-    g.fillText('drag back from the duck ↓', fx0, fy0 - 26); g.textAlign = 'left';
+    g.fillText('drag back from the bell ↓', fx0, fy0 - 26); g.textAlign = 'left';
   }
 }
 function drawTabs(done) {
@@ -1232,17 +1242,17 @@ addEventListener('pagehide', save);
 function end(resumed) {
   S.ended = true; save();
   $('ending').hidden = false; $('desk').hidden = true; document.querySelector('.stats').hidden = true; $('shopHead').hidden = true; $('shop').hidden = true;
-  const g0 = S.given || { ducks: E.TOTAL_DUCKS, favours: 0, pence: 0 };
+  const g0 = S.given || { bells: E.TOTAL_BELLS, favours: 0, pence: 0 };
   const h = Math.floor(S.t / 3600), m = Math.floor(S.t / 60) % 60;
   const time = h ? `${h}h${String(m).padStart(2, '0')}m` : `${m}m`;
-  $('endText').textContent = `At seven o’clock on discharge morning, Nurse Hoo went round the whole hospital with a screwdriver. The ward door, the tea trolley, the lift, the stairs, Matron’s office: every duck came out. Each one got a name tag, a square of gift wrap and a curl of ribbon, and went home in somebody’s coat pocket, tuned to their favourite note. Pip got the first one, an E. The hospital went quiet again, all at once. Matron Bramble stood in the empty ward for a while, humming the polka.`;
-  $('endStats').textContent = S.t > 1 ? `${time} · ${S.night} nights · ${g0.ducks} ducks, ${g0.favours} favours and ${g0.pence}p: everything, given away` : '';
+  $('endText').textContent = `At seven o’clock on discharge morning, Nurse Hoo went round the whole hospital with a screwdriver. The ward door, the tea trolley, the lift, the stairs, Matron’s office: every bell came down. Each one got a name tag, a square of gift wrap and a curl of ribbon, and went home in somebody’s coat pocket, tuned to their favourite note. Pip got the first one, an E. The hospital went quiet again, all at once. Matron Bramble stood in the empty ward for a while, humming the polka.`;
+  $('endStats').textContent = S.t > 1 ? `${time} · ${S.night} nights · ${g0.bells} bells, ${g0.favours} favours and ${g0.pence}p: everything, given away` : '';
   hud(); renderShop();
   if (music) music.update();
   if (!resumed) {
     sfx.finale();
-    say('Somewhere across town, at bath time, a duck squeaks an E. Then another one, a G♯. Then the whole town, very slightly in tune.');
-    if (window.DailyGame) DailyGame.finish({ lines: [`🦆 ${g0.ducks} ducks tuned, then given away`, `⏱ ${time} · 🌙 ${S.night} nights`, '🪗 a polka on 3p a night'] });
+    say('Somewhere across town, a coat pocket jingles an E. Then another one, a G♯. Then the whole town, very slightly in tune.');
+    if (window.DailyGame) DailyGame.finish({ lines: [`🔔 ${g0.bells} bells tuned, then given away`, `⏱ ${time} · 🌙 ${S.night} nights`, '🪗 a polka on 3p a night'] });
   }
   setTimeout(() => $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' }), resumed ? 0 : 1500);
 }
@@ -1261,9 +1271,9 @@ else {
   const got = S.t > 5 ? E.offline(S, away) : null;
   if (got && (got.pence || got.favours || got.installed || got.raw)) {
     const hrs = away / 3600, t = hrs >= 1 ? `${hrs.toFixed(1)} hours` : `${Math.round(away / 60)} minutes`;
-    const bits = [got.pence > 0 && `${got.pence}p`, got.favours > 0 && `${got.favours} favours`, got.installed > 0 && `${got.installed} ducks fitted`, got.raw > 0 && `${got.raw} ducks to tune`, got.pranks > 0 && `${got.pranks} prank${got.pranks > 1 ? 's' : ''} finished`].filter(Boolean);
+    const bits = [got.pence > 0 && `${got.pence}p`, got.favours > 0 && `${got.favours} favours`, got.installed > 0 && `${got.installed} bells fitted`, got.raw > 0 && `${got.raw} bells to tune`, got.pranks > 0 && `${got.pranks} prank${got.pranks > 1 ? 's' : ''} finished`].filter(Boolean);
     say(`You were away ${t}${away > E.OFFLINE_CAP ? ' (Hoo only counts the first three)' : ''}. The ward slept through. Hoo kept to her clipboard${S.review ? ' and the night staff kept at it' : ''}: ${bits.join(', ')}.`);
-  } else say(S.t > 5 ? 'Bramble Ward, still night. Hoo straightens her cap.' : 'Bramble Ward, 2am. Nurse Hoo has two ducks and a plan. Drag back from the duck on the bench, listen to it squeak higher, and let go on a glowing line.');
+  } else say(S.t > 5 ? 'Bramble Ward, still night. Hoo straightens her cap.' : 'Bramble Ward, 2am. Nurse Hoo has two bells and a plan. Drag back from the bell on the bench, listen to it ring higher, and let go on a glowing line.');
 }
 if (DEBUG) Object.assign(window.__game, { hud, renderShop });
 hud(); renderShop(); renderDesk();

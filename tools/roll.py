@@ -268,9 +268,9 @@ def roll(seed, history=()):
     pick = lambda pool, key, part=None: rng.choice(fresh(pool, history, key, part))
     r = {
         "seed": seed,
-        "subject": rng.choice(SUBJECTS),
-        "verb": rng.choice(VERBS),
-        "object": rng.choice(OBJECTS),
+        "subject": pick(SUBJECTS, "subject"),
+        "verb": pick(VERBS, "verb"),
+        "object": pick(OBJECTS, "object"),
         "interaction": pick(INTERACTIONS, "interaction"),
         "scale": pick(SCALES, "scale"),
         "arc": {
@@ -320,7 +320,7 @@ def main():
     # away from it. The roll itself never changes.
     recent = games[-7:]
     for key, value in r.items():
-        if key in ("seed", "subject", "verb", "object", "length", "scale") or value == "none":
+        if key in ("seed", "length", "scale") or value == "none":
             continue
         parts = value.items() if isinstance(value, dict) else [(None, value)]
         for part, v in parts:

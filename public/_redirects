@@ -3,3 +3,6 @@
 /1/* /moonshroom/:splat 301
 /2 /toastergeist/ 301
 /2/* /toastergeist/:splat 301
+# Day 10 shipped as Squeak Shift before its ducks became bells.
+/squeak-shift /hoos-belfry/ 301
+/squeak-shift/* /hoos-belfry/:splat 301

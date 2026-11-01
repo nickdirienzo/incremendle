@@ -9,6 +9,9 @@
     "scale": "thousands",
     "minutes": "10–15",
     "seed": 2428482643,
+    "subject": "a lonely moon",
+    "verb": "polishing",
+    "object": "mushrooms",
     "interaction": "rub"
   },
   {
@@ -21,6 +24,9 @@
     "scale": "hundreds",
     "minutes": "8–12",
     "seed": 2229681724,
+    "subject": "a grumpy ghost",
+    "verb": "hatching",
+    "object": "teacups",
     "interaction": "drag-and-drop"
   },
   {
@@ -33,6 +39,9 @@
     "scale": "billions",
     "minutes": "9–13",
     "seed": 3508230676,
+    "subject": "a slime who wants friends",
+    "verb": "brewing",
+    "object": "maps",
     "interaction": "tap"
   },
   {
@@ -45,6 +54,9 @@
     "scale": "billions",
     "minutes": "20–35",
     "seed": 2811419831,
+    "subject": "a penguin in the desert",
+    "verb": "repairing",
+    "object": "acorns",
     "interaction": "drag-and-drop",
     "arc": {
       "drive": "rivalry",
@@ -78,6 +90,9 @@
     "scale": "billions",
     "minutes": "180–600",
     "seed": 3267020948,
+    "subject": "a mole who wants to see the sun",
+    "verb": "sorting",
+    "object": "lemons",
     "interaction": "rub",
     "arc": {
       "drive": "a promise",
@@ -115,6 +130,9 @@
     "scale": "hundreds",
     "minutes": "25–35",
     "seed": 487038373,
+    "subject": "a squid painter",
+    "verb": "growing",
+    "object": "rubber ducks",
     "interaction": "drag-and-drop",
     "arc": {
       "drive": "legacy",
@@ -148,6 +166,9 @@
     "scale": "billions",
     "minutes": "90–150",
     "seed": 4197351998,
+    "subject": "a nervous lighthouse",
+    "verb": "freezing",
+    "object": "comets",
     "interaction": "catch falling things",
     "arc": {
       "drive": "pride",
@@ -181,6 +202,9 @@
     "scale": "absurd",
     "minutes": "80–140",
     "seed": 1835081946,
+    "subject": "a bookworm (literally)",
+    "verb": "decorating",
+    "object": "teeth",
     "interaction": "stop a moving marker at the right moment",
     "arc": {
       "drive": "a dare",
@@ -214,6 +238,9 @@
     "scale": "millions",
     "minutes": "25–45",
     "seed": 4181033764,
+    "subject": "a lazy sun",
+    "verb": "rescuing",
+    "object": "pickles",
     "interaction": "draw a path",
     "arc": {
       "drive": "hunger",
@@ -243,14 +270,17 @@
   },
   {
     "n": 10,
-    "slug": "squeak-shift",
+    "slug": "hoos-belfry",
     "date": "2026-11-01",
-    "title": "Squeak Shift",
-    "tagline": "An owl on the night shift tunes rubber ducks to prank the whole hospital, on a Toy Fund of three pence a night.",
-    "emoji": "🦉🦆",
+    "title": "Hoo's Belfry",
+    "tagline": "An owl on the night shift tunes little brass bells to prank the whole hospital, on a Toy Fund of three pence a night.",
+    "emoji": "🦉🔔",
     "scale": "tens",
     "minutes": "180–240",
     "seed": 3394538433,
+    "subject": "an owl night-shift nurse",
+    "verb": "tuning",
+    "object": "bells",
     "interaction": "aim and release",
     "arc": {
       "drive": "mischief",
