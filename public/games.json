@@ -274,5 +274,37 @@
     "tone": "cozy",
     "context": "none",
     "palette": "slso8"
+  },
+  {
+    "n": 11,
+    "slug": "eighteen-pleats",
+    "date": "2026-11-02",
+    "title": "Eighteen Pleats",
+    "tagline": "Fog season. A nervous lighthouse folds dumplings to Regulation 18 and stacks the steamers for every boat that follows the smell in.",
+    "emoji": "🏮🥟",
+    "scale": "hundreds",
+    "minutes": "25–45",
+    "seed": 3417333311,
+    "interaction": "stack and balance",
+    "arc": {
+      "drive": "duty",
+      "obstacle": "a strict rule",
+      "turn": "it gets undone, and that's fine",
+      "initial": "E"
+    },
+    "length": "mini (10–60 min)",
+    "structure": [
+      "orders with deadlines (fill contracts for rewards)"
+    ],
+    "twist": "a rival who copies you",
+    "ending": "hand it all over to someone else",
+    "look": "risograph print",
+    "music": {
+      "style": "kalimba folk",
+      "scale": "harmonic minor"
+    },
+    "tone": "deadpan bureaucratic",
+    "context": "none",
+    "palette": "curiosities"
   }
 ]

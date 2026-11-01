@@ -760,5 +760,120 @@
   ],
   "shopTab": "f",
   "lastSeen": 0
+ },
+ "eighteen-pleats": {
+  "t": 780,
+  "chits": 64,
+  "served": 310,
+  "earned": 980,
+  "nerves": 0.35,
+  "sw": 0.3,
+  "lv": {
+   "frame": 1,
+   "gear": 14,
+   "basket": 3,
+   "form18b": 1,
+   "chamomile": 1,
+   "horn": 1,
+   "dowel": 1,
+   "cardigan": 1,
+   "gull": 4,
+   "badge": 1,
+   "latch": 1,
+   "prawn": 1
+  },
+  "seen": {
+   "frame": 1,
+   "gear": 1,
+   "basket": 1,
+   "form18b": 1,
+   "chamomile": 1,
+   "horn": 1,
+   "dowel": 1,
+   "cardigan": 1,
+   "gull": 1,
+   "badge": 1,
+   "latch": 1,
+   "winch": 1,
+   "radio": 1,
+   "prawn": 1,
+   "tray": 1,
+   "hat": 1,
+   "soup": 1
+  },
+  "stack": [
+   {
+    "x": 0,
+    "n": 5
+   },
+   {
+    "x": 0.12,
+    "n": 5
+   },
+   {
+    "x": 0.05,
+    "n": 5
+   },
+   {
+    "x": -0.1,
+    "n": 5
+   }
+  ],
+  "hook": {
+   "n": 3,
+   "p": 7
+  },
+  "board": [
+   {
+    "id": 40,
+    "boat": "Trawler Doris",
+    "kind": "prawn",
+    "want": 22,
+    "pay": 99,
+    "deadline": 80,
+    "patience": 30,
+    "max": 50
+   },
+   {
+    "id": 41,
+    "boat": "Ferry No. 9",
+    "kind": "pork",
+    "want": 18,
+    "pay": 54,
+    "deadline": 70,
+    "patience": 44,
+    "max": 50
+   }
+  ],
+  "active": {
+   "id": 39,
+   "boat": "The Quiet Word",
+   "kind": "prawn",
+   "want": 25,
+   "pay": 112,
+   "deadline": 90,
+   "left": 51,
+   "patience": 40,
+   "max": 50
+  },
+  "nextId": 42,
+  "ep": true,
+  "epHave": {
+   "frame": 1,
+   "gear": 9,
+   "basket": 2,
+   "form18b": 1,
+   "chamomile": 1,
+   "horn": 1,
+   "dowel": 1,
+   "cardigan": 1,
+   "badge": 1
+  },
+  "epCopies": [],
+  "epServed": 620,
+  "delivered": 19,
+  "perfects": 30,
+  "bestStack": 6,
+  "quotaMet": false
  }
 }
