@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Eighteen Pleats · Incremendle</title>
-<meta name="description" content="Fog season. A nervous lighthouse folds dumplings to Regulation 18 and stacks the steamers for every boat that follows the smell in. Incremendle.">
+<meta name="description" content="Fog season. A retired pirate parrot keeps the lighthouse, folds dumplings to Regulation 18 and stacks the steamers for every boat that follows the smell in. Incremendle.">
 <meta property="og:site_name" content="Incremendle">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Eighteen Pleats">
-<meta property="og:description" content="Fog season. A nervous lighthouse folds dumplings to Regulation 18 and stacks the steamers for every boat that follows the smell in.">
+<meta property="og:description" content="Fog season. A retired pirate parrot keeps the lighthouse, folds dumplings to Regulation 18 and stacks the steamers for every boat that follows the smell in.">
 <meta property="og:url" content="https://incremendle.com/eighteen-pleats/">
-<meta property="og:image" content="https://incremendle.com/eighteen-pleats/og.png?v=ac27f0f3">
+<meta property="og:image" content="https://incremendle.com/eighteen-pleats/og.png?v=abfd7834">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Eighteen Pleats: Fog season. A nervous lighthouse folds dumplings to Regulation 18 and stacks the steamers for every boat that follows the smell in.">
+<meta property="og:image:alt" content="Eighteen Pleats: Fog season. A retired pirate parrot keeps the lighthouse, folds dumplings to Regulation 18 and stacks the steamers for every boat that follows the smell in.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/shared/fonts/bricolage-grotesque/font.css">
@@ -162,13 +162,13 @@
         <div class="meter" title="The season's quota: dumplings served"><i id="meterFill"></i><span><em>Season quota</em><em id="quotaTxt">0 / 720</em></span></div>
         <div class="counts"><span><b id="chits">0</b> <small>chits</small></span></div>
         <div class="sub" id="sub">
-          <span class="nerves" title="How nervous the lighthouse is: it makes the basket and the stack tremble">Nerves <s id="nervesBar"></s></span>
+          <span class="nerves" title="Barnacle’s sea legs: forty years on a rolling deck, and the lighthouse won’t roll back. Barnacle works the winch, so the sway shakes the basket and the stack">Sea legs <s id="nervesBar"></s></span>
           <span id="rate"></span>
           <span id="epTxt" class="ep" hidden></span>
         </div>
       </div>
       <div class="board" id="board" aria-label="Boats waiting in the fog"></div>
-      <div class="stagewrap"><canvas id="stage" tabindex="0" aria-label="The gallery of Skerry Light: tap, click or press space to drop the swinging steamer basket onto the stack"></canvas></div>
+      <div class="stagewrap"><canvas id="stage" tabindex="0" aria-label="The gallery of Skerry Light, where Barnacle the parrot keeps the lamp: tap, click or press space to drop the swinging steamer basket onto the stack"></canvas></div>
       <p class="log" id="log" aria-live="polite"></p>
     </main>
     <aside id="side">
@@ -359,7 +359,13 @@ const artReady = Promise.all([
   iconSprite('game-icons--fishing-boat.svg', 110, 110, C.coral, C.teal).then(c => { ART.boats[0] = Sprites.register('trawler', c); }),
   iconSprite('game-icons--sailboat.svg', 100, 100, C.aqua, C.ink, true).then(c => { ART.boats[1] = Sprites.register('sloop', c); }),
 ]).catch(e => console.warn('art', e));
-if (Sprites.sheetRequested()) artReady.then(() => Sprites.showSheet({ zoom: 2 }));
+// Barnacle is drawn live (the crest and the eye move); this is a still for the sprite sheet.
+const parrotStill = artReady.then(() => {
+  const p = Sprites.canvas(60, 80), q = p.getContext('2d'), at = { ...L };
+  L.x = -55; L.y = -40; drawParrot(q, 0); Object.assign(L, at);
+  Sprites.register('Barnacle', p);
+});
+if (Sprites.sheetRequested()) parrotStill.then(() => Sprites.showSheet({ zoom: 2 }));
 
 // ---------- The stage ----------
 const cv = $('stage'), ctx = cv.getContext('2d');
@@ -431,13 +437,11 @@ function render() {
     if (ART.boats[b.id % 2]) x.drawImage(ART.boats[b.id % 2], bx - 10, SEA - 88 + bob, 110, 110);
     if (departing) drawStackAt(x, departing.stack, bx + 45, SEA - 34 + bob, 0.55, false);
   }
-  // The lighthouse, trembling.
-  x.save(); x.translate(shake * 0.3, 0);
+  // The lighthouse, and Barnacle in the lamp room, swaying on old sea legs.
   x.drawImage(ART.light, L.x, L.y);
-  drawFace(x);
+  drawParrot(x, shake);
   drawWheel(x);
   drawWorn(x, L.x + 85, L.y, 1, stillHere(), false);
-  x.restore();
   // The jib and the tray.
   ink(x, C.ink, q => { q.fillRect(L.x + 112, JIB - 3, scrX(1.4) - L.x - 112, 6); q.lineWidth = 2; q.beginPath(); q.moveTo(L.x + 118, JIB + 50); q.lineTo(L.x + 200, JIB + 2); q.stroke(); });
   ink(x, C.teal, q => q.fillRect(TRAY.x - 62, TRAY.y, 124, 7));
@@ -501,20 +505,52 @@ function drawHookBasket(x, h) {
     x.save(); x.font = '700 11px Courier Prime, monospace'; x.fillStyle = C.teal; x.textAlign = 'center'; x.fillText('full', h.x + BW / 2 + 22, h.y + 10); x.restore();
   }
 }
-// The face in the lamp room: two worried eyes that dart about, and blink.
-function drawFace(x) {
-  const cx = L.x + 85, cy = L.y + 92;
-  const calm = S.ended ? 1 : 1 - S.nerves;
-  if (blinkT < 0.12) { ink(x, C.ink, q => { q.fillRect(cx - 21, cy, 14, 2.5); q.fillRect(cx + 7, cy, 14, 2.5); }); return; }
-  const lx = S.ended ? 0 : Math.sin(look) * 3.5 * (1 - calm * 0.6), ly = S.ended ? -1 : Math.cos(look * 1.3) * 1.5;
-  for (const s of [-1, 1]) {
-    ink(x, '#ffffff', q => P(q, () => q.ellipse(cx + s * 14, cy, 9, S.ended ? 6 : 10, 0, 0, Math.PI * 2)));
-    ink(x, C.ink, q => P(q, () => q.arc(cx + s * 14 + lx, cy + ly, S.ended ? 3.4 : 2.6, 0, Math.PI * 2)));
-    // Worried brows, flat when calm.
-    ink(x, C.ink, q => { q.lineWidth = 2; q.beginPath(); q.moveTo(cx + s * 6, cy - 13 - (1 - calm) * 4); q.lineTo(cx + s * 22, cy - 14 + (1 - calm) * 2); q.stroke(); });
+// Barnacle, a retired pirate parrot, standing in the lamp room: one eye patch, one worried eye that
+// darts about and blinks, a crest that ruffles with the sway. Wears the cardigan and the tricorn.
+function drawParrot(x, shake) {
+  const calm = S.ended ? 1 : 1 - S.nerves, have = stillHere();
+  x.save(); x.translate(L.x + 85, L.y + 118); x.rotate(shake * 0.035); x.scale(1.1, 1.1);
+  // Paper under the inks, so Barnacle reads through the lamp-room glass.
+  ink(x, '#ffffff', q => { P(q, () => q.ellipse(0, -22, 13, 16, 0, 0, Math.PI * 2)); P(q, () => q.arc(0, -41, 11, 0, Math.PI * 2)); P(q, () => { q.moveTo(-6, -10); q.lineTo(6, -10); q.lineTo(10, 3); q.lineTo(-2, 3); q.closePath(); }); });
+  // Tail, then body, then wing.
+  ink(x, C.teal, q => P(q, () => { q.moveTo(-5, -10); q.lineTo(5, -10); q.lineTo(9, 2); q.lineTo(-1, 2); q.closePath(); }));
+  ink(x, C.coral, q => P(q, () => q.ellipse(0, -22, 12, 15, 0, 0, Math.PI * 2)));
+  if (have.cardigan) {
+    const cardi = q => { q.moveTo(-12, -28); q.lineTo(12, -28); q.lineTo(12, -12); q.quadraticCurveTo(0, -5, -12, -12); q.closePath(); };
+    ink(x, '#ffffff', q => P(q, () => cardi(q)));
+    ink(x, C.aqua, q => P(q, () => cardi(q)), 0.85);
+    ink(x, C.teal, q => { for (let i = 0; i < 2; i++) q.fillRect(-12, -25 + i * 7, 24, 1.6); }, 0.7);
+    ink(x, C.paper, q => { for (let i = 0; i < 2; i++) P(q, () => q.arc(0, -24 + i * 7, 1.6, 0, Math.PI * 2)); });
   }
-  if (S.ended) ink(x, C.ink, q => { q.lineWidth = 2; q.beginPath(); q.arc(cx, cy + 9, 6, 0.2, Math.PI - 0.2); q.stroke(); });
-  else ink(x, C.ink, q => { q.lineWidth = 2; q.beginPath(); q.moveTo(cx - 6, cy + 14); for (let i = 1; i <= 4; i++) q.lineTo(cx - 6 + i * 3, cy + 14 + (i % 2 ? -1.5 : 1.5)); q.stroke(); });
+  ink(x, C.teal, q => P(q, () => q.ellipse(7, -20, 5, 10, -0.25, 0, Math.PI * 2)));
+  // Feet on the lamp-room floor.
+  ink(x, C.ink, q => { q.lineWidth = 2; q.beginPath(); q.moveTo(-4, -8); q.lineTo(-5, 0); q.moveTo(4, -8); q.lineTo(5, 0); q.stroke(); });
+  // Head.
+  ink(x, C.coral, q => P(q, () => q.arc(0, -41, 10, 0, Math.PI * 2)));
+  // Crest: flat when calm, standing up when ruffled.
+  const up = S.ended ? 0.2 : 0.3 + (1 - calm) * 1.2;
+  ink(x, C.coral, q => { q.lineWidth = 2.5; q.lineCap = 'round'; q.beginPath(); for (const d of [-1, 0, 1]) { const a = -Math.PI / 2 + d * 0.45 * up; q.moveTo(d * 3, -49); q.lineTo(d * 3 + Math.cos(a) * (4 + 6 * up), -49 + Math.sin(a) * (4 + 6 * up)); } q.stroke(); });
+  if (have.hat) {
+    const tri = q => { q.moveTo(-15, -47); q.quadraticCurveTo(-6, -50, -4, -60); q.quadraticCurveTo(0, -56, 4, -60); q.quadraticCurveTo(6, -50, 15, -47); q.quadraticCurveTo(0, -51, -15, -47); q.closePath(); };
+    ink(x, '#ffffff', q => P(q, () => tri(q)));
+    ink(x, C.ink, q => P(q, () => tri(q)));
+    ink(x, '#ffffff', q => P(q, () => q.arc(0, -53, 1.6, 0, Math.PI * 2)));
+  }
+  // The eye patch, and its strap.
+  ink(x, C.ink, q => { P(q, () => q.ellipse(-4.5, -43, 3.8, 3.4, 0, 0, Math.PI * 2)); q.lineWidth = 1.2; q.beginPath(); q.moveTo(-10, -48); q.lineTo(6, -36); q.stroke(); });
+  // The good eye.
+  const lx = S.ended ? 0 : Math.sin(look) * 1.4 * (1 - calm * 0.6), ly = S.ended ? -0.5 : Math.cos(look * 1.3) * 0.8;
+  if (blinkT < 0.12 || S.ended) ink(x, C.ink, q => { q.lineWidth = 1.6; q.beginPath(); if (S.ended) q.arc(4.5, -42, 2.6, Math.PI + 0.3, -0.3); else { q.moveTo(1.5, -43); q.lineTo(7.5, -43); } q.stroke(); });
+  else {
+    ink(x, '#ffffff', q => P(q, () => q.arc(4.5, -43, 4.4, 0, Math.PI * 2)));
+    ink(x, C.ink, q => { q.lineWidth = 1; q.beginPath(); q.arc(4.5, -43, 4.4, 0, Math.PI * 2); q.stroke(); P(q, () => q.arc(4.5 + lx, -43 + ly, 2, 0, Math.PI * 2)); q.lineWidth = 1.5; q.beginPath(); q.moveTo(1, -48 - (1 - calm) * 2); q.lineTo(8, -48 + (1 - calm) * 1.5); q.stroke(); });
+  }
+  // The beak: a big peach hook, on paper so it doesn't sink into the coral.
+  const beak = q => { q.moveTo(-4, -38); q.quadraticCurveTo(3, -41, 7, -36); q.quadraticCurveTo(7, -28, 0, -26); q.quadraticCurveTo(2, -32, -4, -33); q.closePath(); };
+  ink(x, '#ffffff', q => P(q, () => beak(q)));
+  ink(x, C.peach, q => P(q, () => beak(q)));
+  ink(x, C.ink, q => { q.lineWidth = 1.4; q.beginPath(); beak(q); q.stroke(); });
+  x.restore();
 }
 // The pleating wheel, geared to the lamp clockwork: it turns as fast as the pleats.
 function drawWheel(x) {
@@ -523,18 +559,19 @@ function drawWheel(x) {
   ink(x, C.coral, q => { P(q, () => q.arc(cx, cy, 11, 0, Math.PI * 2)); });
   ink(x, C.ink, q => { q.lineWidth = 2; q.beginPath(); for (let i = 0; i < 6; i++) { const b = a + i * Math.PI / 3; q.moveTo(cx, cy); q.lineTo(cx + Math.cos(b) * 13, cy + Math.sin(b) * 13); } q.stroke(); q.fillRect(L.x + 112, cy - 1, 6, 2); });
 }
-// The things the lighthouse has (or Eastpoint has copied), drawn on the tower. m = centre x, top = sprite top.
+// The things Skerry Light has (or Eastpoint has copied), drawn on the tower. Barnacle wears the cardigan
+// and the hat; Eastpoint, having no keeper, puts its copies on the tower. m = centre x, top = sprite top.
 function drawWorn(x, m, top, s, have, copy) {
   const o = (dx, dy) => [m + dx * s, top + dy * s];
-  if (have.cardigan) {
+  if (have.cardigan && copy) {
     ink(x, '#ffffff', q => { const [a, b] = o(-38, 152), [c2, d] = o(38, 152); P(q, () => { q.moveTo(a, b); q.lineTo(c2, d); q.lineTo(m + 48 * s, top + 228 * s); q.lineTo(m - 48 * s, top + 228 * s); q.closePath(); }); });
     ink(x, C.aqua, q => { const [a, b] = o(-38, 152), [c2, d] = o(38, 152); P(q, () => { q.moveTo(a, b); q.lineTo(c2, d); q.lineTo(m + 48 * s, top + 228 * s); q.lineTo(m - 48 * s, top + 228 * s); q.closePath(); }); }, 0.75);
     ink(x, C.teal, q => { for (let i = 0; i < 4; i++) q.fillRect(m - 44 * s, top + (162 + i * 17) * s, 88 * s, 3 * s); }, 0.8);
     ink(x, C.paper, q => { for (let i = 0; i < 3; i++) P(q, () => q.arc(m, top + (172 + i * 18) * s, 2.6 * s, 0, Math.PI * 2)); });
-    // One sleeve is longer (Eastpoint's has three).
+    // Eastpoint's copy: one sleeve longer, and a third sleeve.
     ink(x, C.aqua, q => { q.fillRect(m + 38 * s, top + 152 * s, 8 * s, (copy ? 60 : 72) * s); q.fillRect(m - 46 * s, top + 152 * s, 8 * s, 52 * s); if (copy) q.fillRect(m + 30 * s, top + 214 * s, 8 * s, 30 * s); }, 0.85);
   }
-  if (have.hat) ink(x, C.coral, q => { const [a, b] = o(0, 4); q.fillRect(a - 18 * s * (copy ? 0.7 : 1), b, 36 * s * (copy ? 0.7 : 1), 4 * s); q.fillRect(a - 9 * s * (copy ? 0.7 : 1), b - 14 * s, 18 * s * (copy ? 0.7 : 1), 14 * s); });
+  if (have.hat && copy) ink(x, C.coral, q => { const [a, b] = o(0, 4); q.fillRect(a - 18 * s * (copy ? 0.7 : 1), b, 36 * s * (copy ? 0.7 : 1), 4 * s); q.fillRect(a - 9 * s * (copy ? 0.7 : 1), b - 14 * s, 18 * s * (copy ? 0.7 : 1), 14 * s); });
   if (have.badge) {
     ink(x, '#ffffff', q => { const [a, b] = o(14, 132); q.fillRect(a, b, 26 * s, 13 * s); });
     ink(x, C.coral, q => { const [a, b] = o(14, 132); q.fillRect(a, b, 26 * s, 4 * s); });
@@ -646,7 +683,7 @@ function afterDrop(r, h, was, dx) {
     for (let i = 0; i < Math.min(r.toppled, 10); i++) drops.push({ x: TRAY.x + (Math.random() - 0.5) * 60, y: TRAY.y - i * 26, vy: -60 * Math.random(), r: 0, vr: (Math.random() - 0.5) * 5 });
     gullsFly.push({ x: 820, y: 200, tx: TRAY.x, ty: SEA - 10, t: 0 });
     float(TRAY.x, TRAY.y - 120, `the stack went over (${r.lost} lost)`, C.coral, true);
-    say('INCIDENT', [`Stack of ${r.toppled} has gone over. ${r.lost} dumplings to the gulls. Form 7 filed. The lighthouse is fine. The lighthouse is not fine.`,
+    say('INCIDENT', [`Stack of ${r.toppled} has gone over. ${r.lost} dumplings to the gulls. Form 7 filed. Barnacle is fine. Barnacle is not fine.`,
       `Stack exceeded permitted lean. ${r.lost} dumplings in the sea. The gulls have sent a thank-you card.`][S.topples % 2]);
   } else if (r.landed) {
     sfx.tok(was);
@@ -667,7 +704,7 @@ function dropCrateNow() {
     baskets: 'The steamer baskets. Every one of them.',
     cardigan: 'The cardigan. Eastpoint already has one with three sleeves. Now it has two cardigans.',
     radio: 'The radio, still on the shipping forecast.',
-    chamomile: 'The chamomile. Eastpoint does not have nerves. It may develop some.',
+    chamomile: 'The chamomile. Eastpoint does not have sea legs. It may develop some.',
     gull: 'The gulls, who go on the payroll at Eastpoint at the same rate (rejected dumplings).',
     frame: 'The framed Regulation 18. Still crooked.',
     hat: 'The little hat. Eastpoint’s was smaller anyway.',
@@ -715,8 +752,10 @@ const AMBIENT = [
   ['LOG', 'A boat has followed the smell in. It always does.'],
   ['REG. 18', 'Reminder: eighteen pleats. Not seventeen. Not nineteen. Eighteen.'],
   ['LOG', 'The lamp is turning. Nobody can see it. It is turning anyway.'],
-  ['MEMO', 'Lighthouses are reminded that trembling is not a recognised form of signalling.'],
+  ['MEMO', 'Keepers are reminded that swaying is not a recognised form of signalling.'],
   ['LOG', 'Fog, thick. Dumplings, adequate.'],
+  ['LOG', 'Barnacle says this is nothing next to the Horn in ’71. Barnacle says that about most fog.'],
+  ['MEMO', 'Keepers are reminded that “Pieces of eight” is not a pleat count.'],
 ];
 function ambient() {
   logT += 0.25;
@@ -966,7 +1005,7 @@ function end(resumed) {
   S.ended = true; S.final = S.final ? { ...S.final, done: true } : null; save();
   finaleAnim = null;
   $('ending').hidden = false;
-  $('endText').textContent = `The whole kitchen went across the bay: the clockwork, the baskets${E.has(S, 'cardigan') ? ', the cardigan' : ''}${E.lvl(S, 'gull') ? ', the gulls' : ''}. Eastpoint steamed its first batch at nine. One dumpling came undone in the steamer: seventeen pleats. The skipper of the Adequate ate it anyway and said it tasted the same. Skerry Light stopped trembling, turned its lamp back on, and about ten o'clock the fog lifted.`;
+  $('endText').textContent = `The whole kitchen went across the bay: the clockwork, the baskets${E.has(S, 'cardigan') ? ', the cardigan' : ''}${E.lvl(S, 'gull') ? ', the gulls' : ''}. Eastpoint steamed its first batch at nine. One dumpling came undone in the steamer: seventeen pleats. The skipper of the Adequate ate it anyway and said it tasted the same. Barnacle stopped swaying, turned the lamp back on, and about ten o'clock the fog lifted.`;
   $('endMemo').textContent = `HARBOUR BOARD · Re: Form 18-B${E.has(S, 'form18b') ? '' : ' (not filed)'}. Regulation 18 is struck. Nobody else was counting. Dumplings may be folded however they come out.` + (S.served ? ` Season total: ${fmt(S.served)} dumplings served to ${S.delivered} boats, ${S.perfects} perfect drops. Eastpoint fed ${fmt(S.epServed)}.` : '');
   if (!resumed) {
     sfx.finale();
@@ -1001,8 +1040,8 @@ function handle(ev) {
       departing = { b: { id: d.boat.length, ...d }, stack: Array.from({ length: Math.min(6, Math.ceil(d.delivered / E.stats(S).cap)) }, () => ({ x: 0 })), t: 0 };
       float(645, SEA - 120, `+${d.pay} chits`, C.coral, true);
       say(d.kind === 'lifeboat' ? 'LIFEBOAT' : 'LOG', d.slosh ? `${d.delivered} soup dumplings to the ${d.boat}. The stack leaned; the soup sloshed. Paid half: ${d.pay} chits.` : `${d.delivered} dumplings delivered to the ${d.boat}. ${d.pay} chits, signed for. The boat turns for harbour, following its nose.`);
-    } else if (e.expired) { sfx.gone(); say('INCIDENT', `The ${e.expired.boat} sailed before its stack was ready.${S.ep ? ' Eastpoint fed it instead.' : ''} Form 7 filed. Nerves noted.`); }
-    else if (e.gone) { sfx.gone(); if (Math.random() < 0.6) say(S.ep ? 'EASTPOINT' : 'LOG', S.ep ? `The ${e.gone.boat} got tired of waiting. Eastpoint fed it. Eastpoint would like that noted.` : `The ${e.gone.boat} drifted off into the fog, unfed. The lighthouse feels awful about it.`); }
+    } else if (e.expired) { sfx.gone(); say('INCIDENT', `The ${e.expired.boat} sailed before its stack was ready.${S.ep ? ' Eastpoint fed it instead.' : ''} Form 7 filed. Sea legs noted.`); }
+    else if (e.gone) { sfx.gone(); if (Math.random() < 0.6) say(S.ep ? 'EASTPOINT' : 'LOG', S.ep ? `The ${e.gone.boat} got tired of waiting. Eastpoint fed it. Eastpoint would like that noted.` : `The ${e.gone.boat} drifted off into the fog, unfed. Barnacle takes it personally.`); }
     else if (e.slip) sfx.slip();
     else if (e.eastpoint) {
       sfx.eastpoint();
@@ -1061,8 +1100,8 @@ if (S.ended) end(true);
 else if (S.final) {
   if (S.final.done) startHandoverAnim();
   say('FORM 99', 'Welcome back. The handover is in progress: keep stacking the crates for Eastpoint’s tender.');
-} else if (!S.t) say('LOG', 'Fog season. The beam can’t reach the boats, but the smell of dumplings can. The basket is filling: tap to drop it on the stack.');
-else say('LOG', 'Welcome back to Skerry Light. The fog is still in. The boats are still hungry.');
+} else if (!S.t) say('LOG', 'Fog season. The beam can’t reach the boats, but the smell of dumplings can, and Barnacle has not missed a ship in forty years. The basket is filling: tap to drop it on the stack.');
+else say('LOG', 'Welcome back to Skerry Light. The fog is still in. The boats are still hungry. Barnacle has kept the kettle warm.');
 hud(); renderBoard(); renderShop();
 document.fonts?.ready.then(layout);
 requestAnimationFrame(frame);

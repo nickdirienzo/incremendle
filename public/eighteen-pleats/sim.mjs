@@ -2,7 +2,7 @@
 // A reasonable player: takes the best-paying boat it can finish in time, drops a basket once it's
 // full (or holds what the order still needs), waits for the swing to come over the stack, and aims
 // a little against the lean. Taps no faster than every --tap seconds. Buys the cheapest affordable
-// thing. Their aim gets worse with a fast swing and a trembling lighthouse.
+// thing. Their aim gets worse with a fast swing and a swaying parrot.
 import * as E from './economy.mjs';
 
 const arg = (k, d) => { const a = process.argv.find(x => x.startsWith(`--${k}=`)); return a ? Number(a.split('=')[1]) : d; };

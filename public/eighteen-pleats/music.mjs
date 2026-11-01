@@ -13,7 +13,7 @@
 import { createParts } from './song.mjs';
 
 export const phases = {
-  fog:       { name: 'Fog',       bpm: 92 }, // the lighthouse alone: sparse, the melody hesitant
+  fog:       { name: 'Fog',       bpm: 92 }, // Barnacle alone: sparse, the melody hesitant
   eastpoint: { name: 'Eastpoint', bpm: 92 }, // the rival light: a second kalimba copies the lead a bar late
   thick:     { name: 'Thick',     bpm: 97 }, // the busy final third: fullest, shaker, brighter
   clear:     { name: 'Clear',     bpm: 78 }, // the fog lifts: slower, warm, resolves to D major

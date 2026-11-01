@@ -1,6 +1,6 @@
 // Eighteen Pleats: the rules. Shared by index.html and the pacing sim (sim.mjs).
 //
-// Skerry Light folds dumplings with its lamp clockwork (one turn, one pleat; Regulation 18 wants
+// Barnacle, a retired pirate parrot keeping Skerry Light, folds dumplings with the lamp clockwork (one turn, one pleat; Regulation 18 wants
 // eighteen per dumpling) into a steamer basket swinging on the winch. Tap to drop the basket onto
 // the stack. Boats wait in the fog as contract slips; accept one and the stack is lowered to its
 // deck as soon as it holds enough dumplings. Eastpoint, across the bay, copies everything.
@@ -39,29 +39,29 @@ export const UPGRADES = [
   { id: 'form18b', name: 'Form 18-B', price: 12, silly: true, need: S => S.served >= 12,
     desc: 'Request for Clarification of Regulation 18. Submitted to the Harbour Board. Does nothing yet.', joke: 'Form 18-B submitted. Expected response: end of season. Please do not resubmit.' },
   { id: 'chamomile', name: 'Chamomile', price: 22, need: S => S.served >= 15,
-    desc: 'A thermos of chamomile on the gallery. Nerves settle twice as fast.', joke: 'A lighthouse cannot drink tea. It is the thought that counts.' },
+    desc: 'A thermos of chamomile on the gallery. Nerves settle twice as fast.', joke: 'Barnacle takes it with three sugars and calls it grog. It is not grog.' },
   { id: 'horn', name: 'Fog horn', price: 30, need: S => S.served >= 22,
-    desc: 'Room for a third boat on the board, and boats find you sooner.', joke: 'It goes BWAAARP. The lighthouse apologizes each time.' },
+    desc: 'Room for a third boat on the board, and boats find you sooner.', joke: 'It goes BWAAARP. Barnacle answers it each time: BWAAARP.' },
   { id: 'dowel', name: 'Bamboo dowel', price: 36, need: S => S.served >= 30,
     desc: 'A pole down the middle of the stack. It can lean much further before it goes over.', joke: 'Approved under Form 31 (Structural Support, Edible-Adjacent).' },
   { id: 'cardigan', name: 'Cardigan', price: 42, need: S => S.served >= 40,
-    desc: 'A large knitted cardigan for the tower. Trembling down by a third.', joke: 'Hand-knitted by the Board’s Welfare Committee. One sleeve is longer. It helps anyway.' },
+    desc: 'A small knitted cardigan for Barnacle. Sway down by a third.', joke: 'Hand-knitted by the Board’s Welfare Committee, who were told “keeper” and pictured someone taller. One sleeve is longer. It helps anyway.' },
   { id: 'gull', name: 'Gull apprentice', max: 10, price: l => Math.round(24 * Math.pow(1.18, l)), need: S => S.served >= 55,
     desc: 'A gull on a stool at the pleating wheel: +0.3 pleats per second, even while you look away.', joke: 'Paid in rejected dumplings. Has been eating the rejected dumplings anyway.' },
   { id: 'badge', name: 'Name badge', price: 20, silly: true, need: S => S.ep,
-    desc: 'HELLO MY NAME IS SKERRY. So the boats know which lighthouse is which.', joke: 'Pinned to the gallery rail. Does nothing.' },
+    desc: 'HELLO MY NAME IS SKERRY. So the boats know which lighthouse is which. (Barnacle wanted it to say BARNACLE.)', joke: 'Pinned to the gallery rail. Does nothing.' },
   { id: 'latch', name: 'Drop latch', max: 3, price: l => [45, 100, 180][l], need: S => S.served >= 80,
     desc: 'Clockwork drops a full basket dead centre on its own, every few seconds. Faster each level.', joke: 'Form 41: Automatic Release of Baskets (Supervised). Nobody is supervising.' },
   { id: 'winch', name: 'Steady winch', price: 60, need: S => S.served >= 100,
     desc: 'Oiled and weighted: the basket swings a fifth slower.', joke: 'Three drops of oil, as per the manual. Four would be irresponsible.' },
   { id: 'radio', name: 'Shipping forecast', price: 75, need: S => S.served >= 130,
-    desc: 'A little radio reading the shipping forecast. Trembling down by a fifth, and missed boats sting half as much.', joke: '"Skerry: fog, thick. Visibility: poor. Dumplings: adequate." Soothing.' },
+    desc: 'A little radio reading the shipping forecast. Sway down by a fifth, and missed boats sting half as much.', joke: '"Skerry: fog, thick. Visibility: poor. Dumplings: adequate." Barnacle mouths along.' },
   { id: 'prawn', name: 'Prawn licence', price: 65, need: S => S.served >= 100,
     desc: 'Form 22. Boats can order prawn dumplings, which pay half again.', joke: 'The prawns were consulted and did not object in writing.' },
   { id: 'tray', name: 'Wide tray', price: 80, need: S => S.served >= 180,
     desc: 'A wider landing tray: catches baskets further off-centre, and more drops count as perfect.', joke: 'Previously a door. The lamp room now has no door. This is fine.' },
   { id: 'hat', name: 'Little hat', price: 48, silly: true, need: S => S.served >= 240,
-    desc: 'A small hat for the lamp. Does nothing.', joke: 'It is a very small hat on a very large lamp. Eastpoint will want one.' },
+    desc: 'A small tricorn for Barnacle. Does nothing.', joke: 'Barnacle retired the old one with the rest of the job. This one is from the gift shop. Eastpoint will want one.' },
   { id: 'soup', name: 'Soup permit', price: 115, need: S => S.served >= 230,
     desc: 'Form 18-S: soup dumplings. Big orders that pay triple, but the stack must stand nearly straight or the soup sloshes and the pay is halved.', joke: 'Soup dumplings also have eighteen pleats. Regulation 18 was very clear about that.' },
   { id: 'fruit', name: 'Fruit basket', price: 90, silly: true, need: S => S.served >= 380,
@@ -119,13 +119,13 @@ export function stats(S) {
 }
 export const phase = S => S.ended || S.final ? 'clear' : !S.ep ? 'fog' : S.served >= T.thickAt ? 'thick' : 'eastpoint';
 
-// The swing and the trembling are functions of time so the game and the sim agree.
+// The swing and Barnacle's sway are functions of time so the game and the sim agree.
 export function shake(S, t) {
   const a = (0.025 + 0.2 * S.nerves) * stats(S).tremble;
   return a * (Math.sin(t * 13.1) * 0.5 + Math.sin(t * 7.7 + 1) * 0.35 + Math.sin(t * 21.3 + 2) * 0.15);
 }
 export function hookX(S, t = S.t) { return T.amp * Math.sin(S.sw * Math.PI * 2) + shake(S, t); }
-// The stack sways with its height and the lighthouse's nerves.
+// The stack sways with its height and Barnacle's sea legs.
 export function sway(S, t = S.t) { return Math.min(1, S.stack.length / 10) * shake(S, t * 0.37 + 5) * 1.6; }
 export const topX = S => (S.stack.length ? S.stack[S.stack.length - 1].x : 0);
 export const com = S => (S.stack.length ? S.stack.reduce((a, b) => a + b.x, 0) / S.stack.length : 0);
