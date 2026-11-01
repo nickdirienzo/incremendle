@@ -608,6 +608,7 @@ function flyTo(kind, target, note, perfect) {
 }
 function pop(x, y, text, color = C.orange) { fx.push({ kind: 'text', x, y, text, color, t: 0, life: 1.4 }); }
 let pendingTune = null;
+let rackHinted = false;      // explain the spares rack once, the first time a sheet-1 bell misses
 function handle(out, ctx = {}) {
   for (const ev of out) {
     switch (ev.type) {
@@ -629,6 +630,11 @@ function handle(out, ctx = {}) {
       }
       case 'rack': flyTo(E.isClonk(ev.note) ? 'clonk' : 'bell', RACK(ev.note), ev.note);
         if (ctx.pitch != null) { (E.isClonk(ev.note) ? sfx.clonk : sfx.ting)(ev.note); sfx.rack(); pop(RACK(ev.note)[0], 158, 'spare ' + NOTE[ev.note]); }
+        if (S.plan === 0 && ctx.pitch != null && !rackHinted) {
+          rackHinted = true;
+          const want = E.PLANS[0].notes.filter((n, i) => !S.slots[i]).map(n => NOTE[n]).join(' and ');
+          say(`That one rang ${NOTE[ev.note]}, so it goes on the spares rack for a later sheet. The ward door wants ${want}: let go when the orange line on the gauge sits on ${want.includes(' and ') ? 'one of those' : 'it'}.${S.raw < 1 ? ' Out of bells? The gift shop sells them, top of the column.' : ''}`, 10);
+        }
         break;
       case 'repair': {
         if (!ev.fromRack) flyTo(E.isClonk(ev.note) ? 'clonk' : 'bell', tabPos(ev.plan), ev.note);
@@ -964,7 +970,8 @@ function hud() {
     $('meterFill').style.width = `${(S.installed / E.TOTAL_BELLS) * 100}%`;
   }
   // Column actions
-  const bellShow = !S.ended && S.plan >= 1 && S.plan < E.PLANS.length;
+  // Sheet 1 starts with two free bells; if both land on the wrong notes, the gift shop opens early.
+  const bellShow = !S.ended && (S.plan >= 1 || S.raw < 1) && S.plan < E.PLANS.length;
   $('bellBtn').hidden = !bellShow;
   if (bellShow) {
     const st = E.stats(S), can = E.have(S, E.bellCur(S)) >= st.price;
@@ -1194,11 +1201,16 @@ function drawBench(done) {
     g.textAlign = 'left';
   } else if (!done && S.raw < 1) {
     g.fillStyle = C.peach; g.font = `13px ${HAND}`; g.textAlign = 'center';
-    g.fillText(S.plan === 0 || S.plan >= E.PLANS.length ? '' : S.review ? 'no bells: ask a porter, or Scrounge' : 'no bells: buy one (3p)', 452, 252); g.textAlign = 'left';
+    g.fillText(S.plan >= E.PLANS.length ? '' : S.review ? 'no bells: ask a porter, or Scrounge' : 'no bells: buy one (3p)', 452, 252); g.textAlign = 'left';
   }
-  if (S.t < 25 && S.plan === 0 && !pull && S.raw > 0) {
+  // Sheet 1 coaching: how to pull until a bell lands on the sheet, and when to let go whenever you pull.
+  if (S.plan === 0 && !done && S.matron <= 0 && S.raw > 0) {
+    const need = P.notes.filter((n, i) => !S.slots[i]).map(n => NOTE[n]).join(' or ');
+    const r = pull && p != null && p >= 0 ? E.judge(S, p) : null, on = r && r.kind === 'note' && openNow[r.note] > 0;
     g.fillStyle = C.orange; g.font = `14px ${HAND}`; g.textAlign = 'center';
-    g.fillText('drag back from the bell ↓', fx0, fy0 - 26); g.textAlign = 'left';
+    if (pull) g.fillText(on ? `${NOTE[r.note]}! let go now` : `let go on ${need} (the orange lines)`, fx0 - 10, 236);
+    else if (!S.slots.some(Boolean)) g.fillText('drag back from the bell ↓', fx0, fy0 - 26);
+    g.textAlign = 'left';
   }
 }
 function drawTabs(done) {
@@ -1273,7 +1285,7 @@ else {
     const hrs = away / 3600, t = hrs >= 1 ? `${hrs.toFixed(1)} hours` : `${Math.round(away / 60)} minutes`;
     const bits = [got.pence > 0 && `${got.pence}p`, got.favours > 0 && `${got.favours} favours`, got.installed > 0 && `${got.installed} bells fitted`, got.raw > 0 && `${got.raw} bells to tune`, got.pranks > 0 && `${got.pranks} prank${got.pranks > 1 ? 's' : ''} finished`].filter(Boolean);
     say(`You were away ${t}${away > E.OFFLINE_CAP ? ' (Hoo only counts the first three)' : ''}. The ward slept through. Hoo kept to her clipboard${S.review ? ' and the night staff kept at it' : ''}: ${bits.join(', ')}.`);
-  } else say(S.t > 5 ? 'Bramble Ward, still night. Hoo straightens her cap.' : 'Bramble Ward, 2am. Nurse Hoo has two bells and a plan. Drag back from the bell on the bench, listen to it ring higher, and let go on a glowing line.');
+  } else say(S.t > 5 ? 'Bramble Ward, still night. Hoo straightens her cap.' : 'Bramble Ward, 2am. Nurse Hoo has two bells and a plan. The ward door needs a C and an E. Drag back from the bell on the bench: the further you pull, the higher it rings. Let go when it’s on an orange line.');
 }
 if (DEBUG) Object.assign(window.__game, { hud, renderShop });
 hud(); renderShop(); renderDesk();
