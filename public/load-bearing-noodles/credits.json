@@ -1,0 +1,189 @@
+{
+  "libs": [
+    {
+      "name": "@strudel/web",
+      "version": "1.3.0",
+      "license": "AGPL-3.0-or-later",
+      "what": "pattern music: synths, samples, Tidal mini-notation",
+      "home": "https://strudel.cc",
+      "support": "https://opencollective.com/tidalcycles"
+    },
+    {
+      "name": "@strudel/soundfonts",
+      "version": "1.3.0",
+      "license": "AGPL-3.0-or-later",
+      "what": "General MIDI instruments for Strudel (guitars, strings, brass, winds…)",
+      "home": "https://strudel.cc",
+      "support": "https://opencollective.com/tidalcycles"
+    }
+  ],
+  "art": [
+    {
+      "set": "Material Design Icons",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+      "home": "https://github.com/Templarian/MaterialDesign",
+      "support": "https://github.com/Templarian/MaterialDesign",
+      "icons": [
+        {
+          "icon": "mdi:water",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/water/"
+        },
+        {
+          "icon": "mdi:bird",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/bird/"
+        },
+        {
+          "icon": "mdi:fire",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/fire/"
+        },
+        {
+          "icon": "mdi:stairs",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/stairs/"
+        },
+        {
+          "icon": "mdi:bathtub",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/bathtub/"
+        },
+        {
+          "icon": "mdi:radiator",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/radiator/"
+        },
+        {
+          "icon": "mdi:cat",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/cat/"
+        },
+        {
+          "icon": "mdi:noodles",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/noodles/"
+        },
+        {
+          "icon": "mdi:desk",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/desk/"
+        },
+        {
+          "icon": "mdi:salt",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/salt/"
+        },
+        {
+          "icon": "mdi:washing-machine",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/washing-machine/"
+        },
+        {
+          "icon": "mdi:sprout",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/sprout/"
+        },
+        {
+          "icon": "mdi:pipe",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/pipe/"
+        },
+        {
+          "icon": "mdi:door-open",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/door-open/"
+        },
+        {
+          "icon": "mdi:bed",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/bed/"
+        },
+        {
+          "icon": "mdi:school",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/school/"
+        },
+        {
+          "icon": "mdi:shoe-heel",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/shoe-heel/"
+        },
+        {
+          "icon": "mdi:water-boiler",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/water-boiler/"
+        },
+        {
+          "icon": "mdi:window-closed-variant",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/window-closed-variant/"
+        },
+        {
+          "icon": "mdi:heart",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/heart/"
+        },
+        {
+          "icon": "mdi:silverware-fork-knife",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/silverware-fork-knife/"
+        }
+      ]
+    },
+    {
+      "set": "Tabler Icons",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/tabler/tabler-icons/blob/master/LICENSE",
+      "home": "https://github.com/tabler/tabler-icons",
+      "support": "https://github.com/tabler/tabler-icons",
+      "icons": [
+        {
+          "icon": "tabler:sun",
+          "author": "Paweł Kuna",
+          "source": "https://icon-sets.iconify.design/tabler/sun/"
+        }
+      ]
+    },
+    {
+      "set": "Game Icons",
+      "license": "CC-BY-3.0",
+      "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+      "home": "https://github.com/game-icons/icons",
+      "support": "https://game-icons.net",
+      "icons": [
+        {
+          "icon": "game-icons:accordion",
+          "author": "Caro Asercion",
+          "source": "https://game-icons.net/1x1/caro-asercion/accordion.html"
+        }
+      ]
+    }
+  ],
+  "sounds": [
+    {
+      "name": "WebAudioFont (General MIDI soundfonts)",
+      "license": "MIT",
+      "home": "https://github.com/surikov/webaudiofontdata",
+      "author": "Sergey Surikov, from free SoundFont collections"
+    }
+  ],
+  "fonts": [
+    {
+      "name": "IM Fell English",
+      "license": "OFL-1.1",
+      "home": "https://fonts.google.com/specimen/IM+Fell+English"
+    },
+    {
+      "name": "IM Fell English SC",
+      "license": "OFL-1.1",
+      "home": "https://fonts.google.com/specimen/IM+Fell+English+SC"
+    }
+  ],
+  "palette": {
+    "name": "Rustic GB",
+    "author": "Kerrie Lake",
+    "home": "https://lospec.com/palette-list/rustic-gb"
+  }
+}

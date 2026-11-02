@@ -339,5 +339,45 @@
     "tone": "deadpan bureaucratic",
     "context": "none",
     "palette": "curiosities"
+  },
+  {
+    "n": 12,
+    "slug": "load-bearing-noodles",
+    "date": "2026-11-03",
+    "title": "Load-Bearing Noodles",
+    "tagline": "An anxious monstera untangles forty years of noodles from the walls of her building, room by room, while the landlord salts the walls and the neighbours gossip.",
+    "emoji": "🌿🍜",
+    "scale": "absurd",
+    "minutes": "90–150",
+    "seed": 3187176492,
+    "subject": "an anxious houseplant",
+    "verb": "untangling",
+    "object": "noodles",
+    "interaction": "hold-to-charge",
+    "arc": {
+      "drive": "comfort",
+      "obstacle": "a landlord",
+      "turn": "it all collapses beautifully",
+      "initial": "M"
+    },
+    "length": "short (1–3 hours)",
+    "structure": [
+      "a second, parallel game that opens midway",
+      "a map you explore and reveal"
+    ],
+    "twist": "buildings boost each other (synergies)",
+    "ending": "an epilogue that keeps playing itself as the credits roll",
+    "look": "woodcut",
+    "music": {
+      "style": "baroque harpsichord",
+      "scale": "in-sen"
+    },
+    "tone": "breathless gossip",
+    "context": {
+      "kind": "calendar",
+      "nod": "a holiday or festival near the release date",
+      "topic": "Culture Day (Japan, 3 November) and school culture festivals"
+    },
+    "palette": "rustic-gb"
   }
 ]

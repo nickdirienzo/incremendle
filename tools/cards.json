@@ -823,5 +823,6 @@
   "perfects": 30,
   "bestStack": 6,
   "quotaMet": false
- }
+ },
+  "load-bearing-noodles": {"t": 2700, "noodles": 420000000.0, "dirt": 118, "total": 2100000000.0, "dirtTotal": 420, "lv": [0, 5, 3, 0, 0, 12, 12, 12, 12, 0, 12, 14, 12, 12, 0, 12, 12, 12, 12, 0, 12, 12, 12, 0, 0, 0, 0, 0, 0, 0], "salted": [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1], "saltCleared": 2, "up": {"hairs": 1, "grip": 1, "worry": 1, "damp": 1, "slurp": 1, "warm": 1, "yank": 1, "lean": 1, "natural": 1}, "seen": ["hairs", "grip", "worry", "damp", "slurp", "warm", "yank", "flyer", "light", "aldente", "lean", "natural", "exhale", "partywall"], "tugs": 420, "listens": 9, "caught": 1, "vine": true, "speaker": 5, "news": 4, "shopTab": "n", "lastSeen": 0}
 }

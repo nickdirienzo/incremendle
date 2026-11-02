@@ -1,0 +1,1419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Load-Bearing Noodles · Incremendle</title>
+<meta name="description" content="An anxious houseplant untangles forty years of noodles from the walls of her building, one room at a time, while the landlord salts the walls and the neighbours gossip. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Load-Bearing Noodles">
+<meta property="og:description" content="An anxious monstera untangles forty years of noodles from the walls of her building, room by room, while the landlord salts the walls and the neighbours gossip.">
+<meta property="og:url" content="https://incremendle.com/load-bearing-noodles/">
+<meta property="og:image" content="https://incremendle.com/load-bearing-noodles/og.png?v=26e4b778">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Load-Bearing Noodles: An anxious monstera untangles forty years of noodles from the walls of her building, room by room, while the landlord salts the walls and the neighbours gossip.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/im-fell-english/font.css">
+<link rel="stylesheet" href="/shared/fonts/im-fell-english-sc/font.css">
+<style>
+  /* Rustic GB: #2c2137 #764462 #a96868 #edb4a1. A two-block woodcut: plum key block, rose and mauve tint blocks, peach paper. */
+  :root {
+    --plum: #2c2137; --mauve: #764462; --rose: #a96868; --peach: #edb4a1;
+    --bg: var(--peach); --ink: var(--plum);
+    --fell: 'IM Fell English', Georgia, serif; --sc: 'IM Fell English SC', 'IM Fell English', Georgia, serif;
+    color-scheme: light;
+  }
+  html, body { background: var(--bg); color: var(--ink); }
+  /* Keep this: any display rule (flex, grid) would otherwise override the hidden attribute. */
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 17px/1.35 var(--fell);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(14px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    /* Paper: faint gouge marks, like the grain of the block printing through. */
+    background-image:
+      repeating-linear-gradient(97deg, #2c213708 0 1px, transparent 1px 7px),
+      repeating-linear-gradient(3deg, #76446206 0 2px, transparent 2px 13px);
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; margin: 2px 0 8px; }
+  header h1 { font: 400 clamp(28px, 5vw, 42px)/1 var(--sc); margin: 0; color: var(--plum); letter-spacing: .5px; }
+  header p { margin: 0; color: var(--mauve); font-size: 16px; font-style: italic; }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 20px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } }
+  /* A printed frame: a heavy key-block line with a thin rule inside. */
+  .frame { position: relative; border: 3px solid var(--plum); box-shadow: inset 0 0 0 2px var(--peach), inset 0 0 0 3.5px var(--plum); background: var(--peach); }
+  .stagebox { position: relative; max-width: min(100%, calc(64vh * 820 / 500)); padding: 6px; }
+  .stagebox.tall { max-width: 100%; }
+  .stage { position: relative; }
+  canvas#stage { display: block; width: 100%; height: auto; touch-action: none; cursor: grab; -webkit-user-select: none; user-select: none; }
+  canvas#stage:focus-visible { outline: 2px dashed var(--mauve); outline-offset: 3px; }
+  #rooms { position: absolute; inset: 0; pointer-events: none; }
+  .room { position: absolute; pointer-events: auto; background: transparent; border: 0; padding: 0; margin: 0; cursor: pointer; border-radius: 1px; -webkit-tap-highlight-color: transparent; }
+  .room[aria-disabled="true"] { cursor: help; }
+  .room:focus-visible { outline: 2px dashed var(--rose); outline-offset: -3px; }
+  .room.hot { box-shadow: inset 0 0 0 2px var(--rose); }
+  .stats { display: flex; flex-wrap: wrap; gap: 2px 18px; margin: 8px 2px 0; font-size: 17px; color: var(--mauve); }
+  .stats b { color: var(--plum); font-weight: 400; font-family: var(--sc); font-size: 19px; }
+  .stats small { font-size: 14px; color: var(--rose); }
+  .stats .tipped { cursor: help; }
+  .stats .tipped:focus-visible { outline: 2px dashed var(--mauve); outline-offset: 2px; }
+  .meter { margin: 5px 2px 0; }
+  .meter .label { display: flex; justify-content: space-between; gap: 10px; font-size: 16px; color: var(--mauve); }
+  .meter .label b { color: var(--plum); font-weight: 400; font-family: var(--sc); }
+  .bar { position: relative; height: 11px; border: 2px solid var(--plum); overflow: hidden; background: var(--peach); }
+  .bar i { position: absolute; inset: 0 auto 0 0; width: 0; background: repeating-linear-gradient(120deg, var(--plum) 0 2px, var(--mauve) 2px 5px); transition: width .5s; }
+  .log { margin: 8px 2px 0; min-height: 2.8em; font-size: 17px; font-style: italic; color: var(--plum); }
+  .log.fresh { animation: fresh 1.1s ease-out; }
+  @keyframes fresh { from { color: var(--rose); } }
+  /* The column stays in view and scrolls on its own, so nothing on it is ever below the fold. */
+  aside { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; overscroll-behavior: contain;
+          padding: 8px 8px 8px; scrollbar-width: thin; scrollbar-color: var(--mauve) transparent; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  aside h2 { font: 400 23px var(--sc); margin: 2px 0 6px; color: var(--plum); }
+  #afford { font: 15px var(--fell); color: var(--rose); font-style: italic; }
+  .tabs { display: flex; gap: 6px; margin: 0 0 8px; }
+  .tabs button { font: 17px var(--sc); color: var(--mauve); background: none; border: 0; border-bottom: 3px solid transparent; padding: 1px 6px; cursor: pointer; }
+  .tabs button[aria-selected="true"] { color: var(--plum); border-bottom-color: var(--plum); }
+  .tabs button small { font: 13px var(--fell); color: var(--rose); }
+  .tabs button.fresh::after { content: " ●"; color: var(--rose); font-size: 11px; vertical-align: middle; }
+  .tabs button:focus-visible { outline: 2px dashed var(--mauve); }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  @media (max-width: 760px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  /* Two to a row, name over price, cut like a little block print: plum when you can afford it. */
+  .up {
+    position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 16px/1.2 var(--fell); color: var(--plum);
+    background: var(--peach); border: 2px solid var(--plum); padding: 5px 9px 4px; cursor: pointer;
+  }
+  .up b { font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font: italic 14px var(--fell); color: var(--mauve); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { background: var(--plum); color: var(--peach); box-shadow: 3px 3px 0 var(--rose); }
+  .up.can em { color: var(--peach); }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up[aria-disabled="true"]:not(.can) { opacity: .62; }
+  .up.odd { border-style: dashed; }
+  .up .tag { position: absolute; top: -9px; right: 7px; font: 13px var(--sc); padding: 0 5px; background: var(--rose); color: var(--peach); font-style: normal; }
+  .up.new { animation: pulse 1.6s ease-in-out 4; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 3px var(--rose); } }
+  .up:focus-visible { outline: 2px dashed var(--mauve); outline-offset: 2px; }
+  .none { font-style: italic; color: var(--mauve); font-size: 15px; margin: 2px 0 0; grid-column: 1 / -1; }
+  #tip {
+    position: fixed; z-index: 50; width: 250px; padding: 9px 12px 10px; pointer-events: none; font: 16px/1.32 var(--fell); color: var(--peach);
+    background: var(--plum); box-shadow: 4px 4px 0 var(--rose);
+    background-image: repeating-linear-gradient(100deg, #edb4a10d 0 1px, transparent 1px 6px);
+  }
+  #tip b { display: block; font: 400 19px var(--sc); color: var(--peach); border-bottom: 2px solid var(--rose); margin-bottom: 4px; }
+  #tip span { white-space: pre-line; }
+  #tip small { display: block; white-space: pre-line; margin-top: 6px; font: 15px var(--fell); color: #edb4a1d0; }
+  #tip i { display: block; margin-top: 6px; font-size: 15px; color: #edb4a1c0; border-top: 1.5px dashed #a96868; padding-top: 5px; }
+  #tip.inline { position: static; width: auto; margin-top: 10px; }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 17px var(--sc); color: var(--mauve); cursor: pointer; list-style: none;
+                    padding: 3px 9px; border: 2px dashed var(--mauve); }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: "\25B8"; color: var(--rose); transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 2px dashed var(--mauve); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .bought { max-width: 100%; font: 14px/1.2 var(--fell); color: var(--plum); background: var(--peach); border: 1.5px solid var(--mauve); padding: 3px 8px;
+            cursor: help; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { border-style: dashed; }
+  .bought:hover, .bought.on { background: var(--plum); color: var(--peach); }
+  .bought:focus-visible { outline: 2px dashed var(--mauve); outline-offset: 2px; }
+  #ending { margin: 24px auto 10px; max-width: 700px; text-align: center; padding: 22px 26px; }
+  #ending h2 { font: 400 38px/1.1 var(--sc); margin: 0 0 10px; color: var(--plum); }
+  #ending p { margin: 9px 0; }
+  #ending .stamp { display: inline-block; margin: 6px 0 12px; padding: 5px 14px; border: 3px double var(--rose); color: var(--rose); font: 17px var(--sc); transform: rotate(-2deg); letter-spacing: 1px; }
+  .btn { font: 19px var(--sc); color: var(--peach); background: var(--plum); border: 0; padding: 8px 16px; cursor: pointer; box-shadow: 3px 3px 0 var(--rose); }
+  .btn:focus-visible { outline: 2px dashed var(--mauve); outline-offset: 2px; }
+  #shareBtn, #againBtn { margin: 4px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .log.fresh { animation: none; } .bar i, #bought summary::before { transition: none; } }
+</style>
+<!-- Libraries from /shared/lib/libs.json, by version. List only what this game imports: the credits tool reads these.
+     Strudel's soundfonts import @strudel/core and @strudel/webaudio, which are both inside the @strudel/web bundle. -->
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/soundfonts": "/shared/lib/@strudel/soundfonts@1.3.0/index.mjs"
+} }
+</script>
+<!-- Shared site runtime: top bar, credits, share card, streaks. data-day is this game's "n" from games.json (an internal id, never shown). -->
+<script src="/shared/daily.js" data-day="12" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Load-Bearing Noodles</h1>
+    <p>Hold the knot to tug a strand loose. Let go to pull.</p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="stagebox frame" id="stagebox">
+        <div class="stage">
+          <canvas id="stage" width="820" height="500" tabindex="0" aria-label="A woodcut of Marrow Court cut away like a doll's house, its walls packed with tangled noodles. On the left, Mona the monstera in her pot, a knot of noodles on the wall behind her, and the party wall where the neighbours gossip. Hold the knot to tug noodles loose (Space works too); hold the party wall to listen (L)."></canvas>
+          <div id="rooms"></div>
+        </div>
+      </div>
+      <div class="stats">
+        <span id="noodBox" class="tipped" tabindex="0" aria-describedby="tip">🍜 <b id="nood">0</b> noodles <small id="noodRate"></small></span>
+        <span id="dirtBox" class="tipped" tabindex="0" aria-describedby="tip" hidden>🤫 <b id="dirt">0</b> dirt <small id="dirtRate"></small></span>
+        <span>🌿 Rooms <b id="roomsN">1</b><small id="roomsOf"></small></span>
+      </div>
+      <div class="meter">
+        <div class="label"><span>Mona’s comfort · <b id="comfortLabel">root-bound</b></span><span id="comfortVal">0%</span></div>
+        <div class="bar"><i id="comfortFill"></i></div>
+      </div>
+      <div class="log" id="log" aria-live="polite"></div>
+    </main>
+    <aside id="side">
+      <h2 id="shopHead">Upgrades <span id="afford"></span></h2>
+      <div class="tabs" id="tabs" role="tablist" hidden>
+        <button type="button" role="tab" id="tabN" aria-selected="true">Noodles <small id="tabNc"></small></button>
+        <button type="button" role="tab" id="tabD" aria-selected="false">Dirt <small id="tabDc"></small></button>
+      </div>
+      <div id="shop"></div>
+      <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" class="frame" hidden>
+    <h2>It all came down, beautifully.</h2>
+    <div class="stamp">MARROW COURT · LOAD-BEARING NO MORE</div>
+    <p id="endText"></p>
+    <p id="endStats"></p>
+    <button class="btn" id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale, midiToHz } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const DEBUG = location.search.includes('debug');
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:12:save';
+let S = E.newState();
+try { const raw = localStorage.getItem(KEY); if (raw) S = E.load(JSON.parse(raw)); } catch (e) {}
+const save = () => { S.lastSeen = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const C = { plum: '#2c2137', mauve: '#764462', rose: '#a96868', peach: '#edb4a1' };
+const FELL = "'IM Fell English', Georgia, serif", SC = "'IM Fell English SC', Georgia, serif";
+const fmt = E.fmt;
+
+// ---------- Sound ----------
+// Everything on D in-sen (D Eb G A C), the soundtrack's scale.
+const A = createAudio({ sfxTrim: 1, musicTrim: 12.5 });
+const N = scale('in-sen', 62);
+const sfx = {
+  // The strand stretching: a rubbery step up the scale as the charge fills.
+  stretch(c = 0) { A.tone({ type: 'triangle', freq: N(Math.round(c * 7)), dur: 0.06, vol: 0.06, cutoff: 2200 }); },
+  // A strand comes free: a plucked pair, higher for a fuller tug.
+  pop(c = 1) {
+    const s = Math.round(c * 5);
+    A.tone({ type: 'pluck', freq: N(s + 2), dur: 0.12, vol: 0.16 });
+    A.tone({ type: 'pluck', freq: N(s + 5), dur: 0.16, vol: 0.11, at: A.now + 0.05 });
+  },
+  full() { A.tone({ type: 'bell', freq: N(10), dur: 0.12, vol: 0.05 }); },
+  grow(l = 1) { A.tone({ type: 'pluck', freq: N(2 + (l % 8)), dur: 0.1, vol: 0.14 }); A.tone({ type: 'keys', freq: N(7 + (l % 5)), dur: 0.1, vol: 0.06, at: A.now + 0.04 }); },
+  // A new room: the root breaks through and the room appears.
+  reach() { [0, 2, 4, 5].forEach((d, i) => A.tone({ type: 'pluck', freq: N(d + 3), dur: 0.12, vol: 0.13, at: A.now + i * 0.07 })); A.tone({ type: 'bell', freq: N(10), dur: 0.4, vol: 0.06, at: A.now + 0.3 }); },
+  buy() { [0, 2, 4].forEach((d, i) => A.tone({ type: 'keys', freq: N(d + 5), dur: 0.14, vol: 0.13, at: A.now + i * 0.065 })); },
+  unlock() { A.tone({ type: 'bell', freq: N(9), dur: 0.3, vol: 0.08 }); A.tone({ type: 'bell', freq: N(11), dur: 0.35, vol: 0.07, at: A.now + 0.12 }); },
+  deny() { A.tone({ type: 'triangle', freq: N(1), dur: 0.07, vol: 0.11 }); A.tone({ type: 'triangle', freq: N(0), dur: 0.11, vol: 0.1, at: A.now + 0.08 }); },
+  // Salt swept out: a brushy run down the scale.
+  sweep() { [9, 8, 7, 6, 5, 4].forEach((d, i) => A.tone({ type: 'triangle', freq: N(d), dur: 0.06, vol: 0.09, cutoff: 3000, at: A.now + i * 0.045 })); A.tone({ type: 'pluck', freq: N(2), dur: 0.2, vol: 0.12, at: A.now + 0.3 }); },
+  // Listening: a tiny whisper tick that speeds up as the gossip gets juicier.
+  whisper(j = 0) { A.tone({ type: 'sine', freq: N(8 + (Math.round(j * 2) % 3)), dur: 0.03, vol: 0.05, cutoff: 3500 }); },
+  glance() { A.tone({ type: 'triangle', freq: N(6), dur: 0.08, vol: 0.12 }); A.tone({ type: 'triangle', freq: N(7), dur: 0.1, vol: 0.12, at: A.now + 0.09 }); },
+  dirt() { A.tone({ type: 'pluck', freq: N(5), dur: 0.1, vol: 0.12 }); A.tone({ type: 'pluck', freq: N(3), dur: 0.1, vol: 0.1, at: A.now + 0.07 }); A.tone({ type: 'bell', freq: N(8), dur: 0.2, vol: 0.05, at: A.now + 0.14 }); },
+  caught() { [4, 2, 1, 0].forEach((d, i) => A.tone({ type: 'triangle', freq: N(d - 5), dur: 0.16, vol: 0.12, at: A.now + i * 0.11 })); },
+  // Income that ticks in on its own: a soft harpsichord-ish drip.
+  drip(k = 0) { A.tone({ type: 'pluck', freq: N(5 + (k % 5)), dur: 0.08, vol: 0.05, cutoff: 2600 }); },
+  vine() {
+    [0, 2, 3, 5, 7].forEach((d, i) => A.tone({ type: 'pluck', freq: N(d), dur: 0.15, vol: 0.13, at: A.now + i * 0.1 }));
+    [5, 7, 9].forEach(d => A.tone({ type: 'keys', freq: N(d), dur: 0.6, vol: 0.06, at: A.now + 0.55 }));
+  },
+  creak(c = 0) { A.tone({ type: 'triangle', freq: N(-5 + Math.round(c * 4)), dur: 0.2, vol: 0.1, cutoff: 900 }); },
+  collapse() {
+    for (let i = 0; i < 18; i++) A.tone({ type: 'pluck', freq: N(14 - i), dur: 0.14, vol: 0.1, at: A.now + i * 0.17 });
+    A.tone({ type: 'pad', freq: N(-10), dur: 3.4, vol: 0.06, attack: 0.4, at: A.now + 0.2 });
+  },
+  finale() {
+    const tune = [0, 2, 3, 5, 7, 5, 3, 2, 4, 5, 7, 9, 10];
+    tune.forEach((s, i) => A.tone({ type: 'pluck', freq: N(s), dur: 0.2, vol: 0.12, at: A.now + i * 0.13 }));
+    [0, 3, 5].forEach(s => A.tone({ type: 'pad', freq: N(s - 5), dur: 3, vol: 0.05, attack: 0.6, at: A.now + 1.2 }));
+    A.tone({ type: 'bell', freq: N(10), dur: 1.4, vol: 0.08, at: A.now + 1.7 });
+  },
+};
+// Per-effect levels, measured with npm run mix so every effect peaks near -10 dBFS.
+// The rapid ones (the stretch, the whisper ticks, the drip of income) sit a few dB under on purpose.
+const LEVEL = { stretch: 4.68, pop: 2.99, full: 5.31, grow: 3.2, reach: 2.66, buy: 1.33, unlock: 3.94, deny: 4.52, sweep: 2.82, whisper: 4.79, glance: 3.8, dirt: 3.8, caught: 2.07, drip: 15, vine: 1.55, creak: 3.55, collapse: 2.88, finale: 2.88 };
+for (const k of Object.keys(sfx)) {
+  const fn = sfx[k];
+  sfx[k] = (...a) => {
+    const tone = A.tone, m = LEVEL[k] || 1;
+    A.tone = o => tone({ ...o, vol: (o.vol ?? 0.3) * m });
+    try { fn(...a); } finally { A.tone = tone; }
+  };
+}
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'collapse', 'vine'], S: () => S, E };
+
+// The game owns playback; music.mjs arranges the composed invention per phase.
+const musicKey = () => E.phase(S);
+let music = null, soundtrack = null, lastKey = musicKey();
+const PHASE_GAIN = {};
+const phased = new Map();
+function song() {
+  soundtrack ||= createSoundtrack(music.strudel);
+  const [k, pat, cps] = soundtrack(musicKey());
+  if (!PHASE_GAIN[k]) return [k, pat, cps];
+  if (!phased.has(k)) phased.set(k, pat.mul(music.strudel.gain(PHASE_GAIN[k])));
+  return [k, phased.get(k), cps];
+}
+createMusic(A, { soundfonts: true, song }).then(m => { music = m; music.update(); if (DEBUG) Object.assign(window.__game, { music: m, song }); }).catch(e => console.warn('music', e));
+
+// ---------- Layout ----------
+// Wide: the knot and the party wall stacked on the left, the building on the right.
+// Narrow (phones): the two panels side by side on top, the building below, with bigger rooms.
+const cv = $('stage'), g = cv.getContext('2d');
+let L = null;
+function layout() {
+  const narrow = $('stagebox').clientWidth < 600;
+  if (L && L.narrow === narrow) return false;
+  if (narrow) L = { narrow, W: 400, H: 650, knot: [0, 0, 196, 178], party: [204, 0, 196, 178], bx: 4, by: 196, cw: 78.4, ch: 75 };
+  else L = { narrow, W: 820, H: 500, knot: [0, 0, 232, 244], party: [0, 252, 232, 248], bx: 246, by: 38, cw: 114, ch: 76 };
+  $('stagebox').classList.toggle('tall', narrow);
+  cv.width = L.W; cv.height = L.H; dpr = 0;
+  placeRooms(); bg = null;
+  return true;
+}
+let dpr = 0;
+function fit() {
+  const d = Math.min(2, devicePixelRatio || 1), r = cv.getBoundingClientRect();
+  const w = Math.round((r.width || L.W) * d);
+  if (cv.width !== w || dpr !== d) { dpr = d; cv.width = w; cv.height = Math.round(w * L.H / L.W); bg = null; }
+}
+const cell = i => [L.bx + E.colOf(i) * L.cw, L.by + E.rowOf(i) * L.ch, L.cw, L.ch];
+
+// ---------- Sprites ----------
+const spr = {};
+// Woodcut stamps: the icon in plum, carved through with fine peach gouges, and a slightly ragged edge.
+async function stamp(file, size, ink = C.plum) {
+  const src = await Sprites.loadSvg(file);
+  const shape = await Sprites.svgToCanvas(Sprites.recolor(src, ink), size);
+  const pad = 2, c = Sprites.canvas(size + pad * 2, size + pad * 2), x = c.getContext('2d');
+  x.drawImage(Sprites.outline(shape, ink, 1), pad - 1, pad - 1);
+  x.drawImage(shape, pad, pad);
+  x.globalCompositeOperation = 'destination-out';
+  x.strokeStyle = '#000'; x.lineWidth = Math.max(0.8, size / 34);
+  let seed = size * 7 + file.length;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  for (let k = -size; k < size * 2; k += Math.max(3, size / 9)) {
+    x.beginPath(); x.moveTo(k + rnd() * 2, pad); x.lineTo(k - size * 0.45 + rnd() * 2, size + pad); x.stroke();
+  }
+  return c;
+}
+const ICON = {
+  tank: './art/mdi--water.svg', loft: './art/mdi--bird.svg', sky: './art/mdi--window-closed-variant.svg', chim: './art/mdi--fire.svg',
+  garden: './art/mdi--sprout.svg', '4a': './art/mdi--cat.svg', bath4: './art/mdi--bathtub.svg', st4: './art/mdi--stairs.svg',
+  '4c': './art/game-icons--accordion.svg', well: './art/tabler--sun.svg', '3a': './art/mdi--bed.svg', '3c': './art/mdi--school.svg',
+  airing: './art/mdi--water-boiler.svg', '2a': './art/mdi--heart.svg', laundry: './art/mdi--washing-machine.svg', st2: './art/mdi--stairs.svg',
+  '2c': './art/mdi--shoe-heel.svg', rad: './art/mdi--radiator.svg', shop: './art/mdi--noodles.svg', kitchen: './art/mdi--silverware-fork-knife.svg',
+  lobby: './art/mdi--stairs.svg', office: './art/mdi--desk.svg', yard: './art/mdi--door-open.svg', cellar: './art/mdi--water.svg',
+  boiler: './art/mdi--fire.svg', coal: './art/mdi--fire.svg', drains: './art/mdi--pipe.svg', st3: './art/mdi--stairs.svg',
+};
+async function makeSprites() {
+  spr.icon = {};
+  const done = {};
+  for (const [id, f] of Object.entries(ICON)) {
+    done[f] ||= Sprites.register(`stamp: ${f.slice(6, -4).replace(/^\w+--/, '')}`, await stamp(f, 30));
+    spr.icon[id] = done[f];
+  }
+  spr.salt = Sprites.register('stamp: salt', await stamp('./art/mdi--salt.svg', 22, C.peach));
+  const m = Sprites.canvas(120, 130); drawMona(m.getContext('2d'), 60, 122, { k: 1 }); Sprites.register('Mona (monstera)', m);
+  const t = Sprites.canvas(9 * 54, 60); TENANTS.forEach((w, i) => drawTenant(t.getContext('2d'), 27 + i * 54, 34, w, 0.8, 1)); Sprites.register('the tenants', t);
+  const k = Sprites.canvas(110, 90); drawKnot(k.getContext('2d'), 55, 45, 38, 0, 3); Sprites.register('the Mother Knot', k);
+  const p = Sprites.canvas(70, 90); drawPettibone(p.getContext('2d'), 35, 86, 0); Sprites.register('Mr. Pettibone (sweeping)', p);
+}
+
+// ---------- Drawing helpers ----------
+// Seeded randomness so carved marks stay put frame to frame.
+function rng(seed) { let s = (seed * 9301 + 49297) % 233280 || 1; return () => ((s = (s * 16807) % 2147483647) / 2147483647); }
+// A tangle of noodles: loose loops cut into the block.
+function tangle(x, cx, cy, w, h, seed, color, lw = 1.3, n = 9) {
+  const r = rng(seed);
+  x.save(); x.strokeStyle = color; x.lineWidth = lw; x.lineCap = 'round';
+  for (let k = 0; k < n; k++) {
+    x.beginPath();
+    let px = cx + (r() - 0.5) * w, py = cy + (r() - 0.5) * h;
+    x.moveTo(px, py);
+    for (let s = 0; s < 3; s++) {
+      const nx = cx + (r() - 0.5) * w, ny = cy + (r() - 0.5) * h;
+      x.bezierCurveTo(px + (r() - 0.5) * w * 0.8, py + (r() - 0.5) * h * 0.9, nx + (r() - 0.5) * w * 0.8, ny + (r() - 0.5) * h * 0.9, nx, ny);
+      px = nx; py = ny;
+    }
+    x.stroke();
+  }
+  x.restore();
+}
+// Parallel gouges, clipped to a rectangle: the woodcut's shading.
+function hatch(x, rx, ry, rw, rh, gap, color, lw = 1, ang = -0.9) {
+  x.save(); x.beginPath(); x.rect(rx, ry, rw, rh); x.clip();
+  x.strokeStyle = color; x.lineWidth = lw;
+  const d = rw + rh, dx = Math.cos(ang), dy = Math.sin(ang);
+  for (let k = -d; k < d; k += gap) {
+    x.beginPath(); x.moveTo(rx + rw / 2 + k * -dy - dx * d, ry + rh / 2 + k * dx - dy * d); x.lineTo(rx + rw / 2 + k * -dy + dx * d, ry + rh / 2 + k * dx + dy * d); x.stroke();
+  }
+  x.restore();
+}
+function wobbleRect(x, rx, ry, rw, rh, seed, j = 1.2) {
+  const r = rng(seed), p = () => (r() - 0.5) * j * 2;
+  x.beginPath(); x.moveTo(rx + p(), ry + p()); x.lineTo(rx + rw + p(), ry + p()); x.lineTo(rx + rw + p(), ry + rh + p()); x.lineTo(rx + p(), ry + rh + p()); x.closePath();
+}
+// A monstera leaf: a heart, with the splits and holes carved out.
+function leaf(x, lx, ly, len, ang, droop = 0, fill = C.plum) {
+  x.save(); x.translate(lx, ly); x.rotate(ang + droop);
+  x.fillStyle = fill; x.beginPath();
+  x.moveTo(0, 0); x.bezierCurveTo(len * 0.55, -len * 0.55, len * 1.05, -len * 0.25, len, 0); x.bezierCurveTo(len * 1.05, len * 0.25, len * 0.55, len * 0.55, 0, 0);
+  x.fill();
+  x.strokeStyle = C.peach; x.lineWidth = Math.max(1.2, len / 18); x.lineCap = 'round';
+  for (const s of [-1, 1]) for (let k = 0; k < 3; k++) {
+    const t = 0.3 + k * 0.22; x.beginPath(); x.moveTo(len * t, 0); x.lineTo(len * (t + 0.1), s * len * (0.36 - k * 0.07)); x.stroke();
+  }
+  x.beginPath(); x.moveTo(len * 0.05, 0); x.lineTo(len * 0.85, 0); x.lineWidth = Math.max(0.8, len / 30); x.stroke();
+  x.restore();
+}
+// Mona: a terracotta pot with a worried face and four big leaves. droop 0..1 wilts her.
+function drawMona(x, cx, by, { k = 1, droop = 0, t = 0, shake = 0, hat = false } = {}) {
+  x.save(); x.translate(cx, by); x.scale(k, k);
+  const sh = shake ? Math.sin(t * 40) * shake : 0;
+  // stems and leaves
+  x.strokeStyle = C.plum; x.lineWidth = 3; x.lineCap = 'round';
+  const L4 = [[-0.9, 44, -48], [-2.2, 40, -40], [-0.3, 38, -70], [-2.9, 34, -58]];
+  for (const [a, len, sy] of L4) {
+    const d = droop * (a < -1.6 ? -0.7 : 0.7) + sh * 0.02 + Math.sin(t * 1.3 + a) * 0.03;
+    const sx = Math.cos(a) * 12, ex = sx + Math.cos(a + d) * 10;
+    x.beginPath(); x.moveTo(0, -30); x.quadraticCurveTo(sx, sy + 10, ex, sy + droop * 18); x.stroke();
+    leaf(x, ex, sy + droop * 18, len, a + d * 1.4, droop * (a < -1.6 ? -0.9 : 0.9), a === -0.3 ? C.mauve : C.plum);
+  }
+  // pot
+  x.fillStyle = C.rose; x.strokeStyle = C.plum; x.lineWidth = 2.5;
+  x.beginPath(); x.moveTo(-26, -34); x.lineTo(26, -34); x.lineTo(20, 0); x.lineTo(-20, 0); x.closePath(); x.fill(); x.stroke();
+  x.fillStyle = C.plum; x.fillRect(-29, -40, 58, 8);
+  hatch(x, -22, -31, 44, 30, 5, '#2c213755', 1, 0.9);
+  // face: two dot eyes, worried brows, a tiny wobbly mouth
+  x.fillStyle = C.plum;
+  x.beginPath(); x.arc(-8, -19, 2.4, 0, 7); x.arc(8, -19, 2.4, 0, 7); x.fill();
+  x.lineWidth = 1.6; x.beginPath(); x.moveTo(-12, -26 + droop * 2); x.lineTo(-5, -24); x.moveTo(12, -26 + droop * 2); x.lineTo(5, -24); x.stroke();
+  x.beginPath(); x.moveTo(-4, -11); x.quadraticCurveTo(-2, -13 - droop * 2, 0, -11); x.quadraticCurveTo(2, -9 + droop * 2, 4, -11); x.stroke();
+  if (hat) { x.fillStyle = C.mauve; x.strokeStyle = C.plum; x.beginPath(); x.ellipse(14, -44, 12, 4, -0.25, 0, 7); x.fill(); x.stroke(); }
+  x.restore();
+}
+// The tenants, as little woodcut busts. look: -1 toward Mona (left), +1 away.
+const TENANTS = ['Mrs. Vale', 'the Fennick twins', 'Dot', 'Pim', 'the Okafors', 'Señor Ruiz', 'Auntie Ko', 'Mr. Duda', 'Mr. Pettibone'];
+function bust(x, cx, cy, s, look, hair) {
+  x.save(); x.translate(cx, cy); x.scale(s, s);
+  x.fillStyle = C.plum; x.beginPath(); x.ellipse(0, 26, 20, 12, 0, Math.PI, 0); x.fill();
+  x.fillStyle = C.peach; x.strokeStyle = C.plum; x.lineWidth = 2;
+  x.beginPath(); x.arc(0, 0, 14, 0, 7); x.fill(); x.stroke();
+  hair && hair(x);
+  const ex = look * 3.5;
+  x.fillStyle = C.plum;
+  x.beginPath(); x.arc(-5 + ex, -1, 1.8, 0, 7); x.arc(5 + ex, -1, 1.8, 0, 7); x.fill();
+  x.lineWidth = 1.4; x.beginPath(); x.moveTo(-3 + ex, 7); x.lineTo(3 + ex, 7); x.stroke();
+  x.restore();
+}
+function drawTenant(x, cx, cy, who, s = 1, look = 1) {
+  const H = {
+    'Mrs. Vale': x => { x.fillStyle = C.mauve; x.beginPath(); x.arc(0, -16, 7, 0, 7); x.fill(); x.beginPath(); x.arc(0, -6, 14, Math.PI, 0); x.fill(); x.strokeStyle = C.plum; x.lineWidth = 1.3; x.beginPath(); x.arc(-5, -1, 4, 0, 7); x.arc(5, -1, 4, 0, 7); x.stroke(); },
+    'Dot': x => { x.fillStyle = C.plum; x.beginPath(); x.arc(0, -4, 14, Math.PI, 0); x.fill(); x.fillStyle = C.peach; x.strokeStyle = C.plum; x.fillRect(-7, -19, 14, 6); x.strokeRect(-7, -19, 14, 6); x.fillStyle = C.rose; x.fillRect(-1, -18, 2, 4); },
+    'Pim': x => { x.fillStyle = C.plum; for (let k = -12; k <= 12; k += 4) { x.beginPath(); x.arc(k, -11, 4, 0, 7); x.fill(); } x.strokeStyle = C.plum; x.lineWidth = 1.6; x.beginPath(); x.arc(-5, -1, 4.5, 0, 7); x.arc(5, -1, 4.5, 0, 7); x.stroke(); },
+    'Señor Ruiz': x => { x.fillStyle = C.plum; x.beginPath(); x.moveTo(-14, -3); x.quadraticCurveTo(-10, -18, 8, -15); x.quadraticCurveTo(15, -10, 14, -3); x.quadraticCurveTo(0, -11, -14, -3); x.fill(); x.fillStyle = C.rose; x.beginPath(); x.arc(13, 18, 4, 0, 7); x.fill(); x.strokeStyle = C.plum; x.lineWidth = 1.5; x.beginPath(); x.moveTo(-5, 4); x.quadraticCurveTo(0, 2, 5, 4); x.stroke(); },
+    'Auntie Ko': x => { x.fillStyle = C.rose; x.beginPath(); x.arc(0, -4, 15, Math.PI * 1.05, -0.05); x.fill(); x.beginPath(); x.moveTo(12, -8); x.lineTo(20, -2); x.lineTo(15, -12); x.fill(); },
+    'Mr. Duda': x => { x.fillStyle = C.plum; x.beginPath(); x.ellipse(0, -11, 15, 5, 0, 0, 7); x.fill(); x.fillRect(-11, -16, 22, 6); x.fillStyle = C.mauve; x.beginPath(); x.ellipse(4, -21, 6, 4, 0, 0, 7); x.fill(); x.beginPath(); x.arc(9, -24, 2.5, 0, 7); x.fill(); },
+    'Mr. Pettibone': x => { x.fillStyle = C.plum; x.beginPath(); x.ellipse(-12, -2, 3, 6, 0, 0, 7); x.ellipse(12, -2, 3, 6, 0, 0, 7); x.fill(); x.beginPath(); x.moveTo(-8, 5); x.quadraticCurveTo(0, 1, 8, 5); x.quadraticCurveTo(0, 9, -8, 5); x.fill(); },
+  };
+  if (who === 'the Fennick twins' || who === 'the Okafors') {
+    const twin = who === 'the Fennick twins';
+    const hairA = x => { x.fillStyle = twin ? C.mauve : C.plum; x.beginPath(); x.arc(0, -5, 14, Math.PI, 0); x.fill(); };
+    const hairB = x => { x.fillStyle = twin ? C.mauve : C.plum; if (twin) { x.beginPath(); x.arc(0, -5, 14, Math.PI, 0); x.fill(); } else for (let k = -10; k <= 10; k += 5) { x.beginPath(); x.arc(k, -12, 5, 0, 7); x.fill(); } };
+    bust(x, cx - 11 * s, cy + 2 * s, s * 0.85, look, hairA);
+    bust(x, cx + 11 * s, cy, s * 0.85, look, hairB);
+    return;
+  }
+  bust(x, cx, cy, s, look, H[who]);
+}
+function drawPettibone(x, cx, fy, t) {
+  x.save(); x.translate(cx, fy);
+  // broom
+  x.strokeStyle = C.plum; x.lineWidth = 2.5; const sw = Math.sin(t * 3) * 0.25;
+  x.save(); x.rotate(sw); x.beginPath(); x.moveTo(14, -50); x.lineTo(20, -6); x.stroke(); x.fillStyle = C.mauve; x.beginPath(); x.moveTo(12, -8); x.lineTo(28, -8); x.lineTo(31, 0); x.lineTo(9, 0); x.closePath(); x.fill(); x.restore();
+  // coat
+  x.fillStyle = C.plum; x.beginPath(); x.moveTo(-12, 0); x.lineTo(-10, -40); x.lineTo(10, -40); x.lineTo(12, 0); x.closePath(); x.fill();
+  hatch(x, -10, -40, 20, 40, 4, '#edb4a155', 1);
+  drawTenant(x, 0, -52, 'Mr. Pettibone', 0.75, 1);
+  x.restore();
+}
+// The Mother Knot (and the little knot behind Mona's pot): a wad of loops with a heart of plum.
+function drawKnot(x, cx, cy, r, t, seed, pull = 0) {
+  x.save();
+  x.fillStyle = C.mauve; x.beginPath(); x.ellipse(cx, cy + pull * r * 0.15, r * (1 + pull * 0.08), r * 0.8 * (1 - pull * 0.05), 0, 0, 7); x.fill();
+  tangle(x, cx, cy, r * 1.8, r * 1.4, seed, C.peach, Math.max(1.2, r / 16), 12);
+  tangle(x, cx, cy, r * 1.2, r * 0.9, seed + 5, C.plum, Math.max(1, r / 22), 7);
+  x.restore();
+}
+
+// ---------- The background (rebuilt when the building changes) ----------
+let bg = null, bgSig = '';
+const sigOf = () => S.lv.map((l, i) => `${E.roomState(S, i)[0]}${l}`).join('') + (S.vine ? 'v' : '') + (S.up.hat ? 'h' : '') + L.narrow;
+function paper(x, w, h) {
+  x.fillStyle = C.peach; x.fillRect(0, 0, w, h);
+  const r = rng(11);
+  x.fillStyle = '#76446214';
+  for (let k = 0; k < (w * h) / 900; k++) x.fillRect(r() * w, r() * h, 1 + r() * 2, 1);
+}
+function buildBg() {
+  const c = Sprites.canvas(cv.width, cv.height), x = c.getContext('2d');
+  const s = cv.width / L.W; x.scale(s, s);
+  paper(x, L.W, L.H);
+  // The building: a heavy frame from the fourth floor to the basement; the roof row sits on top in the open air.
+  const [x0, y0] = [L.bx, L.by], w = L.cw * 5, ch = L.ch;
+  // sky behind the roof row: carved sun rays
+  x.save(); x.strokeStyle = '#a9686855'; x.lineWidth = 1.2;
+  for (let k = 0; k < 14; k++) { const a = Math.PI + k * Math.PI / 13; x.beginPath(); x.moveTo(x0 + w * 0.5, y0 + ch); x.lineTo(x0 + w * 0.5 + Math.cos(a) * w * 0.7, y0 + ch + Math.sin(a) * ch * 1.6); x.stroke(); }
+  x.restore();
+  // ground: between the ground floor and the basement, soil on either side
+  const gy = y0 + ch * 5;
+  x.fillStyle = C.mauve; x.fillRect(0, gy, L.W, L.H - gy);
+  tangle(x, x0 + w / 2, gy + ch / 2, w + 30, ch * 0.9, 77, '#edb4a133', 1, 10);
+  for (let i = 0; i < E.N_ROOMS; i++) drawRoom(x, i);
+  // outer walls
+  x.strokeStyle = C.plum; x.lineWidth = 4;
+  x.strokeRect(x0, y0 + ch, w, ch * 5);
+  x.beginPath(); x.moveTo(x0 - 6, y0 + ch); x.lineTo(x0 + w + 6, y0 + ch); x.stroke();
+  x.lineWidth = 3; x.beginPath(); x.moveTo(x0 - 10, gy); x.lineTo(x0 + w + 10, gy); x.stroke();
+  // roots: mauve tendrils across the walls between rooted rooms
+  x.lineCap = 'round';
+  for (let i = 0; i < E.N_ROOMS; i++) {
+    if (!S.lv[i]) continue;
+    for (const j of E.neighbours(i)) {
+      if (j < i || !S.lv[j]) continue;
+      const [ax, ay] = centre(i), [bx, by] = centre(j);
+      const lw = 1.5 + Math.min(S.lv[i], S.lv[j]) / 6;
+      x.strokeStyle = C.mauve; x.lineWidth = lw + 2; x.beginPath();
+      const f0 = 0.4, f1 = 0.6;
+      x.moveTo(ax + (bx - ax) * f0, ay + (by - ay) * f0);
+      x.quadraticCurveTo((ax + bx) / 2 + (ay - by) * 0.06, (ay + by) / 2 + (bx - ax) * 0.05, ax + (bx - ax) * f1, ay + (by - ay) * f1); x.stroke();
+      x.strokeStyle = C.plum; x.lineWidth = Math.max(1, lw - 1); x.stroke();
+    }
+  }
+  return c;
+}
+const centre = i => { const [x, y, w, h] = cell(i); return [x + w / 2, y + h / 2]; };
+const SHORT = {
+  tank: 'Water tank', loft: 'Pigeon loft', sky: 'Skylight', chim: 'Chimney', garden: 'Roof garden', '4a': '4A · Vale', bath4: 'Bath', st4: 'Landing',
+  '4c': '4C · Fennicks', well: 'Light well', '3a': '3A · Dot', '3b': '3B · Mona', st3: 'Landing', '3c': '3C · Pim', airing: 'Airing cpbd', '2a': '2A · Okafors',
+  laundry: 'Laundry', st2: 'Landing', '2c': '2C · Ruiz', rad: 'Radiator', shop: 'Ko’s counter', kitchen: 'Ko’s kitchen', lobby: 'Lobby', office: 'Pettibone',
+  yard: 'Back door', cellar: 'Cellar', boiler: 'Boiler', knot: 'The Knot', coal: 'Coal hole', drains: 'Drains',
+};
+function drawRoom(x, i) {
+  const [rx, ry, rw, rh] = cell(i), R = E.ROOMS[i], st = E.roomState(S, i), lv = S.lv[i];
+  const pad = 2, ix = rx + pad, iy = ry + pad, iw = rw - pad * 2, ih = rh - pad * 2;
+  const small = L.narrow ? 10.5 : 12;
+  if (st === 'hidden' || st === 'reach' || st === 'salt') {
+    // still a wall of noodles
+    x.fillStyle = st === 'hidden' ? C.plum : C.mauve; x.fillRect(rx, ry, rw, rh);
+    tangle(x, rx + rw / 2, ry + rh / 2, rw * 0.95, rh * 0.95, i * 13 + 3, st === 'hidden' ? '#edb4a166' : '#edb4a1aa', 1.2, 8);
+    if (st === 'salt') {
+      const r = rng(i + 40); x.fillStyle = C.peach;
+      for (let k = 0; k < 70; k++) x.fillRect(rx + r() * rw, ry + r() * rh, 1.6, 1.6);
+      x.drawImage(spr.salt, rx + rw / 2 - spr.salt.width / 2, ry + rh / 2 - spr.salt.height / 2 - 6);
+    } else if (st === 'reach') {
+      x.fillStyle = C.peach; x.strokeStyle = C.plum; x.lineWidth = 2;
+      x.beginPath(); x.arc(rx + rw / 2, ry + rh / 2 - 8, 13, 0, 7); x.fill(); x.stroke();
+      x.fillStyle = C.plum; x.font = `${L.narrow ? 20 : 22}px ${SC}`; x.textAlign = 'center'; x.textBaseline = 'middle';
+      x.fillText('?', rx + rw / 2, ry + rh / 2 - 7);
+    }
+    if (st !== 'hidden') {
+      x.font = `${small}px ${SC}`; x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+      const label = st === 'salt' ? (S.vine && !(i === E.KNOT && S.saltCleared < E.SALT_COSTS.length) ? `salt · ${fmt(E.saltCostFor(S, i))} dirt` : 'salted') : `🍜 ${fmt(E.roomCost(S, i))}`;
+      const lw2 = x.measureText(label).width + 10;
+      x.fillStyle = C.peach; x.fillRect(rx + rw / 2 - lw2 / 2, ry + rh - 18, lw2, 15);
+      x.strokeStyle = C.plum; x.lineWidth = 1; x.strokeRect(rx + rw / 2 - lw2 / 2, ry + rh - 18, lw2, 15);
+      x.fillStyle = C.plum; x.fillText(label, rx + rw / 2, ry + rh - 6.5);
+    }
+  } else {
+    // a room you've rooted into: paper, its furniture stamp, its name and level
+    x.fillStyle = C.peach; x.fillRect(rx, ry, rw, rh);
+    hatch(x, rx, ry + rh - 9, rw, 9, 3.5, '#76446288', 1);
+    x.strokeStyle = C.plum; x.lineWidth = 1.5; x.beginPath(); x.moveTo(rx, ry + rh - 9); x.lineTo(rx + rw, ry + rh - 9); x.stroke();
+    if (i === E.KNOT) drawKnot(x, rx + rw / 2, ry + rh / 2, Math.min(rw, rh) * 0.34, 0, 9);
+    else if (i === E.HOME) drawMona(x, rx + rw / 2, ry + rh - 9, { k: L.narrow ? 0.34 : 0.36, hat: S.up.hat });
+    else if (spr.icon[R.id]) x.drawImage(spr.icon[R.id], rx + rw / 2 - 17, ry + rh / 2 - 17);
+    x.font = `${small}px ${SC}`; x.textBaseline = 'alphabetic'; x.fillStyle = C.plum;
+    x.textAlign = 'left'; x.fillText(SHORT[R.id], rx + 4, ry + 13);
+    if (i !== E.KNOT) {
+      x.textAlign = 'left'; x.fillStyle = C.mauve; x.fillText(st === 'full' ? 'full' : `lv ${lv}`, rx + 4, ry + rh - 12);
+      if (st === 'grow') { x.textAlign = 'right'; x.fillStyle = C.plum; x.fillText(`🍜${fmt(E.roomCost(S, i))}`, rx + rw - 4, ry + rh - 12); }
+      // level pips along the right edge
+      x.fillStyle = C.rose;
+      for (let k = 0; k < lv; k++) x.fillRect(rx + rw - 5, ry + rh - 13 - 14 - k * ((rh - 34) / E.MAX_LV), 2.5, (rh - 34) / E.MAX_LV - 1);
+    }
+  }
+  x.strokeStyle = C.plum; x.lineWidth = 1.5; wobbleRect(x, rx, ry, rw, rh, i + 1, 0.8); x.stroke();
+}
+
+// ---------- Panels ----------
+function frameBox(x, [px, py, pw, ph], title) {
+  x.fillStyle = C.peach; x.fillRect(px, py, pw, ph);
+  x.strokeStyle = C.plum; x.lineWidth = 3; x.strokeRect(px + 1.5, py + 1.5, pw - 3, ph - 3);
+  x.fillStyle = C.plum; x.fillRect(px, py, pw, 22);
+  x.fillStyle = C.peach; x.font = `${L.narrow ? 13 : 15}px ${SC}`; x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.fillText(title, px + pw / 2, py + 12);
+}
+let tugC = 0, tugging = false, tugT = 0, tugStep = -1, listening = false, listenT = 0, noticeAt = 0, glanced = false, caughtT = -9, lastSpeech = '';
+const pops = [];   // flying noodle bits and +numbers
+function drawKnotPanel(x) {
+  const P = L.knot, [px, py, pw, ph] = P, final = E.canFinish(S);
+  frameBox(x, P, final ? 'THE MOTHER KNOT' : 'THE KNOT');
+  x.save(); x.beginPath(); x.rect(px + 3, py + 22, pw - 6, ph - 25); x.clip();
+  // the wall behind the pot
+  x.fillStyle = C.mauve; x.fillRect(px, py + 22, pw, ph * 0.62);
+  tangle(x, px + pw / 2, py + 22 + ph * 0.3, pw, ph * 0.6, 21, '#edb4a155', 1.1, 10);
+  x.fillStyle = C.plum; x.fillRect(px, py + 22 + ph * 0.62, pw, 3);
+  hatch(x, px, py + 25 + ph * 0.62, pw, ph, 5, '#76446255', 1);
+  const kx = px + pw / 2, ky = py + 22 + ph * 0.27, kr = final ? Math.min(pw, ph) * 0.27 : Math.min(pw, ph) * 0.17;
+  const c = tugging ? tugC : 0, shake = tugging ? c * (final ? 2.4 : 1.2) : 0;
+  const jx = shake ? Math.sin(T * 50) * shake : 0;
+  drawKnot(x, kx + jx, ky, kr, T, final ? 31 : 4, c);
+  // Mona and her tugging root
+  const mk = L.narrow ? 0.74 : 1.02, mby = py + ph - 8, mx = px + pw / 2 + (L.narrow ? 30 : 38);
+  const droop = S.wilt > 0 ? Math.min(1, S.wilt / 1.2) : 0;
+  const tipX = kx + 4 + jx, tipY = ky + kr * 0.7 + c * 26;
+  x.strokeStyle = C.plum; x.lineWidth = 3.5; x.lineCap = 'round';
+  x.beginPath(); x.moveTo(mx - 6 * mk, mby - 40 * mk); x.bezierCurveTo(mx - 50 * mk, mby - 60 * mk, tipX + 20, tipY + 30, tipX, tipY); x.stroke();
+  x.strokeStyle = C.peach; x.lineWidth = 2; x.beginPath(); x.moveTo(kx + jx, ky); x.quadraticCurveTo(kx + 8 + jx, (ky + tipY) / 2, tipX, tipY); x.stroke();
+  drawMona(x, mx, mby, { k: mk, droop, t: T, shake: tugging ? c : 0, hat: S.up.hat });
+  // charge ring
+  if (tugging) {
+    x.strokeStyle = C.rose; x.lineWidth = 5; x.beginPath(); x.arc(kx, ky, kr + 9, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * c); x.stroke();
+    if (c >= 1) { x.fillStyle = C.plum; x.font = `${L.narrow ? 13 : 16}px ${SC}`; x.textAlign = 'center'; x.fillText(final ? 'LET GO' : 'let go!', kx, ky - kr - 16); }
+  } else if (!S.ended && (S.tugs < 3 || final)) {
+    x.fillStyle = C.peach; x.font = `italic ${L.narrow ? 12 : 15}px ${FELL}`; x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText(final ? `hold ${E.FINAL_HOLD} seconds` : 'hold here', kx, ky + kr + 16);
+  }
+  for (const p of pops) if (p.panel === 'knot') drawPop(x, p);
+  x.restore();
+}
+function drawPop(x, p) {
+  const a = 1 - p.t / p.life;
+  x.globalAlpha = Math.max(0, a);
+  if (p.text) { x.fillStyle = C.plum; x.font = `${L.narrow ? 13 : 16}px ${SC}`; x.textAlign = 'center'; x.fillText(p.text, p.x, p.y - p.t * 26); }
+  else { x.strokeStyle = p.col || C.peach; x.lineWidth = 2; x.beginPath(); const X = p.x + p.vx * p.t, Y = p.y + p.vy * p.t + 90 * p.t * p.t; x.moveTo(X, Y); x.quadraticCurveTo(X + 4, Y - 5, X + 8, Y); x.stroke(); }
+  x.globalAlpha = 1;
+}
+const speakerOf = () => (S.speaker >= 0 && S.lv[S.speaker] > 0 && E.ROOMS[S.speaker].who ? S.speaker : -1);
+function drawPartyPanel(x) {
+  const P = L.party, [px, py, pw, ph] = P;
+  frameBox(x, P, 'THE PARTY WALL');
+  x.save(); x.beginPath(); x.rect(px + 3, py + 22, pw - 6, ph - 25); x.clip();
+  x.textAlign = 'center'; x.textBaseline = 'middle';
+  if (!S.vine) {
+    x.fillStyle = C.plum; x.fillRect(px, py + 22, pw, ph - 22);
+    tangle(x, px + pw / 2, py + ph / 2 + 10, pw, ph - 30, 55, '#edb4a144', 1.2, 12);
+    x.fillStyle = C.peach; x.font = `italic ${L.narrow ? 12.5 : 16}px ${FELL}`;
+    x.fillText('…muffled voices…', px + pw / 2, py + ph * 0.45);
+    x.font = `${L.narrow ? 11 : 13}px ${SC}`;
+    x.fillText(`roots in ${E.tenantsRooted(S)} of ${E.TENANTS_FOR_VINE} flats`, px + pw / 2, py + ph * 0.62);
+    x.restore(); return;
+  }
+  // the wall in section: Mona's leaf pressed to one side, the speaker on the other
+  const wx = px + pw * 0.32;
+  x.fillStyle = C.mauve; x.fillRect(wx - 7, py + 22, 14, ph - 22);
+  tangle(x, wx, py + ph / 2 + 10, 14, ph - 30, 66, '#edb4a1aa', 1, 5);
+  const droop = S.wilt > 0 ? 0.6 : 0;
+  const lean = listening ? Math.min(1, listenT * 2) : 0;
+  leaf(x, px + 8, py + ph * 0.62, pw * 0.22 + lean * 6, -0.15 - droop, 0, C.plum);
+  const sp = speakerOf();
+  const scx = px + pw * 0.68, scy = py + ph * 0.66, s = L.narrow ? 0.95 : 1.35;
+  if (sp < 0) {
+    x.fillStyle = C.mauve; x.font = `italic ${L.narrow ? 12 : 15}px ${FELL}`; x.fillText('nobody’s talking', scx, scy);
+  } else {
+    const who = E.ROOMS[sp].who;
+    const look = (S.wilt > 0 && T - caughtT < 3) || glanced ? -1 : 1;
+    drawTenant(x, scx, scy, who, s, look);
+    // speech bubble
+    const bw = pw * 0.6, bh = L.narrow ? 46 : 58, bx = px + pw * 0.38, by = py + 28;
+    x.fillStyle = C.peach; x.strokeStyle = C.plum; x.lineWidth = 2;
+    x.beginPath(); x.rect(bx, by, bw, bh); x.fill(); x.stroke();
+    x.beginPath(); x.moveTo(scx - 6, by + bh); x.lineTo(scx, by + bh + 9); x.lineTo(scx + 6, by + bh); x.fill(); x.stroke();
+    x.fillStyle = C.plum; x.font = `italic ${L.narrow ? 10.5 : 13}px ${FELL}`; x.textAlign = 'left'; x.textBaseline = 'top';
+    let text;
+    if (S.wilt > 0 && T - caughtT < 4) text = 'That plant is STARING at me.';
+    else if (listening) { const g0 = gossipFor(sp); text = g0.slice(0, Math.floor(4 + listenT * juiceCps())) + (listenT * juiceCps() + 4 < g0.length ? '…' : ''); }
+    else text = '…mutter mutter…';
+    wrapText(x, text, bx + 6, by + 5, bw - 12, L.narrow ? 12 : 15, L.narrow ? 3 : 3);
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    if (glanced && listening) { x.fillStyle = C.rose; x.font = `${L.narrow ? 24 : 32}px ${SC}`; x.fillText('!', scx + 26 * s, scy - 24 * s); }
+    x.fillStyle = C.mauve; x.font = `${L.narrow ? 10.5 : 12}px ${SC}`;
+    x.fillText(who, scx, py + ph - (L.narrow ? 10 : 12));
+  }
+  // juice meter / status
+  const my = py + ph - (L.narrow ? 28 : 34), mw = pw * 0.26;
+  x.textAlign = 'left'; x.font = `${L.narrow ? 10.5 : 12}px ${SC}`; x.fillStyle = C.plum;
+  if (S.wilt > 0) x.fillText(`wilting… ${S.wilt.toFixed(1)}s`, px + 8, my);
+  else if (listening) {
+    x.fillText(`+${fmt(E.listenDirt(S, sp, listenT))} dirt`, px + 8, my);
+    x.fillStyle = C.rose; x.fillRect(px + 8, my + 8, Math.min(mw, mw * listenT / 4), 5);
+  } else x.fillText(S.listens < 3 ? 'hold to listen' : 'hold · let go when they look', px + 8, my);
+  for (const p of pops) if (p.panel === 'party') drawPop(x, p);
+  x.restore();
+}
+function wrapText(x, text, tx, ty, maxW, lh, maxLines) {
+  const words = text.split(' '); let line = '', n = 0;
+  for (const w of words) {
+    const t = line ? line + ' ' + w : w;
+    if (x.measureText(t).width > maxW && line) { x.fillText(line, tx, ty + n * lh); line = w; if (++n >= maxLines) return; }
+    else line = t;
+  }
+  if (line && n < maxLines) x.fillText(line, tx, ty + n * lh);
+}
+
+// ---------- Gossip ----------
+// Plot lines come in order, from whoever's talking (or their own line if it's theirs); the rest is chatter.
+const PLOT = [
+  { who: 'Pim', line: 'Okay so the culture festival is on the 3rd and I’m doing a NOODLE sculpture and everyone’s coming, like the whole building, I made flyers.' },
+  { who: 'Mrs. Vale', line: 'Did you see the second-floor landing? It DIPS. My cats won’t walk on it. Cats KNOW things.' },
+  { who: 'Dot', line: 'I heard Pettibone salted the basement again. Who salts a basement? What is he keeping down there?' },
+  { who: 'Señor Ruiz', line: 'When I do the big tango dip, the whole building leans with me. I thought it was my talent. It is not my talent.' },
+  { who: 'the Okafors', line: 'His ledger says KNOT: DO NOT TOUCH on every page. Every page! We looked. We were returning a pen.' },
+  { who: 'Auntie Ko', line: 'Forty years I give him the tangles from the pot. Forty years he says “for the walls”. I never asked which walls. All of them, apparently.' },
+  { who: 'the Fennick twins', line: 'We played one low note in the stairwell and the whole place hummed. Like it was holding its breath.' },
+  { who: 'Mr. Duda', line: 'The pigeons won’t land on the east side any more. Pigeons know.' },
+  { who: 'Mr. Pettibone', line: '…no, nobody goes in the basement. Nobody touches the knot. It’s load-bearing. LOAD. BEARING.' },
+  { who: 'Pim', line: 'Everyone will be at the festival ALL afternoon. The building will be totally empty. Not that it matters!' },
+];
+const CHATTER = {
+  'Mrs. Vale': ['Did you HEAR about 2A? Two kettles. Who needs TWO kettles?', 'The cats have been staring at the wall all week. At 3B’s wall.', 'Pettibone put the rent up again. On the cats. Per cat.', 'I’ve lived here since the noodles were fresh.', 'That plant in 3B is bigger every time I look. I don’t like it. I love it.'],
+  'the Fennick twins': ['The boiler’s in B flat now. We can’t play in B flat.', 'Who waters the plant in 3B? Nobody’s seen anyone in there for weeks.', 'There’s a root in our bathroom. We named it Gerald.', 'We wrote a polka about the landlord. It’s mostly one angry note.'],
+  'Dot': ['Shh. I’m asleep. But did you hear Ruiz has a new student? She’s ninety.', 'Something keeps rustling in my wall. Mice? Very polite mice.', 'I sleep through sirens, but somebody whispering three floors down? Wide awake.'],
+  'Pim': ['I need four hundred metres of noodle for the sculpture. Do you think Ko will notice?', 'My teacher says the sculpture is “structurally ambitious”. That’s good, right?', 'Mona, I swear your leaves turned toward me just then.'],
+  'the Okafors': ['“It’s YOUR turn to take the bins.” “It is NOT.” “There are roots in the bin cupboard.” “Then it’s the plant’s turn.”', 'We found a noodle in the light switch. A whole noodle.', '“Did you move the sofa?” “The floor moved the sofa.”'],
+  'Señor Ruiz': ['Tango is about tension. Like this building. Like the floor in my kitchen, which is tense.', 'My mirror tilts a little more every week. Or I do.', 'Mrs. Vale was my first student, in 1979. She still owes me for the lesson.'],
+  'Auntie Ko': ['Somebody is taking the noodles out of the walls. Good. They were getting old.', 'People ask why my soup tastes of history. I say, secret recipe.', 'Pettibone eats here free. Forty years. I keep a list. It is a long list.'],
+  'Mr. Duda': ['Duda! Duda, come down. Not you, Duda. The other Duda.', 'Eleven pigeons and every one of them is called Duda. It saves time.', 'You can see the whole city from up here. And the roof garden he won’t let anyone use.'],
+  'Mr. Pettibone': ['Rent’s due Friday. The salt’s due Thursday.', 'If anyone asks, the walls are “traditional”.', 'Plants are against the lease. Clause 14. I wrote clause 14 myself.'],
+};
+const said = {};
+let gossipCache = { sp: -1, line: '' };
+function gossipFor(sp) {
+  if (gossipCache.sp === sp && gossipCache.line) return gossipCache.line;
+  const who = E.ROOMS[sp].who;
+  const next = PLOT[S.news || 0];
+  let line;
+  if (next && (next.who === who || !E.speakers(S).some(i => E.ROOMS[i].who === next.who)) && S.listens >= (S.news || 0) * 2) line = next.line, gossipCache.plot = true;
+  else {
+    const pool = CHATTER[who] || ['…'];
+    said[who] = ((said[who] ?? Math.floor(Math.random() * pool.length)) + 1) % pool.length;
+    line = pool[said[who]]; gossipCache.plot = false;
+  }
+  gossipCache = { sp, line, plot: gossipCache.plot };
+  return line;
+}
+const juiceCps = () => 14 * E.juiceRate(S); // letters of gossip revealed per second
+
+// ---------- Input ----------
+const toCanvas = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * L.W / r.width, (e.clientY - r.top) * L.H / r.height]; };
+const inside = ([x, y], [px, py, pw, ph]) => x >= px && x <= px + pw && y >= py && y <= py + ph;
+let glanceT = 0;
+function startTug() {
+  if (S.ended || tugging || listening) return;
+  tugging = true; tugT = 0; tugC = 0; tugStep = -1;
+}
+function endTug() {
+  if (!tugging) return;
+  tugging = false;
+  if (E.canFinish(S)) { if (tugC >= 1) finish(); else say('Not yet. The Mother Knot needs one long, steady pull. Hold it the whole way.'); tugC = 0; return; }
+  if (tugC < 0.08) { tugC = 0; return; }
+  const got = E.tug(S, tugC);
+  sfx.pop(tugC);
+  const [px, py, pw, ph] = L.knot, kx = px + pw / 2, ky = py + 22 + ph * 0.27;
+  pops.push({ panel: 'knot', text: `+${fmt(got)}`, x: kx, y: ky - 20, t: 0, life: 1.2 });
+  if (!reduced) for (let k = 0; k < 4 + tugC * 6; k++) pops.push({ panel: 'knot', x: kx, y: ky, vx: (Math.random() - 0.5) * 140, vy: -60 - Math.random() * 80, t: 0, life: 0.9 });
+  if (S.tugs === 1) say('A strand comes loose with a soft little pop, and there’s a gap in the wall where it was. Mona’s root wriggles into it. Rooms cost noodles: roots eat the loose strands. Tap the “?” next to 3B.');
+  tugC = 0; hud(); save();
+}
+function startListen() {
+  if (S.ended || tugging || listening) return;
+  if (!S.vine) { sfx.deny(); say(`Just muffled voices through the plaster. Mona needs roots in ${E.TENANTS_FOR_VINE} tenants’ flats to make out the words (${E.tenantsRooted(S)} so far).`); return; }
+  if (S.wilt > 0) { sfx.deny(); say('Mona is wilting with embarrassment. Give her a moment.'); return; }
+  if (speakerOf() < 0) pickSpeaker();
+  if (speakerOf() < 0) { sfx.deny(); return; }
+  listening = true; listenT = 0; glanced = false; noticeAt = E.noticeAt(Math.random());
+}
+function endListen() {
+  if (!listening) return;
+  listening = false;
+  const sp = speakerOf();
+  if (sp < 0) return;
+  if (listenT < 0.25) { glanced = false; return; }
+  const line = gossipFor(sp), who = E.ROOMS[sp].who;
+  const got = E.listen(S, sp, listenT);
+  if (gossipCache.plot) S.news = (S.news || 0) + 1;
+  sfx.dirt();
+  const [px, py, pw] = L.party;
+  pops.push({ panel: 'party', text: `+${fmt(got)} dirt`, x: px + pw * 0.2, y: py + 60, t: 0, life: 1.3 });
+  say(`${cap(who)}: “${line}” (+${fmt(got)} dirt)`, 4);
+  glanced = false; gossipCache = { sp: -1, line: '' };
+  pickSpeaker(); hud(); save();
+}
+const cap = s => s[0].toUpperCase() + s.slice(1);
+function pickSpeaker() {
+  const sp = E.speakers(S);
+  if (!sp.length) { S.speaker = -1; return; }
+  const others = sp.filter(i => i !== S.speaker);
+  S.speaker = (others.length ? others : sp)[Math.floor(Math.random() * (others.length || sp.length))];
+  gossipCache = { sp: -1, line: '' };
+}
+cv.addEventListener('pointerdown', e => {
+  const p = toCanvas(e);
+  if (S.ended) return;
+  if (inside(p, L.knot)) startTug();
+  else if (inside(p, L.party)) startListen();
+  else return;
+  try { cv.setPointerCapture(e.pointerId); } catch (_) {}
+  cv.style.cursor = 'grabbing';
+});
+const release = () => { endTug(); endListen(); cv.style.cursor = 'grab'; };
+cv.addEventListener('pointerup', release);
+cv.addEventListener('pointercancel', release);
+cv.addEventListener('keydown', e => {
+  if (e.repeat) { if (e.key === ' ' || e.key.toLowerCase() === 'l') e.preventDefault(); return; }
+  if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); startTug(); }
+  else if (e.key.toLowerCase() === 'l') { e.preventDefault(); startListen(); }
+});
+cv.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') endTug(); else if (e.key.toLowerCase() === 'l') endListen(); });
+cv.addEventListener('blur', release);
+
+// ---------- Log ----------
+let logT = 0, ambT = 0, holdT = 0, pending = null;
+function say(msg, hold = 0) {
+  if (T < holdT && !hold) { pending = msg; return; }
+  const el = $('log'); el.textContent = msg; el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh'); logT = 0;
+  if (hold) holdT = T + hold;
+}
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const AMBIENT = [
+  'Marrow Court creaks, gently, in a way Mona is trying very hard not to think about.',
+  'Somewhere below, Auntie Ko’s stock pot burbles. It has not been off since 1984.',
+  'Mona counts her leaves. Still four. Good. Good good good.',
+  'A strand of noodle slips out of a crack in the ceiling and dangles there, al dente.',
+  'The radiator bangs once, for no reason, and Mona’s leaves jump.',
+  'The roots hum along the walls, untangling. It’s soothing, mostly.',
+  'A pigeon on the roof coos something that sounds a lot like gossip.',
+];
+const WALLS = [
+  'Down in the walls, a root finds a loose end and keeps pulling.',
+  'A little shower of noodle crumbs falls inside the wall of 2A. Nobody notices.',
+  'The roots untangle quietly, room by room, like someone doing a very long crossword.',
+];
+
+// ---------- Rooms (buttons over the canvas) ----------
+const roomBtns = [];
+for (let i = 0; i < E.N_ROOMS; i++) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'room'; b.dataset.i = i;
+  b.setAttribute('aria-describedby', 'tip');
+  tipWire(b, () => roomTip(i), () => roomAct(i));
+  $('rooms').append(b); roomBtns.push(b);
+}
+function placeRooms() {
+  for (let i = 0; i < E.N_ROOMS; i++) {
+    const [x, y, w, h] = cell(i), b = roomBtns[i];
+    b.style.left = `${(x / L.W) * 100}%`; b.style.top = `${(y / L.H) * 100}%`;
+    b.style.width = `${(w / L.W) * 100}%`; b.style.height = `${(h / L.H) * 100}%`;
+  }
+}
+const pctx = x => `+${Math.round(x * 100)}%`;
+const per = r => `${fmt(r)}/s`;
+function roomTip(i) {
+  const R = E.ROOMS[i], st = E.roomState(S, i), T0 = E.TYPES[R.type];
+  const id = 'room:' + i + ':' + st + S.lv[i];
+  const kind = R.type === 'home' ? 'Mona’s own pot' : R.type === 'knot' ? '' : `${T0.label} room`;
+  if (st === 'hidden') return { id, name: 'Solid noodle', desc: 'Forty years of tangled noodles where the plaster should be. Roots can only get in from a room next door.' };
+  if (st === 'salt') {
+    const knotWait = i === E.KNOT && S.saltCleared < E.SALT_COSTS.length;
+    return {
+      id, name: i === E.KNOT ? 'Something under the stairs' : 'Salted wall',
+      desc: 'Mr. Pettibone has salted this wall “against damp”. Roots won’t go near it.' + (S.vine
+        ? (knotWait ? `\n\nThe salt round this one is the thickest in the building. Get every other salted wall swept first (${S.saltCleared} of ${E.SALT_COSTS.length}).` : '\n\nSpend dirt (gossip) and a tenant will have a quiet word with him. The salt is gone by morning.')
+        : '\n\nNobody can make Pettibone sweep it out. Not yet. If only Mona knew something about him…'),
+      foot: S.vine && !knotWait ? `${fmt(E.saltCostFor(S, i))} dirt · you have ${fmt(S.dirt)}` : 'salted',
+    };
+  }
+  if (st === 'reach') {
+    const after = E.rate({ ...S, lv: S.lv.map((l, k) => (k === i ? 1 : l)) });
+    return {
+      id, name: 'Send a root through', desc: `Something’s on the other side of this wall. Roots feed on loose strands, so getting through costs noodles.${i === E.KNOT ? '\n\nUnder the basement stairs, under everything. Whatever it is, it’s very, very big.' : ''}`,
+      foot: `${fmt(E.roomCost(S, i), true)} noodles\nall rooms ${per(E.rate(S))} → ${per(after)}`,
+    };
+  }
+  if (i === E.KNOT) return { id, name: R.name, desc: R.note + '\n\nThe knot panel is all Mother Knot now. Hold it for four whole seconds.', foot: 'Everything sits on it.' };
+  const now = E.roomRate(S, i), lv = S.lv[i];
+  const nm = E.neighbourMult(S, i);
+  const boost = E.boostOf(S, i), boostNext = st === 'grow' ? E.boostOf({ ...S, lv: S.lv.map((l, k) => (k === i ? l + 1 : l)) }, i) : boost;
+  const lines = [
+    `untangles ${per(now)}${st === 'grow' ? ` → ${per(E.roomRate({ ...S, lv: S.lv.map((l, k) => (k === i ? l + 1 : l)) }, i))}` : ''}`,
+    `boosts each neighbour ${pctx(boost)}${boostNext !== boost ? ` → ${pctx(boostNext)}` : ''}`,
+    `its neighbours give it ×${nm.toFixed(2)}`,
+  ];
+  if (st === 'grow') lines.push(`all rooms ${per(E.rate(S))} → ${per(E.rateAfterGrow(S, i))}`);
+  return {
+    id, name: R.name + (R.who ? ` · ${R.who}` : ''),
+    desc: `${R.note}${kind ? `\n(${kind}: ${R.type === 'flat' || R.type === 'home' ? 'untangles plenty' : R.type === 'stair' ? 'a bit of both' : 'untangles little, boosts its neighbours a lot'})` : ''}`,
+    foot: lines.join('\n') + (st === 'grow' ? `\nlevel ${lv} → ${lv + 1} of ${E.MAX_LV} · ${fmt(E.roomCost(S, i), true)} noodles` : `\nfull of roots (level ${E.MAX_LV})`),
+  };
+}
+function roomAct(i) {
+  const st = E.roomState(S, i);
+  if (st === 'salt') {
+    if (E.clearSalt(S, i)) { sfx.sweep(); say(saltLine(i), 5); bg = null; hud(); save(); refreshTip(i); }
+    else { sfx.deny(); if (!S.vine) say('Pettibone’s salt. Mona can’t do anything about it. Yet.'); }
+    return;
+  }
+  if (st === 'reach' || st === 'grow') {
+    if (!E.grow(S, i)) { sfx.deny(); return; }
+    if (S.lv[i] === 1) {
+      sfx.reach();
+      say(reachLine(i), 6);
+      if (S.vine && !vineSeen) openVine();
+      if (i === E.KNOT) say('There it is. The Mother Knot: every noodle in Marrow Court loops back to it. The knot panel has gone very quiet. Hold it for four seconds, and don’t let go.', 12);
+    } else { sfx.grow(S.lv[i]); if (S.lv[i] === E.MAX_LV) say(`${E.ROOMS[i].name} is full of roots. Mona feels a tiny bit roomier.`); }
+    bg = null; hud(); save(); refreshTip(i);
+    return;
+  }
+  sfx.deny();
+}
+function refreshTip(i) { if (tipFor && tipFor.startsWith('room:' + i + ':')) showTip(roomBtns[i], roomTip(i)); }
+const REACH = {
+  '3a': 'The root pokes out behind Dot’s headboard. Dot is asleep. Dot is always asleep. Room 3A: rooted.',
+  bath4: 'A root in the shared bath! It drinks from the forty-year drip and sighs. Damp rooms boost their neighbours.',
+  st3: 'The landing. A root curls round the bannister like it lives there now. It does.',
+  laundry: 'The laundry: warm, damp, full of other people’s socks. Roots love it.',
+  '4a': 'Mrs. Vale’s flat. Three cats watch the root come through the skirting board. None of them tells.',
+  '3c': 'Pim’s flat is mostly half-finished noodle sculpture. The root takes notes.',
+  '2a': 'Into the Okafors’ flat. They’re arguing about whose turn it is to notice the root.',
+  kitchen: 'Ko’s kitchen! The stock pot steams. The roots are warm for the first time in their lives.',
+  shop: 'Under Ko’s counter. Auntie Ko looks down at the root, looks at Mona’s ceiling, and puts a noodle in its reach. Respect.',
+  lobby: 'The lobby, under eleven of Pettibone’s notices. One says NO PLANTS. The root grows round it.',
+  '4c': 'The Fennick twins’ flat. Two accordions and no sheet music. The root sways in time.',
+  '2c': 'Señor Ruiz’s studio. The root learns the basic step.',
+  office: 'Pettibone’s office: a ledger, a calendar with the festival circled, and sack after sack of salt. The root keeps very still.',
+  knot: 'The root curls round the last corner of the basement and stops. Mona can feel the whole building resting on what it’s touching.',
+};
+function reachLine(i) { const R = E.ROOMS[i]; return REACH[R.id] || `A root breaks through into the ${R.name.toLowerCase()}. ${R.note}`; }
+const SALT_LINES = [
+  'Mrs. Vale mentions to Pettibone, very casually, the 1987 inspection. The salt is gone by morning.',
+  'The Okafors tell Pettibone they know about the free ramen. He sweeps the salt himself, muttering.',
+  'Somebody slips a note under Pettibone’s door: WE KNOW ABOUT CLAUSE 14. The salt goes.',
+  'Señor Ruiz offers Pettibone a tango lesson, “or else.” The salt is swept by noon.',
+  'Dot, half asleep, recites Pettibone’s rent history at him. He sweeps out the salt just to make her stop.',
+  'Auntie Ko slides Pettibone his forty-year tab across the counter. The salt is gone before the soup’s cold.',
+];
+let saltIdx = 0;
+const saltLine = i => `${SALT_LINES[saltIdx++ % SALT_LINES.length]} (${E.ROOMS[i].name} is clear.)`;
+
+// ---------- The grapevine opens ----------
+let vineSeen = S.vine;
+function openVine() {
+  vineSeen = true; sfx.vine(); pickSpeaker();
+  say('Roots in six flats, and suddenly the walls aren’t muffled any more. Mona can hear EVERYTHING. Who’s feuding, who owes who, where Pettibone keeps the salt. Hold the party wall to listen in. Let go before they notice the plant is leaning.', 14);
+  if (music) music.update();
+}
+
+// ---------- Tooltips ----------
+let tipFor = null, tipMoved = 0;
+function tipWire(b, tipOf, act) {
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, tipOf()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, tipOf()); });
+  b.addEventListener('blur', hideTip);
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  // On touch the first tap shows what it does; the second does it.
+  b.addEventListener('click', () => {
+    const t = tipOf();
+    if (b.dataset.touch && (tipFor || '').split(':').slice(0, 2).join(':') !== t.id.split(':').slice(0, 2).join(':')) { showTip(b, t); return; }
+    act();
+  });
+}
+function showTip(b, it) {
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('i').textContent = it.joke || ''; tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || ''; tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== $('side')) { $('side').append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  const inAside = !!b.closest('aside');
+  if (inAside && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 10}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    // Beside the thing, not over it: to the right if there's room, else to the left, else below.
+    let left = r.right + 10, top = Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2));
+    if (left + t.width > innerWidth - 8) left = r.left - t.width - 10;
+    if (left < 8) { left = Math.max(8, Math.min(innerWidth - t.width - 8, r.left)); top = r.bottom + t.height + 14 < innerHeight ? r.bottom + 6 : Math.max(8, r.top - t.height - 6); }
+    tip.style.left = `${left}px`; tip.style.top = `${top}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  if (tip.parentElement !== $('side')) $('side').append(tip);
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .tipped, .bought, .room')) hideTip(); });
+
+// ---------- Shop ----------
+const BUY_LINES = {
+  hairs: 'Mona grows fine little root hairs. She is a bit self-conscious about them. They pull three times the strands.',
+  grip: 'Mona stops saying “sorry, sorry” to every noodle before she pulls. Tugs charge faster.',
+  worry: 'Mona writes her first entry: “Is the floor tilting, or is it me?” She underlines “me”, then crosses it out.',
+  damp: 'The roots discover drips. Damp rooms boost their neighbours twice as much. Mrs. Vale’s bathroom has never been so popular.',
+  slurp: 'The roots stop nibbling and start slurping. Every room untangles twice as fast. Somewhere, Auntie Ko nods approvingly.',
+  warm: 'Roots curl round the hot pipes like cats. Warm rooms boost their neighbours twice as much.',
+  yank: 'Mona puts her whole stem into it. A full tug now also pulls six seconds of everything the rooms untangle.',
+  flyer: 'Mona props Pim’s flyer against the pot. EVERYONE COME. The 3rd. Noodle sculpture. She’s a plant, but she feels invited.',
+  light: 'Leaves tilt to every crack of sun. Bright rooms boost their neighbours twice as much.',
+  aldente: 'Mona learns the exact firmness at which a noodle gives up. Every room untangles three times as fast.',
+  hat: 'The bottle cap fits perfectly, at an angle. Mona feels four percent braver. Just in case.',
+  helping: 'The basement noodles are the oldest and the softest. Every room untangles four times as fast.',
+  lean: 'Mona tilts one leaf toward the wall. Casually. Very casually. Gossip gets juicier faster.',
+  natural: 'Mona practises looking like an ordinary plant. Tenants take longer to look over.',
+  exhale: 'In for four, out for four. After getting caught, Mona perks back up in two seconds instead of six.',
+  partywall: 'The roots run right through the thinnest walls. Rooted flats overhear three times as much on their own.',
+  diary: '“NEVER untie the knot in the basement. It is holding EVERYTHING up.” Mona reads it twice and goes very still, which, for a plant, is saying something.',
+  grapevine: 'Mona passes every rumour along the roots, and it comes back juicier. Twice the dirt from every listen.',
+  fertilizer: 'It turns out the juicy stuff is good for roots. Every room untangles faster for all the dirt Mona has ever heard.',
+};
+const shop = $('shop');
+const newUntil = {}, freshTab = { n: false, d: false };
+let shopSig = '';
+const priceText = u => u.cur === 'd' ? `${fmt(u.cost)} dirt` : `🍜 ${fmt(u.cost)}`;
+const pct = x => `${Math.round(x * 100)}%`;
+const EFFECT = {
+  hairs: ['a full tug pulls', s => fmt(E.tugYield(s, 1))],
+  grip: ['a full tug charges in', s => `${E.chargeTime(s)}s`],
+  damp: ['each damp room boosts neighbours', s => pctx(E.boostOf(s, damp(s)))],
+  warm: ['each warm room boosts neighbours', s => pctx(E.boostOf(s, warm(s)))],
+  light: ['each bright room boosts neighbours', s => pctx(E.boostOf(s, bright(s)))],
+  slurp: ['all rooms', s => per(E.rate(s))], aldente: ['all rooms', s => per(E.rate(s))], helping: ['all rooms', s => per(E.rate(s))],
+  fertilizer: ['all rooms', s => `${per(E.rate(s))} (×${(s.up.fertilizer ? E.fertMult(s) : 1).toFixed(2)})`],
+  yank: ['a full tug pulls', s => fmt(E.tugYield(s, 1))],
+  lean: ['gossip gets juicy at', s => `×${E.juiceRate(s)} speed`],
+  natural: ['the glance comes', s => `${E.warnTime(s)}s before they notice`],
+  exhale: ['getting caught wilts Mona for', s => `${E.wiltTime(s)}s`],
+  partywall: ['overheard on their own', s => `${(E.dirtRate(s) * 60).toFixed(1)} dirt/min`],
+  grapevine: ['a 3-second listen', s => `${fmt(E.listenDirt(s, firstSpeaker(s), 3))} dirt`],
+};
+const firstOf = (s, type) => { const i = E.ROOMS.findIndex((r, k) => r.type === type && s.lv[k] > 0); return i < 0 ? E.ROOMS.findIndex(r => r.type === type) : i; };
+const damp = s => firstOf(s, 'wet'), warm = s => firstOf(s, 'warm'), bright = s => firstOf(s, 'light');
+const firstSpeaker = s => E.speakers(s)[0] ?? 0;
+function effectLine(u) {
+  const e = EFFECT[u.id];
+  if (!e) return '';
+  const [label, f] = e, now = f(S), next = f({ ...S, up: { ...S.up, [u.id]: 1 } });
+  return now === next ? `${label} ${now}` : `${label} ${now} → ${next}`;
+}
+function upTip(u) {
+  let foot = u.cur === 'd' ? `${fmt(u.cost)} dirt` : `${fmt(u.cost, true)} noodles`;
+  if (u.kind === 'odd') foot += ' · does very little';
+  const fx = effectLine(u);
+  if (fx) foot = `${fx}\n${foot}`;
+  return { id: u.id, name: u.name, desc: u.desc, foot };
+}
+function tabCur() { return S.vine && S.shopTab === 'd' ? 'd' : 'n'; }
+$('tabN').addEventListener('click', () => { S.shopTab = 'n'; freshTab.n = false; hideTip(); renderShop(); save(); });
+$('tabD').addEventListener('click', () => { S.shopTab = 'd'; freshTab.d = false; hideTip(); renderShop(); save(); });
+function renderShop() {
+  const all = S.ended ? [] : E.items(S).sort((a, b) => a.cost - b.cost);
+  for (const u of all) if (!S.seen.includes(u.id)) {
+    S.seen.push(u.id); if (S.t > 2) sfx.unlock(); newUntil[u.id] = performance.now() + 9000;
+    if (u.cur !== tabCur()) freshTab[u.cur] = true;
+  }
+  $('tabs').hidden = !S.vine || S.ended;
+  const cur = tabCur();
+  const list = all.filter(u => u.cur === cur);
+  const sig = cur + list.map(u => u.id).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    for (const u of list) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (u.kind === 'odd' ? ' odd' : '');
+      b.dataset.id = u.id; b.dataset.cost = u.cost; b.dataset.cur = u.cur;
+      b.innerHTML = '<b></b><em></em>';
+      b.querySelector('b').textContent = u.name;
+      b.querySelector('em').textContent = priceText(u);
+      b.setAttribute('aria-describedby', 'tip');
+      tipWire(b, () => upTip(u), () => { if (b.getAttribute('aria-disabled') !== 'true') doBuy(u.id); else sfx.deny(); });
+      shop.append(b);
+    }
+    if (!list.length && !S.ended) { const p = document.createElement('p'); p.className = 'none'; p.textContent = S.tugs ? 'Nothing new yet. Keep tugging, keep spreading.' : 'Tug a few strands loose first.'; shop.append(p); }
+  }
+  const now = performance.now();
+  let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = E.have(S, b.dataset.cur) >= Number(b.dataset.cost) && !S.ended;
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  const cnt = c => all.filter(u => u.cur === c && E.have(S, c) >= u.cost).length;
+  n = cnt('n') + cnt('d');
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  $('tabNc').textContent = cnt('n') ? `· ${cnt('n')}` : '';
+  $('tabDc').textContent = cnt('d') ? `· ${cnt('d')}` : '';
+  $('tabN').setAttribute('aria-selected', String(cur === 'n')); $('tabD').setAttribute('aria-selected', String(cur === 'd'));
+  $('tabN').classList.toggle('fresh', freshTab.n && cur !== 'n'); $('tabD').classList.toggle('fresh', freshTab.d && cur !== 'd');
+  renderShelf();
+}
+function doBuy(id) {
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  delete newUntil[id];
+  hideTip(); sfx.buy();
+  say(BUY_LINES[id] || `Bought: ${E.UP[id].name}.`, 5);
+  bg = null; save(); renderShop(); hud();
+}
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+const UI_KEY = window.DailyGame ? DailyGame.storageKey('ui') : 'di:12:ui';
+let ui = {};
+try { ui = JSON.parse(localStorage.getItem(UI_KEY) || '{}') || {}; } catch (e) {}
+shelfEl.open = !!ui.bought;
+const saveUi = () => { try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (e) {} };
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!ui.bought === shelfEl.open) return;
+  ui.bought = shelfEl.open; saveUi();
+});
+const shortName = n => n.replace(/^(The|A|An) /, '');
+function boughtTip(u) {
+  return { id: 'bought:' + u.id, name: u.name, desc: u.desc, joke: BUY_LINES[u.id] || '', foot: u.kind === 'odd' ? 'Bought · did very little' : 'Bought', inline: true };
+}
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(u => u.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(u => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (u.kind === 'odd' ? ' odd' : '');
+    b.textContent = (u.kind === 'odd' ? '✿ ' : '') + shortName(u.name); b.dataset.id = u.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, boughtTip(u)); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + u.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+
+// ---------- HUD ----------
+const STAGES = [[0, 'root-bound'], [0.08, 'fidgety'], [0.2, 'settling'], [0.35, 'spreading out'], [0.5, 'roomy'], [0.7, 'sprawling'], [0.9, 'almost comfy'], [1, 'COMFY']];
+function hud() {
+  $('nood').textContent = fmt(S.noodles);
+  const r = E.rate(S);
+  $('noodRate').textContent = r > 0 ? `+${fmt(r)}/s` : '';
+  $('dirtBox').hidden = !S.vine;
+  $('dirt').textContent = fmt(S.dirt);
+  $('dirtRate').textContent = S.vine ? `+${(E.dirtRate(S) * 60).toFixed(1)}/min overheard` : '';
+  $('roomsN').textContent = S.rooted; $('roomsOf').textContent = ` of ${E.N_ROOMS}`;
+  const cf = S.ended ? 1 : E.comfort(S);
+  $('comfortFill').style.width = `${cf * 100}%`;
+  $('comfortVal').textContent = `${Math.round(cf * 100)}%`;
+  $('comfortLabel').textContent = STAGES.filter(([v]) => cf >= v).pop()[1];
+  for (let i = 0; i < E.N_ROOMS; i++) {
+    const st = E.roomState(S, i), b = roomBtns[i];
+    b.hidden = S.ended;
+    const can = !S.ended && ((st === 'reach' || st === 'grow') && S.noodles >= E.roomCost(S, i) || st === 'salt' && E.canClearSalt(S, i));
+    b.setAttribute('aria-disabled', String(!can));
+    b.classList.toggle('hot', can && (st === 'reach' || st === 'salt'));
+    b.setAttribute('aria-label', `${st === 'hidden' ? 'Solid noodle' : st === 'reach' ? 'Unknown room, send a root through' : st === 'salt' ? 'Salted wall' : E.ROOMS[i].name}${st === 'grow' || st === 'reach' ? `, ${fmt(E.roomCost(S, i))} noodles` : ''}`);
+  }
+}
+const STAT_TIPS = {
+  noodBox: () => {
+    const top = E.ROOMS.map((R, i) => [i, E.roomRate(S, i)]).filter(([, r]) => r > 0).sort((a, b) => b[1] - a[1]).slice(0, 4);
+    return {
+      id: 'stat:n', name: 'Noodles',
+      desc: 'Loose strands, untangled from forty years of tangle. Roots feed on them: spend them to send roots into new rooms and to grow roots in the rooms you have.\n\n' +
+        top.map(([i, r]) => `${E.ROOMS[i].name}: ${per(r)}`).join('\n') + (top.length < S.rooted - (S.lv[E.KNOT] ? 1 : 0) ? '\n…and the rest' : ''),
+      foot: `all rooms ${per(E.rate(S))} · a full tug pulls ${fmt(E.tugYield(S, 1))} (${E.chargeTime(S)}s)`,
+    };
+  },
+  dirtBox: () => {
+    const sp = E.speakers(S);
+    return {
+      id: 'stat:d', name: 'Dirt',
+      desc: `Gossip. Mona hears it through her roots. Dirt on Pettibone gets his salt swept out of the walls; dirt also buys the things in the Dirt tab.\n\nListening: about ${fmt(E.listenDirt(S, sp[0] ?? 0, 2))} dirt for two seconds, ${fmt(E.listenDirt(S, sp[0] ?? 0, 3.5))} for three and a half. The longer, the juicier, until they notice.\nOverheard on its own in ${sp.length} rooted flat${sp.length === 1 ? '' : 's'}: ${(E.dirtRate(S) * 60).toFixed(1)}/min.`,
+      foot: `dirt heard in all: ${fmt(S.dirtTotal)}`,
+    };
+  },
+};
+for (const [id, tipOf] of Object.entries(STAT_TIPS)) tipWire($(id), tipOf, () => {});
+
+// ---------- Drawing ----------
+let T = 0, last = performance.now(), hudT = 0, saveT = 0, dripT = 0, dripK = 0, bannerT = 0;
+function draw() {
+  const s = cv.width / L.W;
+  if (S.ended) { drawEpilogue(s); return; }
+  const sig = sigOf();
+  if (!bg || sig !== bgSig) { bg = buildBg(); bgSig = sig; }
+  g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(bg, 0, 0);
+  g.setTransform(s, 0, 0, s, 0, 0);
+  drawKnotPanel(g); drawPartyPanel(g);
+  // the speaker's room glows on the map
+  const sp = speakerOf();
+  if (S.vine && sp >= 0) { const [rx, ry, rw, rh] = cell(sp); g.strokeStyle = listening ? C.rose : '#a96868aa'; g.lineWidth = listening ? 3 : 2; g.setLineDash([5, 4]); g.strokeRect(rx + 3, ry + 3, rw - 6, rh - 6); g.setLineDash([]); }
+  // the root breaking through: pulses on rooms you can afford
+  if (!reduced) for (let i = 0; i < E.N_ROOMS; i++) {
+    const st = E.roomState(S, i);
+    if (st === 'reach' && S.noodles >= E.roomCost(S, i) || st === 'salt' && E.canClearSalt(S, i)) {
+      const [rx, ry, rw, rh] = cell(i); g.strokeStyle = C.peach; g.globalAlpha = 0.4 + 0.4 * Math.sin(T * 5); g.lineWidth = 2.5; g.strokeRect(rx + 4, ry + 4, rw - 8, rh - 8); g.globalAlpha = 1;
+    }
+  }
+  for (const p of pops) if (p.panel === 'map') drawPop(g, p);
+}
+
+// ---------- The ending ----------
+let endT = -1;
+const CREDITS = [
+  'LOAD-BEARING NOODLES', '', 'Mona', 'as herself', '', 'Mr. Pettibone', 'the landlord, sweeping', '', 'Auntie Ko', 'the noodles, all of them', '',
+  'Mrs. Vale & three cats', 'knew all along', '', 'the Fennick twins', 'accordions', '', 'Dot', 'slept through it', '', 'Pim', 'noodle sculpture (1st prize)', '',
+  'the Okafors', 'it was his turn', '', 'Señor Ruiz', 'one last dip', '', 'Mr. Duda', 'and eleven Dudas', '', 'Marrow Court', 'load-bearing, 1926 to today', '',
+  'music', 'Pettibone’s Invention', 'harpsichord, in-sen', '', 'thank you for untangling', '', '', '',
+];
+let epiN = 0, epiTug = 0;
+function drawEpilogue(s) {
+  const t = endT < 0 ? 99 : T - endT;
+  g.setTransform(s, 0, 0, s, 0, 0);
+  paper(g, L.W, L.H);
+  const W = L.W, H = L.H, gy = H * 0.72;
+  if (t < 7.5 && !reduced) {
+    // The collapse: the building folds, top to bottom, like a soufflé when the oven opens.
+    for (let i = 0; i < E.N_ROOMS; i++) {
+      const [rx, ry, rw, rh] = cell(i), row = E.rowOf(i);
+      const start = (5 - row) * 0.35 + (E.colOf(i) % 2) * 0.12;
+      const k = Math.max(0, t - start), fall = Math.min(1, k * k * 0.25);
+      const ty = ry + (gy - ry - rh * 0.4 - (5 - row) * 6) * fall, rot = fall * (((i * 37) % 7) - 3) * 0.06;
+      g.save(); g.translate(rx + rw / 2, ty + rh / 2); g.rotate(rot); g.scale(1, 1 - fall * 0.55);
+      g.fillStyle = i % 3 ? C.mauve : C.plum; g.fillRect(-rw / 2, -rh / 2, rw, rh);
+      tangle(g, 0, 0, rw * 0.9, rh * 0.9, i * 13 + 3, '#edb4a1aa', 1.2, 6);
+      g.strokeStyle = C.plum; g.lineWidth = 1.5; g.strokeRect(-rw / 2, -rh / 2, rw, rh);
+      g.restore();
+    }
+    if (t > 2) { g.fillStyle = '#edb4a1'; g.globalAlpha = Math.min(0.85, (t - 2) / 5); g.fillRect(0, 0, W, H); g.globalAlpha = 1; }
+    if (t > 5.5) { g.globalAlpha = (t - 5.5) / 2; garden(t); g.globalAlpha = 1; }
+    return;
+  }
+  garden(t);
+}
+function garden(t) {
+  const W = L.W, H = L.H, gy = H * 0.72, n = L.narrow;
+  // sun, carved
+  const sx = W * 0.82, sy = H * 0.16;
+  g.fillStyle = C.rose; g.beginPath(); g.arc(sx, sy, n ? 24 : 34, 0, 7); g.fill();
+  g.strokeStyle = C.rose; g.lineWidth = 2;
+  for (let k = 0; k < 16; k++) { const a = k * Math.PI / 8 + t * 0.05; g.beginPath(); g.moveTo(sx + Math.cos(a) * 42, sy + Math.sin(a) * 42); g.lineTo(sx + Math.cos(a) * 58, sy + Math.sin(a) * 58); g.stroke(); }
+  // ground
+  g.fillStyle = C.mauve; g.fillRect(0, gy, W, H - gy);
+  hatch(g, 0, gy, W, H - gy, 6, '#2c213755', 1);
+  // the heap: forty years of noodles, and flowers already
+  const hx = W * (n ? 0.3 : 0.32), hw = W * (n ? 0.5 : 0.4), hh = H * 0.24;
+  g.fillStyle = C.plum; g.beginPath(); g.moveTo(hx - hw / 2, gy + 2); g.quadraticCurveTo(hx, gy - hh * 1.6, hx + hw / 2, gy + 2); g.closePath(); g.fill();
+  g.save(); g.beginPath(); g.moveTo(hx - hw / 2, gy + 2); g.quadraticCurveTo(hx, gy - hh * 1.6, hx + hw / 2, gy + 2); g.closePath(); g.clip();
+  tangle(g, hx, gy - hh * 0.4, hw, hh * 1.1, 91, '#edb4a1cc', 1.4, 22); g.restore();
+  for (let k = 0; k < 9; k++) {
+    const fx = hx - hw * 0.4 + k * hw * 0.1, fy = gy - Math.sin((k + 0.5) / 9 * Math.PI) * hh * 0.75 - 4;
+    g.strokeStyle = C.plum; g.lineWidth = 1.5; g.beginPath(); g.moveTo(fx, fy + 8); g.lineTo(fx, fy); g.stroke();
+    g.fillStyle = k % 2 ? C.rose : C.peach; g.beginPath(); g.arc(fx, fy - 2, 3 + (k % 3), 0, 7); g.fill();
+  }
+  // Mona, planted in the ground at last, much bigger
+  const mx = W * (n ? 0.74 : 0.6), my = gy + 6;
+  g.save(); g.translate(mx, my);
+  g.strokeStyle = C.plum; g.lineWidth = 4;
+  const sway = Math.sin(t * 0.9) * 0.05;
+  for (const [a, len] of [[-0.6, 70], [-1.2, 84], [-1.9, 86], [-2.5, 74], [-1.55, 60]]) {
+    const ex = Math.cos(a + sway) * 50, ey = Math.sin(a + sway) * 80;
+    g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(ex * 0.3, ey * 0.6, ex, ey); g.stroke();
+    leaf(g, ex, ey, n ? len * 0.62 : len * 0.85, a + sway, 0, a === -1.55 ? C.mauve : C.plum);
+  }
+  // roots spreading in the soil
+  g.strokeStyle = '#2c2137aa'; g.lineWidth = 2;
+  for (let k = 0; k < 7; k++) { g.beginPath(); g.moveTo(0, 0); g.bezierCurveTo((k - 3) * 20, 30, (k - 3) * 45, 20 + k * 5, (k - 3) * 60, 50 + (k % 3) * 12); g.stroke(); }
+  // face, contented
+  g.fillStyle = C.plum; g.beginPath(); g.arc(-7, -18, 2.6, 0, 7); g.arc(7, -18, 2.6, 0, 7); g.fill();
+  g.lineWidth = 1.8; g.beginPath(); g.arc(0, -12, 5, 0.2, Math.PI - 0.2); g.stroke();
+  if (S.up.hat) { g.fillStyle = C.rose; g.strokeStyle = C.plum; g.beginPath(); g.ellipse(14, -30, 12, 4, -0.25, 0, 7); g.fill(); g.stroke(); }
+  g.restore();
+  // tables of tenants and Auntie Ko ladling from the heap
+  const ty = gy + (n ? 40 : 52);
+  const seats = n ? ['Auntie Ko', 'Mrs. Vale', 'Pim', 'the Fennick twins'] : ['Auntie Ko', 'Mrs. Vale', 'Pim', 'the Fennick twins', 'Dot', 'the Okafors', 'Señor Ruiz', 'Mr. Duda'];
+  seats.forEach((w, k) => {
+    const x0 = (n ? 30 : 40) + k * (n ? 46 : 62), bob = Math.sin(t * 2 + k) * 1.5;
+    drawTenant(g, x0, ty + bob, w, n ? 0.62 : 0.8, Math.sin(t * 0.7 + k) > 0.6 ? -1 : 1);
+    if (w !== 'Auntie Ko') { g.fillStyle = C.peach; g.beginPath(); g.ellipse(x0 + 12, ty + 22, 7, 3, 0, 0, 7); g.fill(); }
+    else { g.strokeStyle = C.peach; g.lineWidth = 1.2; for (let s2 = 0; s2 < 3; s2++) { g.beginPath(); g.moveTo(x0 + 18 + s2 * 4, ty + 6); g.quadraticCurveTo(x0 + 22 + s2 * 4 + Math.sin(t * 3 + s2) * 3, ty - 4, x0 + 18 + s2 * 4, ty - 14); g.stroke(); } }
+  });
+  g.fillStyle = C.plum; g.fillRect(n ? 18 : 28, ty + 24, seats.length * (n ? 46 : 62) - 10, 4);
+  // Pettibone, sweeping up his salt
+  drawPettibone(g, W * (n ? 0.9 : 0.86), gy + (n ? 26 : 34), t);
+  g.fillStyle = C.peach; for (let k = 0; k < 14; k++) g.fillRect(W * (n ? 0.9 : 0.86) + 22 + (k % 5) * 3, gy + (n ? 22 : 30) - Math.floor(k / 5) * 2, 2, 2);
+  // the epilogue keeps playing itself: Mona's roots still untangling, the count still going up
+  epiTug += 1 / 60;
+  if (epiTug > 2.6) { epiTug = 0; epiN += Math.max(1e12, E.rate(S) * 3); if (!document.hidden && T - lastEpiSound > 2) { lastEpiSound = T; sfx.drip(dripK++); } }
+  g.fillStyle = C.plum; g.font = `${n ? 13 : 16}px ${SC}`; g.textAlign = 'left'; g.textBaseline = 'top';
+  g.fillText(`noodles untangled: ${fmt(S.total + epiN, true)}`, 10, 10);
+  // the credits roll up the right side, round and round
+  const cxr = n ? W * 0.5 : W * 0.86, top = n ? 34 : 28, bottom = n ? gy - 120 : gy - 70, lh = n ? 15 : 18;
+  g.save(); g.beginPath(); g.rect(cxr - (n ? 110 : 110), top, n ? 220 : 220, bottom - top); g.clip();
+  const total = CREDITS.length * lh, off = (t * 16) % total;
+  g.textAlign = 'center';
+  for (let rep = 0; rep < 2; rep++) CREDITS.forEach((line, k) => {
+    const y = bottom - off + k * lh + rep * total;
+    if (y < top - lh || y > bottom + lh) return;
+    const head = k === 0 || CREDITS[k - 1] === '';
+    g.fillStyle = head ? C.plum : C.mauve; g.font = head ? `${n ? 14 : 17}px ${SC}` : `italic ${n ? 12 : 14}px ${FELL}`;
+    g.fillText(line, cxr, y);
+  });
+  g.restore();
+}
+let lastEpiSound = 0;
+
+function finish() {
+  if (S.ended) return;
+  hideTip(true);
+  S.ended = true; S.endedAt = S.t;
+  end(false);
+}
+function end(resumed) {
+  S.ended = true; E.finishAll(S); save();
+  endT = resumed ? -1 : T;
+  $('ending').hidden = false; $('tabs').hidden = true; $('shopHead').hidden = true;
+  for (const b of roomBtns) b.hidden = true;
+  const tt = S.endedAt ?? S.t, h = Math.floor(tt / 3600), m = Math.floor(tt / 60) % 60;
+  const time = h ? `${h}h${String(m).padStart(2, '0')}m` : `${m}m`;
+  $('endText').textContent = 'On the afternoon of the culture festival, with every tenant out admiring Pim’s noodle sculpture, Mona found the Mother Knot and gave it one long, gentle pull. Marrow Court sighed, and folded: slowly, the way a soufflé does when you open the oven, the roof garden first, then the floors, landing by landing, into one soft heap of forty years of noodles. Nobody was home. Nobody was hurt. When the tenants came back that evening there was a garden where the building had been, Mona in the middle of it with her roots in real ground at last, and Auntie Ko already ladling ramen from the heap. Mr. Pettibone swept up his salt. Mrs. Vale said she’d always known.';
+  $('endStats').textContent = tt > 1 ? `${time} · ${fmt(S.total, true)} noodles untangled · ${fmt(S.dirtTotal)} dirt heard · comfort 100%` : '';
+  hud(); renderShop();
+  if (music) music.update();
+  if (!resumed) {
+    sfx.collapse();
+    setTimeout(() => sfx.finale(), 6200);
+    say('Did you HEAR? Marrow Court fell down. Beautifully. Nobody was in. There’s a garden now, and noodles, and a very relaxed plant.', 30);
+    if (window.DailyGame) DailyGame.finish({ lines: ['🌿 Mona got comfy', `🍜 ${fmt(S.total, true)} noodles · ⏱ ${time}`, '🏚️ Marrow Court: load-bearing no more'] });
+  }
+  setTimeout(() => $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' }), resumed ? 0 : 9000);
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Loop ----------
+function frame(now) {
+  const dt = Math.min(0.25, (now - last) / 1000); last = now; T += dt;
+  if (layout()) hud();
+  if (!S.ended) {
+    E.step(S, dt);
+    if (tugging) {
+      const final = E.canFinish(S);
+      tugT += dt; tugC = Math.min(1, tugT / (final ? E.FINAL_HOLD : E.chargeTime(S)));
+      const step = Math.floor(tugC * (final ? 8 : 6));
+      if (step !== tugStep) { tugStep = step; final ? sfx.creak(tugC) : sfx.stretch(tugC); if (tugC >= 1) sfx.full(); }
+      if (final && tugC >= 1) { tugging = false; finish(); }
+    }
+    if (listening) {
+      listenT += dt;
+      if (Math.floor(listenT * 5) !== Math.floor((listenT - dt) * 5)) sfx.whisper(listenT);
+      if (!glanced && listenT >= noticeAt - E.warnTime(S)) { glanced = true; glanceT = T; sfx.glance(); }
+      if (listenT >= noticeAt) {
+        listening = false; glanced = false; E.caught(S); caughtT = T; sfx.caught();
+        const who = E.ROOMS[speakerOf()]?.who || 'Somebody';
+        say(`${cap(who)} turns round. “That plant is STARING at me.” Mona wilts with shame. (No dirt. Let go when they glance over.)`, 4);
+        gossipCache = { sp: -1, line: '' };
+        setTimeout(pickSpeaker, 1500);
+      }
+    }
+    // income that ticks in on its own: a soft drip now and then, and a line in the log once in a while
+    dripT += dt;
+    if (dripT > 5 && E.rate(S) > 0 && !tugging && !listening) { dripT = 0; sfx.drip(dripK++); }
+  }
+  for (const p of pops) p.t += dt;
+  for (let k = pops.length - 1; k >= 0; k--) if (pops[k].t > pops[k].life) pops.splice(k, 1);
+  const mk = musicKey(); if (mk !== lastKey) { lastKey = mk; if (music) music.update(); }
+  logT += dt; ambT += dt;
+  if (pending && T >= holdT) { const m = pending; pending = null; say(m); }
+  if (logT > 22 && ambT > 22 && !S.ended) {
+    ambT = 0;
+    const r = Math.random();
+    if (S.vine && r < 0.35) say(`${pick(['Overheard through the wall', 'Through the plaster', 'Down the grapevine'])}: ${cap(pick(E.speakers(S).map(i => E.ROOMS[i].who)) || 'someone')} is talking about ${pick(['the landing that dips', 'Pettibone’s salt', 'the festival', 'that plant in 3B', 'whose turn it is', 'the basement'])} again. (+dirt, slowly)`);
+    else if (S.rooted > 2 && r < 0.65) say(`${pick(WALLS)} (+${fmt(E.rate(S))} noodles a second)`);
+    else say(pick(AMBIENT));
+  }
+  hudT += dt; if (hudT > 0.2) { hudT = 0; hud(); renderShop(); }
+  saveT += dt; if (saveT > 4) { saveT = 0; save(); }
+  fit(); draw();
+  requestAnimationFrame(frame);
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('pagehide', save);
+
+// ---------- Start ----------
+try { await Promise.all([document.fonts.load(`14px ${FELL}`), document.fonts.load(`14px ${SC}`), document.fonts.load(`italic 14px ${FELL}`)]); } catch (e) {}
+await makeSprites();
+layout();
+if (Sprites.sheetRequested()) Sprites.showSheet();
+fit();
+if (S.ended) { end(true); say('The garden, a while later. The ramen is still going. So is the gossip.'); }
+else {
+  const away = S.lastSeen ? (Date.now() - S.lastSeen) / 1000 : 0;
+  const got = S.t > 5 ? E.offline(S, away) : null;
+  if (got && (got.noodles > 0 || got.dirt > 0)) {
+    const hrs = away / 3600, t = hrs >= 1 ? `${hrs.toFixed(1)} hours` : `${Math.round(away / 60)} minutes`;
+    say(`Did you hear? While you were away (${t}${got.capped ? ', though the roots only remember three hours' : ''}), the roots kept at it, slowly: +${fmt(got.noodles, true)} noodles${got.dirt >= 1 ? ` and +${fmt(got.dirt)} dirt overheard` : ''}.`, 8);
+  } else say(S.t > 5 ? 'Marrow Court, flat 3B. Mona’s roots are right where you left them.' : 'Marrow Court, flat 3B. Mona is root-bound and anxious, and the wall behind her pot is stuffed with forty years of tangled noodles. Hold the knot on the left to tug a strand loose; let go when the ring is full.');
+}
+if (DEBUG) Object.assign(window.__game, { hud, renderShop });
+if (S.vine && speakerOf() < 0) pickSpeaker();
+hud(); renderShop();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
