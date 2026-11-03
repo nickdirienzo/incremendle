@@ -1,0 +1,150 @@
+{
+  "libs": [
+    {
+      "name": "@strudel/web",
+      "version": "1.3.0",
+      "license": "AGPL-3.0-or-later",
+      "what": "pattern music: synths, samples, Tidal mini-notation",
+      "home": "https://strudel.cc",
+      "support": "https://opencollective.com/tidalcycles"
+    }
+  ],
+  "art": [
+    {
+      "set": "Game Icons",
+      "license": "CC-BY-3.0",
+      "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+      "home": "https://github.com/game-icons/icons",
+      "support": "https://game-icons.net",
+      "icons": [
+        {
+          "icon": "game-icons:magic-swirl",
+          "author": "Lorc",
+          "source": "https://game-icons.net/1x1/lorc/magic-swirl.html"
+        },
+        {
+          "icon": "game-icons:hood",
+          "author": "Lorc",
+          "source": "https://game-icons.net/1x1/lorc/hood.html"
+        },
+        {
+          "icon": "game-icons:queen-crown",
+          "author": "Lorc",
+          "source": "https://game-icons.net/1x1/lorc/queen-crown.html"
+        },
+        {
+          "icon": "game-icons:crown",
+          "author": "Badges",
+          "source": "https://game-icons.net/1x1/badges/crown.html"
+        },
+        {
+          "icon": "game-icons:church",
+          "author": "Delapouite",
+          "source": "https://game-icons.net/1x1/delapouite/church.html"
+        },
+        {
+          "icon": "game-icons:hearts",
+          "author": "Skoll",
+          "source": "https://game-icons.net/1x1/skoll/hearts.html"
+        },
+        {
+          "icon": "game-icons:chariot",
+          "author": "Cathelineau",
+          "source": "https://game-icons.net/1x1/cathelineau/chariot.html"
+        },
+        {
+          "icon": "game-icons:lion",
+          "author": "Lorc",
+          "source": "https://game-icons.net/1x1/lorc/lion.html"
+        },
+        {
+          "icon": "game-icons:lantern-flame",
+          "author": "Lorc",
+          "source": "https://game-icons.net/1x1/lorc/lantern-flame.html"
+        },
+        {
+          "icon": "game-icons:ship-wheel",
+          "author": "Delapouite",
+          "source": "https://game-icons.net/1x1/delapouite/ship-wheel.html"
+        },
+        {
+          "icon": "game-icons:scales",
+          "author": "Lorc",
+          "source": "https://game-icons.net/1x1/lorc/scales.html"
+        },
+        {
+          "icon": "game-icons:knot",
+          "author": "Delapouite",
+          "source": "https://game-icons.net/1x1/delapouite/knot.html"
+        },
+        {
+          "icon": "game-icons:scythe",
+          "author": "Lorc",
+          "source": "https://game-icons.net/1x1/lorc/scythe.html"
+        },
+        {
+          "icon": "game-icons:amphora",
+          "author": "Delapouite",
+          "source": "https://game-icons.net/1x1/delapouite/amphora.html"
+        },
+        {
+          "icon": "game-icons:devil-mask",
+          "author": "Delapouite",
+          "source": "https://game-icons.net/1x1/delapouite/devil-mask.html"
+        },
+        {
+          "icon": "game-icons:white-tower",
+          "author": "Lorc",
+          "source": "https://game-icons.net/1x1/lorc/white-tower.html"
+        },
+        {
+          "icon": "game-icons:star-formation",
+          "author": "Delapouite",
+          "source": "https://game-icons.net/1x1/delapouite/star-formation.html"
+        },
+        {
+          "icon": "game-icons:moon",
+          "author": "Badges",
+          "source": "https://game-icons.net/1x1/badges/moon.html"
+        },
+        {
+          "icon": "game-icons:sun",
+          "author": "Badges",
+          "source": "https://game-icons.net/1x1/badges/sun.html"
+        },
+        {
+          "icon": "game-icons:trumpet",
+          "author": "Delapouite",
+          "source": "https://game-icons.net/1x1/delapouite/trumpet.html"
+        },
+        {
+          "icon": "game-icons:world",
+          "author": "Lorc",
+          "source": "https://game-icons.net/1x1/lorc/world.html"
+        }
+      ]
+    }
+  ],
+  "fonts": [
+    {
+      "name": "Cinzel",
+      "license": "OFL-1.1",
+      "home": "https://fonts.google.com/specimen/Cinzel"
+    },
+    {
+      "name": "Cinzel Decorative",
+      "license": "OFL-1.1",
+      "home": "https://fonts.google.com/specimen/Cinzel+Decorative"
+    },
+    {
+      "name": "Cormorant Garamond",
+      "license": "OFL-1.1",
+      "home": "https://fonts.google.com/specimen/Cormorant+Garamond"
+    }
+  ],
+  "palette": {
+    "name": "Hollow",
+    "author": "Poltergasm",
+    "home": "https://lospec.com/palette-list/hollow"
+  }
+}

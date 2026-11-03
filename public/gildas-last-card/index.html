@@ -1,0 +1,1180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gilda's Last Card · Incremendle</title>
+<meta name="description" content="A tin soldier on leave melts tin-foil frogs at the Paper Fair, where Gilda the fortune machine sets the prices, and has never dealt her last card. Incremendle.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/cinzel/font.css">
+<link rel="stylesheet" href="/shared/fonts/cinzel-decorative/font.css">
+<link rel="stylesheet" href="/shared/fonts/cormorant-garamond/font.css">
+<style>
+  /* Hollow (Poltergasm): night ink, slate, mauve, bone. Tarot cards at a fair under the stairs. */
+  :root {
+    --ink: #0f0f1b; --slate: #565a75; --mauve: #c6b7be; --bone: #fafbf6;
+    --head: 'Cinzel', 'Cinzel Decorative', Georgia, serif; --deco: 'Cinzel Decorative', 'Cinzel', Georgia, serif;
+    --body: 'Cormorant Garamond', Georgia, serif;
+    color-scheme: dark;
+  }
+  html, body { background: var(--ink); color: var(--bone); }
+  /* Keep this: any display rule (flex, grid) would otherwise override the hidden attribute. */
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 500 17px/1.35 var(--body);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(10px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image:
+      radial-gradient(1.2px 1.2px at 12% 18%, #c6b7be88 50%, transparent 51%),
+      radial-gradient(1px 1px at 68% 8%, #fafbf699 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 84% 42%, #c6b7be66 50%, transparent 51%),
+      radial-gradient(1px 1px at 36% 64%, #fafbf666 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 92% 86%, #c6b7be77 50%, transparent 51%),
+      radial-gradient(1px 1px at 4% 78%, #fafbf677 50%, transparent 51%);
+    background-size: 340px 300px;
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 2px 0 8px; }
+  header h1 { margin: 0; font: 700 28px/1.05 var(--deco); color: var(--bone); letter-spacing: .5px; }
+  header p { margin: 0; font: italic 500 16px/1.2 var(--body); color: var(--mauve); }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 20px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } }
+  canvas { touch-action: none; display: block; }
+
+  /* Gilda's booth: her glass case, the card she's dealt, what's coming, and her mending. */
+  .booth { display: grid; grid-template-columns: 138px 112px minmax(0, 1fr) 196px; gap: 12px; align-items: stretch;
+    padding: 10px; border: 1.5px solid var(--slate); background: #0f0f1bcc; position: relative; }
+  .booth::before { content: ""; position: absolute; inset: 4px; border: 1px solid #565a7566; pointer-events: none; }
+  @media (max-width: 900px) { .booth { grid-template-columns: 120px 100px minmax(0, 1fr); } .goal { grid-column: 1 / -1; } }
+  @media (max-width: 520px) { .booth { grid-template-columns: 96px 84px minmax(0, 1fr); gap: 8px; padding: 8px; }
+    .band { grid-template-columns: 50px minmax(0, 1fr) 40px; gap: 4px; font-size: 10px; } .band b { font-size: 11px; }
+    .ahead { gap: 4px; } .ahead button { width: 28px; } .ahead canvas { width: 28px; height: 45px; } .market .says { font-size: 14px; } }
+  #gilda, #nowCard { width: 100%; height: auto; aspect-ratio: 138 / 200; }
+  #nowCard { aspect-ratio: 112 / 186; align-self: start; }
+  .market { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .market .says { font: italic 500 15px/1.2 var(--body); color: var(--mauve); min-height: 2.4em; }
+  .market .says b { font: 700 14px/1.1 var(--head); color: var(--bone); font-style: normal; letter-spacing: .5px; display: block; }
+  .band { display: grid; grid-template-columns: 68px minmax(0, 1fr) 54px; align-items: center; gap: 6px; font: 600 12px var(--head); letter-spacing: .5px; }
+  .band s { position: relative; height: 9px; border: 1px solid var(--slate); text-decoration: none; }
+  .band s i { position: absolute; inset: 0 auto 0 0; background: var(--mauve); transition: width .4s; }
+  .band s::after { content: ""; position: absolute; left: 33.3%; top: -3px; bottom: -3px; border-left: 1px dashed var(--bone); opacity: .5; }
+  .band b { text-align: right; font: 700 13px var(--head); }
+  .band.rise b { color: var(--bone); } .band.fall b { color: var(--slate); }
+  .band.hot s i { background: var(--bone); }
+  .dealbar { height: 3px; background: #565a7566; position: relative; margin-top: 1px; }
+  .dealbar i { position: absolute; inset: 0 auto 0 0; background: var(--mauve); }
+  .ahead { display: flex; gap: 6px; align-items: flex-end; margin-top: 2px; }
+  .ahead small { font: 600 11px var(--head); color: var(--mauve); letter-spacing: 1px; writing-mode: vertical-rl; transform: rotate(180deg); }
+  .ahead button { padding: 0; border: 0; background: none; cursor: help; width: 40px; flex: 0 0 auto; }
+  .ahead canvas { width: 40px; height: 64px; }
+  .ahead button:focus-visible { outline: 2px dashed var(--mauve); outline-offset: 2px; }
+  .goal { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+  .sign { font: 700 11px/1.3 var(--head); letter-spacing: 1.5px; text-align: center; color: var(--ink); background: var(--mauve); padding: 4px 6px; }
+  .sign em { display: block; font: italic 500 13px var(--body); letter-spacing: 0; }
+  .meter { position: relative; height: 22px; border: 1.5px solid var(--mauve); }
+  .meter i { position: absolute; inset: 0 auto 0 0; background: var(--slate); transition: width .6s; }
+  .meter span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 700 12px var(--head); letter-spacing: 1px; }
+  .fit, .sellbar button, #shareBtn, #againBtn {
+    font: 700 14px/1.15 var(--head); letter-spacing: .5px; color: var(--ink); background: var(--bone); border: 1.5px solid var(--bone);
+    box-shadow: inset 0 0 0 2px var(--bone), inset 0 0 0 3px var(--ink); padding: 8px 10px; cursor: pointer; text-align: center;
+  }
+  .fit small { display: block; font: italic 500 14px var(--body); letter-spacing: 0; }
+  .fit[aria-disabled="true"] { background: var(--slate); border-color: var(--slate); color: var(--bone); box-shadow: inset 0 0 0 2px var(--slate), inset 0 0 0 3px #0f0f1b55; cursor: default; }
+  .fit.ready { animation: glow 1.8s ease-in-out infinite; }
+  @keyframes glow { 50% { box-shadow: inset 0 0 0 2px var(--bone), inset 0 0 0 3px var(--ink), 0 0 0 4px #c6b7be55; } }
+  .goal .guess { font: italic 500 14px/1.2 var(--body); color: var(--mauve); text-align: center; }
+  .still-note { font: italic 500 16px/1.25 var(--body); color: var(--bone); text-align: center; }
+
+  .hud { display: flex; gap: 6px 14px; align-items: baseline; flex-wrap: wrap; margin: 8px 2px 6px; }
+  .hud .money { font: 700 22px var(--head); }
+  .hud .money small { font: italic 500 15px var(--body); color: var(--mauve); }
+  .chips { display: flex; gap: 5px; flex-wrap: wrap; }
+  .chips span { font: 600 12px var(--head); letter-spacing: .3px; color: var(--mauve); border: 1px solid var(--slate); padding: 1px 6px; white-space: nowrap; }
+  .coin { display: inline-block; width: .8em; height: .8em; border-radius: 50%; vertical-align: -.05em; margin: 0 .15em;
+    background: radial-gradient(circle at 38% 38%, var(--ink) 9%, transparent 10%), radial-gradient(circle at 62% 38%, var(--ink) 9%, transparent 10%),
+      radial-gradient(circle at 38% 62%, var(--ink) 9%, transparent 10%), radial-gradient(circle at 62% 62%, var(--ink) 9%, transparent 10%), var(--mauve);
+    box-shadow: inset 0 0 0 1.5px var(--bone); }
+
+  #table { width: 100%; border: 1.5px solid var(--slate); background: #14142a; cursor: pointer; }
+  #table:focus-visible { outline: 2px dashed var(--mauve); outline-offset: 3px; }
+  .sellbar { display: flex; align-items: center; gap: 8px; min-height: 40px; margin-top: 6px; flex-wrap: wrap; }
+  .sellbar p { margin: 0; flex: 1 1 200px; font: italic 500 16px/1.2 var(--body); color: var(--mauve); }
+  .sellbar p b { font: 700 14px var(--head); font-style: normal; color: var(--bone); }
+  .sellbar button { padding: 6px 12px; }
+  .sellbar button.quiet { background: transparent; color: var(--bone); box-shadow: none; border-color: var(--mauve); }
+  .log { margin: 6px 2px 0; min-height: 2.7em; font: italic 500 17px/1.35 var(--body); color: var(--bone); }
+  .log.fresh { animation: inkin .5s ease-out; }
+  @keyframes inkin { from { opacity: 0; } }
+
+  /* The fair's stalls: sticky, never taller than the window. */
+  aside { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; scrollbar-width: thin; padding: 2px 4px 8px 2px; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  aside h2 { font: 700 20px/1 var(--head); margin: 2px 0 10px; letter-spacing: 1px; }
+  #afford { font: italic 500 15px var(--body); color: var(--mauve); letter-spacing: 0; }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  @media (max-width: 760px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up {
+    position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; color: var(--ink);
+    background: var(--mauve); border: 1.5px solid var(--mauve); box-shadow: inset 0 0 0 2px var(--mauve), inset 0 0 0 3px #0f0f1b66;
+    padding: 6px 9px 6px; cursor: pointer;
+  }
+  .up b { font: 700 13px/1.15 var(--head); letter-spacing: .3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font: italic 500 14px/1.15 var(--body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { background: var(--bone); border-color: var(--bone); box-shadow: inset 0 0 0 2px var(--bone), inset 0 0 0 3px var(--ink); }
+  .up.can em { font-weight: 700; font-style: normal; }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up[aria-disabled="true"]:not(.can) { opacity: .6; }
+  .up.odd { background: var(--slate); color: var(--bone); border-color: var(--slate); box-shadow: inset 0 0 0 2px var(--slate), inset 0 0 0 3px #fafbf655; }
+  .up.odd.can { background: var(--slate); border-color: var(--bone); opacity: 1; }
+  .up .tag { position: absolute; top: -8px; right: 6px; font: 700 10px var(--head); font-style: normal; letter-spacing: 1px; color: var(--ink); background: var(--bone); border: 1px solid var(--ink); padding: 0 5px; }
+  .up.new { animation: pulse 1.5s ease-in-out 4; }
+  @keyframes pulse { 50% { outline: 3px solid #fafbf677; outline-offset: 2px; } }
+  .up:focus-visible, .bought:focus-visible, .fit:focus-visible, .sellbar button:focus-visible { outline: 2px dashed var(--bone); outline-offset: 2px; }
+  #tip {
+    position: fixed; z-index: 50; width: 250px; padding: 10px 13px 11px; pointer-events: none; font: 500 16px/1.3 var(--body); color: var(--ink);
+    background: var(--bone); border: 1.5px solid var(--bone); box-shadow: inset 0 0 0 3px var(--bone), inset 0 0 0 4px var(--ink), 4px 4px 0 var(--slate);
+  }
+  #tip b { display: block; font: 700 16px/1.1 var(--head); letter-spacing: .5px; margin-bottom: 4px; }
+  #tip .fx { display: block; margin-top: 5px; font: 700 13px var(--head); letter-spacing: .2px; }
+  #tip i { display: block; margin-top: 6px; padding-top: 5px; border-top: 1px solid var(--mauve); font-size: 15px; }
+  #tip small { display: block; margin-top: 6px; font: 600 12px var(--head); color: var(--slate); letter-spacing: .5px; }
+  #tip.inline { position: static; width: auto; margin-top: 10px; box-sizing: border-box; }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 700 16px/1 var(--head); letter-spacing: 1px; cursor: pointer; list-style: none; padding: 3px 2px; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: "\2726"; font-size: 12px; color: var(--mauve); transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(45deg); }
+  #bought summary:focus-visible { outline: 2px dashed var(--bone); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 2px 2px; }
+  .bought { max-width: 100%; font: 600 11px/1.2 var(--head); letter-spacing: .3px; color: var(--bone); background: transparent; border: 1px solid var(--mauve); padding: 3px 7px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { border-style: dashed; }
+  .bought:hover, .bought.on { background: var(--slate); }
+
+  #ending { margin: 18px auto 0; max-width: 720px; display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 20px; align-items: start;
+    padding: 18px 22px 22px; border: 1.5px solid var(--mauve); background: #0f0f1bee; box-shadow: inset 0 0 0 4px var(--ink), inset 0 0 0 5px var(--slate); }
+  @media (max-width: 560px) { #ending { grid-template-columns: 1fr; } #foolCard { max-width: 200px; margin: 0 auto; } }
+  #foolCard { width: 100%; height: auto; aspect-ratio: 200 / 330; }
+  #ending h2 { font: 700 28px/1.05 var(--head); margin: 0 0 8px; }
+  #ending p { margin: 8px 0; }
+  #ending .stats { font: 600 13px var(--head); letter-spacing: .5px; color: var(--mauve); }
+  #shareBtn, #againBtn { font-size: 16px; padding: 8px 16px; margin: 10px 6px 0 0; }
+  #againBtn { background: transparent; color: var(--bone); box-shadow: none; border-color: var(--mauve); }
+  #shareBtn:focus-visible, #againBtn:focus-visible { outline: 2px dashed var(--bone); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .fit.ready, .log.fresh { animation: none; } .meter i, .band s i, #bought summary::before { transition: none; } }
+</style>
+<!-- Libraries from /shared/lib/libs.json, by version. List only what this game imports: the credits tool reads these. -->
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="13" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Gilda's Last Card</h1>
+    <p>in which a tin soldier on leave goes to the Paper Fair</p>
+  </header>
+  <div class="game">
+    <main>
+      <section class="booth" aria-label="Gilda's booth">
+        <canvas id="gilda" width="138" height="200" aria-label="Gilda, the fortune-telling machine, in her glass case"></canvas>
+        <canvas id="nowCard" width="112" height="186" aria-label="The card Gilda has dealt"></canvas>
+        <div class="market">
+          <div class="says" id="says" aria-live="polite"></div>
+          <div class="band" id="band0"><span>Small</span><s><i></i></s><b></b></div>
+          <div class="band" id="band1"><span>Middling</span><s><i></i></s><b></b></div>
+          <div class="band" id="band2"><span>Great</span><s><i></i></s><b></b></div>
+          <div class="dealbar" title="Until Gilda deals the next card"><i id="dealFill"></i></div>
+          <div class="ahead" id="ahead"><small>NEXT</small></div>
+        </div>
+        <div class="goal">
+          <div class="sign">GILDA SEES ALL<em>Name my last card and win my drawer</em></div>
+          <div class="meter" title="Gilda's parts, fitted"><i id="meterFill"></i><span id="meterTxt">Gilda mended 0 / 5</span></div>
+          <button class="fit" id="fitBtn" type="button"></button>
+          <div class="guess" id="guessTxt" hidden></div>
+        </div>
+      </section>
+      <div class="hud">
+        <span class="money"><span id="btns">0</span> <small>buttons</small></span>
+        <span class="chips" id="chips"></span>
+      </div>
+      <canvas id="table" tabindex="0" aria-label="The card table. Tap the sweet tin to fold a frog; drag a frog onto its twin to melt them into one bigger frog; tap a frog to sell it. Space folds a frog."></canvas>
+      <div class="sellbar" id="sellbar"><p id="sellTxt"></p><button id="sellBtn" type="button" hidden>Sell</button><button id="sellAllBtn" class="quiet" type="button" hidden>Sell all</button></div>
+      <p class="log" id="log" aria-live="polite"></p>
+    </main>
+    <aside id="side">
+      <h2 hidden>The Fair <span id="afford"></span></h2>
+      <div id="shop"></div>
+      <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" hidden>
+    <canvas id="foolCard" width="200" height="330" aria-label="The last card: 0, The Fool"></canvas>
+    <div>
+      <h2>0 · The Fool</h2>
+      <p>And the last card turned. It was not the Chariot. It was the Fool: card nought, the one at the front of every deck, which nobody at the fair had ever seen. A traveller in a little hat with a bundle on a stick, stepping out on a fine day with a small frog at his heel, and nowhere in particular to be.</p>
+      <p>"Well," said the tin soldier, who had guessed wrong, and won nothing, and whose leave was nearly over. "So that's what it was." Gilda's drawer stayed shut. He did not mind in the least. He had wondered, and now he knew, and that was what he had come for.</p>
+      <p class="stats" id="endStats"></p>
+      <button id="shareBtn" type="button">Share result</button>
+    </div>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const C = { ink: '#0f0f1b', slate: '#565a75', mauve: '#c6b7be', bone: '#fafbf6' };
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:13:save';
+let S;
+try { S = E.load(JSON.parse(localStorage.getItem(KEY) || 'null')); } catch (e) { S = E.load(null); }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const fmt = E.fmt;
+
+// ---------- Sound: everything on E hirajoshi (E F# G B C), like the gamelan ----------
+const A = createAudio({ sfxTrim: 1, musicTrim: 1 });
+const H = scale('hirajoshi', 64);
+let lastSoft = 0;
+const sfx = {
+  fold() { A.tone({ type: 'pluck', freq: H(5 + Math.floor(Math.random() * 3)), dur: 0.06, vol: 0.12, cutoff: 2600 }); A.noiseHit('shaker', { vol: 0.05, dur: 0.05 }); },
+  melt(t = 1) {
+    A.noiseHit('whoosh', { vol: 0.05, dur: 0.18 });
+    A.tone({ type: 'bell', freq: H(Math.min(13, t + 1)), dur: 0.22, vol: 0.2, at: A.ctx && A.ctx.currentTime + 0.05 });
+  },
+  sell(t = 1) {
+    const n = A.ctx ? A.ctx.currentTime : 0;
+    A.tone({ type: 'bell', freq: H(4 + Math.min(8, t)), dur: 0.1, vol: 0.14, at: n });
+    A.tone({ type: 'bell', freq: H(6 + Math.min(8, t)), dur: 0.16, vol: 0.14, at: n + 0.07 });
+  },
+  buy() { const n = A.ctx ? A.ctx.currentTime : 0; [5, 7, 9].forEach((d, k) => A.tone({ type: 'bell', freq: H(d), dur: 0.18, vol: 0.15, at: n + k * 0.08 })); },
+  unlock() { const n = A.ctx ? A.ctx.currentTime : 0; A.tone({ type: 'bell', freq: H(9), dur: 0.2, vol: 0.12, at: n }); A.tone({ type: 'bell', freq: H(10), dur: 0.3, vol: 0.12, at: n + 0.12 }); },
+  part() {
+    const n = A.ctx ? A.ctx.currentTime : 0;
+    A.tone({ type: 'bell', freq: H(-5), dur: 1.2, vol: 0.18, at: n });
+    [3, 5, 7, 10].forEach((d, k) => A.tone({ type: 'bell', freq: H(d), dur: 0.25, vol: 0.14, at: n + 0.1 + k * 0.11 }));
+  },
+  deal() { A.tone({ type: 'bell', freq: H(-3), dur: 0.7, vol: 0.13 }); A.noiseHit('whoosh', { vol: 0.04, dur: 0.12 }); },
+  deny() { A.tone({ type: 'pluck', freq: H(-2), dur: 0.08, vol: 0.12, cutoff: 900 }); },
+  doll() { const n = performance.now(); if (n - lastSoft < 350) return; lastSoft = n; A.tone({ type: 'pluck', freq: H(7 + (n / 400 | 0) % 3), dur: 0.05, vol: 0.05, cutoff: 2200 }); },
+  moth(t = 1) { A.tone({ type: 'bell', freq: H(Math.min(12, t + 3)), dur: 0.1, vol: 0.06 }); },
+  fidget() { const n = A.ctx ? A.ctx.currentTime : 0; A.tone({ type: 'bell', freq: H(4), dur: 0.2, vol: 0.13, at: n }); A.tone({ type: 'bell', freq: H(1), dur: 0.35, vol: 0.13, at: n + 0.14 }); },
+  sand() { A.noiseHit('shaker', { vol: 0.03, dur: 0.2 }); },
+  finale() {
+    const n = A.ctx ? A.ctx.currentTime : 0;
+    A.tone({ type: 'bell', freq: H(-10), dur: 3, vol: 0.2, at: n });
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach((d, k) => A.tone({ type: 'bell', freq: H(d), dur: 0.5, vol: 0.1, at: n + 0.3 + k * 0.12 }));
+    A.tone({ type: 'bell', freq: H(5), dur: 2.5, vol: 0.14, at: n + 1.8 });
+  },
+};
+if (location.search.includes('debug')) window.__game = { A, sfx, long: ['finale', 'part'] };
+
+// The game owns playback; music.mjs arranges the gending per phase.
+let music = null, soundtrack = null;
+function song() { return (soundtrack ??= createSoundtrack(music.strudel))(E.phase(S)); }
+createMusic(A, { song }).then(m => { music = m; music.update(); }).catch(e => console.warn('music', e));
+let phaseWas = E.phase(S);
+function phaseCheck() { const p = E.phase(S); if (p !== phaseWas) { phaseWas = p; if (music) music.update(); } }
+
+// ---------- Art ----------
+// One glyph per Major Arcana card, I to XXI (game-icons.net shapes, recoloured and reprinted).
+const GLYPH_FILES = [null,
+  'art/game-icons--magic-swirl.svg',
+  'art/game-icons--hood.svg',
+  'art/game-icons--queen-crown.svg',
+  'art/game-icons--crown.svg',
+  'art/game-icons--church.svg',
+  'art/game-icons--hearts.svg',
+  'art/game-icons--chariot.svg',
+  'art/game-icons--lion.svg',
+  'art/game-icons--lantern-flame.svg',
+  'art/game-icons--ship-wheel.svg',
+  'art/game-icons--scales.svg',
+  'art/game-icons--knot.svg',
+  'art/game-icons--scythe.svg',
+  'art/game-icons--amphora.svg',
+  'art/game-icons--devil-mask.svg',
+  'art/game-icons--white-tower.svg',
+  'art/game-icons--star-formation.svg',
+  'art/game-icons--moon.svg',
+  'art/game-icons--sun.svg',
+  'art/game-icons--trumpet.svg',
+  'art/game-icons--world.svg',
+];
+const glyph = [];
+const glyphReady = Promise.all(GLYPH_FILES.map(async (f, i) => {
+  if (!f) return;
+  try {
+    const svg = Sprites.recolor(await Sprites.loadSvg(f), C.ink);
+    const c = await Sprites.svgToCanvas(svg, 96);
+    // An engraved look: ink, with a slate plate offset beneath it like a misregistered print.
+    glyph[i] = Sprites.register(`glyph ${E.ROMAN[i]}`, Sprites.shadow(c, C.mauve, 3, 3));
+  } catch (e) { console.warn(e); }
+}));
+
+// Origami frogs, folded by hand: a squat hexagon body, round eyes on top, folded haunches and
+// splayed front feet. Foil-shaded facets, because they're folded from tin-foil sweet wrappers.
+function poly(ctx, pts) { ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); }
+function drawFrog(ctx, x, y, s, t, { hat = false, glow = 0 } = {}) {
+  ctx.save(); ctx.translate(x, y);
+  const P = (px, py) => [px * s, py * s], lw = Math.max(1, s / 20);
+  ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.lineWidth = lw; ctx.strokeStyle = C.ink;
+  // Emperors and up wear a cape behind them; the Great Frog has a halo of little stars.
+  if (t >= 11) { ctx.fillStyle = C.slate; poly(ctx, [P(-.45, -.3), P(.45, -.3), P(.8, .55), P(-.8, .55)]); ctx.fill(); ctx.stroke(); }
+  if (t >= 12) { ctx.fillStyle = C.bone; for (let k = 0; k < 7; k++) { const a = Math.PI * (1.05 + k * 0.15); star(ctx, Math.cos(a) * s * 1.02, Math.sin(a) * s * 1.02 - s * .1, s * .09); } }
+  const foil = ctx.createLinearGradient(-s, -s, s, s);
+  foil.addColorStop(0, C.bone); foil.addColorStop(.5, C.mauve); foil.addColorStop(1, C.slate);
+  // haunches, folded up at the sides, with their feet
+  for (const m of [-1, 1]) {
+    ctx.fillStyle = C.slate; poly(ctx, [P(m * .5, -.05), P(m * .98, .34), P(m * .42, .42)]); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = C.mauve; poly(ctx, [P(m * .98, .34), P(m * 1.08, .52), P(m * .7, .5)]); ctx.fill(); ctx.stroke();
+  }
+  const body = [P(-.7, .02), P(-.38, -.36), P(.38, -.36), P(.7, .02), P(.42, .42), P(-.42, .42)];
+  ctx.fillStyle = foil; poly(ctx, body); ctx.fill(); ctx.stroke();
+  // facets: a light fold on the left, a shadowed one on the right, and the creases
+  ctx.fillStyle = '#fafbf699'; poly(ctx, [body[0], body[1], P(0, -.36), P(0, .42), body[5]]); ctx.fill();
+  ctx.fillStyle = '#565a7544'; poly(ctx, [P(0, .1), body[3], body[4]]); ctx.fill();
+  ctx.globalAlpha = .4; ctx.beginPath(); ctx.moveTo(...P(0, -.36)); ctx.lineTo(...P(0, .42)); ctx.moveTo(...body[0]); ctx.lineTo(...P(0, .1)); ctx.lineTo(...body[3]); ctx.stroke(); ctx.globalAlpha = 1;
+  ctx.strokeStyle = C.ink; poly(ctx, body); ctx.stroke();
+  // splayed front feet
+  for (const m of [-1, 1]) { ctx.fillStyle = C.mauve; poly(ctx, [P(m * .14, .36), P(m * .4, .62), P(m * .04, .52)]); ctx.fill(); ctx.stroke(); }
+  // round eyes on top of the head
+  const ex = .3 * s, ey = -.4 * s, er = .17 * s;
+  for (const m of [-1, 1]) { ctx.fillStyle = C.bone; dot(ctx, m * ex, ey, er); ctx.stroke(); }
+  ctx.fillStyle = C.ink;
+  const pr = Math.max(1, er * .45);
+  if (t <= 4 || t === 5) { dot(ctx, -ex + pr * .4, ey + pr * .2, pr); dot(ctx, ex - pr * .4, ey + pr * .2, pr); }
+  else { // sleepy, satisfied lids for the grand ones
+    for (const m of [-1, 1]) { ctx.beginPath(); ctx.moveTo(m * ex - er * .7, ey + er * .1); ctx.quadraticCurveTo(m * ex, ey + er * .7, m * ex + er * .7, ey + er * .1); ctx.stroke(); }
+  }
+  // the mouth: a wide, pleased line
+  ctx.beginPath(); ctx.moveTo(...P(-.32, -.08)); ctx.quadraticCurveTo(0, (t >= 9 ? .06 : .02) * s, .32 * s, -.08 * s); ctx.stroke();
+  if (t === 2) { ctx.globalAlpha = .6; for (const m of [-1, 1]) { ctx.beginPath(); ctx.moveTo(m * .9 * s, .62 * s); ctx.lineTo(m * 1.05 * s, .72 * s); ctx.stroke(); } ctx.globalAlpha = 1; }
+  if (t === 3) { ctx.fillStyle = C.mauve; dot(ctx, 0, .14 * s, s * .13); ctx.stroke(); }
+  if (t === 4) { ctx.globalAlpha = .6; ctx.beginPath(); ctx.ellipse(0, .64 * s, .8 * s, .1 * s, 0, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1; }
+  if (t === 5) { for (const m of [-1, 1]) { ctx.beginPath(); ctx.moveTo(m * (ex + er * 1.1), ey - er * 1.3); ctx.lineTo(m * (ex - er * .7), ey - er * .7); ctx.stroke(); } }
+  if (t === 6) { ctx.strokeStyle = C.slate; ctx.lineWidth = lw * 1.6; ctx.beginPath(); ctx.moveTo(-.38 * s, -.55 * s); ctx.quadraticCurveTo(-.72 * s, -.95 * s, -.2 * s, -1.02 * s); ctx.stroke(); ctx.strokeStyle = C.ink; ctx.lineWidth = lw; }
+  if (t === 7) { ctx.beginPath(); ctx.arc(ex, ey, er * 1.35, 0, Math.PI * 2); ctx.stroke(); ctx.beginPath(); ctx.moveTo(ex + er * 1.35, ey); ctx.quadraticCurveTo(ex + er * 2.2, .1 * s, ex + er * 1.2, .3 * s); ctx.stroke(); }
+  if (t === 8) { ctx.fillStyle = C.slate; poly(ctx, [P(-.5, -.12), P(-.36, -.24), P(.5, .3), P(.36, .4)]); ctx.fill(); ctx.stroke(); }
+  if (t >= 9) crown(ctx, 0, -.5 * s, s * (t >= 10 ? .5 : .34), t >= 11);
+  if (hat) { // a paper hat, folded from a newspaper corner
+    ctx.save(); ctx.translate(.14 * s, -.55 * s - (t >= 9 ? s * .32 : 0)); ctx.rotate(.25);
+    ctx.fillStyle = C.bone; poly(ctx, [[-.34 * s, 0], [.34 * s, 0], [0, -.5 * s]]); ctx.fill(); ctx.stroke();
+    ctx.globalAlpha = .5; for (let k = 1; k < 4; k++) { ctx.beginPath(); ctx.moveTo(-.22 * s + k * .05 * s, -k * .11 * s); ctx.lineTo(.22 * s - k * .05 * s, -k * .11 * s); ctx.stroke(); } ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+  if (glow > 0) { ctx.globalAlpha = glow * .6; ctx.fillStyle = C.bone; poly(ctx, body); ctx.fill(); ctx.globalAlpha = 1; }
+  ctx.restore();
+}
+function dot(ctx, x, y, r) { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); }
+function star(ctx, x, y, r) {
+  ctx.beginPath();
+  for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4 - Math.PI / 2, rr = k % 2 ? r * .4 : r; ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+  ctx.closePath(); ctx.fill();
+}
+function crown(ctx, x, y, w, orb) {
+  ctx.save(); ctx.translate(x, y);
+  ctx.fillStyle = C.bone; poly(ctx, [[-w / 2, 0], [-w / 2, -w * .55], [-w / 4, -w * .25], [0, -w * .7], [w / 4, -w * .25], [w / 2, -w * .55], [w / 2, 0]]); ctx.fill(); ctx.stroke();
+  if (orb) { ctx.fillStyle = C.mauve; dot(ctx, 0, -w * .82, w * .12); ctx.stroke(); }
+  ctx.restore();
+}
+
+// A tarot card: bone face, ink border, a slate inner rule, the numeral above and the title below.
+function cardFace(ctx, x, y, w, h, { num = '', title = '', g = null, dim = false } = {}) {
+  ctx.save();
+  ctx.fillStyle = dim ? C.mauve : C.bone; ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = C.ink; ctx.lineWidth = Math.max(1.5, w / 50); ctx.strokeRect(x + .75, y + .75, w - 1.5, h - 1.5);
+  const p = Math.max(3, w * .06);
+  ctx.strokeStyle = C.slate; ctx.lineWidth = 1; ctx.strokeRect(x + p, y + p, w - p * 2, h - p * 2);
+  ctx.fillStyle = C.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const fs = Math.max(8, Math.round(w * .13));
+  ctx.font = `700 ${fs}px Cinzel, Georgia, serif`;
+  if (num) ctx.fillText(num, x + w / 2, y + p + fs * .75);
+  if (title) {
+    let tfs = Math.max(7, Math.round(w * .1));
+    ctx.font = `700 ${tfs}px Cinzel, Georgia, serif`;
+    while (ctx.measureText(title).width > w - p * 2.6 && tfs > 6) { tfs--; ctx.font = `700 ${tfs}px Cinzel, Georgia, serif`; }
+    ctx.fillText(title, x + w / 2, y + h - p - tfs * .8);
+  }
+  if (g) { const gs = Math.min(w - p * 4, h * .5); ctx.drawImage(g, x + (w - gs) / 2, y + h * .48 - gs / 2, gs, gs); }
+  ctx.restore();
+}
+function cardBack(ctx, x, y, w, h, { label = '' } = {}) {
+  ctx.save();
+  ctx.fillStyle = C.slate; ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = C.mauve; ctx.lineWidth = 1.5; ctx.strokeRect(x + .75, y + .75, w - 1.5, h - 1.5);
+  const p = Math.max(3, w * .08);
+  ctx.strokeStyle = '#c6b7be88'; ctx.lineWidth = 1; ctx.strokeRect(x + p, y + p, w - p * 2, h - p * 2);
+  ctx.fillStyle = C.mauve;
+  star(ctx, x + w / 2, y + h / 2, Math.min(w, h) * .18);
+  ctx.beginPath(); ctx.arc(x + w / 2, y + h * .24, w * .1, 0.6, Math.PI * 2 - 0.6); ctx.fill();
+  ctx.beginPath(); ctx.arc(x + w / 2 + w * .05, y + h * .24, w * .085, 0, Math.PI * 2); ctx.fillStyle = C.slate; ctx.fill();
+  ctx.fillStyle = C.mauve; star(ctx, x + w * .3, y + h * .78, w * .05); star(ctx, x + w * .7, y + h * .78, w * .05);
+  if (label) { ctx.fillStyle = C.bone; ctx.font = `700 ${Math.round(w * .3)}px Cinzel, Georgia, serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(label, x + w / 2, y + h / 2); }
+  ctx.restore();
+}
+
+// The Fool, drawn by hand: a little tin traveller with a bundle on a stick, and a frog at his heel.
+function drawFool(ctx, x, y, w, h) {
+  cardFace(ctx, x, y, w, h, { num: '0', title: 'THE FOOL' });
+  ctx.save(); ctx.translate(x + w / 2, y + h * .52); const k = w / 200;
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 2 * k; ctx.lineJoin = 'round';
+  // the sun, the cliff edge
+  ctx.fillStyle = C.mauve; dot(ctx, 56 * k, -96 * k, 16 * k);
+  ctx.fillStyle = C.slate; poly(ctx, [[-90 * k, 70 * k], [40 * k, 70 * k], [62 * k, 100 * k], [-90 * k, 100 * k]]); ctx.fill();
+  // the traveller (a tin soldier, off duty), mid-stride, waving
+  const limb = (pts, col, wd) => { ctx.strokeStyle = C.ink; ctx.lineWidth = (wd + 3) * k; ctx.lineCap = 'round'; ctx.beginPath(); pts.forEach(([px, py], i) => (i ? ctx.lineTo(px * k, py * k) : ctx.moveTo(px * k, py * k))); ctx.stroke(); ctx.strokeStyle = col; ctx.lineWidth = wd * k; ctx.stroke(); };
+  limb([[-6, 14], [-20, 42], [-34, 64]], C.slate, 9);           // back leg
+  limb([[6, 14], [16, 40], [14, 66]], C.slate, 9);              // front leg
+  ctx.fillStyle = C.ink; ctx.save(); ctx.translate(-36 * k, 66 * k); ctx.rotate(.5); ctx.fillRect(-8 * k, -4 * k, 14 * k, 8 * k); ctx.restore();
+  ctx.fillRect(12 * k, 63 * k, 14 * k, 8 * k);
+  limb([[14, -26], [34, -38], [44, -58]], C.mauve, 8);          // waving arm
+  ctx.fillStyle = C.bone; ctx.strokeStyle = C.ink; ctx.lineWidth = 2 * k; dot(ctx, 45 * k, -61 * k, 5 * k); ctx.stroke();
+  ctx.fillStyle = C.mauve; poly(ctx, [[-17 * k, -34 * k], [17 * k, -34 * k], [20 * k, 18 * k], [-20 * k, 18 * k]]); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = C.bone; ctx.lineWidth = 3 * k; ctx.beginPath(); ctx.moveTo(-15 * k, -31 * k); ctx.lineTo(15 * k, 12 * k); ctx.moveTo(15 * k, -31 * k); ctx.lineTo(-15 * k, 12 * k); ctx.stroke();
+  limb([[-14, -26], [-26, -10], [-30, -30]], C.mauve, 8);       // the arm with the stick
+  // the stick and bundle over his shoulder
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 2.5 * k; ctx.beginPath(); ctx.moveTo(-26 * k, -14 * k); ctx.lineTo(-62 * k, -78 * k); ctx.stroke();
+  ctx.fillStyle = C.bone; ctx.lineWidth = 2 * k; ctx.beginPath(); ctx.ellipse(-62 * k, -74 * k, 15 * k, 12 * k, -.4, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = C.slate; dot(ctx, -66 * k, -76 * k, 2.2 * k); dot(ctx, -57 * k, -70 * k, 2.2 * k); dot(ctx, -68 * k, -67 * k, 2.2 * k);
+  // his head, tipped back to look at the sun, with his shako at a holiday angle
+  ctx.fillStyle = C.bone; ctx.strokeStyle = C.ink; ctx.lineWidth = 2 * k; dot(ctx, 2 * k, -48 * k, 14 * k); ctx.stroke();
+  ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(-3 * k, -51 * k, 2.4 * k, Math.PI, 0); ctx.arc(8 * k, -51 * k, 2.4 * k, Math.PI, 0); ctx.stroke();
+  ctx.beginPath(); ctx.arc(3 * k, -45 * k, 6 * k, .2, Math.PI - .2); ctx.stroke();
+  ctx.save(); ctx.translate(6 * k, -64 * k); ctx.rotate(.3); ctx.fillStyle = C.ink; ctx.fillRect(-11 * k, -18 * k, 22 * k, 18 * k); ctx.fillStyle = C.bone; dot(ctx, 0, -9 * k, 3 * k); ctx.beginPath(); ctx.ellipse(0, -23 * k, 3 * k, 6 * k, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  // little flowers at the cliff edge
+  ctx.fillStyle = C.bone; for (const fx of [-74, -50]) star(ctx, fx * k, 64 * k, 5 * k);
+  // the frog at his heel, mid-hop
+  ctx.restore();
+  drawFrog(ctx, x + w * .7, y + h * .68, w * .09, 2);
+}
+
+// The tin soldier, by hand: shako, mauve coat with bone cross-belts, slate trousers, tin shine.
+function drawSoldier(ctx, x, y, s, { still = false, t = 0 } = {}) {
+  ctx.save(); ctx.translate(x, y + (still ? 0 : Math.sin(t * 2.2) * s * .015));
+  const k = s / 100; ctx.lineWidth = Math.max(1, 1.6 * k); ctx.strokeStyle = C.ink; ctx.lineJoin = 'round';
+  ctx.fillStyle = C.ink; ctx.strokeStyle = C.mauve; ctx.fillRect(-12 * k, -4 * k, 10 * k, 6 * k); ctx.fillRect(2 * k, -4 * k, 10 * k, 6 * k); ctx.strokeRect(-12 * k, -4 * k, 10 * k, 6 * k); ctx.strokeRect(2 * k, -4 * k, 10 * k, 6 * k); ctx.strokeStyle = C.ink;
+  ctx.fillStyle = C.slate; ctx.fillRect(-11 * k, -36 * k, 9 * k, 33 * k); ctx.fillRect(2 * k, -36 * k, 9 * k, 33 * k);
+  ctx.fillStyle = C.bone; ctx.fillRect(-7.5 * k, -36 * k, 2 * k, 33 * k); ctx.fillRect(5.5 * k, -36 * k, 2 * k, 33 * k);
+  ctx.fillStyle = C.mauve; ctx.fillRect(-15 * k, -72 * k, 30 * k, 38 * k); ctx.strokeRect(-15 * k, -72 * k, 30 * k, 38 * k);
+  // arms at his sides (at attention) or one reaching to the spoon
+  ctx.fillRect(-21 * k, -70 * k, 7 * k, 30 * k); ctx.strokeRect(-21 * k, -70 * k, 7 * k, 30 * k);
+  if (still) { ctx.fillRect(14 * k, -70 * k, 7 * k, 30 * k); ctx.strokeRect(14 * k, -70 * k, 7 * k, 30 * k); }
+  else { ctx.save(); ctx.translate(17 * k, -68 * k); ctx.rotate(-1.0 + Math.sin(t * 1.3) * .08); ctx.fillRect(-3.5 * k, 0, 7 * k, 28 * k); ctx.strokeRect(-3.5 * k, 0, 7 * k, 28 * k); ctx.restore(); }
+  ctx.strokeStyle = C.bone; ctx.lineWidth = 2.4 * k; ctx.beginPath(); ctx.moveTo(-13 * k, -70 * k); ctx.lineTo(13 * k, -38 * k); ctx.moveTo(13 * k, -70 * k); ctx.lineTo(-13 * k, -38 * k); ctx.stroke();
+  ctx.strokeStyle = C.ink; ctx.lineWidth = Math.max(1, 1.6 * k);
+  ctx.fillStyle = C.bone; ctx.beginPath(); ctx.arc(0, -82 * k, 10 * k, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = C.ink; dot(ctx, -3.5 * k, -83 * k, 1.3 * k); dot(ctx, 3.5 * k, -83 * k, 1.3 * k);
+  ctx.beginPath(); ctx.moveTo(-5 * k, -78 * k); ctx.lineTo(5 * k, -78 * k); ctx.stroke(); // a moustache, regulation
+  // the shako: ink, trimmed in mauve so it shows against the night, with a bone badge and plume
+  ctx.fillStyle = C.ink; ctx.strokeStyle = C.mauve;
+  poly(ctx, [[-9 * k, -88 * k], [-11 * k, -112 * k], [11 * k, -112 * k], [9 * k, -88 * k]]); ctx.fill(); ctx.stroke();
+  ctx.fillRect(-13 * k, -91 * k, 26 * k, 4 * k); ctx.strokeRect(-13 * k, -91 * k, 26 * k, 4 * k);
+  ctx.fillStyle = C.mauve; ctx.fillRect(-11 * k, -109 * k, 22 * k, 2.5 * k);
+  ctx.fillStyle = C.bone; dot(ctx, 0, -100 * k, 3.2 * k); ctx.beginPath(); ctx.ellipse(0, -118 * k, 2.6 * k, 6 * k, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = C.mauve; ctx.lineWidth = Math.max(1, k); ctx.beginPath(); ctx.moveTo(-9 * k, -87 * k); ctx.quadraticCurveTo(0, -70 * k, 9 * k, -87 * k); ctx.stroke();
+  ctx.strokeStyle = C.ink; ctx.lineWidth = Math.max(1, 1.6 * k);
+  ctx.fillStyle = C.ink; ctx.fillRect(-15 * k, -40 * k, 30 * k, 4 * k); ctx.fillStyle = C.bone; ctx.fillRect(-2.5 * k, -40.5 * k, 5 * k, 5 * k); // belt and buckle
+  ctx.fillStyle = '#fafbf655'; ctx.fillRect(-13 * k, -70 * k, 3 * k, 34 * k); // tin shine
+  ctx.restore();
+}
+
+// Gilda in her glass case. Her parts appear as they're fitted.
+function drawGilda(ctx, W, Hh, t) {
+  ctx.clearRect(0, 0, W, Hh);
+  const k = W / 138, P = S.parts, cx = W / 2;
+  // the case
+  ctx.fillStyle = '#565a7533'; ctx.strokeStyle = C.mauve; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(6 * k, Hh - 4); ctx.lineTo(6 * k, 50 * k); ctx.arc(cx, 50 * k, cx - 6 * k, Math.PI, 0); ctx.lineTo(W - 6 * k, Hh - 4); ctx.closePath(); ctx.fill(); ctx.stroke();
+  // shawl and shoulders
+  ctx.fillStyle = C.slate; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.5 * k;
+  ctx.beginPath(); ctx.moveTo(18 * k, 150 * k); ctx.quadraticCurveTo(cx, 100 * k, W - 18 * k, 150 * k); ctx.lineTo(W - 14 * k, 172 * k); ctx.lineTo(14 * k, 172 * k); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = C.mauve; for (let i = 0; i < 6; i++) dot(ctx, 28 * k + i * 16 * k, 150 * k + Math.abs(i - 2.5) * 3 * k, 2.2 * k);
+  // head
+  ctx.fillStyle = C.bone; ctx.beginPath(); ctx.ellipse(cx, 92 * k, 24 * k, 30 * k, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  // turban
+  ctx.fillStyle = C.mauve; ctx.beginPath(); ctx.ellipse(cx, 66 * k, 30 * k, 18 * k, 0, Math.PI, 0); ctx.lineTo(cx + 28 * k, 72 * k); ctx.quadraticCurveTo(cx, 80 * k, cx - 28 * k, 72 * k); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - 26 * k, 62 * k); ctx.quadraticCurveTo(cx, 50 * k, cx + 24 * k, 70 * k); ctx.stroke();
+  ctx.fillStyle = C.bone; star(ctx, cx, 60 * k, 6 * k);
+  // eyes: dark sockets until fitted
+  const blink = Math.sin(t * 0.9) > 0.985;
+  const eye = (ex, has) => {
+    ctx.fillStyle = C.ink; ctx.beginPath(); ctx.ellipse(ex, 90 * k, 5.5 * k, has && blink ? 1 * k : 4.5 * k, 0, 0, Math.PI * 2); ctx.fill();
+    if (has && !blink) { ctx.fillStyle = C.mauve; dot(ctx, ex, 90 * k, 3 * k); ctx.fillStyle = C.ink; dot(ctx, ex + Math.sin(t * .4) * 1.2 * k, 90 * k, 1.6 * k); ctx.fillStyle = C.bone; dot(ctx, ex - 1.2 * k, 88.6 * k, .9 * k); }
+  };
+  eye(cx - 10 * k, P >= 1); eye(cx + 10 * k, P >= 2);
+  if (P >= 3) { ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2 * k; ctx.beginPath(); ctx.arc(cx - 10 * k, 90 * k, 7.5 * k, 0, Math.PI * 2); ctx.moveTo(cx + 17.5 * k, 90 * k); ctx.arc(cx + 10 * k, 90 * k, 7.5 * k, 0, Math.PI * 2); ctx.moveTo(cx - 2.5 * k, 89 * k); ctx.lineTo(cx + 2.5 * k, 89 * k); ctx.stroke(); }
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4 * k;
+  ctx.beginPath(); if (P >= 5) ctx.arc(cx, 103 * k, 6 * k, .3, Math.PI - .3); else { ctx.moveTo(cx - 6 * k, 108 * k); ctx.lineTo(cx + 6 * k, 108 * k); } ctx.stroke();
+  // her hand, holding the last card, stuck halfway out
+  const open = S.ended ? 1 : S.still ? Math.min(1, S.still.t / E.T.still) : 0;
+  const flick = Math.max(0, dealAnim) * 6 * k;
+  ctx.save(); ctx.translate(cx + 30 * k, 132 * k - flick); ctx.rotate(-.25 - open * .25);
+  if (S.ended) cardFace(ctx, -12 * k, -36 * k, 24 * k, 38 * k, { num: '0' });
+  else cardBack(ctx, -12 * k, -36 * k, 24 * k, 38 * k);
+  ctx.fillStyle = C.bone; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.3 * k;
+  ctx.beginPath(); ctx.ellipse(0, 2 * k, 10 * k, 7 * k, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.restore();
+  // crystal ball
+  if (P >= 4) {
+    const gl = .5 + .5 * Math.sin(t * 1.5);
+    ctx.fillStyle = `rgba(198,183,190,${.25 + gl * .2})`; dot(ctx, cx - 30 * k, 158 * k, 15 * k);
+    const g = ctx.createRadialGradient(cx - 34 * k, 152 * k, 1, cx - 30 * k, 158 * k, 11 * k); g.addColorStop(0, C.bone); g.addColorStop(1, C.mauve);
+    ctx.fillStyle = g; dot(ctx, cx - 30 * k, 158 * k, 11 * k); ctx.stroke();
+    ctx.fillStyle = C.ink; ctx.fillRect(cx - 38 * k, 168 * k, 16 * k, 4 * k);
+  }
+  // the cog in her base: a gap where the last one goes, turning once she's mended
+  ctx.save(); ctx.translate(cx + 32 * k, 182 * k); ctx.rotate(P >= 5 && !reduced ? t * .8 : 0);
+  ctx.strokeStyle = C.mauve; ctx.lineWidth = 1.5 * k; ctx.fillStyle = C.ink;
+  ctx.beginPath(); for (let i = 0; i < 16; i++) { const a = i * Math.PI / 8, r = i % 2 ? 9 * k : 12 * k; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } ctx.closePath(); ctx.fill();
+  if (P >= 5) ctx.stroke(); else { ctx.setLineDash([2 * k, 3 * k]); ctx.stroke(); ctx.setLineDash([]); }
+  ctx.fillStyle = C.mauve; dot(ctx, 0, 0, 2.5 * k);
+  ctx.restore();
+  // the glass: two shines
+  ctx.strokeStyle = '#fafbf622'; ctx.lineWidth = 6 * k;
+  ctx.beginPath(); ctx.moveTo(22 * k, 70 * k); ctx.lineTo(44 * k, 40 * k); ctx.moveTo(20 * k, 96 * k); ctx.lineTo(30 * k, 82 * k); ctx.stroke();
+  // her name plate
+  ctx.fillStyle = C.ink; ctx.fillRect(cx - 28 * k, Hh - 18 * k, 56 * k, 14 * k);
+  ctx.fillStyle = C.mauve; ctx.font = `700 ${Math.round(10 * k)}px Cinzel, Georgia, serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('GILDA', cx, Hh - 11 * k);
+}
+
+// Register the hand-made sprites for the ?sprites sheet.
+function spriteOf(w, h, fn) { const c = Sprites.canvas(w, h); fn(c.getContext('2d'), w, h); return c; }
+for (let t = 1; t <= E.MAX; t++) Sprites.register(`frog ${t} ${E.SIZES[t - 1]}`, spriteOf(72, 72, ctx => drawFrog(ctx, 36, 40, 26, t)));
+Sprites.register('frog with hat', spriteOf(72, 80, ctx => drawFrog(ctx, 36, 50, 26, 12, { hat: true })));
+Sprites.register('tin soldier', spriteOf(60, 128, ctx => drawSoldier(ctx, 30, 124, 100, { still: true })));
+Sprites.register('card back', spriteOf(56, 88, ctx => cardBack(ctx, 0, 0, 56, 88)));
+Sprites.register('the fool', spriteOf(200, 330, ctx => drawFool(ctx, 0, 0, 200, 330)));
+
+// ---------- Log ----------
+const logEl = $('log');
+function say(text) {
+  logEl.textContent = text;
+  logEl.classList.remove('fresh'); void logEl.offsetWidth; logEl.classList.add('fresh');
+}
+
+// ---------- The table ----------
+const cv = $('table'), tc = cv.getContext('2d');
+let TW = 600, TH = 400, L = null;
+const anims = []; // { kind, i, a, t0, dur, tier, text }
+const pop = {};   // slot -> time of last change
+let sel = -1, drag = null, dealAnim = 0, meltFlash = 0;
+function layout() {
+  const w = cv.clientWidth || 600, narrow = w < 520;
+  // Phones: four rows under a strip. Desktop: two long rows (three, with the widest table).
+  const n = S.board.length, gap = narrow ? 5 : 8;
+  const cols = narrow ? n / 4 : n <= 20 ? n / 2 : 8, rows = n / cols;
+  const strip = narrow ? { x: 0, y: 0, w, h: 96 } : { x: 0, y: 0, w: 226, h: 0 };
+  const gx0 = narrow ? 8 : strip.w + 10, gy0 = narrow ? strip.h + 4 : 12;
+  const availW = w - gx0 - 8;
+  const cw = Math.min(narrow ? 90 : 72, (availW - gap * (cols - 1)) / cols), ch = cw / 0.64;
+  const gridW = cols * cw + (cols - 1) * gap;
+  const ox = narrow ? (w - gridW) / 2 : gx0 + (availW - gridW) / 2;
+  const h = Math.max(narrow ? 0 : 250, gy0 + rows * ch + (rows - 1) * gap + 12);
+  if (!narrow) strip.h = h;
+  const cells = [];
+  for (let i = 0; i < n; i++) { const c = i % cols, r = Math.floor(i / cols); cells.push({ x: ox + c * (cw + gap), y: gy0 + r * (ch + gap), w: cw, h: ch }); }
+  const tin = narrow ? { x: 16, y: 10, w: 92, h: 78 } : { x: 116, y: h - 120, w: 100, h: 84 };
+  return { w, h, cells, strip, tin, narrow, cols };
+}
+function resize() {
+  L = layout();
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  TW = L.w; TH = L.h;
+  cv.width = Math.round(TW * dpr); cv.height = Math.round(TH * dpr); cv.style.height = TH + 'px';
+  tc.setTransform(dpr, 0, 0, dpr, 0, 0);
+  for (const [id, c] of [['gilda', $('gilda')], ['nowCard', $('nowCard')]]) {
+    const r = c.getBoundingClientRect(); if (!r.width) continue;
+    const bw = Math.round(r.width * dpr), bh = Math.round(r.height * dpr);
+    if (c.width !== bw) { c.width = bw; c.height = bh; }
+  }
+}
+addEventListener('resize', resize);
+
+function drawStrip(t) {
+  const { strip, tin, narrow } = L;
+  tc.save();
+  tc.fillStyle = '#0f0f1b'; tc.fillRect(strip.x, strip.y, strip.w, strip.h);
+  tc.strokeStyle = C.slate; tc.lineWidth = 1;
+  if (narrow) { tc.beginPath(); tc.moveTo(0, strip.h); tc.lineTo(TW, strip.h); tc.stroke(); } else { tc.beginPath(); tc.moveTo(strip.w, 0); tc.lineTo(strip.w, TH); tc.stroke(); }
+  // the sweet tin: a round tin, lid off, wrappers spilling
+  const full = E.full(S);
+  const tx = tin.x + tin.w / 2, ty = tin.y + tin.h * .45, rw = tin.w * .42, rh = tin.h * .16;
+  tc.fillStyle = C.slate; tc.strokeStyle = C.mauve; tc.lineWidth = 1.5;
+  tc.beginPath(); tc.ellipse(tx, ty + tin.h * .3, rw, rh, 0, 0, Math.PI); tc.lineTo(tx - rw, ty); tc.ellipse(tx, ty, rw, rh, 0, Math.PI, 0, true); tc.closePath(); tc.fill(); tc.stroke();
+  tc.fillStyle = C.ink; tc.beginPath(); tc.ellipse(tx, ty, rw, rh, 0, 0, Math.PI * 2); tc.fill(); tc.stroke();
+  for (let k = 0; k < 6; k++) { // wrappers
+    const a = k * 1.1 + 0.3, wx = tx + Math.cos(a) * rw * .55, wy = ty + Math.sin(a) * rh * .5 - 3;
+    tc.fillStyle = k % 2 ? C.mauve : C.bone; tc.save(); tc.translate(wx, wy); tc.rotate(a); tc.fillRect(-6, -4, 12, 8); tc.restore();
+  }
+  tc.fillStyle = C.bone; tc.font = `700 ${narrow ? 9 : 10}px Cinzel, Georgia, serif`; tc.textAlign = 'center'; tc.textBaseline = 'middle';
+  tc.fillText('SWEETS', tx, ty + tin.h * .26);
+  tc.fillStyle = full ? C.slate : C.mauve; tc.font = `italic 500 ${narrow ? 13 : 14}px "Cormorant Garamond", Georgia, serif`;
+  tc.fillText(S.still ? 'be still…' : full ? 'the table is full' : `tap to fold${E.perTap(S) > 1 ? ' ×' + E.perTap(S) : ''}`, tx, tin.y + tin.h + (narrow ? -2 : 8));
+  // the candle and spoon
+  const cx0 = narrow ? TW - 70 : 84, cy0 = narrow ? 84 : TH - 16;
+  tc.fillStyle = C.bone; tc.strokeStyle = C.ink; tc.fillRect(cx0 - 6, cy0 - 30, 12, 30); tc.strokeRect(cx0 - 6, cy0 - 30, 12, 30);
+  const fl = 1 + Math.sin(t * 9) * .08 + Math.sin(t * 13) * .05 + meltFlash * .6;
+  tc.fillStyle = C.mauve; tc.beginPath(); tc.ellipse(cx0, cy0 - 38, 4.5 * fl, 9 * fl, 0, 0, Math.PI * 2); tc.fill();
+  tc.fillStyle = C.bone; tc.beginPath(); tc.ellipse(cx0, cy0 - 36, 2.2, 5 * fl, 0, 0, Math.PI * 2); tc.fill();
+  tc.strokeStyle = C.slate; tc.lineWidth = 3; tc.beginPath(); tc.moveTo(cx0 - 26, cy0 - 50); tc.lineTo(cx0 + 4, cy0 - 52); tc.stroke();
+  tc.fillStyle = meltFlash > 0 ? C.bone : C.mauve; tc.beginPath(); tc.ellipse(cx0 + 10, cy0 - 53, 9, 4.5, 0, 0, Math.PI * 2); tc.fill();
+  // the soldier beside it
+  const sx = narrow ? TW - 30 : 36, sy = narrow ? 92 : TH - 14;
+  drawSoldier(tc, sx, sy, narrow ? 72 : 150, { still: !!S.still && !S.ended, t: reduced ? 0 : t });
+  if (!narrow) {
+    // the paper doll and the moth, once hired
+    if (E.lvl(S, 'doll')) { tc.save(); tc.translate(tin.x + tin.w / 2 + 10, tin.y - 4); tc.fillStyle = C.bone; tc.strokeStyle = C.ink; tc.lineWidth = 1;
+      poly(tc, [[0, -26], [7, -18], [4, -18], [11, 0], [-11, 0], [-4, -18], [-7, -18]]); tc.fill(); tc.stroke(); dot(tc, 0, -30, 5); tc.stroke(); tc.restore(); }
+    if (E.lvl(S, 'moth')) { const mx = cx0 + Math.cos(t * 2.3) * 22, my = cy0 - 70 + Math.sin(t * 3.1) * 10; tc.fillStyle = C.mauve;
+      const f = Math.abs(Math.sin(t * 18)); tc.beginPath(); tc.ellipse(mx - 4, my, 5, 3 + f * 3, .4, 0, Math.PI * 2); tc.ellipse(mx + 4, my, 5, 3 + f * 3, -.4, 0, Math.PI * 2); tc.fill(); }
+  }
+  tc.restore();
+}
+const biggest = () => { let b = -1; S.board.forEach((t, i) => { if (t && (b < 0 || t > S.board[b])) b = i; }); return b; };
+function drawTable(t) {
+  if (!L) resize();
+  tc.clearRect(0, 0, TW, TH);
+  drawStrip(t);
+  const now = performance.now(), hatI = E.has(S, 'hat') ? biggest() : -1;
+  const selT = sel >= 0 ? S.board[sel] : 0;
+  L.cells.forEach((c, i) => {
+    const f = S.board[i];
+    if (drag && drag.moved && drag.i === i) { cardBack(tc, c.x, c.y, c.w, c.h); return; }
+    if (!f) {
+      tc.strokeStyle = '#565a7588'; tc.setLineDash([3, 4]); tc.lineWidth = 1; tc.strokeRect(c.x + .5, c.y + .5, c.w - 1, c.h - 1); tc.setLineDash([]);
+      return;
+    }
+    const twin = selT && i !== sel && f === selT;
+    const age = (now - (pop[i] || 0)) / 260, sc = age < 1 && !reduced ? 0.8 + 0.2 * Math.sin(age * Math.PI / 2) : 1;
+    tc.save(); tc.translate(c.x + c.w / 2, c.y + c.h / 2); tc.scale(sc, sc); tc.translate(-c.w / 2, -c.h / 2);
+    cardFace(tc, 0, 0, c.w, c.h, { num: E.ROMAN[f] });
+    drawFrog(tc, c.w / 2, c.h * .53, c.w * (.27 + .1 * (f - 1) / 11), f, { hat: i === hatI });
+    // the price on the card, with the band's direction
+    const tr = E.trend(S, f), p = E.priceAt(S, f);
+    tc.fillStyle = C.ink; tc.font = `700 ${Math.max(9, Math.round(c.w * .17))}px Cinzel, Georgia, serif`; tc.textAlign = 'center'; tc.textBaseline = 'middle';
+    tc.fillText(`${fmt(p)}${tr > 0 ? '▴' : tr < 0 ? '▾' : ''}`, c.w / 2, c.h - c.h * .12);
+    tc.restore();
+    if (i === sel) { tc.strokeStyle = C.bone; tc.lineWidth = 2.5; tc.strokeRect(c.x - 3, c.y - 3, c.w + 6, c.h + 6); }
+    if (twin) { tc.strokeStyle = C.mauve; tc.lineWidth = 2; tc.setLineDash([4, 3]); tc.lineDashOffset = -t * 20; tc.strokeRect(c.x - 3, c.y - 3, c.w + 6, c.h + 6); tc.setLineDash([]); }
+  });
+  // animations
+  for (let k = anims.length - 1; k >= 0; k--) {
+    const a = anims[k], u = (now - a.t0) / a.dur;
+    if (u >= 1) { anims.splice(k, 1); continue; }
+    const c = L.cells[a.i]; if (!c) continue;
+    if (a.kind === 'melt') { // the spoon and candle, a quick shimmer of melting foil
+      tc.save(); tc.globalAlpha = 1 - u; tc.fillStyle = C.bone;
+      for (let d = 0; d < 7; d++) { const ang = d * .9 + u * 3, r = c.w * (.2 + u * .5); dot(tc, c.x + c.w / 2 + Math.cos(ang) * r, c.y + c.h / 2 + Math.sin(ang) * r * 1.2, 2.2 * (1 - u)); }
+      tc.fillStyle = C.mauve; tc.beginPath(); tc.ellipse(c.x + c.w / 2, c.y + c.h * .9, c.w * .3, c.w * .1, 0, 0, Math.PI * 2); tc.fill();
+      tc.fillStyle = C.bone; tc.beginPath(); tc.ellipse(c.x + c.w / 2, c.y + c.h - 2 - u * 8, 3, 6, 0, 0, Math.PI * 2); tc.fill();
+      tc.restore();
+    } else if (a.kind === 'fly') { // a frog flying from the tin (or a melted twin) to its card
+      const from = a.from || { x: L.tin.x + L.tin.w / 2, y: L.tin.y + L.tin.h * .4 };
+      const e = 1 - Math.pow(1 - u, 2), x = from.x + (c.x + c.w / 2 - from.x) * e, y = from.y + (c.y + c.h / 2 - from.y) * e - Math.sin(u * Math.PI) * 30;
+      drawFrog(tc, x, y, c.w * .22, a.tier);
+    } else if (a.kind === 'sold') {
+      tc.save(); tc.globalAlpha = 1 - u; tc.fillStyle = C.bone; tc.font = `700 15px Cinzel, Georgia, serif`; tc.textAlign = 'center';
+      tc.fillText(a.text, c.x + c.w / 2, c.y + c.h / 2 - u * 34); tc.restore();
+    }
+  }
+  if (drag && drag.moved) {
+    const f = S.board[drag.i], c = L.cells[drag.i];
+    if (f && c) { tc.save(); tc.globalAlpha = .92; cardFace(tc, drag.x - c.w / 2, drag.y - c.h / 2, c.w, c.h, { num: E.ROMAN[f] }); drawFrog(tc, drag.x, drag.y + c.h * .03, c.w * (.27 + .1 * (f - 1) / 11), f); tc.restore(); }
+  }
+  meltFlash = Math.max(0, meltFlash - 0.04);
+}
+function hit(x, y) {
+  return L.cells.findIndex(c => x >= c.x - 4 && x <= c.x + c.w + 4 && y >= c.y - 4 && y <= c.y + c.h + 4);
+}
+const onTin = (x, y) => { const t = L.tin; return x >= t.x - 6 && x <= t.x + t.w + 6 && y >= t.y - 6 && y <= t.y + t.h + 14; };
+const pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+cv.addEventListener('pointerdown', e => {
+  e.preventDefault(); cv.focus({ preventScroll: true });
+  if (S.ended) return;
+  const [x, y] = pos(e);
+  if (onTin(x, y)) { doFold(); return; }
+  const i = hit(x, y);
+  if (i >= 0 && S.board[i]) { drag = { i, x, y, x0: x, y0: y, moved: false }; cv.setPointerCapture(e.pointerId); }
+  else if (i >= 0 && sel >= 0 && !S.board[i]) { moveFrog(sel, i); }
+  else { sel = -1; sellUI(); }
+});
+cv.addEventListener('pointermove', e => {
+  if (!drag) return;
+  const [x, y] = pos(e); drag.x = x; drag.y = y;
+  if (!drag.moved && Math.hypot(x - drag.x0, y - drag.y0) > 7) drag.moved = true;
+});
+cv.addEventListener('pointerup', e => {
+  if (!drag) return;
+  const d = drag; drag = null;
+  const [x, y] = pos(e), j = hit(x, y);
+  if (d.moved) {
+    if (j >= 0 && j !== d.i && S.board[j] === S.board[d.i]) doMelt(d.i, j, true);
+    else if (j >= 0 && !S.board[j]) moveFrog(d.i, j);
+    return;
+  }
+  // a tap: melt into the selected twin, or select this frog
+  if (sel >= 0 && sel !== d.i && S.board[sel] === S.board[d.i]) doMelt(sel, d.i);
+  else { sel = sel === d.i ? -1 : d.i; if (sel >= 0) A.tone({ type: 'pluck', freq: H(S.board[sel] + 2), dur: 0.04, vol: 0.06 }); sellUI(); }
+});
+cv.addEventListener('pointercancel', () => { drag = null; });
+cv.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); doFold(); } });
+
+function moveFrog(a, b) {
+  if (!S.board[a] || S.board[b]) return;
+  S.board[b] = S.board[a]; S.board[a] = null; pop[b] = performance.now();
+  if (sel === a) sel = b; sellUI();
+}
+
+// ---------- Actions ----------
+const firstTier = new Set(S.board.filter(Boolean).concat([...Array(S.best).keys()].map(i => i + 1)));
+const TIER_LINES = {
+  2: 'Two Pip Frogs in the spoon, and out comes a Hopper. "Tin," says the soldier, who would know.',
+  3: 'A Croaker. It has a chin. Nobody folded it a chin. Tin does what it likes.',
+  4: 'A Puddler, wide as a puddle and twice as pleased with itself.',
+  5: 'A Bullfrog! The paper folk stop to look. One of them is a paper boat and cannot stop, but it looks as it goes past.',
+  6: 'A Pond Squire, with a feather. "Steady," says the soldier, to himself, to the frog, to the candle.',
+  7: 'A Lily Baron, with a monocle. Where the monocle came from is between the Baron and the spoon.',
+  8: 'A Marsh Duke. It wears a sash. The soldier salutes it before he can help himself.',
+  9: 'A Frog Prince! He waits to be kissed. Nobody does. He takes it well.',
+  10: 'A Frog King, crowned. The fair goes quiet for a moment, then the bidding starts.',
+  11: 'A Frog Emperor, in a cape, holding an orb that is, on close inspection, a sweet.',
+  12: 'A Great Frog. Stars come out around it. The candle bows. The soldier stands to attention, which is where he is most comfortable.',
+};
+function fidget() {
+  if (E.fidget(S)) { sfx.fidget(); say('The card shivers back into her hand. Gilda will not read for a fidget. The hourglass turns over and begins again.'); }
+}
+function doFold() {
+  if (S.ended) return;
+  const out = E.tap(S);
+  if (!out.length) { sfx.deny(); say(S.still ? 'Be still.' : 'The table is full. Melt a pair, or sell something to the paper folk.'); return; }
+  fidget();
+  for (const i of out) { pop[i] = performance.now() + 220; anims.push({ kind: 'fly', i, t0: performance.now(), dur: 220, tier: S.board[i] }); }
+  sfx.fold();
+  if (S.made === 6) say('He folds a frog from a sweet wrapper: the silver kind, real tin, like him. Drag a frog onto its twin and he will melt them together.');
+}
+function doMelt(a, b, dragged) {
+  const t = S.board[a], at = L.cells[a];
+  const n = E.melt(S, a, b);
+  if (!n) return;
+  fidget();
+  sel = -1; sellUI();
+  meltFlash = 1; pop[b] = performance.now();
+  if (!dragged && at) anims.push({ kind: 'fly', i: b, from: { x: at.x + at.w / 2, y: at.y + at.h / 2 }, t0: performance.now(), dur: 160, tier: t });
+  anims.push({ kind: 'melt', i: b, t0: performance.now(), dur: 520 });
+  sfx.melt(n);
+  if (!firstTier.has(n)) { firstTier.add(n); if (TIER_LINES[n]) say(TIER_LINES[n]); if (n >= 2 && n <= 3) setTimeout(() => sfx.unlock(), 220); }
+  else if (S.melts === 3) say('Two alike in the spoon, over the candle: they melt into one, and he folds the warm foil into a bigger frog. Tap a frog to sell it.');
+}
+function doSell(i, all) {
+  const t = S.board[i];
+  if (!t) return;
+  fidget();
+  let p = 0;
+  if (all) { S.board.forEach((x, k) => { if (x === t) anims.push({ kind: 'sold', i: k, t0: performance.now(), dur: 700, text: '+' + fmt(E.priceAt(S, t)) }); }); p = E.sellAll(S, t); }
+  else { p = E.sell(S, i); anims.push({ kind: 'sold', i, t0: performance.now(), dur: 700, text: '+' + fmt(p) }); }
+  sel = -1; sellUI();
+  sfx.sell(t);
+  soldLog.push([S.t, p]);
+  if (S.sold === 1) say(`A paper lady buys it for ${fmt(p)} button${p === 1 ? '' : 's'}. Prices are whatever Gilda's card says they are; you can see them on each frog.`);
+}
+const soldLog = [];
+$('sellBtn').addEventListener('click', () => { if (sel >= 0) doSell(sel, false); });
+$('sellAllBtn').addEventListener('click', () => { if (sel >= 0) doSell(sel, true); });
+function sellUI() {
+  const t = sel >= 0 ? S.board[sel] : 0;
+  const txt = $('sellTxt');
+  if (S.ended) { txt.textContent = ''; $('sellBtn').hidden = $('sellAllBtn').hidden = true; return; }
+  if (!t) {
+    sel = -1;
+    txt.innerHTML = S.still ? '<b>Be still.</b> Fold nothing, melt nothing, sell nothing, buy nothing. The fair goes on without you.'
+      : 'Drag a frog onto its twin to melt them. Tap a frog to sell it.';
+    $('sellBtn').hidden = $('sellAllBtn').hidden = true; return;
+  }
+  const n = S.board.filter(x => x === t).length, p = E.priceAt(S, t), tr = E.trend(S, t);
+  txt.innerHTML = '';
+  const b = document.createElement('b'); b.textContent = `${E.ROMAN[t]} · ${E.SIZES[t - 1]}`;
+  txt.append(b, ` sells for ${fmt(p)} buttons${tr > 0 ? ', and rising' : tr < 0 ? ', and falling' : ''}.${n > 1 ? ' Or tap its twin to melt them.' : ''}`);
+  $('sellBtn').hidden = false; $('sellBtn').textContent = `Sell · ${fmt(p)}`;
+  $('sellAllBtn').hidden = !(E.has(S, 'barrow') && n > 1);
+  $('sellAllBtn').textContent = `Sell all ${n} · ${fmt(p * n)}`;
+}
+
+// ---------- Gilda's booth ----------
+const gctx = $('gilda').getContext('2d'), nctx = $('nowCard').getContext('2d');
+const aheadEl = $('ahead');
+let aheadSig = '';
+function cardTip(c) {
+  const cd = E.CARDS[c], m = E.cardM(S, c, c === S.card ? S.wheelM : null);
+  const bands = cd.m ? E.BANDS.map((b, k) => `${b} ×${m[k].toFixed(1)}`).join(' · ') : 'any band might be worth anything';
+  return { id: 'card:' + c, name: `${E.ROMAN[c]} · ${cd.name}`, desc: cd.say[0].toUpperCase() + cd.say.slice(1) + '.', fx: bands };
+}
+function renderAhead() {
+  const n = E.forecast(S), show = S.ended || S.still ? 0 : n, locked = S.parts < 4 && !S.still && !S.ended ? 1 : 0;
+  const sig = S.next.slice(0, show).join(',') + '|' + locked;
+  if (sig === aheadSig) return;
+  aheadSig = sig;
+  [...aheadEl.querySelectorAll('button')].forEach(b => b.remove());
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  for (let k = 0; k < show + locked; k++) {
+    const b = document.createElement('button'); b.type = 'button';
+    const c = Sprites.canvas(40 * dpr, 64 * dpr), x = c.getContext('2d'); x.scale(dpr, dpr);
+    if (k < show) {
+      const id = S.next[k];
+      cardFace(x, 0, 0, 40, 64, { num: E.ROMAN[id], g: glyph[id] });
+      b.setAttribute('aria-label', `In ${k + 1}: ${E.CARDS[id].name}`);
+      wireTip(b, () => cardTip(id), null);
+    } else {
+      cardBack(x, 0, 0, 40, 64, { label: '?' });
+      b.setAttribute('aria-label', 'Not yet: Gilda can\'t see this far');
+      wireTip(b, () => ({ id: 'locked', name: 'Not yet', desc: S.parts === 0 ? 'Gilda has no eyes. Fit her a glass eye and she\'ll see the next card before she deals it.' : 'Gilda can\'t see this far. Her next part lets her see one card further.' }), null);
+    }
+    b.append(c); aheadEl.append(b);
+  }
+}
+function renderBooth(t) {
+  // Gilda's portrait
+  const gc = $('gilda'), dpr = gc.width / (gc.clientWidth || 138);
+  gctx.setTransform(dpr, 0, 0, dpr, 0, 0); drawGilda(gctx, gc.clientWidth || 138, gc.clientHeight || 200, t);
+  // the card she has dealt (or, at the end, her last card)
+  const nc = $('nowCard'), nw = nc.clientWidth || 112, nh = nc.clientHeight || 186, nd = nc.width / nw;
+  nctx.setTransform(nd, 0, 0, nd, 0, 0); nctx.clearRect(0, 0, nw, nh);
+  if (S.ended) drawFool(nctx, 0, 0, nw, nh);
+  else if (S.still) {
+    cardBack(nctx, 0, 0, nw, nh);
+    // the hourglass: one whole reading
+    const u = Math.min(1, S.still.t / E.T.still), cx = nw / 2, cy = nh / 2, hw = nw * .26, hh = nh * .26;
+    nctx.fillStyle = C.ink; nctx.fillRect(cx - hw - 4, cy - hh - 6, hw * 2 + 8, 5); nctx.fillRect(cx - hw - 4, cy + hh + 1, hw * 2 + 8, 5);
+    nctx.strokeStyle = C.bone; nctx.lineWidth = 1.5;
+    poly(nctx, [[cx - hw, cy - hh], [cx + hw, cy - hh], [cx + 3, cy], [cx + hw, cy + hh], [cx - hw, cy + hh], [cx - 3, cy]]); nctx.fillStyle = '#0f0f1b88'; nctx.fill(); nctx.stroke();
+    nctx.fillStyle = C.mauve;
+    const top = (1 - u) * hh; if (top > 1) poly(nctx, [[cx - hw * top / hh, cy - top], [cx + hw * top / hh, cy - top], [cx, cy]]), nctx.fill();
+    const bot = u * hh; if (bot > 1) { poly(nctx, [[cx - hw, cy + hh], [cx + hw, cy + hh], [cx + hw * (1 - bot / hh), cy + hh - bot], [cx - hw * (1 - bot / hh), cy + hh - bot]]); nctx.fill(); }
+    if (u < 1 && !reduced) { nctx.fillRect(cx - .75, cy, 1.5, hh - bot); }
+  } else cardFace(nctx, 0, 0, nw, nh, { num: E.ROMAN[S.card], title: E.CARDS[S.card].name.replace(/^The /, '').toUpperCase(), g: glyph[S.card] });
+  // what the card says, and the three bands
+  const says = $('says');
+  const sk = S.ended ? 'end' : S.still ? 'still' : 'c' + S.card;
+  if (says.dataset.k !== sk) {
+    says.dataset.k = sk; says.innerHTML = '';
+    const b = document.createElement('b');
+    if (S.ended) { b.textContent = '0 · THE FOOL'; says.append(b, 'the card nobody had ever seen'); }
+    else if (S.still) { b.textContent = 'THE LAST CARD'; says.append(b, 'everything at three times the price. Be still.'); }
+    else { b.textContent = `${E.ROMAN[S.card]} · ${E.CARDS[S.card].name.toUpperCase()}`; says.append(b, E.CARDS[S.card].say); }
+  }
+  const tg = E.target(S);
+  for (let k = 0; k < 3; k++) {
+    const el = $('band' + k), m = S.price[k];
+    el.querySelector('i').style.width = `${Math.min(100, m / 3 * 100)}%`;
+    const d = tg[k] - 1;
+    el.querySelector('b').textContent = `×${m.toFixed(1)}${d > 0.05 ? ' ▴' : d < -0.05 ? ' ▾' : ''}`;
+    el.classList.toggle('rise', d > 0.05); el.classList.toggle('fall', d < -0.05); el.classList.toggle('hot', m >= 1.5);
+  }
+  $('dealFill').style.width = S.still || S.ended ? '0%' : `${Math.max(0, S.dealT / E.T.deal * 100)}%`;
+  renderAhead();
+}
+function renderGoal() {
+  const btn = $('fitBtn'), p = E.nextPart(S);
+  $('meterFill').style.width = `${E.meter(S) * 100}%`;
+  $('meterTxt').textContent = `Gilda mended ${S.parts} / ${E.PARTS.length}`;
+  const g = $('guessTxt');
+  g.hidden = !E.has(S, 'guess') && !S.still;
+  g.textContent = S.ended ? 'He guessed the Chariot.' : 'His guess, in writing: the Chariot.';
+  if (!p || S.ended) { btn.hidden = true; return; }
+  btn.hidden = false;
+  const can = S.buttons >= p.price;
+  btn.setAttribute('aria-disabled', String(!can));
+  btn.classList.toggle('ready', can);
+  const sig = p.id + can;
+  if (btn.dataset.sig !== sig) { btn.dataset.sig = sig; btn.innerHTML = ''; btn.append(`Fit ${p.name}`); const s = document.createElement('small'); s.textContent = `${fmt(p.price)} buttons`; btn.append(s); }
+}
+function partTip() {
+  const p = E.nextPart(S);
+  if (!p) return { id: 'fit', name: 'Mended', desc: 'Gilda is mended.' };
+  const n = E.forecast(S);
+  const fx = S.parts < 4 ? `cards seen ahead: ${n} → ${n + 1}` : 'then: one whole reading, kept still';
+  return { id: 'fit', name: `Fit ${p.name}`, desc: p.desc, fx, foot: `${fmt(p.price)} buttons · part ${S.parts + 1} of ${E.PARTS.length}` };
+}
+function doFit() {
+  const p = E.nextPart(S);
+  if (!p || !E.fit(S)) { sfx.deny(); return; }
+  sfx.part();
+  aheadSig = '';
+  if (S.still) {
+    hideTip(true);
+    say(`${p.joke} "Name your card," says Gilda, "and then be still. I will not read for a fidget." The soldier names the Chariot. Then he stands to attention, the one thing he has always been good at.`);
+  } else say(p.joke);
+  phaseCheck(); save(); renderAll();
+}
+
+// ---------- Shop ----------
+const shop = $('shop');
+const newUntil = {};
+let shopSig = '';
+function renderShop() {
+  if (S.ended) { shop.innerHTML = ''; document.querySelector('aside h2').hidden = true; renderShelf(); return; }
+  const fresh = E.reveal(S);
+  for (const id of fresh) { if (S.t > 3) sfx.unlock(); newUntil[id] = performance.now() + 9000; }
+  const all = E.items(S).sort((a, b) => a.price - b.price);
+  const sig = all.map(i => i.id + ':' + i.price).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    for (const it of all) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (it.silly ? ' odd' : '');
+      b.dataset.id = it.id; b.dataset.cost = it.price;
+      b.innerHTML = '<b></b><em></em>';
+      b.querySelector('b').textContent = it.name;
+      b.querySelector('em').textContent = fmt(it.price) + (it.max ? ` · ${it.level}/${it.max}` : '');
+      b.setAttribute('aria-describedby', 'tip');
+      b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, upTip(it.id)); });
+      b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+      b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, upTip(it.id)); });
+      b.addEventListener('blur', hideTip);
+      b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+      // On touch the first tap shows what it does; the second buys.
+      b.addEventListener('click', () => {
+        if (b.dataset.touch && tipFor !== it.id) { showTip(b, upTip(it.id)); return; }
+        if (b.getAttribute('aria-disabled') !== 'true') doBuy(it.id); else sfx.deny();
+      });
+      shop.append(b);
+    }
+  }
+  const now = performance.now();
+  let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = S.buttons >= Number(b.dataset.cost);
+    if (can) n++;
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  document.querySelector('aside h2').hidden = !all.length;
+  renderShelf();
+}
+let tipFor = null;
+function upTip(id) {
+  const u = E.BY_ID[id], L = E.lvl(S, id), price = E.priceOf(S, u);
+  let foot = `${fmt(price)} buttons`;
+  if (u.max) foot += ` · level ${L} of ${u.max}`;
+  if (u.silly) foot += ' · does very little';
+  return { id, name: u.name, desc: u.desc, fx: E.effect(S, id), joke: u.joke, foot };
+}
+function showTip(b, it) {
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><span class="fx"></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('.fx').textContent = it.fx || ''; tip.querySelector('.fx').hidden = !it.fx;
+  tip.querySelector('i').textContent = it.joke || ''; tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || ''; tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  const inSide = !!b.closest('#side');
+  if (inSide && r.left > t.width + 24 && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 12}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - t.width - 8, r.left))}px`;
+    tip.style.top = `${r.bottom + 8 + t.height < innerHeight ? r.bottom + 8 : Math.max(8, r.top - t.height - 8)}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+let tipMoved = 0;
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .tipped, .bought, .ahead button, .fit')) hideTip(); });
+
+// Buttons whose effect isn't obvious explain themselves (on touch, the first tap of the session).
+const explained = new Set();
+function wireTip(b, info, act) {
+  b.classList.add('tipped');
+  b.setAttribute('aria-describedby', 'tip');
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, info()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, info()); });
+  b.addEventListener('blur', hideTip);
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  b.addEventListener('click', () => {
+    // Cards ahead only explain themselves: a tap opens or closes the tip.
+    if (!act) { if (tipFor === info().id) hideTip(); else showTip(b, info()); return; }
+    if (b.dataset.touch && !explained.has(b.id)) { explained.add(b.id); showTip(b, info()); return; }
+    hideTip(); act();
+  });
+}
+wireTip($('fitBtn'), partTip, () => { if ($('fitBtn').getAttribute('aria-disabled') === 'true') { sfx.deny(); return; } doFit(); });
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!S.boughtOpen === shelfEl.open) return;
+  S.boughtOpen = shelfEl.open; save();
+});
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.UPGRADES.filter(u => !u.max && E.has(S, u.id));
+  const sig = list.map(i => i.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (it.silly ? ' odd' : '');
+    b.textContent = it.name; b.dataset.id = it.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, { id: 'bought:' + it.id, name: it.name, desc: it.desc, joke: it.joke, foot: it.silly ? 'Bought · does very little' : 'Bought', inline: true }); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + it.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+function doBuy(id) {
+  const u = E.BY_ID[id];
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  delete newUntil[id];
+  hideTip();
+  sfx.buy();
+  say(u.joke);
+  if (id === 'table') resize();
+  fidget();
+  save(); renderAll();
+}
+
+// ---------- HUD ----------
+function renderHud() {
+  $('btns').textContent = fmt(S.buttons);
+  const chips = [];
+  const recent = soldLog.filter(([t]) => S.t - t < 60).reduce((a, [, p]) => a + p, 0);
+  while (soldLog.length && S.t - soldLog[0][0] > 60) soldLog.shift();
+  if (recent) chips.push(`Sold this minute ${fmt(recent)}`);
+  if (E.lvl(S, 'doll')) chips.push(`Apprentice: a frog / ${E.DOLL[E.lvl(S, 'doll')]}s`);
+  if (E.lvl(S, 'moth')) chips.push(`Moth: a melt / ${E.MOTH[E.lvl(S, 'moth')]}s`);
+  if (E.lvl(S, 'wrap')) chips.push(`Folds: ${E.SIZES[E.foldSize(S) - 1]}`);
+  if (E.lvl(S, 'fingers')) chips.push(`${E.perTap(S)} a tap`);
+  if (E.lvl(S, 'haggle')) chips.push(`Prices ×${E.haggle(S).toFixed(2)}`);
+  const sig = chips.join('|');
+  const el = $('chips');
+  if (el.dataset.sig !== sig) { el.dataset.sig = sig; el.replaceChildren(...chips.map(c => Object.assign(document.createElement('span'), { textContent: c }))); }
+}
+function renderAll() { renderHud(); renderGoal(); renderShop(); sellUI(); }
+
+// ---------- Time ----------
+const DEAL_LINES = {
+  1: 'Gilda deals the Magician. The middling frogs are suddenly in demand.',
+  10: 'Gilda deals the Wheel of Fortune. Round and round it goes, and the prices with it.',
+  16: 'Gilda deals the Tower. Everything falls down. The paper folk clutch their buttons.',
+  17: 'Gilda deals the Star. Hope, and good prices, all round.',
+  18: 'Gilda deals the Moon. The paper folk want small things by moonlight.',
+  19: 'Gilda deals the Sun. Great frogs shine.',
+  21: 'Gilda deals the World. Everything, everywhere, at twice the price. Sell!',
+};
+let last = performance.now(), saveT = 0, shopT = 0, helperSay = 0, sandT = 0;
+function step() {
+  const now = performance.now();
+  let dt = Math.min(2, (now - last) / 1000); last = now;
+  if (dt <= 0) return;
+  for (const ev of E.tick(S, dt)) {
+    if (ev.type === 'deal') {
+      dealAnim = 1; sfx.deal(); aheadSig = '';
+      const cd = E.CARDS[ev.card];
+      say(DEAL_LINES[ev.card] || `Gilda deals ${cd.name.replace(/^The /, 'the ')}: ${cd.say}.`);
+      if (sel >= 0) sellUI();
+    } else if (ev.type === 'fold') {
+      pop[ev.i] = performance.now() + 220; anims.push({ kind: 'fly', i: ev.i, t0: performance.now(), dur: 220, tier: S.board[ev.i] });
+      sfx.doll();
+      if (S.t - helperSay > 150 && Math.random() < .02) { helperSay = S.t; say('The paper apprentice folds another frog, carefully, with no opinions.'); }
+    } else if (ev.type === 'melt') {
+      if (sel === ev.a || sel === ev.i) { sel = -1; sellUI(); }
+      pop[ev.i] = performance.now(); anims.push({ kind: 'melt', i: ev.i, t0: performance.now(), dur: 420 });
+      sfx.moth(ev.t);
+      if (!firstTier.has(ev.t)) { firstTier.add(ev.t); if (TIER_LINES[ev.t]) say('The moth, by the candle: ' + TIER_LINES[ev.t][0].toLowerCase() + TIER_LINES[ev.t].slice(1)); }
+      else if (S.t - helperSay > 150 && Math.random() < .03) { helperSay = S.t; say('The candle moth melts a pair while nobody is looking. She is only here for the flame.'); }
+    } else if (ev.type === 'end') end(false);
+  }
+  dealAnim = Math.max(0, dealAnim - dt * 3);
+  if (S.still && !S.ended) { sandT += dt; if (sandT > 3) { sandT = 0; sfx.sand(); } }
+  saveT += dt; shopT += dt;
+  if (shopT > 0.25) { shopT = 0; renderAll(); }
+  if (saveT > 3) { saveT = 0; save(); }
+  phaseCheck();
+}
+setInterval(step, 100);
+addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('pagehide', save);
+function frame() {
+  const t = performance.now() / 1000;
+  drawTable(t); renderBooth(t);
+  requestAnimationFrame(frame);
+}
+
+// ---------- The ending ----------
+function end(resumed) {
+  S.ended = true;
+  if (!S.finishedAt) S.finishedAt = S.t;
+  // The finished world: if the table is bare (a save of just { ended: true }), set out the grand frogs.
+  if (!S.board.some(t => t >= 9)) { S.parts = E.PARTS.length; S.best = E.MAX; S.lv.hat = S.lv.hat || 1; S.board = S.board.map((_, i) => [12, 11, 10, 9, 8, 7, 6, 5][i] || null); }
+  sel = -1; drag = null;
+  save();
+  const el = $('ending'); el.hidden = false;
+  const fc = $('foolCard'), dpr = Math.min(2, devicePixelRatio || 1);
+  fc.width = 200 * dpr; fc.height = 330 * dpr; const fx = fc.getContext('2d'); fx.scale(dpr, dpr); drawFool(fx, 0, 0, 200, 330);
+  const T = S.finishedAt || S.t, mm = Math.floor(T / 60), ss = String(Math.floor(T % 60)).padStart(2, '0');
+  $('endStats').hidden = !S.earned;
+  $('endStats').textContent = `${mm}m${ss}s at the fair · ${fmt(S.earned)} buttons earned · ${fmt(S.melts)} frogs melted · biggest: ${E.SIZES[S.best - 1]}`;
+  hideTip(true);
+  renderAll(); phaseCheck();
+  if (!resumed) {
+    sfx.finale();
+    say('And the last card turned.');
+    setTimeout(() => el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' }), 600);
+    if (window.DailyGame) DailyGame.finish({ lines: [`⏱ ${mm}m${ss}s`, `🐸 ${E.SIZES[S.best - 1]}`, `🔘 ${fmt(S.earned)} buttons`, '🃏 lost the wager, didn\'t mind'] });
+  } else say('The fair is packing up. Gilda\'s hand is open. The soldier stands at ease, for once.');
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Start ----------
+resize();
+glyphReady.then(() => { aheadSig = ''; if (Sprites.sheetRequested()) Sprites.showSheet(); });
+document.fonts && document.fonts.ready.then(() => { aheadSig = ''; });
+if (S.ended) end(true);
+else if (S.still) say('Gilda\'s hand is opening. "Be still," she says. The soldier stands to attention.');
+else if (S.t > 5) say('The fair is just as he left it. Gilda is still dealing, and the candle is still lit.');
+else say('Once upon a time, a tin soldier was given seven days\' leave, and he went to the Paper Fair, where Gilda the fortune machine has never dealt her last card. Tap the sweet tin to fold a frog.');
+renderAll();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

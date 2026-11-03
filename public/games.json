@@ -379,5 +379,40 @@
       "topic": "Culture Day (Japan, 3 November) and school culture festivals"
     },
     "palette": "rustic-gb"
+  },
+  {
+    "n": 13,
+    "slug": "gildas-last-card",
+    "date": "2026-11-04",
+    "title": "Gilda's Last Card",
+    "tagline": "A tin soldier on leave melts tin-foil frogs at the Paper Fair, where Gilda the fortune machine sets the prices with her tarot cards and has never once dealt the last one.",
+    "emoji": "🃏🐸",
+    "scale": "millions",
+    "minutes": "25–45",
+    "seed": 3498889575,
+    "subject": "a toy soldier on leave",
+    "verb": "melting",
+    "object": "origami frogs",
+    "interaction": "merge two alike into one",
+    "arc": {
+      "drive": "curiosity",
+      "obstacle": "a broken machine",
+      "turn": "they lose and don't mind",
+      "initial": "G"
+    },
+    "length": "mini (10–60 min)",
+    "structure": [
+      "a market whose prices move"
+    ],
+    "twist": "nothing extra, keep it pure",
+    "ending": "an ending reached by holding back",
+    "look": "tarot cards",
+    "music": {
+      "style": "gamelan",
+      "scale": "hirajoshi"
+    },
+    "tone": "fairy tale narrator",
+    "context": "none",
+    "palette": "hollow"
   }
 ]

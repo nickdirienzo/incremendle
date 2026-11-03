@@ -1,0 +1,24 @@
+{
+  "intro": "Every day the dice roll a premise and a dozen constraints, and the game has to honour all of them. Today's roll was seed 3498889575. Here is each roll and what became of it, as told by the narrator, who was there.",
+  "rolls": [
+    { "roll": "Premise", "value": "a toy soldier on leave · melting · origami frogs", "became": "A tin soldier with seven days off the mantelpiece goes to the Paper Fair under the stairs. Paper doesn't melt, but tin does, so the frogs are folded from tin-foil sweet wrappers, the silver kind." },
+    { "roll": "Subject", "value": "a toy soldier on leave", "became": "He has stood at attention every day of his life. On leave he can do anything he likes, and what he likes is poking at things to see how they work." },
+    { "roll": "Verb", "value": "melting", "became": "He's tin himself, so he knows tin: two foil frogs in a spoon over a candle melt into one warm bead, enough foil to fold one bigger frog." },
+    { "roll": "Object", "value": "origami frogs", "became": "Twelve sizes, from the Pip Frog to the Great Frog, each one fancier than the last: a feather, a monocle, a sash, a crown, a cape, a halo of little stars." },
+    { "roll": "Interaction", "value": "merge two alike into one", "became": "Drag a frog onto its twin and they melt into one. Two frogs of one size sell for less than the bigger frog they make, so melting usually pays. Usually." },
+    { "roll": "Structure", "value": "a market whose prices move", "became": "The paper folk buy frogs at whatever Gilda's latest card says. The Moon wants small frogs, the Sun wants great ones, and the Tower knocks everything down. Sell into a good card, or melt and wait for a better one." },
+    { "roll": "Drive", "value": "curiosity", "became": "For a hundred years Gilda has held one card she has never dealt. The soldier wants to know what's on it. That's all he wants." },
+    { "roll": "Obstacle", "value": "a broken machine", "became": "Gilda is a fortune-telling automaton with no eyes, so she deals blind and nobody can see what's coming. Every part you fit lets her see one card further ahead." },
+    { "roll": "Initial", "value": "G", "became": "Gilda. It's on her name plate, and on the sign: GILDA SEES ALL. (She doesn't, until you buy her the eyes.)" },
+    { "roll": "Scale", "value": "millions", "became": "Buttons, the paper folk's money. A Pip Frog fetches one button, a Great Frog several hundred thousand, and the last cog costs three million." },
+    { "roll": "Length", "value": "mini (10–60 min)", "became": "About half an hour at the fair, from the first Pip Frog to the last card. A paper apprentice and a candle moth turn up early to fold and melt for you." },
+    { "roll": "Twist", "value": "nothing extra, keep it pure", "became": "No twist. Fold, melt, sell, mend. The cards do the twisting." },
+    { "roll": "Ending", "value": "an ending reached by holding back", "became": "Once she's mended, Gilda will only turn her last card for someone who can keep still for one whole reading, while every price at the fair goes to triple. Standing still is the one thing a toy soldier has always been good at.", "spoiler": true },
+    { "roll": "Turn", "value": "they lose and don't mind", "became": "He guessed the Chariot, the soldier's card. The last card is the Fool, card nought, the one missing from the twenty-one he counted: a traveller on a day off with a little frog at his heel. He loses the wager, the drawer stays shut, and he doesn't mind at all, because now he knows.", "spoiler": true },
+    { "roll": "Look", "value": "tarot cards", "became": "Every frog sits on its own card with a Roman numeral, Gilda deals real Major Arcana, and the shop is a row of little cards." },
+    { "roll": "Palette", "value": "hollow", "became": "Four colours by Poltergasm: night ink, slate, mauve and bone. Tin foil turns out to look very good in all four." },
+    { "roll": "Music", "value": "gamelan · hirajoshi", "became": "A slow gending in E hirajoshi on synthesised bronze, with the core melody in fours, an elaboration that runs ahead of it, and a gong at the end of every cycle. It fills out as Gilda mends, and while you keep still it's almost only the gong. Every bell and blip in the game is on the same five notes." },
+    { "roll": "Tone", "value": "fairy tale narrator", "became": "Once upon a time, a tin soldier was given seven days' leave. The narrator tells the rest, and is very fond of the frogs." }
+  ],
+  "outro": "Name my last card and win my drawer. Nobody ever has. Nobody minds."
+}
