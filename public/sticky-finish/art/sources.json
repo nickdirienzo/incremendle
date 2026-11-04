@@ -1,0 +1,56 @@
+{
+ "mdi--bee.svg": {
+  "icon": "mdi:bee",
+  "set": "Material Design Icons",
+  "setUrl": "https://github.com/Templarian/MaterialDesign",
+  "author": "Pictogrammers",
+  "license": "Apache-2.0",
+  "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+  "source": "https://icon-sets.iconify.design/mdi/bee/"
+ },
+ "mdi--microphone.svg": {
+  "icon": "mdi:microphone",
+  "set": "Material Design Icons",
+  "setUrl": "https://github.com/Templarian/MaterialDesign",
+  "author": "Pictogrammers",
+  "license": "Apache-2.0",
+  "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+  "source": "https://icon-sets.iconify.design/mdi/microphone/"
+ },
+ "mdi--beehive-outline.svg": {
+  "icon": "mdi:beehive-outline",
+  "set": "Material Design Icons",
+  "setUrl": "https://github.com/Templarian/MaterialDesign",
+  "author": "Pictogrammers",
+  "license": "Apache-2.0",
+  "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+  "source": "https://icon-sets.iconify.design/mdi/beehive-outline/"
+ },
+ "mdi--crown.svg": {
+  "icon": "mdi:crown",
+  "set": "Material Design Icons",
+  "setUrl": "https://github.com/Templarian/MaterialDesign",
+  "author": "Pictogrammers",
+  "license": "Apache-2.0",
+  "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+  "source": "https://icon-sets.iconify.design/mdi/crown/"
+ },
+ "mdi--flag-triangle.svg": {
+  "icon": "mdi:flag-triangle",
+  "set": "Material Design Icons",
+  "setUrl": "https://github.com/Templarian/MaterialDesign",
+  "author": "Pictogrammers",
+  "license": "Apache-2.0",
+  "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+  "source": "https://icon-sets.iconify.design/mdi/flag-triangle/"
+ },
+ "mdi--radio-handheld.svg": {
+  "icon": "mdi:radio-handheld",
+  "set": "Material Design Icons",
+  "setUrl": "https://github.com/Templarian/MaterialDesign",
+  "author": "Pictogrammers",
+  "license": "Apache-2.0",
+  "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+  "source": "https://icon-sets.iconify.design/mdi/radio-handheld/"
+ }
+}

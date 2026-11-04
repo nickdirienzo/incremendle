@@ -1,0 +1,1204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sticky Finish · Incremendle</title>
+<meta name="description" content="A bored lighthouse keeper types the label on every jar of honey and stacks it up the spiral stair, calling it like a match for the fishing fleet, before the supply boat comes. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sticky Finish">
+<meta property="og:description" content="A bored lighthouse keeper types the label on every jar of honey and stacks it up the spiral stair, calling it like a match for the fishing fleet, before the supply boat comes.">
+<meta property="og:url" content="https://incremendle.com/sticky-finish/">
+<meta property="og:image" content="https://incremendle.com/sticky-finish/og.png?v=c9745cff">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Sticky Finish: A bored lighthouse keeper types the label on every jar of honey and stacks it up the spiral stair, calling it like a match for the fishing fleet, before the supply boat comes.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/monoton/font.css">
+<link rel="stylesheet" href="/shared/fonts/vt323/font.css">
+<style>
+  /* FunkyFuture 8: #2b0f54 #ab1f65 #ff4f69 #fff7f8 #ff8142 #ffda45 #3368dc #49e7ec.
+     Vaporwave: a purple night, a striped sunset, a neon grid sea, chrome-pink type. */
+  :root {
+    --night: #2b0f54; --mag: #ab1f65; --pink: #ff4f69; --white: #fff7f8; --orange: #ff8142; --honey: #ffda45; --blue: #3368dc; --cyan: #49e7ec;
+    --bg: var(--night); --ink: var(--white);
+    --vt: 'VT323', ui-monospace, monospace; --neon: 'Monoton', 'VT323', sans-serif;
+    color-scheme: dark;
+  }
+  html, body { background: var(--bg); color: var(--ink); }
+  /* Keep this: any display rule (flex, grid) would otherwise override the hidden attribute. */
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 20px/1.15 var(--vt);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(14px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image: linear-gradient(180deg, #2b0f54 0%, #2b0f54 60%, #3a1260 100%);
+    background-attachment: fixed;
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; margin: 2px 0 10px; }
+  header h1 { font: 400 clamp(30px, 5vw, 46px)/1 var(--neon); margin: 0; letter-spacing: 1px;
+    background: linear-gradient(180deg, var(--honey) 10%, var(--orange) 45%, var(--pink) 75%, var(--mag)); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 6px #ff4f6988); }
+  header p { margin: 0; color: var(--cyan); font-size: 20px; }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 20px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } }
+  .frame { position: relative; border: 2px solid var(--cyan); box-shadow: 4px 4px 0 var(--mag), 0 0 14px #49e7ec44; background: var(--night); }
+  .stagebox { position: relative; max-width: min(100%, calc(60vh * 820 / 470)); }
+  .stagebox.tall { max-width: 100%; }
+  canvas#stage { display: block; width: 100%; height: auto; touch-action: none; cursor: text; -webkit-user-select: none; user-select: none; }
+  /* The label: type it out, letter by letter. */
+  .typer { position: relative; display: flex; align-items: center; gap: 12px; margin: 10px 0 0; padding: 6px 12px; border: 2px solid var(--pink);
+           background: linear-gradient(90deg, #ab1f6533, #2b0f54); box-shadow: 3px 3px 0 var(--blue); cursor: text; max-width: min(100%, calc(60vh * 820 / 470)); box-sizing: border-box; }
+  .typer.tall { max-width: 100%; }
+  .typer .lbl { color: var(--cyan); font-size: 18px; white-space: nowrap; }
+  .typer .word { font: clamp(26px, 6.5vw, 40px)/1 var(--vt); overflow: hidden; letter-spacing: 3px; white-space: pre; color: #fff7f866; min-height: 40px; }
+  .typer .word .done { color: var(--honey); text-shadow: 0 0 8px #ffda4588; }
+  .typer .word .cur { color: var(--white); border-bottom: 3px solid var(--pink); }
+  .typer.miss .word .cur { color: var(--pink); }
+  @media (max-width: 520px) { .typer .next { display: none; } .typer .lbl { display: none; } .typer .word { letter-spacing: 1px; } }
+  .typer .next { margin-left: auto; color: #fff7f877; font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .typer.off .word { color: #fff7f833; }
+  .typer:focus-within { border-color: var(--honey); }
+  #type { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; font-size: 16px; border: 0; padding: 0; margin: 0; cursor: text; }
+  @keyframes shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+  .typer.miss { animation: shake .15s; }
+  .stats { display: flex; flex-wrap: wrap; gap: 2px 18px; margin: 8px 2px 0; font-size: 20px; color: var(--cyan); }
+  .stats b { color: var(--white); font-weight: 400; }
+  .stats small { font-size: 17px; color: var(--pink); }
+  .stats .tipped { cursor: help; }
+  .stats .tipped:focus-visible { outline: 2px dashed var(--honey); outline-offset: 2px; }
+  .meters { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; margin: 6px 2px 0; }
+  @media (max-width: 520px) { .meters { grid-template-columns: 1fr; } }
+  .meter .label { display: flex; justify-content: space-between; gap: 10px; font-size: 19px; color: var(--cyan); }
+  .meter .label b { color: var(--white); font-weight: 400; }
+  .bar { position: relative; height: 12px; border: 2px solid var(--cyan); overflow: hidden; background: #2b0f54; }
+  .bar i { position: absolute; inset: 0 auto 0 0; width: 0; background: linear-gradient(90deg, var(--orange), var(--honey)); transition: width .4s; }
+  .bar.clock i { background: linear-gradient(90deg, var(--cyan), var(--blue)); transition: none; }
+  .bar.clock.late i { background: linear-gradient(90deg, var(--pink), var(--orange)); }
+  .bar .rec { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--pink); }
+  .log { margin: 8px 2px 0; min-height: 2.4em; font-size: 21px; color: var(--white); }
+  .log.fresh { animation: fresh 1.1s ease-out; }
+  @keyframes fresh { from { color: var(--honey); text-shadow: 0 0 8px var(--honey); } }
+  /* Overlays in the play area: Ottoline's review over winter, and the last jar. */
+  .card { position: absolute; left: 4%; top: 50%; transform: translateY(-50%); width: min(58%, 470px); box-sizing: border-box;
+          padding: 12px 16px 14px; background: #2b0f54ee; border: 2px solid var(--pink); box-shadow: 5px 5px 0 var(--blue), 0 0 24px #ff4f6955; }
+  .stagebox.tall .card { left: 50%; top: 4%; transform: translateX(-50%); width: 92%; }
+  .card canvas { float: right; margin: 0 0 4px 8px; width: 60px; height: 60px; image-rendering: pixelated; }
+  .card h3 { margin: 0 0 6px; font: 400 21px var(--neon); color: var(--honey); letter-spacing: 1px; }
+  .card .on-air { display: inline-block; font-size: 16px; color: var(--night); background: var(--pink); padding: 0 6px; margin-bottom: 6px; }
+  .card p { margin: 6px 0; font-size: 20px; }
+  .card q { color: var(--white); }
+  .card .tally { color: var(--cyan); }
+  .card .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .btn { font: 22px var(--vt); color: var(--night); background: linear-gradient(180deg, var(--honey), var(--orange) 60%, var(--pink)); border: 0; padding: 6px 16px;
+         cursor: pointer; box-shadow: 3px 3px 0 var(--mag); }
+  .btn.alt { background: linear-gradient(180deg, var(--white), var(--cyan)); box-shadow: 3px 3px 0 var(--blue); }
+  .btn:focus-visible { outline: 2px dashed var(--honey); outline-offset: 2px; }
+  /* The column stays in view and scrolls on its own, so nothing on it is ever below the fold. */
+  aside { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; overscroll-behavior: contain;
+          padding: 8px 8px 8px; scrollbar-width: thin; scrollbar-color: var(--pink) transparent; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  aside h2 { font: 400 22px var(--neon); margin: 2px 0 6px; color: var(--pink); letter-spacing: 1px; }
+  #afford { font: 19px var(--vt); color: var(--cyan); letter-spacing: 0; }
+  .tabs { display: flex; gap: 6px; margin: 0 0 8px; }
+  .tabs button { font: 21px var(--vt); color: var(--cyan); background: none; border: 0; border-bottom: 3px solid transparent; padding: 1px 6px; cursor: pointer; }
+  .tabs button[aria-selected="true"] { color: var(--white); border-bottom-color: var(--pink); }
+  .tabs button small { font-size: 17px; color: var(--honey); }
+  .tabs button.fresh::after { content: " ●"; color: var(--pink); font-size: 14px; vertical-align: middle; }
+  .tabs button:focus-visible { outline: 2px dashed var(--honey); }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  @media (max-width: 760px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up {
+    position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 20px/1.05 var(--vt); color: var(--white);
+    background: #2b0f54; border: 2px solid var(--cyan); padding: 4px 8px 3px; cursor: pointer;
+  }
+  .up b { font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; font-size: 18px; color: var(--cyan); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { background: linear-gradient(180deg, var(--honey), var(--orange) 70%, var(--pink)); color: var(--night); border-color: var(--honey); box-shadow: 3px 3px 0 var(--mag); }
+  .up.can em { color: var(--night); }
+  .up.rep { border-color: var(--pink); }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up[aria-disabled="true"]:not(.can) { opacity: .7; }
+  .up.odd { border-style: dashed; }
+  .up .tag { position: absolute; top: -9px; right: 7px; font-size: 16px; padding: 0 5px; background: var(--pink); color: var(--white); font-style: normal; }
+  .up.new { animation: pulse 1.6s ease-in-out 4; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 3px var(--pink), 0 0 12px var(--pink); } }
+  .up:focus-visible { outline: 2px dashed var(--honey); outline-offset: 2px; }
+  .none { color: var(--cyan); font-size: 18px; margin: 2px 0 0; grid-column: 1 / -1; }
+  #tip {
+    position: fixed; z-index: 50; width: 250px; padding: 8px 12px 10px; pointer-events: none; font: 19px/1.12 var(--vt); color: var(--white);
+    background: #2b0f54f4; border: 2px solid var(--pink); box-shadow: 4px 4px 0 var(--blue), 0 0 16px #ff4f6966;
+  }
+  #tip b { display: block; font-weight: 400; font-size: 22px; color: var(--honey); border-bottom: 2px solid var(--mag); margin-bottom: 4px; }
+  #tip span { white-space: pre-line; }
+  #tip small { display: block; white-space: pre-line; margin-top: 6px; font-size: 18px; color: var(--cyan); }
+  #tip i { display: block; margin-top: 6px; font-style: normal; font-size: 18px; color: #fff7f8c0; border-top: 1.5px dashed var(--mag); padding-top: 5px; }
+  #tip.inline { position: static; width: auto; margin-top: 10px; }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 20px var(--vt); color: var(--cyan); cursor: pointer; list-style: none;
+                    padding: 2px 9px; border: 2px dashed var(--mag); }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: "\25B8"; color: var(--pink); transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 2px dashed var(--honey); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .bought { max-width: 100%; font: 18px/1.1 var(--vt); color: var(--honey); background: #2b0f54; border: 1.5px solid var(--orange); padding: 2px 8px;
+            cursor: help; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { border-style: dashed; }
+  .bought:hover, .bought.on { background: var(--orange); color: var(--night); }
+  .bought:focus-visible { outline: 2px dashed var(--honey); outline-offset: 2px; }
+  #ending { margin: 24px auto 10px; max-width: 700px; text-align: center; padding: 20px 26px; }
+  #ending h2 { font: 400 32px/1.15 var(--neon); margin: 0 0 10px; color: var(--honey); }
+  #ending p { margin: 9px 0; font-size: 21px; }
+  #ending .stamp { display: inline-block; margin: 6px 0 12px; padding: 3px 14px; border: 2px solid var(--cyan); color: var(--cyan); font-size: 20px; letter-spacing: 2px; }
+  #shareBtn, #againBtn { margin: 4px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .log.fresh, .typer.miss { animation: none; } .bar i, #bought summary::before { transition: none; } }
+</style>
+<!-- Libraries from /shared/lib/libs.json, by version. List only what this game imports: the credits tool reads these.
+     Strudel's soundfonts import @strudel/core and @strudel/webaudio, which are both inside the @strudel/web bundle. -->
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/soundfonts": "/shared/lib/@strudel/soundfonts@1.3.0/index.mjs"
+} }
+</script>
+<!-- Shared site runtime: top bar, credits, share card, streaks. data-day is this game's "n" from games.json (an internal id, never shown). -->
+<script src="/shared/daily.js" data-day="13" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Sticky Finish</h1>
+    <p>Type the label. Stack the jar. Beat the boat.</p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="stagebox frame" id="stagebox">
+        <canvas id="stage" width="820" height="470" aria-label="Gannet Rock at sunset, drawn in neon: a striped sun sinking into a grid sea, and the lighthouse cut away so you can see its spiral stair, stacked with honey jars from the bottom up toward the lamp. Hives and flowers on the rock; the supply boat on the horizon, coming closer as the summer runs out."></canvas>
+        <div class="card" id="review" hidden>
+          <canvas id="otto" width="60" height="60" aria-hidden="true"></canvas>
+          <span class="on-air">● ON AIR · SUNDAY SPORT</span>
+          <h3 id="revHead">Ottoline Vane reviews the summer</h3>
+          <p><q id="revQuote"></q></p>
+          <p class="tally" id="revTally"></p>
+          <div class="row"><button class="btn" id="nextBtn" type="button">Next summer ▸</button></div>
+        </div>
+        <div class="card" id="choice" hidden>
+          <span class="on-air">● LIVE · GANNET ROCK</span>
+          <h3>One jar left</h3>
+          <p>The stair is full to the top step, where Ottoline scratched her record thirty years ago. One jar left, and one place to put it: the little shelf beside the lamp. The fleet is out there, coming home in the dark.</p>
+          <div class="row">
+            <button class="btn" id="lampBtn" type="button">Set it on the lamp shelf</button>
+            <button class="btn alt" id="clearBtn" type="button">Keep the lamp clear</button>
+          </div>
+        </div>
+      </div>
+      <label class="typer" id="typer">
+        <span class="lbl">LABEL ▸</span>
+        <span class="word" id="word" aria-hidden="true"></span>
+        <span class="next" id="next"></span>
+        <input id="type" type="text" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" enterkeyhint="next" aria-label="Type the label on the jar">
+      </label>
+      <div class="meters">
+        <div class="meter">
+          <div class="label"><span>Stair · <b id="stairN">0</b> jars</span><span id="stairOf"></span></div>
+          <div class="bar" id="stairBar"><i id="stairFill"></i><span class="rec" id="bestMark" hidden></span></div>
+        </div>
+        <div class="meter">
+          <div class="label"><span id="clockLabel">Summer 1</span><span id="clockVal"></span></div>
+          <div class="bar clock" id="clockBar"><i id="clockFill"></i></div>
+        </div>
+      </div>
+      <div class="stats">
+        <span id="rateBox" class="tipped" tabindex="0" aria-describedby="tip">🍯 <b id="rate">0</b>/s</span>
+        <span id="labelBox" class="tipped" tabindex="0" aria-describedby="tip">✍ <b id="perLabel">6</b> a label</span>
+        <span id="beeBox" class="tipped" tabindex="0" aria-describedby="tip" hidden>🐝 <b id="frames">0</b> <span id="framesW">frames</span> <small id="frameGrow"></small></span>
+        <span id="hiveBox" class="tipped" tabindex="0" aria-describedby="tip" hidden>🏠 <b id="hives">0</b> <span id="hivesW">hives</span> <small id="hiveGrow"></small></span>
+        <span id="queenBox" class="tipped" tabindex="0" aria-describedby="tip" hidden>👑 <b id="queens">0</b></span>
+        <span id="notesBox" class="tipped" tabindex="0" aria-describedby="tip" hidden>📝 <b id="notes">0</b> Notes</span>
+      </div>
+      <div class="log" id="log" aria-live="polite"></div>
+    </main>
+    <aside id="side">
+      <h2 id="shopHead">Trades <span id="afford"></span></h2>
+      <div class="tabs" id="tabs" role="tablist" hidden>
+        <button type="button" role="tab" id="tabJ" aria-selected="true">Jars <small id="tabJc"></small></button>
+        <button type="button" role="tab" id="tabN" aria-selected="false">Notes <small id="tabNc"></small></button>
+      </div>
+      <div id="shop"></div>
+      <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" class="frame" hidden>
+    <h2 id="endHead">A sticky finish.</h2>
+    <div class="stamp" id="endStamp">GANNET ROCK · FULL STAIR</div>
+    <p id="endText"></p>
+    <p id="endStats"></p>
+    <button class="btn" id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const DEBUG = location.search.includes('debug');
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:13:save';
+let S = E.newState();
+try { const raw = localStorage.getItem(KEY); if (raw) S = E.load(JSON.parse(raw)); } catch (e) {}
+const save = () => { S.lastSeen = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const C = { night: '#2b0f54', mag: '#ab1f65', pink: '#ff4f69', white: '#fff7f8', orange: '#ff8142', honey: '#ffda45', blue: '#3368dc', cyan: '#49e7ec' };
+const VT = "'VT323', monospace", NEON = "'Monoton', 'VT323', sans-serif";
+const fmt = E.fmt;
+const num = x => Math.floor(x).toLocaleString('en-GB');
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const mmss = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+
+// ---------- Sound ----------
+// Everything on D dorian (D E F G A B C), the soundtrack's scale.
+const A = createAudio({ sfxTrim: 1, musicTrim: 8.4 });
+const N = scale('dorian', 62);
+const sfx = {
+  // One soft tick per letter, climbing the scale as the word goes on: typing plays a little run.
+  key(i = 0) { A.tone({ type: 'triangle', freq: N(i % 9), dur: 0.035, vol: 0.06, cutoff: 2600 }); },
+  miss() { A.tone({ type: 'triangle', freq: N(-3), dur: 0.06, vol: 0.06, cutoff: 900 }); },
+  // The jar goes on the step: a steel-pan pair, higher for longer words.
+  label(len = 6) {
+    const s = Math.min(6, Math.floor(len / 3));
+    A.tone({ type: 'bell', freq: N(s + 4), dur: 0.1, vol: 0.12 });
+    A.tone({ type: 'bell', freq: N(s + 6), dur: 0.14, vol: 0.09, at: A.now + 0.07 });
+  },
+  // Another step full: a little chime.
+  step(k = 0) { A.tone({ type: 'bell', freq: N(7 + (k % 5)), dur: 0.2, vol: 0.07 }); },
+  // The fleet cheers (every ten steps): horns from out on the water, on the scale.
+  cheer() {
+    [0, 2, 4, 7].forEach((d, i) => A.tone({ type: 'keys', freq: N(d + 2), dur: 0.16, vol: 0.09, at: A.now + i * 0.08 }));
+    A.tone({ type: 'pad', freq: N(-3), dur: 0.5, vol: 0.04, attack: 0.05, at: A.now + 0.05 });
+  },
+  // Bees filling jars on their own: a soft drip now and then.
+  drip(k = 0) { A.tone({ type: 'pluck', freq: N(4 + (k % 4)), dur: 0.07, vol: 0.05, cutoff: 2400 }); },
+  buy() { [0, 2, 4].forEach((d, i) => A.tone({ type: 'bell', freq: N(d + 4), dur: 0.12, vol: 0.1, at: A.now + i * 0.06 })); },
+  prod(k = 0) { A.tone({ type: 'pluck', freq: N(2 + (k % 3) * 2), dur: 0.09, vol: 0.12 }); A.tone({ type: 'bell', freq: N(6 + (k % 3) * 2), dur: 0.08, vol: 0.05, at: A.now + 0.04 }); },
+  unlock() { A.tone({ type: 'bell', freq: N(9), dur: 0.3, vol: 0.08 }); A.tone({ type: 'bell', freq: N(11), dur: 0.35, vol: 0.07, at: A.now + 0.12 }); },
+  deny() { A.tone({ type: 'triangle', freq: N(1), dur: 0.07, vol: 0.1 }); A.tone({ type: 'triangle', freq: N(0), dur: 0.1, vol: 0.09, at: A.now + 0.08 }); },
+  // The supply boat rounds the point: a low two-note horn.
+  horn() { A.tone({ type: 'pad', freq: N(-7), dur: 0.7, vol: 0.07, attack: 0.08 }); A.tone({ type: 'pad', freq: N(-3), dur: 0.9, vol: 0.06, attack: 0.08, at: A.now + 0.8 }); },
+  // The boat takes the stair: a run down the scale, then Ottoline's radio jingle.
+  boat() {
+    [9, 8, 7, 6, 5, 4, 3, 2].forEach((d, i) => A.tone({ type: 'pluck', freq: N(d), dur: 0.08, vol: 0.09, at: A.now + i * 0.06 }));
+    A.tone({ type: 'pad', freq: N(-7), dur: 1.1, vol: 0.06, attack: 0.1, at: A.now + 0.2 });
+  },
+  jingle() { [4, 6, 7, 9, 7, 11].forEach((d, i) => A.tone({ type: 'bell', freq: N(d), dur: 0.12, vol: 0.08, at: A.now + i * 0.11 })); },
+  // A new summer: the sun comes up on the rock.
+  summer() { [0, 2, 4, 6, 7, 9].forEach((d, i) => A.tone({ type: 'bell', freq: N(d + 2), dur: 0.14, vol: 0.09, at: A.now + i * 0.07 })); A.tone({ type: 'keys', freq: N(4), dur: 0.6, vol: 0.06, at: A.now + 0.45 }); },
+  finale() {
+    const tune = [0, 2, 4, 6, 7, 6, 4, 5, 7, 9, 11, 9, 14];
+    tune.forEach((s, i) => A.tone({ type: 'bell', freq: N(s), dur: 0.2, vol: 0.1, at: A.now + i * 0.14 }));
+    [0, 2, 4].forEach(s => A.tone({ type: 'pad', freq: N(s - 7), dur: 3, vol: 0.04, attack: 0.6, at: A.now + 1.2 }));
+    A.tone({ type: 'bell', freq: N(14), dur: 1.4, vol: 0.07, at: A.now + 1.9 });
+  },
+};
+// Per-effect levels, measured with npm run mix so every effect peaks near -10 dBFS.
+// The rapid ones (the letter ticks, the drip of the bees) sit a few dB under on purpose.
+const LEVEL = { key: 5.25, miss: 5.3, label: 3.94, step: 4.5, cheer: 1.66, drip: 18, buy: 3.05, prod: 4.42, unlock: 4.27, deny: 4.95, horn: 6.5, boat: 2.82, jingle: 4.47, summer: 3.39, finale: 3.24 };
+for (const k of Object.keys(sfx)) {
+  const fn = sfx[k];
+  sfx[k] = (...a) => {
+    const tone = A.tone, m = LEVEL[k] || 1;
+    A.tone = o => tone({ ...o, vol: (o.vol ?? 0.3) * m });
+    try { fn(...a); } finally { A.tone = tone; }
+  };
+}
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'boat', 'horn', 'summer', 'jingle'], S: () => S, E };
+
+// The game owns playback; music.mjs arranges the composed calypso per phase.
+const musicKey = () => E.phase(S);
+let music = null, soundtrack = null, lastKey = musicKey();
+function song() {
+  soundtrack ||= createSoundtrack(music.strudel);
+  return soundtrack(musicKey());
+}
+createMusic(A, { soundfonts: true, packs: ['vcsl'], song }).then(m => { music = m; music.update(); if (DEBUG) Object.assign(window.__game, { music: m, song }); }).catch(e => console.warn('music', e));
+
+// ---------- Layout ----------
+// Wide: the sun and the sea on the left, the lighthouse on its rock on the right.
+// Narrow (phones): taller, the lighthouse bigger and the sun behind it.
+const cv = $('stage'), g = cv.getContext('2d');
+let L = null;
+function layout() {
+  const narrow = $('stagebox').clientWidth < 560;
+  if (L && L.narrow === narrow) return false;
+  if (narrow) L = { narrow, W: 420, H: 520, hz: 300, sun: [120, 290, 90], tw: { x: 290, top: 92, base: 452, wt: 74, wb: 126 }, rock: [170, 420, 0] };
+  else L = { narrow, W: 820, H: 470, hz: 290, sun: [270, 280, 112], tw: { x: 650, top: 78, base: 404, wt: 80, wb: 138 }, rock: [470, 790, 0] };
+  $('stagebox').classList.toggle('tall', narrow); $('typer').classList.toggle('tall', narrow);
+  cv.width = L.W; cv.height = L.H; dpr = 0; bg = null;
+  return true;
+}
+let dpr = 0;
+function fit() {
+  const d = Math.min(2, devicePixelRatio || 1), r = cv.getBoundingClientRect();
+  const w = Math.round((r.width || L.W) * d);
+  if (cv.width !== w || dpr !== d) { dpr = d; cv.width = w; cv.height = Math.round(w * L.H / L.W); bg = null; }
+}
+
+// ---------- Sprites ----------
+const spr = {};
+// Neon stamps: the icon filled with a sunset gradient and a glow line round it.
+async function neon(file, size, stops = [C.honey, C.orange, C.pink], glow = C.cyan) {
+  const src = await Sprites.loadSvg(file);
+  const shape = await Sprites.svgToCanvas(Sprites.gradient(src, stops, { angle: 90 }), size);
+  const pad = 3, c = Sprites.canvas(size + pad * 2, size + pad * 2), x = c.getContext('2d');
+  x.drawImage(Sprites.outline(shape, glow, 1), pad - 1, pad - 1);
+  x.drawImage(shape, pad, pad);
+  return c;
+}
+// A honey jar, drawn by hand: a glass body full of honey, a lid, a label stripe.
+function drawJar(x, cx, by, s = 1, full = 1, lid = C.pink) {
+  const w = 7 * s, h = 9 * s;
+  x.fillStyle = '#fff7f833'; x.fillRect(cx - w / 2, by - h, w, h);
+  x.fillStyle = C.honey; x.fillRect(cx - w / 2, by - h * full, w, h * full);
+  x.fillStyle = C.orange; x.fillRect(cx - w / 2, by - h * 0.45, w, h * 0.18);
+  x.fillStyle = lid; x.fillRect(cx - w / 2 - 0.5 * s, by - h - 2 * s, w + s, 2 * s);
+}
+// The keeper: a little figure in a cap and a striped jumper, at the radio.
+function drawKeeper(x, cx, fy, t = 0, k = 1) {
+  x.save(); x.translate(cx, fy); x.scale(k, k);
+  const bob = Math.sin(t * 6) * 0.6;
+  x.fillStyle = C.blue; x.fillRect(-4, -9, 3, 9); x.fillRect(1, -9, 3, 9);           // trousers
+  x.fillStyle = C.white; x.fillRect(-5, -19 + bob, 10, 11);                           // jumper
+  x.fillStyle = C.pink; x.fillRect(-5, -16 + bob, 10, 2); x.fillRect(-5, -12 + bob, 10, 2);
+  x.fillStyle = C.orange; x.fillRect(-3.5, -26 + bob, 7, 7);                          // face
+  x.fillStyle = C.night; x.fillRect(-4.5, -28 + bob, 9, 3); x.fillRect(1, -27 + bob, 6, 2); // cap
+  x.fillStyle = C.night; x.fillRect(0.5, -23.5 + bob, 1.2, 1.2);                      // eye
+  x.restore();
+}
+// Ottoline on the radio: a silhouette in a headset, for the review card art and the sheet.
+function drawOttoline(x, cx, by, k = 1) {
+  x.save(); x.translate(cx, by); x.scale(k, k);
+  x.fillStyle = C.mag; x.beginPath(); x.ellipse(0, -8, 14, 9, 0, Math.PI, 0); x.fill();
+  x.fillStyle = C.pink; x.beginPath(); x.arc(0, -24, 8, 0, Math.PI * 2); x.fill();
+  x.fillStyle = C.white; x.fillRect(-8, -36, 16, 6); x.fillRect(-10, -31, 4, 9);       // a big white bun, and the headset
+  x.strokeStyle = C.cyan; x.lineWidth = 2; x.beginPath(); x.arc(0, -25, 11, Math.PI * 1.1, Math.PI * 1.9); x.stroke();
+  x.fillStyle = C.cyan; x.fillRect(9, -27, 3, 6); x.fillRect(8, -21, 6, 2);
+  x.restore();
+}
+function drawBoat(x, cx, wy, s = 1, laden = 0) {
+  x.save(); x.translate(cx, wy); x.scale(s, s);
+  x.fillStyle = C.white; x.beginPath(); x.moveTo(-22, -6); x.lineTo(22, -6); x.lineTo(16, 2); x.lineTo(-18, 2); x.closePath(); x.fill();
+  x.fillStyle = C.pink; x.fillRect(-20, -6, 40, 2);
+  x.fillStyle = C.blue; x.fillRect(-6, -15, 14, 9);
+  x.fillStyle = C.cyan; x.fillRect(-4, -13, 4, 3); x.fillRect(2, -13, 4, 3);
+  x.fillStyle = C.white; x.fillRect(4, -22, 3, 7);
+  if (laden) { x.fillStyle = C.honey; for (let i = 0; i < Math.min(6, laden); i++) x.fillRect(-18 + i * 4, -10, 3, 4); }
+  x.restore();
+}
+const ICON = { bee: './art/mdi--bee.svg', boat: './art/mdi--boat.svg', hive: './art/mdi--beehive-outline.svg',   crown: './art/mdi--crown.svg', flag: './art/mdi--flag-triangle.svg', mic: './art/mdi--microphone.svg', radio: './art/mdi--radio-handheld.svg' };
+const FLOWER_TINT = { thrift: [C.pink, C.white], bramble: [C.white, C.pink], rosebay: [C.pink, C.mag], heather: [C.mag, C.pink], ivy: [C.cyan, C.blue], aster: [C.cyan, C.white] };
+async function makeSprites() {
+  spr.bee = Sprites.register('bee (neon)', await neon(ICON.bee, 12, [C.honey, C.orange]));
+  spr.hive = Sprites.register('hive (neon)', await neon(ICON.hive, 18, [C.honey, C.orange], C.pink));
+  spr.crown = Sprites.register('queen crown', await neon(ICON.crown, 12, [C.honey, C.white], C.pink));
+  spr.flag = Sprites.register('fan club pennant', await neon(ICON.flag, 16, [C.pink, C.mag], C.white));
+  spr.mic = Sprites.register('brass microphone', await neon(ICON.mic, 14, [C.honey, C.orange], C.white));
+  spr.radio = Sprites.register('lighthouse radio', await neon(ICON.radio, 16, [C.cyan, C.blue], C.white));
+  spr.flower = {};
+  for (const [id, [a, b]] of Object.entries(FLOWER_TINT)) {
+    const c = Sprites.canvas(14, 14), x = c.getContext('2d');
+    x.fillStyle = a; for (let i = 0; i < 5; i++) { const an = i * Math.PI * 2 / 5 - Math.PI / 2; x.beginPath(); x.arc(7 + Math.cos(an) * 3.6, 7 + Math.sin(an) * 3.6, 2.6, 0, Math.PI * 2); x.fill(); }
+    x.fillStyle = b; x.beginPath(); x.arc(7, 7, 1.8, 0, Math.PI * 2); x.fill();
+    spr.flower[id] = Sprites.register(`flower: ${id} (hand-drawn)`, c);
+  }
+  const j = Sprites.canvas(100, 30), jx = j.getContext('2d'); for (let i = 0; i < 8; i++) drawJar(jx, 8 + i * 12, 26, 1.2, (i + 1) / 8); Sprites.register('honey jars (hand-drawn)', j);
+  const k = Sprites.canvas(40, 40); drawKeeper(k.getContext('2d'), 20, 36, 0, 1.2); Sprites.register('the keeper', k);
+  const o = Sprites.canvas(50, 50); drawOttoline(o.getContext('2d'), 25, 48, 1.2); Sprites.register('Ottoline Vane, on air', o);
+  const ox = $('otto').getContext('2d'); ox.fillStyle = C.blue; ox.fillRect(0, 0, 60, 60); ox.drawImage(o, 5, 8);
+  const b = Sprites.canvas(60, 30); drawBoat(b.getContext('2d'), 30, 26, 1, 5); Sprites.register('the supply boat', b);
+}
+
+// ---------- The background (sky, sun, sea, rock), rebuilt when the layout or season changes ----------
+let bg = null, bgSig = '';
+function towerAt(y) {
+  const { tw } = L, f = (y - tw.top) / (tw.base - tw.top);
+  const w = tw.wt + (tw.wb - tw.wt) * f;
+  return [tw.x - w / 2, tw.x + w / 2];
+}
+function buildBg(winter) {
+  const k = cv.width / L.W;
+  const c = Sprites.canvas(cv.width, cv.height), x = c.getContext('2d');
+  x.scale(k, k);
+  const { W, H, hz } = L, [sx, sy, sr] = L.sun;
+  // sky
+  const sky = x.createLinearGradient(0, 0, 0, hz);
+  if (winter) { sky.addColorStop(0, C.night); sky.addColorStop(0.6, '#24206e'); sky.addColorStop(1, C.blue); }
+  else { sky.addColorStop(0, C.night); sky.addColorStop(0.5, C.mag); sky.addColorStop(1, C.pink); }
+  x.fillStyle = sky; x.fillRect(0, 0, W, hz);
+  // stars
+  let s = 7; const r = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+  x.fillStyle = C.white;
+  for (let i = 0; i < 60; i++) { const px = r() * W, py = r() * hz * 0.55; x.globalAlpha = 0.25 + r() * 0.5; x.fillRect(px, py, 1.4, 1.4); }
+  x.globalAlpha = 1;
+  // the sun, striped, half sunk (in winter, a low pale one)
+  x.save(); x.beginPath(); x.rect(0, 0, W, hz); x.clip();
+  const sunY = winter ? sy + sr * 0.55 : sy;
+  const sg = x.createLinearGradient(0, sunY - sr, 0, sunY + sr * 0.3);
+  if (winter) { sg.addColorStop(0, C.white); sg.addColorStop(1, C.cyan); } else { sg.addColorStop(0, C.honey); sg.addColorStop(0.55, C.orange); sg.addColorStop(1, C.pink); }
+  x.fillStyle = sg; x.beginPath(); x.arc(sx, sunY, sr, 0, Math.PI * 2); x.fill();
+  x.globalCompositeOperation = 'destination-out';
+  for (let i = 0; i < 7; i++) { const yy = sunY - sr * 0.1 + i * sr * 0.16, hh = 2 + i * 1.6; x.fillRect(sx - sr, yy, sr * 2, hh); }
+  x.restore();
+  // redraw the sky behind the cut stripes
+  x.save(); x.globalCompositeOperation = 'destination-over'; x.fillStyle = sky; x.fillRect(0, 0, W, hz); x.restore();
+  // the sea: deep purple and a neon grid toward the sun
+  const sea = x.createLinearGradient(0, hz, 0, H);
+  sea.addColorStop(0, winter ? '#1d2a7a' : '#3a1063'); sea.addColorStop(1, C.night);
+  x.fillStyle = sea; x.fillRect(0, hz, W, H - hz);
+  x.strokeStyle = winter ? C.white : C.cyan; x.globalAlpha = 0.5; x.lineWidth = 1;
+  for (let i = -16; i <= 16; i++) { x.beginPath(); x.moveTo(sx, hz); x.lineTo(sx + i * W * 0.12, H); x.stroke(); }
+  x.globalAlpha = 1;
+  x.strokeStyle = C.pink; x.lineWidth = 2; x.beginPath(); x.moveTo(0, hz); x.lineTo(W, hz); x.stroke();
+  // the rock
+  const [r0, r1] = L.rock, base = L.tw.base;
+  x.fillStyle = C.night;
+  x.beginPath(); x.moveTo(r0, H); x.lineTo(r0 + 30, base - 6); x.lineTo(r0 + 90, base - 18); x.lineTo(r1 - 80, base - 16); x.lineTo(r1 - 20, base - 2); x.lineTo(r1, H); x.closePath(); x.fill();
+  x.strokeStyle = C.pink; x.lineWidth = 2; x.stroke();
+  x.strokeStyle = C.mag; x.lineWidth = 1;
+  for (let i = 0; i < 6; i++) { x.beginPath(); x.moveTo(r0 + 40 + i * (r1 - r0 - 80) / 6, base + 4); x.lineTo(r0 + 60 + i * (r1 - r0 - 80) / 6, H - 6); x.stroke(); }
+  return c;
+}
+
+// ---------- The lighthouse ----------
+// 100 steps in 20 flights of 5, zigzagging up the tower; jars fill them from the bottom.
+const FLIGHTS = 20, PER = E.STEPS / FLIGHTS;
+function stepPos(i) {
+  const { tw } = L, f = Math.floor(i / PER), k = i % PER;
+  const y0 = tw.base - 8, y1 = tw.top + 34, fh = (y0 - y1) / FLIGHTS;
+  const y = y0 - f * fh - (k + 1) * fh / PER;
+  const [a, b] = towerAt(y), inset = 9, span = b - a - inset * 2;
+  const t = (k + 0.5) / PER, xx = f % 2 === 0 ? a + inset + span * t : b - inset - span * t;
+  return [xx, y, span / PER];
+}
+function drawTower(x, t) {
+  const { tw } = L;
+  const top = tw.top, base = tw.base;
+  const [a0, b0] = towerAt(base), [a1, b1] = towerAt(top + 24);
+  // the shell, cut away: a dark inside, neon walls
+  x.fillStyle = '#2b0f54e8';
+  x.beginPath(); x.moveTo(a0, base); x.lineTo(a1, top + 24); x.lineTo(b1, top + 24); x.lineTo(b0, base); x.closePath(); x.fill();
+  // stripes on the outer walls (a candy-striped tower, the way the board painted them)
+  x.save(); x.clip();
+  x.fillStyle = '#ff4f6922';
+  for (let i = 0; i < 6; i++) { const y = top + 24 + i * (base - top - 24) / 6; x.fillRect(a0 - 10, y, (b0 - a0) + 20, (base - top) / 14); }
+  x.restore();
+  x.save(); x.shadowColor = C.cyan; x.shadowBlur = reduced ? 0 : 8;
+  x.strokeStyle = C.cyan; x.lineWidth = 2;
+  x.beginPath(); x.moveTo(a0, base); x.lineTo(a1, top + 24); x.moveTo(b0, base); x.lineTo(b1, top + 24); x.stroke();
+  x.restore();
+  // the stair: every step, and the jars on it
+  const full = E.stepFrac(S.jars);
+  for (let i = 0; i < E.STEPS; i++) {
+    const [sx, sy, sw] = stepPos(i);
+    x.fillStyle = i < Math.floor(full) ? C.orange : '#ab1f6588';
+    x.fillRect(sx - sw / 2, sy, sw + 0.5, 2);
+    const fr = Math.max(0, Math.min(1, full - i));
+    if (fr > 0) {
+      const n = Math.max(1, Math.round(fr * 2));
+      for (let j = 0; j < n; j++) drawJar(x, sx - sw / 4 + j * sw / 2, sy, L.narrow ? 0.42 : 0.5, 1, j % 2 ? C.pink : C.cyan);
+    }
+  }
+  // Ottoline's record, scratched into the top step
+  const [tx, ty] = stepPos(E.STEPS - 1);
+  x.fillStyle = C.pink; x.font = `${L.narrow ? 11 : 12}px ${VT}`; x.textAlign = 'center';
+  x.fillText('O.V. 100,000', tx, ty - 8);
+  // the gallery and the lamp room
+  const lw = tw.wt + 14, ly = top + 24;
+  x.fillStyle = C.night; x.fillRect(tw.x - lw / 2, ly - 3, lw, 4);
+  x.strokeStyle = C.white; x.lineWidth = 1.5; x.strokeRect(tw.x - lw / 2, ly - 3, lw, 4);
+  for (let i = 0; i <= 8; i++) { x.beginPath(); x.moveTo(tw.x - lw / 2 + i * lw / 8, ly - 3); x.lineTo(tw.x - lw / 2 + i * lw / 8, ly - 11); x.stroke(); }
+  x.beginPath(); x.moveTo(tw.x - lw / 2, ly - 11); x.lineTo(tw.x + lw / 2, ly - 11); x.stroke();
+  const rw = tw.wt * 0.55, rh = 26;
+  x.fillStyle = '#49e7ec22'; x.fillRect(tw.x - rw / 2, ly - 3 - rh, rw, rh);
+  x.strokeStyle = C.cyan; x.strokeRect(tw.x - rw / 2, ly - 3 - rh, rw, rh);
+  x.fillStyle = C.pink; x.beginPath(); x.moveTo(tw.x - rw / 2 - 4, ly - 3 - rh); x.lineTo(tw.x, ly - 3 - rh - 16); x.lineTo(tw.x + rw / 2 + 4, ly - 3 - rh); x.closePath(); x.fill();
+  // the lamp, and the little shelf beside it
+  const lampY = ly - 3 - rh / 2;
+  const gold = S.ending === 'lamp';
+  x.fillStyle = gold ? C.honey : C.white; x.beginPath(); x.arc(tw.x, lampY, 6, 0, Math.PI * 2); x.fill();
+  x.fillStyle = C.orange; x.fillRect(tw.x + rw / 2 - 9, lampY + 6, 7, 2);
+  if (gold) drawJar(x, tw.x + rw / 2 - 5.5, lampY + 6, 0.55, 1, C.pink);
+  // the beam: always lit at dusk; honey-gold if the last jar went on the lamp
+  if (!S.winter || S.ended) {
+    const ang = reduced ? -0.25 : Math.sin(t * 0.35) * 0.5 - 0.3, len = L.W * 0.9;
+    x.save(); x.globalCompositeOperation = 'lighter'; x.globalAlpha = S.ended ? 0.45 : 0.18;
+    const bgc = x.createLinearGradient(tw.x, lampY, tw.x - len, lampY);
+    bgc.addColorStop(0, gold ? C.honey : C.white); bgc.addColorStop(1, 'rgba(255,247,248,0)');
+    x.fillStyle = bgc; x.beginPath(); x.moveTo(tw.x, lampY);
+    x.lineTo(tw.x - len * Math.cos(ang - 0.06), lampY + len * Math.sin(ang - 0.06));
+    x.lineTo(tw.x - len * Math.cos(ang + 0.06), lampY + len * Math.sin(ang + 0.06)); x.closePath(); x.fill();
+    x.restore();
+  }
+  // things on the gallery: the pennant, the microphone's aerial
+  if (S.up.pennant) x.drawImage(spr.flag, tw.x + lw / 2 - 6, ly - 30);
+  if (S.up.mic) { x.strokeStyle = C.white; x.lineWidth = 1; x.beginPath(); x.moveTo(tw.x - rw / 2 + 2, ly - 3 - rh); x.lineTo(tw.x - rw / 2 - 6, ly - rh - 30); x.stroke();
+    if (!reduced && Math.sin(t * 3) > 0) { x.fillStyle = C.pink; x.fillRect(tw.x - rw / 2 - 7.5, ly - rh - 32, 3, 3); } }
+  // the keeper, at the radio by the door
+  const [da] = towerAt(base - 6);
+  drawKeeper(x, da + 16, base - 2, typingT > 0 ? t : 0, L.narrow ? 0.8 : 1);
+  x.drawImage(S.up.mic ? spr.mic : spr.radio, da + 24, base - 24);
+  if (S.up.observation) { x.drawImage(spr.hive, tw.x - rw / 2 - 20, ly - 26); }
+}
+// Hives on the rock, flowers along it, bees between.
+function drawRock(x, t) {
+  const [r0, r1] = L.rock, base = L.tw.base, [ta, tb] = towerAt(base);
+  const spots = [];
+  for (let i = r0 + 50; i < r1 - 40; i += 17) if (i < ta - 14 || i > tb + 10) spots.push(i);
+  const hives = Math.min(spots.length, Math.floor(S.hive));
+  for (let i = 0; i < hives; i++) x.drawImage(spr.hive, spots[i] - 9, base - 30 + (i % 2) * 4);
+  const fl = E.FLOWERS.filter(f => S.up[f.id]);
+  fl.forEach((f, j) => { for (let i = 0; i < 5; i++) x.drawImage(spr.flower[f.id], r0 + 36 + ((j * 47 + i * 61) % (r1 - r0 - 70)), base - 12 + ((i + j) % 3) * 6); });
+  if (S.queen >= 1) x.drawImage(spr.crown, (spots[0] || r0 + 60) - 6, base - 46);
+  // bees: one dot per frame, up to thirty, looping between the hives and the flowers
+  const n = Math.min(30, Math.floor(S.frame));
+  for (let i = 0; i < n; i++) {
+    const ph = t * (0.4 + (i % 5) * 0.07) + i * 2.1;
+    const bx = r0 + 70 + (r1 - r0 - 140) * (0.5 + 0.5 * Math.sin(ph)), by = base - 40 - 22 * Math.abs(Math.sin(ph * 1.7 + i));
+    if (n < 6 && i === 0) x.drawImage(spr.bee, bx - 7, by - 7);
+    else { x.fillStyle = C.honey; x.fillRect(bx, by, 2, 2); }
+  }
+}
+// The supply boat sails in from the horizon as the summer runs out, and away again with the stair.
+let boatAway = 0;
+function drawSea(x, t) {
+  const { W, H, hz } = L, [sx] = L.sun;
+  // the grid rolls toward you
+  x.save(); x.strokeStyle = S.winter ? C.white : C.cyan; x.lineWidth = 1;
+  const off = reduced ? 0 : (t * 0.25) % 1;
+  for (let i = 0; i < 10; i++) {
+    const f = Math.pow((i + off) / 10, 2.2), y = hz + 2 + f * (H - hz);
+    x.globalAlpha = 0.15 + f * 0.6; x.beginPath(); x.moveTo(0, y); x.lineTo(W, y); x.stroke();
+  }
+  x.restore();
+  // the fleet, three trawlers with their lights, out by the horizon
+  if (S.up.mic) for (let i = 0; i < 3; i++) {
+    const fx = sx - 200 + i * 70 + Math.sin(t * 0.2 + i) * 6, fy = hz + 6 + i * 3;
+    x.fillStyle = C.night; x.fillRect(fx - 8, fy - 4, 16, 4); x.fillRect(fx - 2, fy - 9, 4, 5);
+    x.fillStyle = (Math.floor(t * 1.5 + i) % 3 === 0 && !reduced) ? C.honey : C.pink; x.fillRect(fx - 1, fy - 11, 2, 2);
+  }
+  // the boat
+  let p;
+  if (S.ended) p = -1;
+  else if (S.winter) p = 1 - Math.min(1, boatAway / 8);
+  else p = S.clock / E.summerLength(S);
+  if (p >= 0) {
+    const bx = 30 + (L.rock[0] - 30) * Math.pow(p, 1.4), s = 0.35 + 0.75 * p, by = hz + 6 + p * (L.tw.base - hz - 10);
+    drawBoat(x, bx, by, s, S.winter ? 6 : 0);
+  }
+}
+const pops = [];
+function drawPops(x) {
+  x.textAlign = 'center';
+  for (const p of pops) {
+    const f = p.t / p.life;
+    x.globalAlpha = Math.max(0, 1 - f);
+    x.font = `${p.big ? 22 : 18}px ${VT}`;
+    x.fillStyle = p.c || C.honey;
+    x.fillText(p.text, p.x, p.y - f * 34);
+  }
+  x.globalAlpha = 1;
+}
+let T = 0, typingT = 0;
+function draw() {
+  const k = cv.width / L.W;
+  const sig = `${cv.width}|${S.winter && !S.ended ? 1 : 0}`;
+  if (!bg || bgSig !== sig) { bgSig = sig; bg = buildBg(S.winter && !S.ended); }
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.drawImage(bg, 0, 0);
+  g.setTransform(k, 0, 0, k, 0, 0);
+  drawSea(g, T);
+  drawRock(g, T);
+  drawTower(g, T);
+  drawPops(g);
+  // the clock, top left, like a scoreboard
+  if (!S.ended) {
+    g.textAlign = 'left'; g.font = `${L.narrow ? 20 : 24}px ${VT}`;
+    g.fillStyle = C.night; g.fillRect(10, 10, L.narrow ? 150 : 176, 50);
+    g.strokeStyle = C.cyan; g.lineWidth = 2; g.strokeRect(10, 10, L.narrow ? 150 : 176, 50);
+    g.fillStyle = C.honey; g.fillText(S.winter ? `WINTER ${S.season}` : `SUMMER ${S.season}`, 18, 30);
+    g.fillStyle = !S.winter && E.timeLeft(S) <= 30 ? C.pink : C.cyan;
+    g.fillText(S.winter ? 'BOAT GONE' : S.record ? 'FULL STAIR' : `BOAT IN ${mmss(E.timeLeft(S))}`, 18, 52);
+  }
+}
+
+// ---------- Typing ----------
+let word = '', nextWord = '', pos = 0, missT = 0, lastWords = [];
+function newWord() {
+  const pool = E.words(S);
+  const choose = () => { let w; for (let i = 0; i < 8; i++) { w = pick(pool); if (!lastWords.includes(w)) break; } return w; };
+  word = nextWord && pool.includes(nextWord) ? nextWord : choose();
+  lastWords.push(word); if (lastWords.length > 3) lastWords.shift();
+  nextWord = choose(); pos = 0; renderWord();
+}
+function renderWord() {
+  const off = S.winter || S.ended || S.record;
+  $('typer').classList.toggle('off', off);
+  const el = $('word');
+  if (off) { el.textContent = S.ended ? 'FINISHED' : S.record ? 'ONE JAR LEFT' : 'WINTER'; $('next').textContent = ''; return; }
+  el.innerHTML = '';
+  const done = document.createElement('span'); done.className = 'done'; done.textContent = word.slice(0, pos);
+  const cur = document.createElement('span'); cur.className = 'cur'; cur.textContent = word.slice(pos, pos + 1);
+  const rest = document.createElement('span'); rest.textContent = word.slice(pos + 1);
+  el.append(done, cur, rest);
+  $('next').textContent = `next: ${nextWord}`;
+}
+const CALLS = [
+  w => `${w}! And it's ON the step!`,
+  w => `${w}, cleanly labelled, straight up the stair!`,
+  w => `It's ${w}! The keeper's in form tonight!`,
+  w => `${w}! Textbook. Ottoline won't like it.`,
+  w => `Oh, ${w}! Lovely lettering!`,
+  w => `${w}! Up it goes, and the crowd on the trawlers goes mild!`,
+  w => `${w}, no fuss, no smudge, onto the pile!`,
+  w => `${w}! Is there a better labeller on this coast? There is not!`,
+];
+let callN = 0;
+function typeChar(ch) {
+  if (S.winter || S.ended || S.record) return;
+  ch = ch.toUpperCase();
+  if (!/[A-Z ]/.test(ch)) return;
+  if (word[pos] === ' ' && ch !== ' ') pos++;      // the space is optional
+  if (ch === word[pos]) {
+    pos++; typingT = 0.6; sfx.key(pos);
+    if (pos >= word.length) complete();
+    else renderWord();
+  } else if (ch !== ' ') {
+    sfx.miss(); missT = 0.2; $('typer').classList.remove('miss'); void $('typer').offsetWidth; $('typer').classList.add('miss');
+  }
+}
+function complete() {
+  const before = E.steps(S);
+  const n = E.label(S, word);
+  sfx.label(E.letters(word));
+  const [px, py] = stepPos(Math.min(E.STEPS - 1, E.steps(S)));
+  pops.push({ text: `${word} +${num(n)}`, x: Math.min(L.W - 80, Math.max(80, px + (callN % 3 - 1) * 34)), y: py - 6 - (callN % 2) * 14, t: 0, life: 1.4, big: true });
+  // the call: the keeper's commentary on every label (unless something else is being said)
+  if (T >= holdT) say(CALLS[callN++ % CALLS.length](word));
+  const after = E.steps(S);
+  if (after > before) stepped(before, after);
+  newWord(); hud();
+  if (S.record) reachRecord();
+}
+function stepped(before, after) {
+  if (Math.floor(after / 10) > Math.floor(before / 10) && after > S.cheered) {
+    S.cheered = after; sfx.cheer();
+    if (S.up.mic) say(`Step ${after}! ${pick(['Horns from the fleet!', 'The trawlers flash their lights!', 'The Marigold sounds her horn!', 'Somebody out there is banging a pan!'])}`, 3);
+  } else sfx.step(after);
+}
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.target === $('type')) return;              // the input handles its own
+  const t = e.target;
+  if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+  if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) { e.preventDefault(); typeChar(e.key); }
+  else if (e.key === ' ' && !(t && t.closest && t.closest('button, summary, a'))) { e.preventDefault(); typeChar(' '); }
+});
+$('type').addEventListener('input', () => {
+  const v = $('type').value; $('type').value = '';
+  for (const ch of v) typeChar(ch);
+});
+$('type').addEventListener('keydown', e => { if (e.key === 'Enter') e.preventDefault(); });
+cv.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') $('type').focus(); });
+
+// ---------- Log ----------
+let logT = 0, ambT = 0, holdT = 0;
+function say(msg, hold = 0) {
+  const el = $('log'); el.textContent = msg; el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
+  logT = 0; if (hold) holdT = T + hold;
+}
+const AMBIENT = [
+  () => S.jars > 400 && `The keeper climbs over ${num(S.jars)} jars to light the lamp. ${Math.max(1, Math.round(S.jars / 2000))} minute${S.jars >= 3000 ? 's' : ''} late. The fleet doesn't mind.`,
+  () => E.jarRate(S) > 0 && `The bees fill ${E.jarRate(S).toFixed(1)} jars a second on their own. Nobody asked them to. Absolute professionals.`,
+  () => E.frameGrowth(S) > 0 && `The hives are raising ${(E.frameGrowth(S) * 60).toFixed(1)} new frames of bees a minute. Big summer for the colony.`,
+  () => E.hiveGrowth(S) > 0 && `The queens are heading ${(E.hiveGrowth(S) * 60).toFixed(1)} new hives a minute. That's how dynasties start.`,
+  () => S.up.mic && `${pick(['Marigold', 'Kittiwake', 'Brave Bess'])} to Gannet Rock: “${pick(['Keep it going, keeper, we’re all listening!', 'Was that HEATHER? Lovely.', 'Put the lamp on when you get a minute!', 'Our skipper’s got a fiver on the full stair.'])}”`,
+  () => 'Under the static, a mainland station plays calypso. The keeper turns it up a bit.',
+  () => S.season > 1 && `Somewhere on the mainland, Ottoline Vane is not listening. Probably.`,
+  () => `A gannet lands on the gallery, looks at the stair, and leaves.`,
+];
+
+// ---------- Ottoline's reviews ----------
+const OPEN = [
+  [1000, p => `${num(p)} jars. I kept that lighthouse thirty years, and I'd have called that a slow Tuesday.`],
+  [3000, p => `${num(p)} jars. Better. Still stacking like they're apologising to the stairs.`],
+  [10000, p => `${num(p)} jars. The bees did most of that. You could leave them a key.`],
+  [30000, p => `${num(p)} jars. The commentary's improved. The stacking is merely adequate.`],
+  [60000, p => `${num(p)} jars. That is a respectable stair. I'm not saying good.`],
+  [Infinity, p => `${num(p)} jars. Close. Not close. Closer. There's a difference, and I'll explain it next week.`],
+];
+const ADVICE = {
+  thrift: 'Nothing flowers on that rock after June, keeper. Sea thrift. Look it up.',
+  bramble: 'The old coal store is full of brambles. Let them flower, for goodness’ sake.',
+  rosebay: 'Rosebay along the boathouse path. I planted it once. Somebody mowed it. I won’t say who.',
+  rearing: 'Raise a queen, keeper. One queen. I did it with a teaspoon.',
+  heather: 'No heather? On Gannet Rock? Judges go weak for heather. So do I, frankly.',
+  ivy: 'Let the ivy up the tower. It flowers in autumn. Mind my old nets on the hooks.',
+  aster: 'Michaelmas daisies in the salt marsh. The last flowers of the year, if anyone over there is listening.',
+};
+function reviewText() {
+  const p = S.lastPeak, prev = S.reviews.length > 1 ? S.reviews[S.reviews.length - 2] : 0;
+  let q = OPEN.find(([cap]) => p < cap)[1](p);
+  if (prev && p < prev) q += ' Fewer than last summer, which takes a special kind of effort.';
+  const next = E.items(S).filter(u => u.cur === 'n' && ADVICE[u.id]).sort((a, b) => a.cost - b.cost)[0];
+  if (S.season >= 3 && S.winterLv === 0) q += ' And wrap those hives up for the winter. You’re losing the lot.';
+  else if (next) q += ' ' + ADVICE[next.id];
+  else q += ' You know where my record is. The top step. Next to the lamp.';
+  return q;
+}
+function showReview() {
+  $('review').hidden = !(S.winter && !S.ended);
+  if ($('review').hidden) return;
+  $('revHead').textContent = `Ottoline Vane on summer ${S.season}`;
+  $('revQuote').textContent = reviewText();
+  $('revTally').textContent = `The boat took ${num(S.lastPeak)} jars. Ottoline found ${S.lastNotes} things to say: +${S.lastNotes} Notes. Spend them in the Notes tab, then start the next summer.`;
+}
+
+// ---------- Seasons ----------
+function boatCame() {
+  boatAway = 0; sfx.boat(); setTimeout(() => sfx.jingle(), 1400);
+  say(`And there's the boat. The crew carry ${num(S.lastPeak)} jars down the stair, one at a time, very carefully. That's the summer, folks.`, 6);
+  S.shopTab = 'n'; freshTab.n = false;
+  hideTip(true); showReview(); renderWord(); renderShop(); hud(); save();
+}
+$('nextBtn').addEventListener('click', () => {
+  if (!E.startSummer(S)) return;
+  S.shopTab = 'j'; S.cheered = 0; hornDone = false;
+  sfx.summer();
+  say(S.winterLv ? `Summer ${S.season}! The wrapped hives come through: ${E.WINTER_FRAMES * S.winterLv} frames and ${S.winterLv} hive${S.winterLv > 1 ? 's' : ''} already at it. ${mmss(E.summerLength(S))} on the clock. Here we go!` : `Summer ${S.season}! ${mmss(E.summerLength(S))} on the clock until the boat. Type those labels!`, 4);
+  showReview(); newWord(); renderShop(); hud(); save();
+  if (matchMedia('(pointer: fine)').matches) $('type').focus({ preventScroll: true });
+});
+let hornDone = false;
+function reachRecord() {
+  hideTip(true);
+  $('choice').hidden = false; renderWord(); renderShop(); hud(); save();
+  sfx.cheer(); setTimeout(() => sfx.horn(), 600);
+  say('THE STAIR IS FULL! Every step from the door to the lamp! One jar left in the keeper’s hands, and the commentary box has gone very quiet.', 30);
+}
+$('lampBtn').addEventListener('click', () => finish('lamp'));
+$('clearBtn').addEventListener('click', () => finish('clear'));
+
+// ---------- Tooltips ----------
+let tipFor = null, tipMoved = 0;
+function tipWire(b, tipOf, act) {
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, tipOf()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, tipOf()); });
+  b.addEventListener('blur', hideTip);
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  // On touch the first tap shows what it does; the second does it.
+  b.addEventListener('click', () => {
+    const t = tipOf();
+    if (b.dataset.touch && tipFor !== t.id) { showTip(b, t); return; }
+    act();
+    if (tipFor) showTip(b, tipOf());
+  });
+}
+function showTip(b, it) {
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('i').textContent = it.joke || ''; tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || ''; tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== $('side')) { $('side').append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  if (b.closest('aside') && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 10}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    let left = r.right + 10, top = Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2));
+    if (left + t.width > innerWidth - 8) left = r.left - t.width - 10;
+    if (left < 8) { left = Math.max(8, Math.min(innerWidth - t.width - 8, r.left)); top = r.bottom + t.height + 14 < innerHeight ? r.bottom + 6 : Math.max(8, r.top - t.height - 6); }
+    tip.style.left = `${left}px`; tip.style.top = `${top}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  if (tip.parentElement !== $('side')) $('side').append(tip);
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .tipped, .bought')) hideTip(); });
+
+// ---------- Shop ----------
+const BUY_LINES = {
+  mic: 'The keeper taps the new microphone. “Is this on? Gannet Rock calling the fleet.” Out in the dark, three trawlers flash their lights.',
+  bigjars: 'The boat brings two-pound jars. Same label, twice the honey. The keeper calls it “a tactical rethink”.',
+  extractor: 'Crank, crank, crank. The frames give up their honey twice as fast. The keeper commentates the cranking too.',
+  pennant: 'GANNET ROCK HONEY LEAGUE · MEMBERS: 31. The keeper didn’t know there was a league. There is now, and it meets on the radio.',
+  excluder: 'The queen is politely kept to her quarters. The hives raise frames twice as fast. She seems fine about it.',
+  stamp: 'Ka-chunk. Every label gets a batch number now, and the batch includes whatever the bees just filled.',
+  duster: 'The keeper dusts the little shelf beside the lamp. It is exactly one jar wide. They stand there a moment, then go back down.',
+  observation: 'A glass hive by the lamp room window. The queens work in full view, heading new hives twice as fast. The keeper narrates them as well.',
+  thrift: 'Pink cushions all along the cliff edge. Summers run longer, and THRIFT and SEA PINK go on the labels.',
+  bramble: 'The coal store goes white with bramble flower. Summers run longer, and BLACKBERRY is a very long label. Good.',
+  rosebay: 'Pink spires down the boathouse path. Summers run longer. WILLOWHERB is ten letters, and every letter is a jar.',
+  heather: 'Purple from the boathouse to the foghorn. Summers run into September, and BELL HEATHER goes on the labels.',
+  ivy: 'Ivy climbs the tower and flowers in October. The bees are delighted. Ottoline’s old nets are now a trellis.',
+  aster: 'Sea asters in the salt marsh, the last flowers of the year. The longest summers yet, and MICHAELMAS DAISY: fifteen jars a label, if you can spell it.',
+  rearing: 'With a teaspoon and a great deal of patience, the keeper raises a queen. Queens are on sale with the jars now.',
+  mischief: 'A sign for the door: GONE BEEKEEPING. On 4 November the harbour kids row out anyway, knock, and row off giggling. The keeper commentates the getaway.',
+  plate: 'Ottoline’s championship trophy, from a jumble sale: a dinner plate with “100,000” painted on in her handwriting. The keeper props it by the radio. It is, in the end, a plate.',
+};
+const PROD_LINES = {
+  frame: ['A frame of bees off the boat. They get straight to work.', 'Another frame! The bees are in good voice.'],
+  hive: ['A new hive on the rock. It will raise frames of bees all summer.', 'Another hive goes up by the foghorn.'],
+  queen: ['A queen! She will head new hives, all on her own.', 'Another queen. The rock is a monarchy now.'],
+};
+const shop = $('shop');
+const newUntil = {}, freshTab = { j: false, n: false };
+let shopSig = '';
+const priceText = (cur, c) => cur === 'n' ? `📝 ${num(c)}` : `🍯 ${num(c)}`;
+const per = x => x < 10 ? x.toFixed(2) : x < 100 ? x.toFixed(1) : num(x);
+const after = (id) => { const s = { ...S, up: { ...S.up, [id]: 1 } }; return s; };
+const EFFECT = {
+  bigjars: ['a CLOVER label', s => `${num(E.labelJars(s, 'CLOVER'))} jars`],
+  extractor: ['the bees fill', s => `${per(E.jarRate(s))} jars/s`],
+  excluder: ['the hives raise', s => `${per(E.frameGrowth(s) * 60)} frames/min`],
+  stamp: ['a CLOVER label', s => `${num(E.labelJars(s, 'CLOVER'))} jars`],
+  observation: ['the queens head', s => `${per(E.hiveGrowth(s) * 60)} hives/min`],
+  rearing: ['queens on sale', s => (s.up.rearing ? 'yes' : 'no')],
+};
+function effectLine(u) {
+  if (u.flower) {
+    const s2 = after(u.id);
+    return `summer ${mmss(E.summerLength(S))} → ${mmss(E.summerLength(s2))}\naverage label ${E.avgLetters(S).toFixed(1)} → ${E.avgLetters(s2).toFixed(1)} letters\nnew labels: ${u.words.join(', ')}`;
+  }
+  const e = EFFECT[u.id];
+  if (!e) return '';
+  const [label, f] = e, now = f(S), next = f(after(u.id));
+  return now === next ? `${label}: ${now}` : `${label}: ${now} → ${next}`;
+}
+function upTip(u) {
+  let foot = u.cur === 'n' ? `${num(u.cost)} Notes · learned for good` : `${num(u.cost)} jars off the stair · kit stays in the lighthouse`;
+  if (u.kind === 'odd') foot += ' · does very little';
+  const fx = effectLine(u);
+  if (fx) foot = `${fx}\n${foot}`;
+  return { id: u.id, name: u.name, desc: u.desc, foot };
+}
+const PROD_DESC = {
+  frame: s => `A frame of bees. Each fills ${per(E.frameRate(s))} jars a second, on its own, until the boat comes.`,
+  hive: s => `A hive. Each raises ${per(E.hiveRate(s) * 60)} new frames of bees a minute.`,
+  queen: s => `A queen. Each heads ${per(E.queenRate(s) * 60)} new hives a minute.`,
+};
+function prodTip(k) {
+  const c = E.prodCost(S, k), s2 = { ...S, [k]: S[k] + 1 };
+  const fx = k === 'frame' ? `the bees fill: ${per(E.jarRate(S))} → ${per(E.jarRate(s2))} jars/s`
+    : k === 'hive' ? `new frames: ${per(E.frameGrowth(S) * 60)} → ${per(E.frameGrowth(s2) * 60)} a minute`
+    : `new hives: ${per(E.hiveGrowth(S) * 60)} → ${per(E.hiveGrowth(s2) * 60)} a minute`;
+  return { id: 'p:' + k, name: E.PROD[k].name, desc: PROD_DESC[k](S), foot: `${fx}\nyou have ${Math.floor(S[k])} · ${num(c)} jars off the stair\nthe colony goes back to nothing each winter` };
+}
+function winterTip() {
+  const w = S.winterLv, F = E.WINTER_FRAMES;
+  return { id: 'p:winter', name: 'Overwintering', desc: 'Wrap the hives in sacking for the winter, so more of the colony makes it through. Buy it again and again.',
+    foot: `every summer starts with ${F * w} frames and ${w} hives → ${F * (w + 1)} and ${w + 1}\n${num(E.winterCost(S))} Notes · learned for good` };
+}
+function tabCur() { return S.season > 1 || S.winter ? S.shopTab : 'j'; }
+$('tabJ').addEventListener('click', () => { S.shopTab = 'j'; freshTab.j = false; hideTip(); renderShop(); save(); });
+$('tabN').addEventListener('click', () => { S.shopTab = 'n'; freshTab.n = false; hideTip(); renderShop(); save(); });
+function cells() {
+  const out = [];
+  if (S.ended) return out;
+  for (const k of ['frame', 'hive', 'queen']) if (E.unlocked(S, k) && (S.best >= E.PROD[k].base * 0.5 || S.seen.includes('p:' + k))) out.push({ id: 'p:' + k, cur: 'j', rep: true, name: E.PROD[k].name.replace('Frame of bees', 'Frame') + 's', cost: () => E.prodCost(S, k), count: () => Math.floor(S[k]), tip: () => prodTip(k), go: () => buyProd(k) });
+  if (S.season > 1 || S.winter) out.push({ id: 'p:winter', cur: 'n', rep: true, name: 'Overwinter', cost: () => E.winterCost(S), count: () => S.winterLv, tip: winterTip, go: buyWinter });
+  for (const u of E.items(S).sort((a, b) => a.cost - b.cost)) out.push({ id: u.id, cur: u.cur, odd: u.kind === 'odd', name: u.name, cost: () => u.cost, tip: () => upTip(u), go: () => doBuy(u.id) });
+  return out;
+}
+const canBuy = c => !S.ended && !S.record && E.have(S, c.cur) >= c.cost() && !(c.cur === 'j' && S.winter);
+function renderShop() {
+  const all = cells();
+  for (const c of all) if (!S.seen.includes(c.id)) {
+    S.seen.push(c.id);
+    if (S.t > 2) { sfx.unlock(); newUntil[c.id] = performance.now() + 9000; }
+    if (c.cur !== tabCur()) freshTab[c.cur] = true;
+  }
+  const tabs = S.season > 1 || S.winter;
+  $('tabs').hidden = !tabs || S.ended;
+  const cur = tabCur();
+  const list = all.filter(c => c.cur === cur);
+  const sig = cur + list.map(c => c.id).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    for (const c of list) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (c.odd ? ' odd' : '') + (c.rep ? ' rep' : '');
+      b.dataset.id = c.id;
+      b.innerHTML = '<b></b><em></em>';
+      b.setAttribute('aria-describedby', 'tip');
+      tipWire(b, c.tip, () => { if (b.getAttribute('aria-disabled') !== 'true') c.go(); else sfx.deny(); });
+      b._c = c;
+      shop.append(b);
+    }
+    if (!list.length && !S.ended) { const p = document.createElement('p'); p.className = 'none'; p.textContent = 'Nothing new yet. Keep labelling.'; shop.append(p); }
+  }
+  const now = performance.now();
+  for (const b of shop.querySelectorAll('button.up')) {
+    const c = b._c, can = canBuy(c);
+    b.querySelector('b').textContent = c.count ? `${c.name} · ${c.count()}` : c.name;
+    b.querySelector('em').textContent = priceText(c.cur, c.cost());
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[c.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  const cnt = k => all.filter(c => c.cur === k && canBuy(c)).length;
+  const n = cnt('j') + cnt('n');
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  $('tabJc').textContent = cnt('j') ? `· ${cnt('j')}` : '';
+  $('tabNc').textContent = cnt('n') ? `· ${cnt('n')}` : '';
+  $('tabJ').setAttribute('aria-selected', String(cur === 'j')); $('tabN').setAttribute('aria-selected', String(cur === 'n'));
+  $('tabJ').classList.toggle('fresh', freshTab.j && cur !== 'j'); $('tabN').classList.toggle('fresh', freshTab.n && cur !== 'n');
+  renderShelf();
+}
+let prodN = 0;
+function buyProd(k) {
+  if (!E.buyProd(S, k)) { sfx.deny(); return; }
+  delete newUntil['p:' + k]; sfx.prod(prodN++);
+  if (S.bought[k] === 1 || Math.random() < 0.25) say(PROD_LINES[k][S.bought[k] === 1 ? 0 : 1], 2);
+  save(); renderShop(); hud();
+}
+function buyWinter() {
+  if (!E.buyWinter(S)) { sfx.deny(); return; }
+  delete newUntil['p:winter']; sfx.buy();
+  say(`The hives get wrapped in sacking. Next summer starts with ${E.WINTER_FRAMES * S.winterLv} frames and ${S.winterLv} hive${S.winterLv > 1 ? 's' : ''} already at it.`, 4);
+  save(); renderShop(); hud();
+}
+function doBuy(id) {
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  delete newUntil[id];
+  hideTip(); sfx.buy();
+  say(BUY_LINES[id] || `Bought: ${E.UP[id].name}.`, 6);
+  if (E.UP[id].flower) newWord();
+  save(); renderShop(); hud();
+}
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+const UI_KEY = window.DailyGame ? DailyGame.storageKey('ui') : 'di:13:ui';
+let ui = {};
+try { ui = JSON.parse(localStorage.getItem(UI_KEY) || '{}') || {}; } catch (e) {}
+shelfEl.open = !!ui.bought;
+const saveUi = () => { try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (e) {} };
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!ui.bought === shelfEl.open) return;
+  ui.bought = shelfEl.open; saveUi();
+});
+function boughtTip(u) {
+  return { id: 'bought:' + u.id, name: u.name, desc: u.desc, joke: BUY_LINES[u.id] || '', foot: u.kind === 'odd' ? 'Bought · did very little' : 'Bought', inline: true };
+}
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(u => u.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(u => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (u.kind === 'odd' ? ' odd' : '');
+    b.textContent = (u.kind === 'odd' ? '✿ ' : '') + u.name.replace(/^(The|A|An) /, ''); b.dataset.id = u.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, boughtTip(u)); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + u.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+
+// ---------- HUD ----------
+function hud() {
+  $('stairN').textContent = num(S.jars);
+  $('stairOf').textContent = S.ended ? (S.ending === 'lamp' ? 'every step, and the lamp' : 'every step · lamp clear') : E.steps(S) >= E.STEPS ? 'the top step' : `step ${E.steps(S)}/${E.STEPS} · next at ${fmt(E.jarsForStep(E.steps(S) + 1))}`;
+  $('stairFill').style.width = `${Math.min(100, 100 * E.stepFrac(S.jars) / E.STEPS)}%`;
+  $('bestMark').hidden = !S.best || S.best >= E.RECORD;
+  $('bestMark').style.left = `${Math.min(99.5, 100 * E.stepFrac(S.best) / E.STEPS)}%`;
+  const len = E.summerLength(S);
+  $('clockLabel').textContent = S.ended ? 'The last summer' : S.winter ? `Winter after summer ${S.season}` : `Summer ${S.season} · ${mmss(len)} long`;
+  $('clockVal').textContent = S.ended ? '' : S.winter ? 'boat gone' : S.record ? 'stopped' : `boat in ${mmss(E.timeLeft(S))}`;
+  $('clockFill').style.width = `${S.winter ? 100 : 100 * Math.min(1, S.clock / len)}%`;
+  $('clockBar').classList.toggle('late', !S.winter && E.timeLeft(S) <= 30);
+  $('rate').textContent = per(E.jarRate(S));
+  $('perLabel').textContent = `≈${num(Math.round(E.avgLetters(S) * E.jarsPerLetter(S) + E.stampJars(S)))}`;
+  $('beeBox').hidden = !(S.frame >= 1 || S.bought.frame);
+  $('frames').textContent = Math.floor(S.frame); $('framesW').textContent = Math.floor(S.frame) === 1 ? 'frame' : 'frames';
+  $('frameGrow').textContent = E.frameGrowth(S) > 0 ? `+${per(E.frameGrowth(S) * 60)}/min` : '';
+  $('hiveBox').hidden = !(S.hive >= 1);
+  $('hives').textContent = Math.floor(S.hive); $('hivesW').textContent = Math.floor(S.hive) === 1 ? 'hive' : 'hives';
+  $('hiveGrow').textContent = E.hiveGrowth(S) > 0 ? `+${per(E.hiveGrowth(S) * 60)}/min` : '';
+  $('queenBox').hidden = !(S.queen >= 1);
+  $('queens').textContent = Math.floor(S.queen);
+  $('notesBox').hidden = !S.notesTotal;
+  $('notes').textContent = num(S.notes);
+}
+const STAT_TIPS = {
+  rateBox: () => ({ id: 'stat:rate', name: 'The bees', desc: `${Math.floor(S.frame)} frames of bees, each filling ${per(E.frameRate(S))} jars a second${S.up.extractor ? ' (the extractor doubles it)' : ''}.`, foot: `${per(E.jarRate(S))} jars a second, on their own` }),
+  labelBox: () => ({ id: 'stat:label', name: 'A label', desc: `Every letter you type is ${E.jarsPerLetter(S)} jar${E.jarsPerLetter(S) > 1 ? 's' : ''}${S.up.bigjars ? ' (Bigger Jars)' : ''}${S.up.stamp ? `, and the Label Stamp adds ${STAMP()} seconds of the bees: +${num(E.stampJars(S))}` : ''}. Longer flowers, longer labels.`, foot: `average label: ${E.avgLetters(S).toFixed(1)} letters, ${E.words(S).length} flowers on the rock` }),
+  beeBox: () => ({ id: 'stat:bees', name: 'Frames of bees', desc: 'Each frame fills jars on its own. Hives raise new frames.', foot: `${Math.floor(S.frame)} frames · +${per(E.frameGrowth(S) * 60)} a minute from ${Math.floor(S.hive)} hives` }),
+  hiveBox: () => ({ id: 'stat:hives', name: 'Hives', desc: `Each hive raises ${per(E.hiveRate(S) * 60)} frames of bees a minute${S.up.excluder ? ' (the excluder doubles it)' : ''}.`, foot: `${Math.floor(S.hive)} hives${E.hiveGrowth(S) > 0 ? ` · +${per(E.hiveGrowth(S) * 60)} a minute from the queens` : ''}` }),
+  queenBox: () => ({ id: 'stat:queens', name: 'Queens', desc: `Each queen heads ${per(E.queenRate(S) * 60)} new hives a minute${S.up.observation ? ' (the observation hive doubles it)' : ''}.`, foot: `${Math.floor(S.queen)} queens` }),
+  notesBox: () => ({ id: 'stat:notes', name: 'Ottoline’s Notes', desc: 'Every summer, Ottoline reviews the stair on Sunday Sport. Each thing she finds to criticise is a Note, and Notes are what you learn from: flowers, queen-rearing, overwintering. Notes stay with you.', foot: `${num(S.notes)} to spend · ${num(S.notesTotal)} ever` }),
+};
+const STAMP = () => E.STAMP_SECS;
+for (const [id, f] of Object.entries(STAT_TIPS)) {
+  const el = $(id);
+  el.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(el, f()); });
+  el.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  el.addEventListener('focus', () => showTip(el, f()));
+  el.addEventListener('blur', hideTip);
+  el.addEventListener('click', () => { if (tipFor === f().id) hideTip(); else showTip(el, f()); });
+}
+
+// ---------- The ending ----------
+const ENDINGS = {
+  lamp: {
+    head: 'Honey-gold.',
+    stamp: 'GANNET ROCK · A FULL STAIR · 100,000',
+    text: 'The keeper climbed the last flight, set the jar on the little shelf beside the lamp, and the beam went out over the sea the colour of honey. For one night the whole coast was gold. The fleet came home through it slowly, horns going. On Sunday, Ottoline Vane gave it one sentence: “That is a full stair, and fine, it is a sport.” Then she moved on to the bowls. It was the best sentence the keeper had ever heard.',
+    lines: t => ['🍯 A full stair: 100,000 jars', t, '🔆 The beam went honey-gold · Ottoline said “fine”'],
+  },
+  clear: {
+    head: 'One jar short.',
+    stamp: 'GANNET ROCK · 99,999 · LAMP CLEAR',
+    text: 'The keeper held the last jar for a while, then put it in a jacket pocket and lit the lamp, clean and white, the way it is supposed to be. The fleet came home on it one by one. At midnight the radio crackled: “Gannet Rock, this is the Marigold. Best match all summer. Same again next year?” On Sunday, Ottoline Vane said the record stands. Then, off-mic but not quite, she said: “Good call, keeper.”',
+    lines: t => ['🍯 99,999 jars · one short, on purpose', t, '⚓ The fleet came home on a clear light'],
+  },
+};
+let endT = -1;
+function finish(which) {
+  if (S.ended) return;
+  hideTip(true);
+  S.ending = which; S.ended = true; S.endedAt = S.t;
+  S.jars = which === 'lamp' ? E.RECORD : E.RECORD - 1;
+  end(false);
+}
+function end(resumed) {
+  S.ended = true; E.finishAll(S); save();
+  endT = resumed ? -1 : T;
+  const En = ENDINGS[S.ending] || ENDINGS.clear;
+  $('ending').hidden = false; $('choice').hidden = true; $('review').hidden = true; $('tabs').hidden = true; $('shopHead').hidden = true;
+  $('endHead').textContent = En.head; $('endStamp').textContent = En.stamp; $('endText').textContent = En.text;
+  const tt = S.endedAt ?? S.t, h = Math.floor(tt / 3600), m = Math.floor(tt / 60) % 60;
+  const time = h ? `${h}h${String(m).padStart(2, '0')}m` : `${m}m`;
+  $('endStats').textContent = tt > 1 ? `${time} · ${S.season} summers · ${num(S.labels)} labels typed · ${num(S.notesTotal)} Notes from Ottoline` : '';
+  hud(); renderShop(); renderWord();
+  if (music) music.update();
+  if (!resumed) {
+    sfx.finale();
+    say(S.ending === 'lamp' ? 'The jar goes on the shelf. The beam goes gold. Listen to those horns!' : 'The lamp goes on, clean and white. The fleet turns for home. What a summer, folks. What a summer.', 30);
+    if (window.DailyGame) DailyGame.finish({ lines: En.lines(`⏱ ${time} · ☀️ ${S.season} summers`) });
+  }
+  setTimeout(() => $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' }), resumed ? 0 : 2500);
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Loop ----------
+let last = performance.now(), hudT = 0, saveT = 0, dripT = 0, dripK = 0, wasWinter = S.winter;
+function frame(now) {
+  const dt = Math.min(0.25, (now - last) / 1000); last = now; T += dt;
+  if (layout()) hud();
+  typingT = Math.max(0, typingT - dt);
+  if (!S.ended) {
+    const before = E.steps(S);
+    E.step(S, dt);
+    if (S.winter) boatAway += dt;
+    if (S.winter && !wasWinter) boatCame();
+    wasWinter = S.winter;
+    const after = E.steps(S);
+    if (!S.winter && after > before) stepped(before, after);
+    if (S.record && $('choice').hidden) reachRecord();
+    if (!S.winter && !S.record && !hornDone && E.timeLeft(S) <= 30) {
+      hornDone = true; sfx.horn();
+      say('The supply boat is rounding the point! Thirty seconds on the clock! Get those labels on!', 4);
+    }
+    // income that ticks in on its own: a soft drip now and then
+    dripT += dt;
+    if (dripT > 4 && E.jarRate(S) > 0 && !S.winter && typingT <= 0) { dripT = 0; sfx.drip(dripK++); const [px, py] = stepPos(Math.max(0, E.steps(S) - 1)); pops.push({ text: `+${num(E.jarRate(S) * 4)} 🐝`, x: px - 40, y: py + 10, t: 0, life: 1.2, c: C.cyan }); }
+  }
+  for (const p of pops) p.t += dt;
+  for (let k = pops.length - 1; k >= 0; k--) if (pops[k].t > pops[k].life) pops.splice(k, 1);
+  const mk = musicKey(); if (mk !== lastKey) { lastKey = mk; if (music) music.update(); }
+  logT += dt; ambT += dt;
+  if (logT > 9 && ambT > 24 && !S.ended && !S.winter && T >= holdT) {
+    ambT = 0;
+    const opts = AMBIENT.map(f => f()).filter(Boolean);
+    if (opts.length) say(pick(opts));
+  }
+  hudT += dt; if (hudT > 0.2) { hudT = 0; hud(); renderShop(); }
+  saveT += dt; if (saveT > 4) { saveT = 0; save(); }
+  fit(); draw();
+  requestAnimationFrame(frame);
+}
+// Away (a hidden tab or a closed one): the summer waits, the bees keep at it slowly.
+function welcomeBack(away) {
+  const got = S.t > 5 ? E.offline(S, away) : null;
+  if (!got || got.jars < 1) return false;
+  const hrs = away / 3600, t = hrs >= 1 ? `${hrs.toFixed(1)} hours` : `${Math.round(away / 60)} minutes`;
+  say(`Welcome back to Gannet Rock! While you were off the rock (${t}${got.capped ? ', though the bees only remember ten minutes of it' : ''}), the bees filled ${num(got.jars)} jars on their own. The boat waited: it won’t sail without the commentary.`, 8);
+  hud(); return true;
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) save();
+  else { const away = S.lastSeen ? (Date.now() - S.lastSeen) / 1000 : 0; last = performance.now(); if (away > 60) welcomeBack(away); }
+});
+addEventListener('pagehide', save);
+
+// ---------- Start ----------
+try { await Promise.all([document.fonts.load(`20px ${VT}`), document.fonts.load(`20px ${NEON}`)]); } catch (e) {}
+await makeSprites();
+layout();
+if (Sprites.sheetRequested()) Sprites.showSheet();
+fit();
+S.cheered ||= 0;
+newWord();
+if (S.ended) { end(true); say('Gannet Rock, the morning after. The jars are still there. So is the keeper. So is the radio.'); }
+else {
+  const away = S.lastSeen ? (Date.now() - S.lastSeen) / 1000 : 0;
+  if (!(away > 60 && welcomeBack(away))) say(S.t > 5 ? (S.winter ? 'Winter on Gannet Rock. Ottoline’s review is still on the radio.' : 'Gannet Rock. The stair is where you left it, and so is the boat.')
+    : 'Good evening and welcome to Gannet Rock, where the keeper is bored, the bees are busy, and every jar of honey goes on the stair. Type the label to stack the jar. The boat comes at the end of the summer!');
+  if (S.winter) showReview();
+  if (S.record) reachRecord();
+  if (matchMedia('(pointer: fine)').matches && !S.winter) $('type').focus({ preventScroll: true });
+}
+if (DEBUG) Object.assign(window.__game, { hud, renderShop, typeChar, label: () => { for (const ch of word) typeChar(ch); } });
+hud(); renderShop();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

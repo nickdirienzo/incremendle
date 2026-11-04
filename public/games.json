@@ -379,5 +379,45 @@
       "topic": "Culture Day (Japan, 3 November) and school culture festivals"
     },
     "palette": "rustic-gb"
+  },
+  {
+    "n": 13,
+    "slug": "sticky-finish",
+    "date": "2026-11-04",
+    "title": "Sticky Finish",
+    "tagline": "A bored lighthouse keeper types the label on every jar of honey and stacks it up the spiral stair, calling it like a match for the fishing fleet, before the supply boat comes.",
+    "emoji": "🍯🏆",
+    "scale": "thousands",
+    "minutes": "75–120",
+    "seed": 698833443,
+    "subject": "a bored lighthouse keeper",
+    "verb": "stacking",
+    "object": "honey pots",
+    "interaction": "type words",
+    "arc": {
+      "drive": "a deadline",
+      "obstacle": "a critic",
+      "turn": "a quiet, smaller win",
+      "initial": "O"
+    },
+    "length": "short (1–3 hours)",
+    "structure": [
+      "a forced reset on a timer (a season, a lifespan); runs grow longer as you learn",
+      "producers that make producers (tier 2 makes tier 1)"
+    ],
+    "twist": "nothing extra, keep it pure",
+    "ending": "choose between two endings",
+    "look": "vaporwave",
+    "music": {
+      "style": "steel drum calypso",
+      "scale": "dorian"
+    },
+    "tone": "sports commentary",
+    "context": {
+      "kind": "calendar",
+      "nod": "an obscure observance day on the release date",
+      "topic": "Mischief Night (4 November, Yorkshire and the North of England)"
+    },
+    "palette": "funkyfuture-8"
   }
 ]
