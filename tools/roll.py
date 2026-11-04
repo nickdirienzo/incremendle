@@ -10,6 +10,12 @@ whatever an LLM finds most natural. Each part avoids what the last two weeks of 
 public/games.json used (see fresh()), so a roll depends on its seed and on the games before it.
 Edit the lists freely, but only append to them: inserting or removing entries changes what older
 seeds roll. Days 1-8 were rolled before history mattered; their rolls are recorded in games.json.
+
+From day 14 the subject is an emoji (tools/subjects.json, built from Unicode's list by
+tools/emoji.py) with a trait: "a nervous waffle". SUBJECTS was written by an LLM and leaned on
+its favourites (three lighthouses); Unicode didn't write its list for us. A subject also skips
+every emoji subgroup (animal-bird, transport-water...) of the last two weeks, so a boat doesn't
+follow a ship. SUBJECTS stays so days 1-13 replay as they rolled.
 """
 import datetime
 import json
@@ -36,6 +42,38 @@ SUBJECTS = [
     "a slime who wants friends", "a weather vane that can't decide", "a beaver architect", "an ant union rep",
     "a vampire on a diet", "a koi pond spirit",
 ]
+
+# The first day that rolls an emoji subject. Earlier days replay from SUBJECTS.
+EMOJI_FROM = 14
+EMOJI = json.loads((Path(__file__).resolve().parent / "subjects.json").read_text())
+
+# Who the subject is, not what it wants (that's the arc's drive). "{}" is the emoji's name.
+TRAITS = [
+    "nervous {}", "retired {}", "bored {}", "{} on its first day", "{} who is bad at its job",
+    "haunted {}", "overconfident {}", "{} with stage fright", "sleepy {}", "{} with a grudge",
+    "forgetful {}", "tiny {}", "enormous {}", "{} with big dreams", "{} on the night shift",
+    "very polite {}", "{} who thinks it's a detective", "grumpy {}", "{} with a business plan",
+    "anxious {}", "{} running for mayor", "superstitious {}", "{} who never sleeps", "dramatic {}",
+    "{} far from home", "{} who reads every manual", "competitive {}", "elderly {}",
+    "{} in witness protection", "{} who just moved in", "cursed {}", "{} who hates surprises",
+    "{} with a secret", "{} who talks to plants", "perfectionist {}", "{} with a fan club",
+    "{} that won't stop humming", "clumsy {}", "{} on vacation", "stubborn {}", "{} who lost a bet",
+    "{} raised by wolves", "{} with an intern", "relentlessly cheerful {}",
+    "{} who has been here too long", "{} studying for an exam", "{} in a tiny hat",
+    "{} just up from a hundred-year nap", "homesick {}", "{} who loves paperwork",
+    "{} with a rival", "{} who wants to be famous", "jittery {}", "philosophical {}",
+    "newly promoted {}", "{} who is very, very late", "{} who can't say no", "know-it-all {}",
+    "{} with a terrible memory for faces", "{} who is secretly royalty", "{} in its villain era",
+    "unflappable {}", "{} who only speaks in rhyme", "{} who is allergic to fuss",
+]
+
+
+def article(phrase):
+    """'a' or 'an' in front of a phrase, by how its first word sounds."""
+    w = phrase.lower()
+    vowel = w[0] in "aeiou" and not w.startswith(("uni", "use", "usu", "eu", "one", "ufo"))
+    return ("an " if vowel or w.startswith(("hour", "honest", "x-ray")) else "a ") + phrase
+
 
 VERBS = [
     "hatching", "knitting", "polishing", "brewing", "baking", "growing", "stacking", "collecting",
@@ -263,13 +301,25 @@ def fresh(pool, history, key, part=None, need=1):
     return [v for v in pool if v in keep]
 
 
+def emoji_subject(rng, history):
+    """An emoji whose subgroup and name the last WINDOW games didn't use, with a fresh trait."""
+    recent = history[-WINDOW:]
+    groups = {v for g in recent for v in used(g, "subject", "subgroup")}
+    names = {v for g in recent for v in used(g, "subject", "name")}
+    e = rng.choice([e for e in EMOJI if e["subgroup"] not in groups and e["name"] not in names])
+    trait = rng.choice(fresh(TRAITS, history, "subject", "trait"))
+    return {"text": article(trait.format(e["name"])), "emoji": e["emoji"], "name": e["name"],
+            "subgroup": e["subgroup"], "trait": trait}
+
+
 def roll(seed, history=()):
     history = list(history)
     rng = random.Random(seed)
     pick = lambda pool, key, part=None: rng.choice(fresh(pool, history, key, part))
+    n = history[-1]["n"] + 1 if history else 1
     r = {
         "seed": seed,
-        "subject": pick(SUBJECTS, "subject"),
+        "subject": emoji_subject(rng, history) if n >= EMOJI_FROM else pick(SUBJECTS, "subject"),
         "verb": pick(VERBS, "verb"),
         "object": pick(OBJECTS, "object"),
         "interaction": pick(INTERACTIONS, "interaction"),
@@ -325,7 +375,7 @@ def main():
             continue
         parts = value.items() if isinstance(value, dict) else [(None, value)]
         for part, v in parts:
-            if part in ("initial", "kind"):
+            if part in ("initial", "kind", "text", "emoji"):
                 continue
             same = lambda g: bool(set(v if isinstance(v, list) else [v]) & set(used(g, key, part)))
             clash = [g["n"] for g in recent if same(g)]
