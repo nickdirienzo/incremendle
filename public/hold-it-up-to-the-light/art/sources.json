@@ -1,0 +1,37 @@
+{
+  "game-icons--crystalize.svg": {
+    "icon": "game-icons:crystalize",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Lorc",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/lorc/crystalize.html"
+  },
+  "game-icons--magnifying-glass.svg": {
+    "icon": "game-icons:magnifying-glass",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Lorc",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/lorc/magnifying-glass.html"
+  },
+  "pixelarticons--diamond-gem.svg": {
+    "icon": "pixelarticons:diamond-gem",
+    "set": "Pixelarticons",
+    "setUrl": "https://github.com/halfmage/pixelarticons",
+    "author": "Gerrit Halfmann",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/halfmage/pixelarticons/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/pixelarticons/diamond-gem/"
+  },
+  "iconoven--baby-food-jar.svg": {
+    "icon": "iconoven:baby-food-jar",
+    "set": "IconOven",
+    "setUrl": "https://iconoven.com/icons",
+    "author": "Appic Marketing",
+    "license": "MIT",
+    "source": "https://icon-sets.iconify.design/iconoven/baby-food-jar/"
+  }
+}

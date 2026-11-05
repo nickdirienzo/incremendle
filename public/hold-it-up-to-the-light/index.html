@@ -1,0 +1,973 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hold It Up to the Light · Incremendle</title>
+<meta name="description" content="A museum's unopened 1911 gift hates surprises, so every night it steers its trolley round the Mineral Hall charging crystals with moonlight, to see what's inside itself. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hold It Up to the Light">
+<meta property="og:description" content="A museum's unopened 1911 gift hates surprises, so every night it steers its old trolley round the Mineral Hall, charging crystals with moonlight to see what's inside itself.">
+<meta property="og:url" content="https://incremendle.com/hold-it-up-to-the-light/">
+<meta property="og:image" content="https://incremendle.com/hold-it-up-to-the-light/og.png?v=ea221bae">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Hold It Up to the Light: A museum's unopened 1911 gift hates surprises, so every night it steers its old trolley round the Mineral Hall, charging crystals with moonlight to see what's inside itself.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/pixelify-sans/font.css">
+<link rel="stylesheet" href="/shared/fonts/silkscreen/font.css">
+<style>
+  /* vanilla milkshake (Space Sandwich): a pastel museum at night. */
+  :root {
+    --night: #28282e; --plum: #6c5671; --stone: #d9c8bf; --coral: #f98284; --lilac: #b0a9e4; --sky: #accce4;
+    --mint: #b3e3da; --pink: #feaae4; --sage: #87a889; --lime: #b0eb93; --butter: #e9f59d; --peach: #ffe6c6;
+    --clay: #dea38b; --apricot: #ffc384; --lemon: #fff7a0; --cream: #fff7e4;
+    --px: 'Pixelify Sans', ui-monospace, monospace; --sk: 'Silkscreen', ui-monospace, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--night); color: var(--cream); }
+  /* Keep this: any display rule (flex, grid) would otherwise override the hidden attribute. */
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 17px/1.35 var(--px);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(10px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image: radial-gradient(#6c567133 1px, transparent 1px); background-size: 8px 8px;
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 2px 0 6px; }
+  h1 { font: 400 26px var(--sk); margin: 0; color: var(--lemon); text-shadow: 2px 2px 0 var(--plum); letter-spacing: .5px; }
+  header p { margin: 0; color: var(--lilac); font-size: 16px; }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 20px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } h1 { font-size: 21px; } }
+  main { min-width: 0; }
+
+  /* The goal: the next layer and the jars. */
+  .goal { display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; align-items: center; margin-bottom: 6px; }
+  .goal .layer { font: 400 15px var(--sk); color: var(--pink); white-space: nowrap; }
+  .goal .layer b { color: var(--cream); font-weight: 400; }
+  .bar { position: relative; height: 16px; background: #3a3440; border: 2px solid var(--plum); box-shadow: inset 0 0 0 1px var(--night); }
+  .bar i { position: absolute; inset: 0 auto 0 0; width: 0; background: repeating-linear-gradient(90deg, var(--lemon) 0 6px, var(--apricot) 6px 8px); }
+  .bar .capm { position: absolute; top: -4px; bottom: -4px; width: 3px; background: var(--coral); }
+  .bar .peekm { position: absolute; top: -4px; bottom: -4px; width: 3px; background: var(--mint); }
+  .goal small { grid-column: 1 / -1; color: var(--stone); font-size: 15px; min-height: 1.2em; }
+  .goal small b { color: var(--lemon); font-weight: 600; }
+  .goal small .warn { color: var(--coral); }
+
+  .stats { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 16px; color: var(--stone); margin: 0 0 6px; }
+  .stats b { color: var(--cream); font-weight: 600; }
+  .tipped { cursor: help; }
+  .tipped:focus-visible { outline: 2px dashed var(--lemon); outline-offset: 2px; }
+
+  .stage { position: relative; border: 3px solid var(--plum); box-shadow: 4px 4px 0 #00000055; background: var(--night); }
+  canvas#hall { display: block; width: 100%; aspect-ratio: 16 / 9; image-rendering: pixelated; touch-action: none; cursor: crosshair; }
+  .hint { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); font: 13px var(--sk); color: var(--night); background: var(--lemon);
+          padding: 2px 8px; pointer-events: none; white-space: nowrap; box-shadow: 2px 2px 0 var(--plum); }
+  .log { margin: 7px 0 6px; min-height: 2.7em; font-size: 16px; color: var(--peach); border-left: 3px solid var(--lilac); padding: 1px 0 1px 9px; }
+  .log.fresh { animation: fresh .8s ease-out; }
+  @keyframes fresh { from { color: var(--lemon); } }
+  .log em { font-style: normal; color: var(--lilac); font-family: var(--sk); font-size: 13px; }
+
+  /* The cabinet: 24 cases. The bench: two slots and a Mix button. */
+  .cab { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 3px; }
+  @media (max-width: 760px) { .cab { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
+  .case { position: relative; aspect-ratio: 1; min-width: 0; padding: 0; background: #3a3440; border: 2px solid var(--plum); cursor: pointer; display: grid; place-items: center; }
+  .case img { width: 78%; height: 78%; image-rendering: pixelated; }
+  .case.unk img { opacity: .5; }
+  .case.row0 { border-color: #fff7e466; } .case.row1 { border-color: #f9828488; } .case.row2 { border-color: #b3e3da88; } .case.row3 { border-color: #b0a9e488; }
+  .case.done { box-shadow: inset 0 0 0 1px var(--lemon); }
+  .case.sel { background: var(--lemon); }
+  .case.fresh { animation: pulse 1.6s ease-in-out 4; }
+  .case:focus-visible { outline: 2px dashed var(--lemon); outline-offset: 1px; }
+  .bench { display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+  .bench .lbl { font: 13px var(--sk); color: var(--lilac); }
+  .bench .slot { width: 34px; height: 34px; border: 2px dashed var(--lilac); display: grid; place-items: center; background: #3a3440; padding: 0; cursor: pointer; }
+  .bench .slot img { width: 26px; height: 26px; image-rendering: pixelated; }
+  .bench #tools { display: flex; gap: 6px; flex-wrap: wrap; }
+  .bench .tool { display: flex; align-items: center; gap: 4px; font: 14px var(--px); color: var(--cream); background: #3a3440; border: 2px solid var(--sky); padding: 2px 8px 2px 4px; cursor: pointer; }
+  .bench .tool img { width: 18px; height: 18px; image-rendering: pixelated; }
+  .bench .tool.sel { background: var(--lemon); color: var(--night); }
+  .btn { font: 15px var(--sk); color: var(--night); background: var(--lemon); border: 0; padding: 6px 12px; cursor: pointer; box-shadow: 3px 3px 0 var(--plum); }
+  .btn:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--plum); }
+  .btn[aria-disabled="true"] { background: var(--stone); color: var(--plum); cursor: default; }
+  .btn:focus-visible, .bench button:focus-visible { outline: 2px dashed var(--lemon); outline-offset: 2px; }
+
+  /* The column stays in view and scrolls on its own, so nothing on it is ever below the fold. */
+  aside { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow-y: auto; overscroll-behavior: contain; padding: 2px 4px 8px;
+          scrollbar-width: thin; scrollbar-color: var(--plum) transparent; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  #peekBtn { width: 100%; display: flex; flex-direction: column; align-items: flex-start; text-align: left; font: 17px var(--sk); padding: 7px 10px 6px; margin-bottom: 10px;
+             background: var(--mint); box-shadow: 3px 3px 0 var(--plum); }
+  #peekBtn em { font: 15px var(--px); font-style: normal; }
+  #peekBtn.ready { background: var(--lemon); animation: pulse 1.6s ease-in-out infinite; }
+  aside h2 { font: 400 17px var(--sk); margin: 2px 0 7px; color: var(--pink); }
+  #afford { font: 15px var(--px); color: var(--mint); }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  @media (max-width: 760px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up { position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 16px/1.1 var(--px); color: var(--cream);
+        background: #3a3440; border: 2px solid var(--plum); padding: 4px 7px 3px; cursor: pointer; }
+  .up b { font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; font-size: 14px; color: var(--lilac); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { background: var(--peach); color: var(--night); border-color: var(--apricot); box-shadow: 2px 2px 0 var(--clay); }
+  .up.can em { color: var(--plum); }
+  .up.rep { border-color: var(--lilac); }
+  .up.can.rep { border-color: var(--lilac); }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up[aria-disabled="true"]:not(.can) { opacity: .72; }
+  .up.odd { border-style: dashed; }
+  .up .tag { position: absolute; top: -9px; right: 6px; font: 12px var(--sk); padding: 0 4px; background: var(--coral); color: var(--cream); font-style: normal; }
+  .up.new { animation: pulse 1.6s ease-in-out 4; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 3px var(--pink), 0 0 10px var(--pink); } }
+  .up:focus-visible { outline: 2px dashed var(--lemon); outline-offset: 2px; }
+  .none { color: var(--lilac); font-size: 15px; margin: 2px 0 0; grid-column: 1 / -1; }
+
+  #tip { position: fixed; z-index: 30; width: 250px; padding: 8px 10px; background: var(--cream); color: var(--night); border: 3px solid var(--plum);
+         box-shadow: 4px 4px 0 var(--night); font: 15px/1.3 var(--px); pointer-events: none; }
+  #tip b { display: block; font: 400 15px var(--sk); color: var(--plum); border-bottom: 2px solid var(--pink); margin-bottom: 4px; padding-bottom: 2px; }
+  #tip span { white-space: pre-line; display: block; }
+  #tip i { display: block; margin-top: 6px; font-style: normal; color: #6c5671; border-top: 2px dotted var(--lilac); padding-top: 4px; }
+  #tip small { display: block; white-space: pre-line; margin-top: 6px; font-size: 14px; color: #8a4a5a; }
+  #tip.inline { position: static; width: auto; margin-top: 10px; }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 15px var(--sk); color: var(--mint); cursor: pointer; list-style: none; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: "\25B8"; color: var(--pink); transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 2px dashed var(--lemon); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .bought { max-width: 100%; font: 14px/1.1 var(--px); color: var(--peach); background: #3a3440; border: 2px solid var(--clay); padding: 2px 7px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+  .bought.odd { border-style: dashed; }
+  .bought:hover, .bought.on { background: var(--peach); color: var(--night); }
+  .bought:focus-visible { outline: 2px dashed var(--lemon); outline-offset: 2px; }
+
+  #ending { margin: 18px 0 0; padding: 14px 16px; background: #3a3440; border: 3px solid var(--lemon); box-shadow: 5px 5px 0 var(--plum); max-width: 820px; }
+  #ending h2 { font: 400 22px var(--sk); color: var(--lemon); margin: 0 0 8px; }
+  #ending p { margin: 0 0 9px; }
+  #ending .who { color: var(--mint); }
+  #shareBtn, #againBtn { font: 15px var(--sk); color: var(--night); background: var(--lemon); border: 0; padding: 8px 14px; cursor: pointer; box-shadow: 3px 3px 0 var(--plum); margin: 4px 8px 0 0; }
+  #againBtn { background: var(--stone); }
+  @media (prefers-reduced-motion: reduce) { .up.new, .case.fresh, #peekBtn.ready, .log.fresh { animation: none; } #bought summary::before { transition: none; } }
+</style>
+<!-- Libraries from /shared/lib/libs.json, by version. Strudel's soundfonts import @strudel/core and
+     @strudel/webaudio, which are both inside the @strudel/web bundle. -->
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/soundfonts": "/shared/lib/@strudel/soundfonts@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="14" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Hold It Up to the Light</h1>
+    <p>The Mineral Hall, after closing</p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="goal">
+        <span class="layer" id="layerName">Next: <b>the ribbon</b></span>
+        <div class="bar tipped" id="jarBar" tabindex="0" aria-describedby="tip"><i id="jarFill"></i><span class="peekm" id="peekMark"></span><span class="capm" id="capMark"></span></div>
+        <small id="goalLine"></small>
+      </div>
+      <div class="stats">
+        <span id="rateBox" class="tipped" tabindex="0" aria-describedby="tip">✨ <b id="rate">0</b>/s</span>
+        <span id="litBox" class="tipped" tabindex="0" aria-describedby="tip">💎 <b id="lit">0/2</b> glowing</span>
+        <span id="lensBox" class="tipped" tabindex="0" aria-describedby="tip">🔍 full <b id="full">1.00</b>×</span>
+        <span id="glowBox" class="tipped" tabindex="0" aria-describedby="tip">⏳ afterglow <b id="after">14</b>s</span>
+        <span id="lampBox" class="tipped" tabindex="0" aria-describedby="tip" hidden>🌀 <b id="lampN">0</b> lamps · <b id="lampRate">0</b>/s</span>
+      </div>
+      <div class="stage">
+        <canvas id="hall" width="320" height="180" aria-label="The Mineral Hall at night. Hold and drag to steer the trolley; its lens charges the crystals it passes over."></canvas>
+        <div class="hint" id="hint">Hold &amp; drag to steer the gift</div>
+      </div>
+      <div class="log" id="log" aria-live="polite"></div>
+      <div class="cab" id="cab" aria-label="The collection: 24 cases"></div>
+      <div class="bench" id="bench">
+        <span class="lbl">Bench</span>
+        <button type="button" class="slot" id="slotA" aria-label="First ingredient"></button>
+        <span class="lbl">+</span>
+        <button type="button" class="slot" id="slotB" aria-label="Second ingredient"></button>
+        <button type="button" class="btn" id="mixBtn" aria-describedby="tip">Mix</button>
+        <span id="tools"></span>
+      </div>
+    </main>
+    <aside id="side">
+      <button type="button" class="btn" id="peekBtn" aria-describedby="tip">👁 Peek <em id="peekCost">400</em></button>
+      <h2 id="upHead">Upgrades <span id="afford"></span></h2>
+      <div id="shop"></div>
+      <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" hidden>
+    <h2>Stop 24. The Gift.</h2>
+    <p>The flash goes through the ribbon, the paper, the tape, the box, the tissue, the second box (no comment), the bubble wrap and the velvet. At the very middle there is a small, sky-blue crystal.</p>
+    <p><b>Celestine.</b> Case 24. Missing since 1911. It was never missing. It came by post. It was in here. The tag says “For C.”, and C. was never a who.</p>
+    <p>Then it charges. It works far too well. Celestine throws the light straight back up through the skylight, and at three in the morning the whole town looks up and sees the inside of the gift drawn on the clouds.</p>
+    <p class="who" id="townLines"></p>
+    <p>The gift that hated surprises is now the biggest surprise the town has ever had. It finds, to its own surprise, that it doesn't mind. That concludes the tour.</p>
+    <button id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const DEBUG = location.search.includes('debug');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:14:save';
+let S = E.defaults();
+try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(S, JSON.parse(raw)); } catch (e) {}
+const save = () => { S.last = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+// A finished save is drawn as the finished hall: every crystal home, every layer seen.
+if (S.ended) { S.peeks = E.LAYERS.length; for (const id of E.ORDER) if (!S.own.includes(id)) S.own.push(id); }
+const fmt = E.fmt;
+const mmss = s => s >= 3600 ? `${Math.floor(s / 3600)}h${String(Math.floor(s / 60) % 60).padStart(2, '0')}m` : `${Math.floor(s / 60)}m${String(Math.floor(s % 60)).padStart(2, '0')}s`;
+
+// ---------- Sound: everything on A hirajoshi (A B C E F), the soundtrack's scale ----------
+const A = createAudio({ sfxTrim: 3, musicTrim: 3.1 });
+const N = scale('hirajoshi', 57);
+let lastFull = 0, lastLamp = 0;
+const sfx = {
+  charge(i = 0) { A.tone({ type: 'sine', freq: N(5 + (i % 5)), dur: 0.05, vol: 0.15, attack: 0.01, release: 0.12, cutoff: 2200 }); },
+  full(i = 0) {
+    const now = performance.now(); if (now - lastFull < 90) return; lastFull = now;
+    A.tone({ type: 'bell', freq: N(8 + (i % 7)), dur: 0.12, vol: 0.22, cutoff: 3200 });
+  },
+  lamp() {
+    const now = performance.now(); if (now - lastLamp < 1100) return; lastLamp = now;
+    A.tone({ type: 'pluck', freq: N(3 + Math.floor(Math.random() * 3)), dur: 0.06, vol: 0.17, cutoff: 1500 });
+  },
+  squeak() { A.tone({ type: 'sine', freq: N(12), dur: 0.06, vol: 0.16, glide: 1.12, attack: 0.01, release: 0.05 }); },
+  buy() { [0, 2, 4].forEach((d, i) => A.tone({ type: 'pluck', freq: N(5 + d), dur: 0.1, vol: 0.155, at: A.now + i * 0.06 })); },
+  unlock() { [0, 3].forEach((d, i) => A.tone({ type: 'bell', freq: N(10 + d), dur: 0.15, vol: 0.13, at: A.now + i * 0.09, cutoff: 3500 })); },
+  deny() { A.tone({ type: 'triangle', freq: N(-1), dur: 0.08, vol: 0.17, glide: 0.85, cutoff: 900 }); },
+  select() { A.tone({ type: 'pluck', freq: N(7), dur: 0.06, vol: 0.4, cutoff: 2400 }); },
+  fizzle() {
+    A.tone({ type: 'pluck', freq: N(4), dur: 0.1, vol: 0.15, cutoff: 1400 });
+    A.tone({ type: 'pluck', freq: N(1), dur: 0.14, vol: 0.15, at: A.now + 0.12, cutoff: 1200 });
+  },
+  mix() {
+    [0, 1, 2, 3, 4, 5, 7].forEach((d, i) => A.tone({ type: i < 6 ? 'pluck' : 'bell', freq: N(5 + d), dur: i < 6 ? 0.09 : 0.4, vol: i < 6 ? 0.09 : 0.11, at: A.now + i * 0.07, cutoff: 3600 }));
+  },
+  caseDone() { [0, 2, 4, 5].forEach((d, i) => A.tone({ type: 'bell', freq: N(7 + d), dur: 0.35, vol: 0.08, at: A.now + i * 0.12, cutoff: 3600 })); },
+  tink() { A.tone({ type: 'bell', freq: N(17), dur: 0.08, vol: 0.2 }); A.tone({ type: 'bell', freq: N(19), dur: 0.06, vol: 0.06, at: A.now + 0.11 }); },
+  peek() {
+    A.noiseHit('whoosh', { vol: 0.12, dur: 0.9 });
+    [0, 2, 4, 5, 7].forEach((d, i) => A.tone({ type: 'bell', freq: N(5 + d), dur: 0.5, vol: 0.05, at: A.now + 0.35 + i * 0.05, cutoff: 3800 }));
+    A.tone({ type: 'pad', freq: N(-5), dur: 1.2, vol: 0.035, attack: 0.3, release: 1, cutoff: 900, at: A.now + 0.3 });
+  },
+  finale() {
+    A.noiseHit('whoosh', { vol: 0.15, dur: 1.6 });
+    const run = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    run.forEach((d, i) => A.tone({ type: 'bell', freq: N(5 + d), dur: 0.5, vol: 0.055, at: A.now + 0.5 + i * 0.09, cutoff: 4000 }));
+    [0, 2, 4].forEach(d => A.tone({ type: 'pad', freq: N(d), dur: 3, vol: 0.038, attack: 0.8, release: 2.5, cutoff: 1100, at: A.now + 1.2 }));
+  },
+};
+if (DEBUG) window.__game = { A, sfx, long: ['peek', 'finale', 'mix', 'caseDone'], S: () => S, E };
+
+// ---------- Music: Mineral Hall After Hours (slopwave), a phase per stretch of the gift ----------
+const musicKey = () => S.ended ? 'ending' : S.peeks < 3 ? 'early' : S.peeks < 6 ? 'middle' : 'late';
+let music = null, soundtrack = null, lastKey = musicKey();
+const song = () => (soundtrack ||= createSoundtrack(music.strudel))(musicKey());
+createMusic(A, { soundfonts: true, packs: ['vcsl'], song }).then(m => { music = m; music.update(); if (DEBUG) Object.assign(window.__game, { music: m, song }); }).catch(e => console.warn('music', e));
+
+// ---------- Sprites (hand-made pixel grids, plus restyled source shapes) ----------
+const P = { '.': null, k: '#28282e', p: '#6c5671', s: '#d9c8bf', c: '#f98284', l: '#b0a9e4', y: '#accce4', m: '#b3e3da', i: '#feaae4',
+  g: '#87a889', e: '#b0eb93', u: '#e9f59d', h: '#ffe6c6', d: '#dea38b', a: '#ffc384', n: '#fff7a0', w: '#fff7e4' };
+const GIFT = [
+  '....n...n.....',
+  '...nan.nan....',
+  '....nnann.....',
+  '.ccccnncccccc.',
+  '.cicccnccicc..',
+  '.ccccinccccc..',
+  '.nnnnnnnnnnnn.',
+  '.cccicnccicc..',
+  '.ciccc nccccc.',
+  '.ccccinccccic.',
+  '.ccicccnccccc.',
+  'pppppppppppppp',
+  '.s..........s.',
+  'pkp........pkp',
+].map(r => r.replace(/ /g, 'c').padEnd(14, '.'));
+const GIFT_LOOK = [ // the trolley leans a little: two frames for the wheels
+  GIFT, GIFT.map((r, y) => y === 13 ? '.pkp......pkp.' : r),
+];
+const giftC = GIFT_LOOK.map((g, i) => Sprites.register(`gift ${i + 1}`, Sprites.outline(Sprites.pixel(g, P), '#28282e')));
+const CRYSTAL = [
+  '....a....',
+  '...aab...',
+  '..aaabc..',
+  '.aaaabcc.',
+  '.waabbcc.',
+  '.waabbcc.',
+  '.aaabbcc.',
+  '.aaabbcc.',
+  '..aabbc..',
+  '...abc...',
+];
+const crystalC = {};
+for (const sp of E.SPECIES) {
+  const [a, b, c] = sp.color;
+  crystalC[sp.id] = Sprites.register(sp.name, Sprites.outline(Sprites.pixel(CRYSTAL, { '.': null, a, b, c, w: '#fff7e4' }), '#28282e'));
+}
+const STAND = Sprites.register('stand', Sprites.pixel(['sssssssss', 'pdddddddp', '.ppppppp.'], P));
+const PLINTH = Sprites.register('plinth', Sprites.pixel([
+  'wwwwwwwwwwwwwwwwwwww', 'sssssssssssssssssssd', 'hhhhhhhhhhhhhhhhhhhd', 'hsshssshsshsshsshhhd', 'hhhhhhhhhhhhhhhhhhhd',
+  'hhhhhhhhhhhhhhhhhhhd', 'hhhhhhhhhhhhhhhhhhhd', 'ddddddddddddddddddddd'.slice(0, 20), 'pppppppppppppppppppp'], P));
+// Source shapes from the icon sets, pixelated into the palette (see art/sources.json).
+const ART = {};
+async function loadArt() {
+  const pix = async (file, color, w, name) => {
+    const svg = Sprites.recolor(await Sprites.loadSvg(`./art/${file}`), color);
+    const c = Sprites.pixelate(await Sprites.svgToCanvas(svg, 64), w, ['#28282e', '#6c5671', color, '#fff7e4']);
+    return Sprites.register(name, Sprites.outline(c, '#28282e'));
+  };
+  ART.jar = await pix('iconoven--baby-food-jar.svg', '#b3e3da', 12, 'glow jar');
+  ART.lens = await pix('game-icons--magnifying-glass.svg', '#accce4', 14, 'lens');
+  ART.unknown = await pix('pixelarticons--diamond-gem.svg', '#6c5671', 12, 'unknown case');
+  ART.celestine = await pix('game-icons--crystalize.svg', '#accce4', 22, 'celestine (the ending)');
+  ART.radiator = Sprites.register('radiator', Sprites.outline(Sprites.pixel([
+    '.p.p.p.p.', 'pdpdpdpdp', 'pdpdpdpdp', 'pdpdpdpdp', 'pdpdpdpdp', 'pdpdpdpdp', 'ppppppppp', '.k.....k.'], P), '#28282e'));
+  ART.moon = Sprites.register('moonbeam', Sprites.pixel([
+    '..wwww..', '.wwnnww.', 'wwn..nww', 'wn....nw', 'wn....nw', 'wwn..nww', '.wwnnww.', '..wwww..'].map(r => r.replace(/\./g, 'y')), { ...P, y: '#accce4' }));
+}
+const art = loadArt().then(() => { if (Sprites.sheetRequested()) Sprites.showSheet(); }).catch(e => console.warn('art', e));
+const imgOf = c => c.__url || (c.__url = c.toDataURL());
+
+// ---------- The hall ----------
+const cv = $('hall'), g = cv.getContext('2d');
+g.imageSmoothingEnabled = false;
+const tr = { x: E.CX, y: E.CY + 44, h: -Math.PI / 2, v: 0 };
+let target = null, keys = {}, lampA = 0, rateShown = 0, flash = 0, wheel = 0, endT = 0;
+let focused = new Set(), spot = null, sparkles = [];
+const toHall = e => { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * E.W, y: (e.clientY - r.top) / r.height * E.H }; };
+cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); target = toHall(e); $('hint').hidden = true; S.steered = true; });
+cv.addEventListener('pointermove', e => { if (target) target = toHall(e); });
+const release = () => { target = null; };
+cv.addEventListener('pointerup', release); cv.addEventListener('pointercancel', release);
+addEventListener('keydown', e => { if (/^Arrow|^[wasd]$/i.test(e.key) && !e.target.closest('button, input, details')) { keys[e.key.toLowerCase()] = true; $('hint').hidden = true; S.steered = true; e.preventDefault(); } });
+addEventListener('keyup', e => { delete keys[e.key.toLowerCase()]; });
+function keyTarget() {
+  const dx = (keys.arrowright || keys.d ? 1 : 0) - (keys.arrowleft || keys.a ? 1 : 0);
+  const dy = (keys.arrowdown || keys.s ? 1 : 0) - (keys.arrowup || keys.w ? 1 : 0);
+  return dx || dy ? { x: tr.x + dx * 40, y: tr.y + dy * 40 } : null;
+}
+if (S.steered || S.time > 10 || S.ended) $('hint').hidden = true;
+if (DEBUG) Object.assign(window.__game, { tr, get target() { return target; } });
+
+function draw(t) {
+  const ended = S.ended;
+  // Floor and walls.
+  g.fillStyle = '#28282e'; g.fillRect(0, 0, E.W, E.H);
+  g.fillStyle = '#3a3440'; g.fillRect(0, 0, E.W, 18);
+  g.fillStyle = '#6c5671'; for (let x = 6; x < E.W; x += 22) g.fillRect(x, 3, 12, 11);
+  g.fillStyle = '#28282e'; for (let x = 6; x < E.W; x += 22) g.fillRect(x + 1, 4, 10, 9);
+  g.fillStyle = '#6c5671'; g.fillRect(0, 18, E.W, 2);
+  g.fillStyle = '#2f2c36';
+  for (let y = 20; y < E.H; y += 10) for (let x = (y / 10) % 2 ? 0 : 10; x < E.W; x += 20) g.fillRect(x, y, 10, 10);
+  // The moonbeam from the skylight onto the plinth.
+  g.fillStyle = ended ? '#fff7a033' : '#accce414';
+  g.beginPath(); g.moveTo(E.CX - 14, 0); g.lineTo(E.CX + 14, 0); g.lineTo(E.CX + 26, E.CY); g.lineTo(E.CX - 26, E.CY); g.fill();
+  g.fillStyle = '#fff7e4'; g.fillRect(E.CX - 13, 0, 26, 2);
+  // Lamp rays.
+  const n = E.lamps(S);
+  if (n && !ended) for (let i = 0; i < n; i++) {
+    const a = lampA + i * Math.PI * 2 / n;
+    g.fillStyle = '#fff7a01c';
+    g.beginPath(); g.moveTo(E.CX, E.CY);
+    g.lineTo(E.CX + Math.cos(a - 0.07) * 170, E.CY + 4 + Math.sin(a - 0.07) * 90);
+    g.lineTo(E.CX + Math.cos(a + 0.03) * 170, E.CY + 4 + Math.sin(a + 0.03) * 90); g.fill();
+  }
+  // Stands and crystals, with halos by charge.
+  const full = E.lensCharge(S);
+  E.SLOTS.forEach((s, i) => { if (i < 23) { g.globalAlpha = S.own[i] ? 1 : 0.35; g.drawImage(STAND, s.x - 4, s.y + 3); } });
+  g.globalAlpha = 1;
+  for (const id of S.own) {
+    if (id === 'celestine') continue;
+    const s = E.slotOf(S, id), c = ended ? 1 : Math.min(1, (S.charge[id] || 0) / Math.max(1, full * 0.6));
+    if (c > 0.02) {
+      const r = 3 + c * 6 + (focused.has(id) ? 1.5 + Math.sin(t / 90) : 0);
+      const col = E.BY_ID[id].color[0];
+      g.globalAlpha = 0.12 + c * 0.25; g.fillStyle = col;
+      g.beginPath(); g.arc(s.x, s.y - 1, r, 0, Math.PI * 2); g.fill();
+      g.globalAlpha = 0.25 + c * 0.35; g.beginPath(); g.arc(s.x, s.y - 1, r * 0.5, 0, Math.PI * 2); g.fill();
+      g.globalAlpha = 1;
+    }
+    g.globalAlpha = 0.45 + 0.55 * Math.min(1, c * 1.5);
+    g.drawImage(crystalC[id], s.x - 5, s.y - 9);
+    g.globalAlpha = 1;
+  }
+  // The plinth, with its label.
+  g.drawImage(PLINTH, E.CX - 10, E.CY - 2);
+  g.fillStyle = '#6c5671'; g.font = '5px monospace';
+  if (ended) {
+    // The finished hall: the gift home on its plinth, see-through, Celestine blazing inside it.
+    const pulse = reduced ? 1 : 0.8 + 0.2 * Math.sin(t / 300);
+    g.fillStyle = '#fff7a0'; g.globalAlpha = 0.18 * pulse; g.fillRect(E.CX - 30, 0, 60, E.CY);
+    g.globalAlpha = 0.3 * pulse; g.beginPath(); g.arc(E.CX, E.CY - 10, 26, 0, Math.PI * 2); g.fill(); g.globalAlpha = 1;
+    g.globalAlpha = 0.35; g.drawImage(giftC[0], E.CX - 7, E.CY - 24); g.globalAlpha = 1;
+    // Up on the clouds, for the whole town: the inside of the gift.
+    if (ART.celestine) { g.globalAlpha = 0.22 * pulse; g.drawImage(ART.celestine, E.CX - 36, -14, 72, 72); g.globalAlpha = 1; }
+    if (ART.celestine) g.drawImage(ART.celestine, E.CX - 12, E.CY - 30); else g.drawImage(crystalC.celestine, E.CX - 5, E.CY - 20);
+  } else {
+    // Lens spot ahead of the trolley.
+    if (spot) {
+      const r = E.spotRadius(S);
+      g.fillStyle = '#fff7e4'; g.globalAlpha = 0.16; g.beginPath(); g.arc(spot.x, spot.y, r, 0, Math.PI * 2); g.fill();
+      g.globalAlpha = 0.35; g.beginPath(); g.arc(spot.x, spot.y, r * 0.45, 0, Math.PI * 2); g.fill();
+      g.globalAlpha = 0.7; g.beginPath(); g.arc(spot.x, spot.y, 1.6, 0, Math.PI * 2); g.fill(); g.globalAlpha = 1;
+      g.strokeStyle = '#accce466'; g.beginPath(); g.moveTo(tr.x, tr.y - 9); g.lineTo(spot.x, spot.y); g.stroke();
+    }
+    const fr = Math.floor(wheel / 6) % 2;
+    g.drawImage(giftC[fr], Math.round(tr.x - 7), Math.round(tr.y - 13));
+    if (ART.lens) g.drawImage(ART.lens, Math.round(tr.x + Math.cos(tr.h) * 7 - 7), Math.round(tr.y - 14 + Math.sin(tr.h) * 4 - 7));
+  }
+  // Sparkles from mixing and filling.
+  sparkles = sparkles.filter(p => (p.life -= 1) > 0);
+  for (const p of sparkles) { p.x += p.vx; p.y += p.vy; g.fillStyle = p.c; g.globalAlpha = Math.min(1, p.life / 20); g.fillRect(Math.round(p.x), Math.round(p.y), 1, 1); }
+  g.globalAlpha = 1;
+  drawXray(t);
+  if (flash > 0) { g.fillStyle = '#fff7e4'; g.globalAlpha = Math.min(1, flash); g.fillRect(0, 0, E.W, E.H); g.globalAlpha = 1; }
+}
+// The gift as the Peeks have seen it so far: a little x-ray inset, one layer clearer per Peek.
+function drawXray() {
+  const x0 = E.W - 50, y0 = 22, w = 46, h = 40, k = S.peeks;
+  g.fillStyle = '#28282ecc'; g.fillRect(x0 - 2, y0 - 2, w + 4, h + 10);
+  g.strokeStyle = '#b0a9e4'; g.strokeRect(x0 - 1.5, y0 - 1.5, w + 3, h + 3);
+  const box = (i, c, a = 1) => { g.globalAlpha = a; g.fillStyle = c; g.fillRect(x0 + i * 2.5, y0 + i * 2.2, w - i * 5, h - i * 4.4); g.globalAlpha = 1; };
+  // Outer to inner: paper, tape, box, tissue, box, bubbles, velvet, the crystal.
+  box(0, '#f98284', k >= 2 ? 0.25 : 1);
+  if (k < 1) { g.fillStyle = '#fff7a0'; g.fillRect(x0 + w / 2 - 1, y0, 3, h); g.fillRect(x0, y0 + h / 2 - 1, w, 3); }
+  if (k >= 2) { g.fillStyle = '#e9f59d'; g.globalAlpha = k >= 3 ? 0.3 : 0.9; g.fillRect(x0 + 3, y0 + 6, w - 6, 2); g.fillRect(x0 + 3, y0 + h - 8, w - 6, 2); g.globalAlpha = 1; }
+  if (k >= 3) box(2, '#dea38b', k >= 4 ? 0.3 : 0.95);
+  if (k >= 4) box(3, '#fff7e4', k >= 5 ? 0.25 : 0.8);
+  if (k >= 5) box(4, '#dea38b', k >= 6 ? 0.35 : 0.95);
+  if (k >= 6) { g.fillStyle = '#accce4'; g.globalAlpha = k >= 7 ? 0.35 : 0.9; for (let yy = 0; yy < 4; yy++) for (let xx = 0; xx < 5; xx++) g.fillRect(x0 + 13 + xx * 5, y0 + 12 + yy * 5, 3, 3); g.globalAlpha = 1; }
+  if (k >= 7) { g.fillStyle = '#6c5671'; g.globalAlpha = S.ended ? 0.3 : 1; g.beginPath(); g.ellipse(x0 + w / 2, y0 + h / 2 + 2, 9, 10, 0, 0, Math.PI * 2); g.fill(); g.globalAlpha = 1;
+    g.fillStyle = '#b0a9e4'; g.fillRect(x0 + w / 2 - 4, y0 + h / 2 - 9, 8, 2); }
+  if (S.ended) g.drawImage(crystalC.celestine, x0 + w / 2 - 5, y0 + h / 2 - 6);
+  else if (k >= 1) { g.fillStyle = '#fff7e4'; g.font = '6px monospace'; g.textAlign = 'center'; g.fillText('?', x0 + w / 2, y0 + h / 2 + 3); g.textAlign = 'left'; }
+  g.fillStyle = '#b0a9e4'; g.font = '5px monospace'; g.fillText(`X-RAY ${k}/8`, x0, y0 + h + 7);
+}
+function burst(x, y, color, n = 16) {
+  if (reduced) return;
+  for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, v = 0.3 + Math.random() * 0.9; sparkles.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 0.2, life: 25 + Math.random() * 25, c: color }); }
+}
+
+// ---------- Log: the audio guide ----------
+let stop = 1;
+function say(text, guide = false) {
+  const el = $('log');
+  el.innerHTML = '';
+  if (guide) { const em = document.createElement('em'); em.textContent = `Stop ${stop++}. `; el.append(em); }
+  el.append(text);
+  el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
+}
+const IDLE_LINES = [
+  'On your left, quartz. On your right, also quartz, but feeling it.',
+  'The trolley squeaks. The night guard does not wake. The night guard never wakes.',
+  'Please observe the afterglow. Phosphorescent minerals store light and give it back slowly, like a grudge.',
+  'The gift would like it noted that it is not curious. It is simply checking.',
+  'Light passes through paper only grudgingly. This is physics, and the gift has filed a complaint.',
+  'Please keep to the marked route. The gift does not, and is not a good example.',
+  'Moonlight is sunlight that has been somewhere first. The lens does not mind.',
+  'A crystal that is not glowing is just a rock with ambitions.',
+];
+
+// ---------- Tooltips ----------
+let tipFor = null, tipMoved = 0;
+function tipWire(b, tipOf, act) {
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, tipOf()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, tipOf()); });
+  b.addEventListener('blur', () => hideTip());
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  // On touch the first tap shows what it does; the second does it.
+  b.addEventListener('click', () => {
+    const t = tipOf();
+    if (b.dataset.touch && tipFor !== t.id && !(t.once && seenTips.has(t.id))) { seenTips.add(t.id); showTip(b, t); return; }
+    if (act) act();
+    if (tipFor) showTip(b, tipOf());
+  });
+}
+const seenTips = new Set();
+function showTip(b, it) {
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('i').textContent = it.joke || ''; tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || ''; tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== $('side')) { $('side').append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  if (b.closest('aside') && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 10}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    let left = r.right + 10, top = Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2));
+    if (left + t.width > innerWidth - 8) left = r.left - t.width - 10;
+    if (left < 8) { left = Math.max(8, Math.min(innerWidth - t.width - 8, r.left)); top = r.top - t.height - 8 > 8 ? r.top - t.height - 8 : r.bottom + 6; }
+    tip.style.left = `${left}px`; tip.style.top = `${top}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  if (tip.parentElement !== $('side')) $('side').append(tip);
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .tipped, .bought, .case, .bench button, #peekBtn')) hideTip(); });
+
+// Readout tooltips.
+const per = x => x < 10 ? x.toFixed(2) : x < 100 ? x.toFixed(1) : fmt(x);
+const STAT_TIPS = {
+  jarBar: () => ({ id: 'jarBar', name: 'The Glow Jars', desc: `Holding ${fmt(S.glow)} of ${fmt(E.capacity(S))} glow. Anything past the top spills on the floor and is lost.\nThe green mark is the next Peek (${fmt(E.peekCost(S))}). The red mark is the top of the jars.`, foot: E.capacity(S) < E.peekCost(S) ? 'The jars can\'t hold the next flash yet: build more storage.' : '' }),
+  rateBox: () => ({ id: 'rateBox', name: 'Glow per second', desc: 'Everything the crystals are giving off right now, poured into the jars.', foot: `full hall, fully charged: ${fmt(fullRate())}/s` }),
+  litBox: () => ({ id: 'litBox', name: 'Crystals glowing', desc: 'How many crystals still have charge in them. Steer the lens over the dim ones.', foot: `${S.own.filter(id => id !== 'celestine').length} crystals in the hall` }),
+  lensBox: () => ({ id: 'lensBox', name: 'Full charge', desc: 'How far past full the lens charges a crystal. A crystal glows in proportion to its charge.', foot: `spot ${E.spotRadius(S)}px wide · trolley ${E.speed(S)}px/s` }),
+  glowBox: () => ({ id: 'glowBox', name: 'Afterglow', desc: 'How long a fully charged crystal keeps glowing before it fades out.', foot: '' }),
+  lampBox: () => ({ id: 'lampBox', name: 'Revolving Lamps', desc: `Each lamp sweeps the hall every ${E.LAMP_PERIOD}s and tops every crystal up to ${E.LAMP_CHARGE * 100}%. They keep going while you're away (at half the rate, up to 8 hours).`, foot: `a sweep every ${(E.LAMP_PERIOD / Math.max(1, E.lamps(S))).toFixed(1)}s · ${fmt(E.lampRate(S))}/s from lamps alone` }),
+};
+for (const [id, f] of Object.entries(STAT_TIPS)) tipWire($(id), f);
+const fullRate = () => S.own.reduce((a, id) => a + E.speciesRate(S, E.BY_ID[id]) * E.lensCharge(S), 0);
+
+// ---------- Shop ----------
+const BUY_LINES = {
+  shake: 'The gift shakes itself, very gently. Something inside goes tink. The gift holds very still for some time.',
+  tag: 'The tag, turned over after a century: “For C.” Not “For the Museum”. The gift spends the rest of the night thinking about who C. is.',
+  postcard: 'A postcard: “Arrived 5 November 1911”, the day the first aeroplane to cross America landed in Pasadena. The gift came by train. It would like that noted.',
+  sign: 'DO NOT PEEK, hung on the gift, facing inwards. The gift reads it every night. It does not help.',
+  guide: '“Stop 0. You are inside a box, inside paper, inside a museum. Please do not tell anyone what is in here, if you find out first.”',
+  ears: 'Earmuffs, tied onto the ribbon roughly where ears would be. The gift does not want to hear itself gasp.',
+  radiator: 'The 1911 radiator clanks over to the bench. It gets things hot. The night guard sleeps through it, as always.',
+  lamp: 'A revolving lamp, off a decommissioned carousel, set turning on the plinth. Its beam sweeps the hall, topping up every crystal it passes.',
+};
+const shop = $('shop');
+const newUntil = {};
+let shopSig = '';
+const after = (id, n = 1) => ({ ...S, up: { ...S.up, [id]: E.lvl(S, id) + n } });
+function effectLine(u) {
+  const s2 = after(u.id);
+  if (u.cap) return `jars hold: ${fmt(E.capacity(S))} → ${fmt(E.capacity(s2))}`;
+  switch (u.id) {
+    case 'lens': return `spot: ${E.spotRadius(S)}px → ${E.spotRadius(s2)}px wide`;
+    case 'coat': return `afterglow: ${E.afterglow(S).toFixed(1)}s → ${E.afterglow(s2).toFixed(1)}s`;
+    case 'oil': return `trolley: ${E.speed(S)} → ${E.speed(s2)} px/s`;
+    case 'polish': return `full charge: ${E.lensCharge(S).toFixed(2)}× → ${E.lensCharge(s2).toFixed(2)}×`;
+    case 'lamp': return `lamps: ${E.lamps(S)} → ${E.lamps(s2)} · a sweep every ${(E.LAMP_PERIOD / Math.max(1, E.lamps(S))).toFixed(1)}s → ${(E.LAMP_PERIOD / E.lamps(s2)).toFixed(1)}s\nlamps alone: ${fmt(E.lampRate(S))}/s → ${fmt(E.lampRate(s2))}/s`;
+    case 'twin': return `every crystal: ×${E.twinMult(S)} → ×${E.twinMult(s2)}\nfull hall: ${fmt(fullRate())}/s → ${fmt(fullRate() * 2)}/s`;
+    case 'radiator': return 'a new tool on the bench';
+  }
+  if (u.species) { const sp = E.BY_ID[u.species]; return `a new crystal: ${fmt(E.speciesRate(S, sp))}/s at full charge`; }
+  return '';
+}
+function upTip(u) {
+  const lv = E.lvl(S, u.id);
+  let foot = `${fmt(E.upCost(S, u))} glow from the jars`;
+  if (u.kind === 'rep') foot += ` · you have ${lv}${u.max ? ` of ${u.max}` : ''}`;
+  if (u.silly) foot += ' · does very little';
+  const fx = effectLine(u);
+  if (fx) foot = `${fx}\n${foot}`;
+  return { id: u.id, name: u.name, desc: u.desc, joke: u.kind === 'one' ? '' : u.joke, foot };
+}
+function cells() {
+  if (S.ended) return [];
+  // An upgrade turns up once the jars have held half its price, and then stays until it's bought.
+  return E.UPGRADES.filter(u => E.unlocked(S, u) && !E.maxed(S, u) && (S.seen.includes(u.id) || S.glow >= E.upCost(S, u) * 0.5)).map(u => ({ u, id: u.id }));
+}
+const canBuy = u => !S.ended && !E.maxed(S, u) && S.glow >= E.upCost(S, u);
+function renderShop() {
+  const all = cells();
+  for (const c of all) if (!S.seen.includes(c.id)) {
+    S.seen.push(c.id);
+    if (S.time > 3) { sfx.unlock(); newUntil[c.id] = performance.now() + 9000; }
+  }
+  const sig = all.map(c => c.id).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    for (const c of all) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (c.u.silly ? ' odd' : '') + (c.u.kind === 'rep' ? ' rep' : '');
+      b.dataset.id = c.id;
+      b.innerHTML = '<b></b><em></em>';
+      b.setAttribute('aria-describedby', 'tip');
+      tipWire(b, () => upTip(c.u), () => { if (b.getAttribute('aria-disabled') !== 'true') doBuy(c.u); else sfx.deny(); });
+      b._u = c.u;
+      shop.append(b);
+    }
+    if (!all.length && !S.ended && S.seen.length) { const p = document.createElement('p'); p.className = 'none'; p.textContent = 'Everything is bought. Fill the jars.'; shop.append(p); }
+  }
+  const now = performance.now();
+  let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const u = b._u, can = canBuy(u);
+    if (can) n++;
+    b.querySelector('b').textContent = u.kind === 'rep' ? `${u.name} · ${E.lvl(S, u.id)}` : u.name;
+    b.querySelector('em').textContent = `✨ ${fmt(E.upCost(S, u))}`;
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[u.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  $('upHead').hidden = S.ended || (!all.length && !S.seen.length);
+  renderShelf();
+}
+function doBuy(u) {
+  const first = E.lvl(S, u.id) === 0;
+  if (!E.buy(S, u)) { sfx.deny(); return; }
+  delete newUntil[u.id];
+  if (u.kind === 'one') hideTip(true);
+  sfx.buy();
+  if (u.id === 'shake') setTimeout(() => sfx.tink(), 380);
+  if (u.species) {
+    const sp = E.BY_ID[u.species], s = E.slotOf(S, sp.id);
+    S.charge[sp.id] = E.lensCharge(S);
+    burst(s.x, s.y, sp.color[0], 24);
+    say(`${sp.name} arrives from the basement and takes stand ${S.own.length}. ${sp.note}`, true);
+    caseCheck(sp);
+    renderCab();
+  } else if (BUY_LINES[u.id] && first) say(BUY_LINES[u.id], u.silly);
+  else if (u.kind === 'one' && u.joke) say(u.joke, u.silly);
+  else if (first || Math.random() < 0.2) say(u.joke);
+  save(); renderShop(); hud();
+}
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => { if (!shelfEl.open) hideTip(true); if (S.boughtOpen !== shelfEl.open) { S.boughtOpen = shelfEl.open; save(); } });
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.UPGRADES.filter(u => E.lvl(S, u.id) > 0 && E.maxed(S, u));
+  const sig = list.map(u => u.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(u => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (u.silly ? ' odd' : '');
+    b.textContent = u.kind === 'rep' ? `${u.name} · ${E.lvl(S, u.id)}` : u.name;
+    b.setAttribute('aria-describedby', 'tip');
+    const tip = () => ({ id: 'bought:' + u.id, name: u.name, desc: u.desc, joke: BUY_LINES[u.id] || u.joke, foot: u.silly ? 'Bought · did very little' : u.kind === 'rep' ? `Bought all ${E.lvl(S, u.id)}` : 'Bought', inline: true });
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { b.classList.add('on'); showTip(b, tip()); } });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(true); });
+    b.addEventListener('focus', () => { b.classList.add('on'); showTip(b, tip()); });
+    b.addEventListener('blur', () => hideTip(true));
+    b.addEventListener('click', () => { for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on'); b.classList.add('on'); showTip(b, tip()); });
+    return b;
+  }));
+}
+
+// ---------- The cabinet and the bench ----------
+const cab = $('cab');
+const sel = [];
+const freshCase = {};
+// Cases in collection order: four rooms of six.
+const CASE_ORDER = [0, 1, 2, 3].flatMap(c => E.SPECIES.filter(s => s.case === c));
+function caseTip(sp) {
+  const own = S.own.includes(sp.id);
+  if (own) {
+    const c = S.charge[sp.id] || 0;
+    return { id: 'case:' + sp.id, name: sp.name, desc: sp.note, joke: '',
+      foot: sp.id === 'celestine' ? 'Case 24 · found' : `${E.CASES[sp.case]} · ${fmt(E.speciesRate(S, sp))}/s at full charge · now ${Math.round(c * 100)}%${E.caseDone(S, sp.case) ? `\nroom complete: ×${E.CASE_BONUS}` : ''}\ntap to put it on the bench` };
+  }
+  let desc = sp.hint || 'Still in the basement stores. The museum will lend it out when the gift has seen a little more.';
+  if (sp.mix) {
+    const known = sp.mix.filter(id => E.has(S, id)).map(id => (E.BY_ID[id] || E.TOOLS[id]).name);
+    if (known.length) desc += `\nYou have something it needs: ${known.join(' and ')}.`;
+  }
+  if (sp.base) desc = `Still in the basement stores. ${S.peeks >= E.BY_ID[sp.id].chapter ? 'The museum will lend it now: see the upgrades.' : 'The museum will lend it out when the gift has seen a little more.'}`;
+  return { id: 'case:' + sp.id, name: `Case ${CASE_ORDER.indexOf(sp) + 1} · ???`, desc, foot: `${E.CASES[sp.case]}${sp.missing ? ' · missing since 1911' : ''}` };
+}
+function renderCab() {
+  if (!cab.children.length) {
+    for (const sp of CASE_ORDER) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = `case row${sp.case}`; b.dataset.id = sp.id;
+      b.setAttribute('aria-describedby', 'tip');
+      b.append(document.createElement('img'));
+      tipWire(b, () => caseTip(sp), () => pickIng(sp.id));
+      cab.append(b);
+    }
+  }
+  const now = performance.now();
+  for (const b of cab.children) {
+    const id = b.dataset.id, sp = E.BY_ID[id], own = S.own.includes(id);
+    const img = b.firstChild, src = own ? imgOf(crystalC[id]) : (ART.unknown ? imgOf(ART.unknown) : '');
+    if (src && img.getAttribute('src') !== src) img.src = src;
+    img.alt = own ? sp.name : 'unknown';
+    b.classList.toggle('unk', !own);
+    b.classList.toggle('done', E.caseDone(S, sp.case));
+    b.classList.toggle('sel', sel.includes(id));
+    b.classList.toggle('fresh', (freshCase[id] || 0) > now);
+    b.setAttribute('aria-label', own ? sp.name : `Case ${CASE_ORDER.indexOf(sp) + 1}, unknown`);
+  }
+  renderBench();
+}
+function pickIng(id) {
+  if (S.ended || !E.has(S, id) || id === 'celestine') { sfx.deny(); return; }
+  const i = sel.indexOf(id);
+  if (i >= 0) sel.splice(i, 1);
+  else { if (sel.length >= 2) sel.shift(); sel.push(id); }
+  sfx.select(); renderCab();
+}
+const ingImg = id => E.TOOLS[id] ? (id === 'moonbeam' ? ART.moon : ART.radiator) : crystalC[id];
+function renderBench() {
+  [$('slotA'), $('slotB')].forEach((b, i) => {
+    const id = sel[i];
+    const want = id ? (ingImg(id) ? imgOf(ingImg(id)) : '') : '';
+    const img = b.querySelector('img');
+    if (!want) { if (img) img.remove(); b.setAttribute('aria-label', i ? 'Second ingredient (empty)' : 'First ingredient (empty)'); }
+    else { if (!img) b.append(Object.assign(document.createElement('img'), { alt: '' })); if (b.querySelector('img').src !== want) b.querySelector('img').src = want; b.setAttribute('aria-label', (E.BY_ID[id] || E.TOOLS[id]).name); }
+  });
+  const tools = $('tools');
+  const list = S.tools;
+  if (tools.dataset.sig !== list.join() + (ART.moon ? 1 : 0)) {
+    tools.dataset.sig = list.join() + (ART.moon ? 1 : 0);
+    tools.replaceChildren(...list.map(id => {
+      const t = E.TOOLS[id], b = document.createElement('button');
+      b.type = 'button'; b.className = 'tool'; b.dataset.id = id;
+      if (ingImg(id)) b.append(Object.assign(document.createElement('img'), { src: imgOf(ingImg(id)), alt: '' }));
+      b.append(t.name);
+      b.setAttribute('aria-describedby', 'tip');
+      tipWire(b, () => ({ id: 'tool:' + id, name: t.name, desc: t.note, foot: 'a tool, not a crystal · tap to put it on the bench' }), () => pickIng(id));
+      return b;
+    }));
+  }
+  for (const b of tools.children) b.classList.toggle('sel', sel.includes(b.dataset.id));
+  $('mixBtn').setAttribute('aria-disabled', String(sel.length < 2 || S.ended));
+}
+const MIX_FAILS = [
+  'The two specimens regard each other. Nothing happens. This is how most of science goes.',
+  'The bench hums, thinks about it, and declines. Mineralogy is not a free-for-all.',
+  'Nothing. The audio guide suggests reading the labels on the empty cases.',
+  'A faint smell of warm pebble. No new crystal. Please try a different pairing.',
+];
+let failN = 0;
+function doMix() {
+  if (sel.length < 2 || S.ended) { sfx.deny(); say('Put two things on the bench first: tap a crystal in the cabinet, or the Moonbeam.'); return; }
+  const r = E.mix(S, sel[0], sel[1]);
+  if (r.ok) {
+    const sp = r.sp, s = E.slotOf(S, sp.id);
+    S.charge[sp.id] = E.lensCharge(S);
+    sfx.mix(); burst(s.x, s.y, sp.color[0], 34);
+    freshCase[sp.id] = performance.now() + 7000;
+    say(`New specimen: ${sp.name}! It takes stand ${S.own.length}. ${sp.note}`, true);
+    sel.length = 0;
+    caseCheck(sp);
+    save(); renderCab(); renderShop(); hud();
+  } else if (r.why === 'poor') { sfx.deny(); say(`The bench starts to hum: something is going to happen here. It needs ${fmt(r.sp.cost)} glow from the jars to finish the job.`); }
+  else if (r.why === 'have') { sfx.fizzle(); say(`That makes ${r.sp.name}, and the hall already has one. The museum only needs one. It has a strict policy, recently invented.`); }
+  else { sfx.fizzle(); say(MIX_FAILS[failN++ % MIX_FAILS.length]); }
+}
+$('mixBtn').addEventListener('click', doMix);
+tipWire($('mixBtn'), () => {
+  const sp = sel.length === 2 ? E.recipe(sel[0], sel[1]) : null;
+  return { id: 'mix', name: 'Mix', desc: 'Combine the two things on the bench. If the mineralogy works, a new crystal grows and takes a stand in the hall.', foot: sp && !S.own.includes(sp.id) ? 'the bench is humming…' : 'failed mixes cost nothing' };
+}, null);
+[$('slotA'), $('slotB')].forEach((b, i) => b.addEventListener('click', () => { if (sel[i]) { sel.splice(i, 1); renderCab(); } }));
+function caseCheck(sp) {
+  if (E.caseDone(S, sp.case)) {
+    setTimeout(() => { sfx.caseDone(); say(`The ${E.CASES[sp.case]} is complete. Every crystal in it now glows ×${E.CASE_BONUS}. The audio guide takes a moment.`, true); }, 1400);
+  }
+}
+
+// ---------- Peek ----------
+const PEEK_LINES = [
+  'The flash goes through the ribbon. Under it: paper, with a pattern of small bells. The gift had no idea it was so festive.',
+  'Through the wrapping paper: tape. A great deal of tape. Whoever wrapped this in 1911 did not want it opened by accident.',
+  'Through the tape: a cardboard box. Plain. Sturdy. The gift is disappointed and relieved at the same time.',
+  'Through the box: tissue paper, white, crinkled. Something small, wrapped very carefully, is in the middle of it.',
+  'Through the tissue: a second box. The gift has asked us not to discuss the second box.',
+  'Through the second box (which we are not discussing): bubble wrap. Every bubble intact. The gift will not be popping them.',
+  'Through the bubble wrap: a velvet pouch. Thick. Purple. The kind of thing you keep a precious thing in.',
+];
+const LAYER_DESC = [
+  'A yellow ribbon, tied by someone in 1911 who knew what they were doing.',
+  'Paper with a pattern of small bells, faded at the folds.',
+  'Tape. More tape than seems necessary.',
+  'A plain cardboard box.',
+  'White tissue paper, crinkled round something small.',
+  'A second box. The gift would rather not talk about it.',
+  'Bubble wrap. The gift resents how much it wants to pop it.',
+  'A thick velvet pouch. Only a full spectrum gets through velvet: every crystal in the hall, glowing at once.',
+];
+function peekTip() {
+  if (S.peeks >= E.LAYERS.length) return { id: 'peek', name: 'Peek', desc: 'Nothing left to see through.', once: true };
+  const L = E.LAYERS[S.peeks], cap = E.capacity(S);
+  let foot = `${fmt(L.flash)} glow in one flash · jars hold ${fmt(cap)}`;
+  if (cap < L.flash) foot += '\nthe jars can\'t hold this flash yet: build more storage';
+  if (E.needsAll(S)) foot += `\nneeds every crystal in the hall: ${E.found(S)} of ${E.FINDABLE}`;
+  return { id: 'peek', name: `Peek through ${L.name}`, desc: `Hold the gift up to the light: empty ${fmt(L.flash)} glow from the jars through it in one flash and see one layer deeper.\n${LAYER_DESC[S.peeks]}`, joke: 'Only the jars empty. Crystals, upgrades and the collection all stay.', foot, once: true };
+}
+tipWire($('peekBtn'), peekTip, doPeek);
+function doPeek() {
+  if (!E.canPeek(S)) {
+    sfx.deny();
+    if (E.needsAll(S)) say(`Velvet only lets a full spectrum through. The flash needs every crystal in the hall: ${E.found(S)} of ${E.FINDABLE} so far.`);
+    else if (E.capacity(S) < E.peekCost(S)) say(`That flash is ${fmt(E.peekCost(S))}, and the jars only hold ${fmt(E.capacity(S))}. Physics is very firm about this.`);
+    else say(`Not bright enough yet: ${fmt(S.glow)} of ${fmt(E.peekCost(S))}.`);
+    return;
+  }
+  E.peek(S);
+  flash = reduced ? 0.6 : 1.4;
+  hideTip(true);
+  if (S.ended) { sfx.finale(); save(); setTimeout(() => end(false), reduced ? 200 : 1600); }
+  else { sfx.peek(); say(PEEK_LINES[S.peeks - 1], true); save(); }
+  renderShop(); renderCab(); hud();
+  const mk = musicKey(); if (mk !== lastKey) { lastKey = mk; if (music) music.update(); }
+}
+
+// ---------- HUD ----------
+function hud() {
+  const cap = E.capacity(S), pc = E.peekCost(S), top = Math.max(cap, isFinite(pc) ? pc : cap) * 1.05;
+  $('jarFill').style.width = `${Math.min(100, S.glow / top * 100)}%`;
+  $('capMark').style.left = `calc(${cap / top * 100}% - 1px)`;
+  $('peekMark').style.left = `calc(${Math.min(pc, top) / top * 100}% - 1px)`;
+  $('peekMark').hidden = !isFinite(pc);
+  if (S.ended) { $('layerName').innerHTML = 'Seen through: <b>everything</b>'; $('goalLine').textContent = 'The whole gift, and then the whole town.'; }
+  else {
+    $('layerName').innerHTML = `Next: <b>${E.LAYERS[S.peeks].name}</b>`;
+    const gl = $('goalLine');
+    if (E.needsAll(S)) gl.innerHTML = `Velvet needs a full spectrum: <b>${E.found(S)}/${E.FINDABLE}</b> crystals in the hall · jars <b>${fmt(S.glow)}</b> / ${fmt(cap)}`;
+    else if (cap < pc) gl.innerHTML = `jars <b>${fmt(S.glow)}</b> / ${fmt(cap)} · <span class="warn">the next flash is ${fmt(pc)}: build bigger jars</span>`;
+    else gl.innerHTML = `jars <b>${fmt(S.glow)}</b> / ${fmt(cap)} · the next flash is <b>${fmt(pc)}</b>`;
+  }
+  $('rate').textContent = per(rateShown);
+  const crystals = S.own.filter(id => id !== 'celestine');
+  $('lit').textContent = `${crystals.filter(id => (S.charge[id] || 0) > 0.01).length}/${crystals.length}`;
+  $('full').textContent = E.lensCharge(S).toFixed(2);
+  $('after').textContent = E.afterglow(S).toFixed(E.afterglow(S) < 100 ? 1 : 0);
+  $('lampBox').hidden = !E.lamps(S);
+  $('lampN').textContent = E.lamps(S); $('lampRate').textContent = per(E.lampRate(S));
+  const pb = $('peekBtn');
+  if (!S.peekSeen && (S.peeks || S.glow >= E.peekCost(S) * 0.25)) S.peekSeen = true;
+  pb.hidden = S.ended || !S.peekSeen;
+  $('peekCost').textContent = isFinite(pc) ? `through ${E.LAYERS[S.peeks].name} · ✨ ${fmt(pc)}` : '';
+  const ok = E.canPeek(S);
+  pb.setAttribute('aria-disabled', String(!ok)); pb.classList.toggle('ready', ok);
+}
+
+// ---------- The loop ----------
+let last = performance.now(), acc = 0, saveT = 0, idleT = 30, shopT = 0, madeWin = [], fillN = 0, prevLit = new Set(), moving = 0;
+function step(dt) {
+  if (S.ended) return;
+  const tgt = target || keyTarget();
+  const was = Math.abs(tr.v);
+  E.steer(tr, tgt, dt, E.speed(S));
+  if (was < 5 && Math.abs(tr.v) > 12 && performance.now() - moving > 1500) { moving = performance.now(); sfx.squeak(); }
+  wheel += Math.abs(tr.v) * dt;
+  spot = { x: tr.x + Math.cos(tr.h) * 6, y: tr.y + Math.sin(tr.h) * 5 };
+  lampA = (lampA + dt * Math.PI * 2 / E.LAMP_PERIOD) % (Math.PI * 2);
+  const before = {};
+  if (E.lamps(S)) for (const id of S.own) before[id] = S.charge[id] || 0;
+  const r = E.tick(S, dt, spot, lampA);
+  if (E.lamps(S)) for (const id of S.own) if (!r.focused.includes(id) && (S.charge[id] || 0) > before[id] + 1e-6) { sfx.lamp(); break; }
+  for (const id of r.focused) if (!focused.has(id)) sfx.charge(E.BY_ID[id].order);
+  focused = new Set(r.focused);
+  for (const id of r.filled) { sfx.full(E.BY_ID[id].order); const s = E.slotOf(S, id); burst(s.x, s.y - 3, E.BY_ID[id].color[0], 6); }
+  E.addGlow(S, r.made);
+  madeWin.push([performance.now(), r.made]);
+  S.time += dt;
+}
+function frame(now) {
+  let dt = (now - last) / 1000; last = now;
+  if (dt > 2) catchUp(dt);
+  else {
+    dt = Math.min(dt, 0.1);
+    // Fixed small steps so a fast trolley never skips over a crystal.
+    acc += dt;
+    while (acc >= 1 / 60) { step(1 / 60); acc -= 1 / 60; }
+  }
+  if (flash > 0) flash -= dt * 1.2;
+  const cutoff = now - 2000;
+  while (madeWin.length && madeWin[0][0] < cutoff) madeWin.shift();
+  rateShown = madeWin.reduce((a, m) => a + m[1], 0) / 2;
+  shopT -= dt; if (shopT <= 0) { shopT = 0.25; renderShop(); hud(); }
+  saveT -= dt; if (saveT <= 0) { saveT = 5; save(); }
+  idleT -= dt; if (idleT <= 0 && !S.ended) { idleT = 50 + Math.random() * 40; say(E.lamps(S) && Math.random() < 0.35 ? `The ${E.lamps(S) > 1 ? 'lamps go' : 'lamp goes'} round, humming a carousel tune only it can hear: ${fmt(E.lampRate(S))} glow a second, whether you steer or not.` : IDLE_LINES[Math.floor(Math.random() * IDLE_LINES.length)], Math.random() < 0.5); }
+  draw(now);
+  requestAnimationFrame(frame);
+}
+// A tab in the background (or a long freeze) runs on the lamps, the same as being away.
+function catchUp(sec, tell = false) {
+  if (S.ended) return;
+  const off = E.offline(S, sec);
+  if (tell && off.seconds > 60) {
+    const lampsN = E.lamps(S);
+    say(lampsN
+      ? `While you were away (${mmss(off.seconds)}${off.seconds >= E.OFFLINE_CAP ? ', the most the lamps can manage' : ''}), the ${lampsN === 1 ? 'lamp' : `${lampsN} lamps`} kept sweeping: +${fmt(off.gained)} glow in the jars${S.glow >= E.capacity(S) - 1 ? ' (full to the brim)' : ''}.`
+      : `While you were away (${mmss(off.seconds)}), the crystals faded to nothing. A Revolving Lamp would have kept them going.`, true);
+  }
+  if (!E.lamps(S)) for (const id of S.own) S.charge[id] = 0;
+}
+setInterval(() => { if (document.hidden) { const now = performance.now(), dt = (now - last) / 1000; if (dt > 1) { last = now; catchUp(dt); } } }, 1000);
+
+// ---------- Ending ----------
+const TOWN = [
+  '“Is that a crystal?” says a man walking his dog. The dog\'s expression says: big crystal.',
+  'The night bus stops in the middle of the road so the driver can have a look.',
+  'Across the river, the planetarium phones the museum to ask whether it\'s all right.',
+];
+function end(resumed) {
+  S.ended = true; save();
+  S.peeks = E.LAYERS.length;
+  if (!S.own.includes('celestine')) S.own.push('celestine');
+  for (const id of S.own) S.charge[id] = 1;
+  $('ending').hidden = false;
+  $('bench').hidden = true; $('hint').hidden = true;
+  $('townLines').textContent = TOWN.join(' ');
+  hideTip(true);
+  renderShop(); renderCab(); hud();
+  if (!resumed) {
+    say('Stop 24. Please look up.', false);
+    if (music) music.update();
+    if (window.DailyGame) DailyGame.finish({ lines: [`⏱ ${mmss(S.time)}`, `✨ ${fmt(S.total)} glow`, '💎 24/24 cases', '☁️ it worked far too well'] });
+    setTimeout(() => $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }), 300);
+  } else say('The Mineral Hall, the morning after. Case 24 is full. The gift is on its plinth, looking very pleased with itself.');
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Start ----------
+if (S.ended) end(true);
+else {
+  if (S.last) catchUp((Date.now() - S.last) / 1000, true);
+  if (!$('log').textContent && S.time > 0) say(`Welcome back to the Mineral Hall. The gift has seen through ${S.peeks} of 8 layers so far, and would like to see the rest.`, true);
+  else if (!S.last && !S.time) say('This is the Unopened Gift, 1911. It has never been opened. Tonight it would like to know why. Hold and drag to steer.', true);
+}
+art.then(() => renderCab());
+renderCab(); renderShop(); hud();
+addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('pagehide', save);
+requestAnimationFrame(t => { last = t; frame(t); });
+</script>
+</body>
+</html>

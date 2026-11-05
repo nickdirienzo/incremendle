@@ -419,5 +419,51 @@
       "topic": "Mischief Night (4 November, Yorkshire and the North of England)"
     },
     "palette": "funkyfuture-8"
+  },
+  {
+    "n": 14,
+    "slug": "hold-it-up-to-the-light",
+    "date": "2026-11-05",
+    "title": "Hold It Up to the Light",
+    "tagline": "A museum's unopened 1911 gift hates surprises, so every night it steers its old trolley round the Mineral Hall, charging crystals with moonlight to see what's inside itself.",
+    "emoji": "🎁💎",
+    "scale": "billions",
+    "minutes": "240–360",
+    "seed": 4273567032,
+    "subject": {
+      "text": "a wrapped gift who hates surprises",
+      "emoji": "🎁",
+      "name": "wrapped gift",
+      "subgroup": "event",
+      "trait": "{} who hates surprises"
+    },
+    "verb": "charging",
+    "object": "crystals",
+    "interaction": "steer something",
+    "arc": {
+      "drive": "curiosity",
+      "obstacle": "physics",
+      "turn": "it works far too well",
+      "initial": "C"
+    },
+    "length": "story (3–10 hours, over several sittings)",
+    "structure": [
+      "a collection to complete",
+      "a recipe book: combine things to discover new ones"
+    ],
+    "twist": "storage caps you must build past",
+    "ending": "hit a target",
+    "look": "pixel art",
+    "music": {
+      "style": "jazzy walking bass",
+      "scale": "hirajoshi"
+    },
+    "tone": "museum audio guide",
+    "context": {
+      "kind": "calendar",
+      "nod": "a harmless historical anniversary on the release date",
+      "topic": "the first transcontinental flight across the US landing in Pasadena (5 November 1911)"
+    },
+    "palette": "vanilla-milkshake"
   }
 ]
