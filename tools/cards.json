@@ -1099,5 +1099,65 @@
   "tab": "shop",
   "boughtOpen": false,
   "last": 0
+ },
+ "wilt-your-way-to-wealth": {
+  "t": 2400,
+  "cash": 4200,
+  "earned": 31000,
+  "kites": 820,
+  "tears": 40,
+  "sold": 31000,
+  "tier": 2,
+  "lv": {
+   "scrape": 2,
+   "steady": 2,
+   "advert": 1
+  },
+  "wormN": 30,
+  "lines": 20,
+  "up": {
+   "mirror": 1,
+   "ticker": 1,
+   "patch": 1,
+   "press": 1,
+   "worms": 1,
+   "testimonial": 1,
+   "splitter": 1
+  },
+  "inv": {
+   "paper": 310,
+   "string": 120,
+   "silk": 64,
+   "bamboo": 210,
+   "ripstop": 0,
+   "gold": 0
+  },
+  "queue": 6,
+  "cur": {
+   "type": "box",
+   "clean": 0.35,
+   "grade": 0.93,
+   "tears": 1
+  },
+  "nextEv": 2600,
+  "seen": [
+   "r:snag",
+   "r:worm",
+   "l:stalk",
+   "l:scrape",
+   "l:steady",
+   "l:advert",
+   "mirror",
+   "ticker",
+   "patch",
+   "press",
+   "worms",
+   "testimonial",
+   "splitter",
+   "vision",
+   "magpie",
+   "iron",
+   "vane"
+  ]
  }
 }

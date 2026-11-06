@@ -465,5 +465,50 @@
       "topic": "the first transcontinental flight across the US landing in Pasadena (5 November 1911)"
     },
     "palette": "vanilla-milkshake"
+  },
+  {
+    "n": 15,
+    "slug": "wilt-your-way-to-wealth",
+    "date": "2026-11-06",
+    "title": "Wilt Your Way to Wealth",
+    "tagline": "A wilted flower who only speaks in rhyme scratches the mud off every runaway kite on Tumble Hill and sells the scrap, on its way to seven figures.",
+    "emoji": "🥀🪁",
+    "scale": "millions",
+    "minutes": "90–150",
+    "seed": 3133852973,
+    "subject": {
+      "text": "a wilted flower who only speaks in rhyme",
+      "emoji": "🥀",
+      "name": "wilted flower",
+      "subgroup": "plant-flower",
+      "trait": "{} who only speaks in rhyme"
+    },
+    "verb": "recycling",
+    "object": "kites",
+    "interaction": "scratch to reveal",
+    "arc": {
+      "drive": "money",
+      "obstacle": "their own clumsiness",
+      "turn": "it turns out someone asked for it",
+      "initial": "T"
+    },
+    "length": "short (1–3 hours)",
+    "structure": [
+      "a market whose prices move"
+    ],
+    "twist": "random events",
+    "ending": "a final showdown",
+    "look": "1-bit classic Mac",
+    "music": {
+      "style": "ambient pads",
+      "scale": "lydian"
+    },
+    "tone": "self-help guru",
+    "context": {
+      "kind": "calendar",
+      "nod": "the night sky (moon phase, meteor shower, solstice)",
+      "topic": "the Taurid meteor showers' slow fireballs (South Taurids peak 5 November, North Taurids 12 November 2026)"
+    },
+    "palette": "blessing"
   }
 ]

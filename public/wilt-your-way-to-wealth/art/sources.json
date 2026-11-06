@@ -1,0 +1,38 @@
+{
+  "mdi--snail.svg": {
+    "icon": "mdi:snail",
+    "set": "Material Design Icons",
+    "setUrl": "https://github.com/Templarian/MaterialDesign",
+    "author": "Pictogrammers",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/mdi/snail/"
+  },
+  "mdi--bird.svg": {
+    "icon": "mdi:bird",
+    "set": "Material Design Icons",
+    "setUrl": "https://github.com/Templarian/MaterialDesign",
+    "author": "Pictogrammers",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/mdi/bird/"
+  },
+  "fluent-emoji-high-contrast--rooster.svg": {
+    "icon": "fluent-emoji-high-contrast:rooster",
+    "set": "Fluent Emoji High Contrast",
+    "setUrl": "https://github.com/microsoft/fluentui-emoji",
+    "author": "Microsoft Corporation",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/microsoft/fluentui-emoji/blob/main/LICENSE",
+    "source": "https://icon-sets.iconify.design/fluent-emoji-high-contrast/rooster/"
+  },
+  "material-symbols--chair.svg": {
+    "icon": "material-symbols:chair",
+    "set": "Material Symbols",
+    "setUrl": "https://github.com/google/material-design-icons",
+    "author": "Google",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/google/material-design-icons/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/material-symbols/chair/"
+  }
+}

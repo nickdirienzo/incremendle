@@ -1,0 +1,1367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wilt Your Way to Wealth · Incremendle</title>
+<meta name="description" content="A wilted flower who only speaks in rhyme scratches the mud off every runaway kite that lands on Tumble Hill and sells the scrap, on its way to seven figures. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Wilt Your Way to Wealth">
+<meta property="og:description" content="A wilted flower who only speaks in rhyme scratches the mud off every runaway kite on Tumble Hill and sells the scrap, on its way to seven figures.">
+<meta property="og:url" content="https://incremendle.com/wilt-your-way-to-wealth/">
+<meta property="og:image" content="https://incremendle.com/wilt-your-way-to-wealth/og.png?v=bba07461">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Wilt Your Way to Wealth: A wilted flower who only speaks in rhyme scratches the mud off every runaway kite on Tumble Hill and sells the scrap, on its way to seven figures.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/dotgothic16/font.css">
+<link rel="stylesheet" href="/shared/fonts/pixelify-sans/font.css">
+<style>
+  /* 1-bit classic Mac, in Blessing: purple ink on cream paper, pink and mint for the odd highlight,
+     thistle for the desktop. */
+  :root {
+    --ink: #74569b; --paper: #f7ffae; --pink: #ffb3cb; --mint: #96fbc7; --thistle: #d8bfd8;
+    --head: 'Pixelify Sans', ui-monospace, monospace; --body: 'DotGothic16', ui-monospace, monospace;
+    color-scheme: light;
+  }
+  html { background: var(--thistle); color: var(--ink); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 15px/1.45 var(--body); color: var(--ink); min-height: 100vh; box-sizing: border-box;
+    background: var(--thistle);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' fill='%2374569b' fill-opacity='.45'/%3E%3Crect x='2' y='2' width='1' height='1' fill='%2374569b' fill-opacity='.45'/%3E%3C/svg%3E");
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(14px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } }
+  canvas { touch-action: none; }
+  h1, h2, h3 { font-family: var(--head); font-weight: 700; margin: 0; }
+  button { font: inherit; color: inherit; }
+
+  /* Windows */
+  .win { background: var(--paper); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); margin-bottom: 14px; }
+  .bar { position: relative; display: flex; align-items: center; justify-content: center; height: 22px; border-bottom: 2px solid var(--ink);
+    background: repeating-linear-gradient(var(--paper) 0 3px, var(--ink) 3px 4px) 0 4px / 100% calc(100% - 8px) no-repeat, var(--paper); }
+  .bar::before { content: ""; position: absolute; left: 8px; top: 4px; width: 11px; height: 11px; border: 2px solid var(--ink); background: var(--paper); box-shadow: 0 0 0 2px var(--paper); }
+  .bar h2, .bar h1 { font-size: 15px; line-height: 1; padding: 2px 10px; background: var(--paper); white-space: nowrap; }
+  .bar .bar-r { position: absolute; right: 8px; top: 2px; font-size: 13px; background: var(--paper); padding: 0 4px; }
+  header .win { margin-bottom: 12px; }
+  header h1 { font-size: 18px; }
+
+  /* The hill */
+  .stagewrap { position: relative; line-height: 0; }
+  #stage { width: 100%; height: auto; display: block; image-rendering: pixelated; image-rendering: crisp-edges; cursor: none; }
+  .status { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; padding: 6px 10px; border-top: 2px solid var(--ink); font-size: 14px; line-height: 1.3; }
+  .status .tipped { cursor: help; white-space: nowrap; }
+  .status .tipped:focus-visible, .meter:focus-visible { outline: 2px dashed var(--ink); outline-offset: 2px; }
+  .gauge { display: inline-flex; align-items: center; gap: 6px; }
+  .gauge i { position: relative; display: inline-block; width: 86px; height: 10px; border: 2px solid var(--ink); background: var(--paper); }
+  .gauge i b { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--ink); }
+  .gauge i::after { content: ""; position: absolute; left: 66.6%; top: -4px; bottom: -4px; width: 2px; background: var(--ink); }
+  .gauge.hot i b { background: var(--pink); }
+  .gauge.rip { animation: shake .25s; }
+  .gauge em { font-style: normal; min-width: 4.6em; }
+  @keyframes shake { 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
+  .meter { display: block; padding: 6px 10px 8px; border-top: 2px solid var(--ink); }
+  .meter .lbl { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; }
+  .meter .lbl b { font-family: var(--head); font-weight: 600; }
+  .meter .track { height: 12px; border: 2px solid var(--ink); margin-top: 3px;
+    background: repeating-conic-gradient(var(--ink) 0 25%, var(--paper) 0 50%) 0 0 / 4px 4px; }
+  .meter .track b { display: block; height: 100%; width: 0; background: var(--ink); transition: width .4s; }
+  .meter .goalnote { font-size: 13px; margin-top: 3px; }
+  #faceBtn { margin-top: 6px; }
+  .log { min-height: 3.1em; padding: 7px 10px; border-top: 2px solid var(--ink); font-size: 14.5px; }
+  .log.rhyme { font-style: italic; }
+  .log.fresh { animation: ink .6s; }
+  @keyframes ink { from { background: var(--ink); color: var(--paper); } to { background: var(--paper); color: var(--ink); } }
+
+  /* Mac alert box over the hill */
+  .alert { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); width: min(92%, 420px); background: var(--paper); border: 2px solid var(--ink);
+    box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink), 4px 4px 0 4px var(--ink); padding: 10px 12px 10px 58px; line-height: 1.35; font-size: 14px; z-index: 3; }
+  .alert canvas.icon { position: absolute; left: 12px; top: 12px; width: 32px; height: 32px; image-rendering: pixelated; }
+  .alert h3 { font-size: 15px; margin-bottom: 2px; }
+  .alert .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; }
+  .alert .time { flex: 1; height: 8px; border: 2px solid var(--ink); }
+  .alert .time b { display: block; height: 100%; background: var(--ink); width: 100%; }
+  .alert .rhyme { font-style: italic; margin-top: 4px; }
+  .mac { font: 600 14px/1 var(--head); padding: 5px 14px; background: var(--paper); border: 2px solid var(--ink); border-radius: 8px; cursor: pointer; }
+  .mac.def { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink); }
+  .mac:hover { background: var(--mint); }
+  .mac:active, .mac.on { background: var(--ink); color: var(--paper); }
+  .mac:focus-visible { outline: 2px dashed var(--ink); outline-offset: 4px; }
+
+  /* The column */
+  #side { position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+  @media (max-width: 760px) { #side { position: static; max-height: none; overflow: visible; } }
+  .xrows { padding: 4px 6px 6px; }
+  .xrow { display: grid; grid-template-columns: 1fr 52px 50px 74px; gap: 4px; align-items: center; padding: 2px 2px; font-size: 13px; line-height: 1.15; border-bottom: 1px dotted var(--ink); }
+  .xrow:last-child { border-bottom: 0; }
+  .xrow .nm b { display: block; font-family: var(--head); font-weight: 600; font-size: 13.5px; }
+  .xrow .nm small { font-size: 12px; }
+  .xrow .pr { text-align: right; font-size: 13px; }
+  .xrow .pr small { display: block; font-size: 11px; }
+  .xrow canvas { width: 50px; height: 18px; image-rendering: pixelated; }
+  .xrow .sell { font: 600 12.5px/1 var(--head); padding: 4px 2px; border: 2px solid var(--ink); border-radius: 6px; background: var(--paper); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .xrow .sell:hover { background: var(--mint); }
+  .xrow .sell:active { background: var(--ink); color: var(--paper); }
+  .xrow .sell[aria-disabled="true"] { opacity: .55; cursor: default; }
+  .xrow .sell:focus-visible { outline: 2px dashed var(--ink); outline-offset: 2px; }
+  .xrow.up { background: var(--mint); }
+  .xrow.down { background: var(--thistle); }
+  .xnote { font-size: 12px; padding: 2px 8px 6px; border-top: 1px dotted var(--ink); min-height: 1.2em; }
+  #shop { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px; }
+  .up { position: relative; min-width: 0; text-align: left; padding: 4px 7px 5px; background: var(--paper); border: 2px solid var(--ink); border-radius: 6px; cursor: pointer; line-height: 1.15; }
+  .up b { display: block; font: 600 13.5px/1.2 var(--head); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { display: block; font-style: normal; font-size: 12.5px; }
+  .up.can { box-shadow: 2px 2px 0 var(--ink); }
+  .up.can:hover { background: var(--mint); }
+  .up.can:active { background: var(--ink); color: var(--paper); box-shadow: none; }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up[aria-disabled="true"]:not(.can) { opacity: .62; border-style: dashed; }
+  .up.odd b::before { content: "✿ "; }
+  .up:focus-visible { outline: 2px dashed var(--ink); outline-offset: 2px; }
+  .up.new { animation: pulse 1.1s ease-in-out infinite; }
+  .up .tag { position: absolute; right: -4px; top: -7px; font: 600 10px/1 var(--head); font-style: normal; background: var(--pink); border: 2px solid var(--ink); padding: 1px 4px; border-radius: 4px; }
+  @keyframes pulse { 50% { background: var(--pink); } }
+  .none { grid-column: 1 / -1; font-size: 13px; margin: 2px; }
+  #tip { position: fixed; z-index: 50; width: 260px; background: var(--paper); color: var(--ink); border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); padding: 8px 10px; font-size: 13.5px; line-height: 1.35; pointer-events: none; }
+  #tip b { display: block; font: 700 15px/1.2 var(--head); border-bottom: 2px solid var(--ink); padding-bottom: 3px; margin-bottom: 4px; }
+  #tip span { white-space: pre-line; }
+  #tip i { display: block; margin-top: 6px; border-top: 1px dotted var(--ink); padding-top: 4px; white-space: pre-line; }
+  #tip small { display: block; white-space: pre-line; margin-top: 6px; font-size: 12.5px; background: var(--ink); color: var(--paper); padding: 3px 5px; }
+  #tip.inline { position: static; width: auto; margin: 8px; box-shadow: none; pointer-events: auto; }
+  #bought { margin: 0 8px 8px; }
+  #bought summary { font: 600 14px var(--head); cursor: pointer; list-style: none; display: flex; gap: 6px; align-items: center; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: "▸"; transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 2px dashed var(--ink); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .bought { max-width: 100%; font: 12.5px/1.1 var(--body); background: var(--paper); border: 2px solid var(--ink); padding: 2px 6px; border-radius: 4px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { border-style: dashed; }
+  .bought:hover, .bought.on { background: var(--ink); color: var(--paper); }
+  .bought:focus-visible { outline: 2px dashed var(--ink); outline-offset: 2px; }
+
+  /* The ending */
+  #ending .body { padding: 12px 16px 16px; }
+  #ending p { margin: 0 0 10px; }
+  #ending .sail { font-family: var(--head); font-weight: 700; text-align: center; font-size: 18px; border: 2px solid var(--ink); padding: 8px; background: repeating-linear-gradient(45deg, var(--paper) 0 6px, var(--pink) 6px 8px); }
+  #ending .rhyme { font-style: italic; }
+  #ending .stats { font-size: 14px; }
+  #ending .btns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+  #shareBtn, #againBtn { font: 600 15px/1 var(--head); padding: 8px 18px; background: var(--paper); color: var(--ink); border: 2px solid var(--ink); border-radius: 8px; cursor: pointer; }
+  #shareBtn { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink); }
+  #shareBtn:hover, #againBtn:hover { background: var(--mint); }
+  #shareBtn:active, #againBtn:active { background: var(--ink); color: var(--paper); }
+  @media (prefers-reduced-motion: reduce) { .up.new, .log.fresh, .gauge.rip { animation: none; } .meter .track b, #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="15" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header><div class="win"><div class="bar"><h1>Wilt Your Way to Wealth</h1></div></div></header>
+  <div class="game">
+    <main>
+      <div class="win">
+        <div class="bar"><h2>Tumble Hill</h2><span class="bar-r" id="stalkLbl">knee-high</span></div>
+        <div class="stagewrap">
+          <canvas id="stage" width="400" height="260" aria-label="A muddy kite on the hilltop. Drag across it to scratch the mud off."></canvas>
+          <div class="alert" id="alert" role="status" hidden></div>
+        </div>
+        <div class="status" id="status">
+          <span class="tipped" id="kiteBox" tabindex="0" aria-describedby="tip"><b id="kiteName">paper diamond</b> · <span id="kiteClean">0%</span> · grade <span id="kiteGrade">100%</span></span>
+          <span class="tipped gauge" id="gauge" tabindex="0" aria-describedby="tip"><span>scratch</span><i><b id="gaugeFill"></b></i><em id="gaugeWord">steady</em></span>
+          <span class="tipped" id="queueBox" tabindex="0" aria-describedby="tip">🪁 <b id="queueN">1</b> waiting · <span id="queueRate">1 / 6.5s</span></span>
+          <span class="tipped" id="wormBox" tabindex="0" aria-describedby="tip" hidden>🪱 <b id="wormN">0</b> · <span id="wormRate">0</span>/min</span>
+        </div>
+        <div class="meter" id="meter" tabindex="0" aria-describedby="tip">
+          <div class="lbl"><span>Seven figures: <b id="earned">$0</b> of $1,000,000 earned</span><span id="incRate"></span></div>
+          <div class="track"><b id="meterFill"></b></div>
+          <div class="goalnote" id="goalNote" hidden></div>
+          <button type="button" class="mac def" id="faceBtn" hidden>Face the gale</button>
+        </div>
+        <div class="log" id="log" aria-live="polite"></div>
+      </div>
+    </main>
+    <aside id="side">
+      <div class="win" id="xwin" hidden>
+        <div class="bar"><h2>Scrap Exchange</h2><span class="bar-r" id="cash">$0</span></div>
+        <div class="xrows" id="xrows"></div>
+        <div class="xnote" id="xnote"></div>
+      </div>
+      <div class="win" id="cwin">
+        <div class="bar"><h2>Catalogue <span id="afford"></span></h2></div>
+        <div id="shop"></div>
+        <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      </div>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" class="win" hidden>
+    <div class="bar"><h2>Read Me</h2></div>
+    <div class="body">
+      <p>Under the last of the mud, painted across the Tremendous in letters a yard high:</p>
+      <p class="sail">THANK YOU, FLOWER! SAME AGAIN NEXT YEAR? · L.K.C.</p>
+      <p><b>L.K.C.</b> is the Lowmarsh Kite Club. Every autumn they fly their old kites at Tumble Hill on purpose, because the Tramontane always carries them up, and buy the clean scrap back off the Exchange to build new ones. New silk is expensive. Recycled silk, graded by a flower, is not.</p>
+      <p>All of them are coming up the hill now, with this year's kites, to sit in <span id="chairWord">the folding chairs</span>. They would like to hear the seminar.</p>
+      <p class="rhyme">“I knew they would come. It was all in my vision. / Take notes, little ones: wilting's a decision.”</p>
+      <p class="stats" id="endStats"></p>
+      <div class="btns"><button id="shareBtn" type="button">Share result</button></div>
+    </div>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const DEBUG = location.search.includes('debug');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const INK = '#74569b', PAPER = '#f7ffae', PINK = '#ffb3cb', MINT = '#96fbc7', THISTLE = '#d8bfd8';
+
+// ---------- Save ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:15:save';
+const fresh = E.newState();
+let S = fresh;
+try {
+  const raw = localStorage.getItem(KEY);
+  if (raw) {
+    const got = JSON.parse(raw);
+    S = Object.assign(E.newState(), got);
+    S.lv = Object.assign(fresh.lv, got.lv || {});
+    S.inv = Object.assign(E.newState().inv, got.inv || {});
+    const mk = E.newState().mk; for (const m of E.MAT_IDS) mk[m] = Object.assign(mk[m], (got.mk || {})[m] || {}); S.mk = mk;
+  }
+} catch (e) {}
+const save = () => { S.lastSeen = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound ----------
+const A = createAudio({ sfxTrim: 1, musicTrim: 8 });
+const F = scale('lydian', 65);          // F lydian, F4 root: every effect sits on the music's scale
+let scratchN = 0, lastScratchSnd = 0;
+const sfx = {
+  scratch() { A.noiseHit('shaker', { vol: 0.07, dur: 0.05 }); },
+  reveal(i) { A.tone({ type: 'pluck', freq: F(4 + (i % 8)), dur: 0.08, vol: 0.12, cutoff: 2600 }); },
+  tear() { A.noiseHit('whoosh', { vol: 0.16, dur: 0.18 }); A.tone({ type: 'triangle', freq: F(-3), glide: 0.7, dur: 0.12, vol: 0.12, cutoff: 900 }); },
+  recycle() { [0, 2, 4, 7].forEach((d, i) => A.tone({ type: 'bell', freq: F(7 + d), dur: 0.16, vol: 0.13, at: A.now + i * 0.07, cutoff: 3200 })); },
+  wormDone() { [0, 4].forEach((d, i) => A.tone({ type: 'bell', freq: F(9 + d), dur: 0.12, vol: 0.08, at: A.now + i * 0.08, cutoff: 3000 })); },
+  sell(n) { A.tone({ type: 'bell', freq: F(11 + (n % 3)), dur: 0.1, vol: 0.14, cutoff: 3400 }); A.tone({ type: 'bell', freq: F(14 + (n % 3)), dur: 0.14, vol: 0.12, at: A.now + 0.07, cutoff: 3400 }); },
+  coin() { A.tone({ type: 'bell', freq: F(12), dur: 0.08, vol: 0.07, cutoff: 3000 }); },
+  buy() { [0, 2, 4, 6].forEach((d, i) => A.tone({ type: 'keys', freq: F(4 + d), dur: 0.12, vol: 0.12, at: A.now + i * 0.06, cutoff: 2800 })); },
+  stalk() { [0, 2, 4, 6, 7, 9].forEach((d, i) => A.tone({ type: 'bell', freq: F(3 + d), dur: 0.22, vol: 0.13, at: A.now + i * 0.09, cutoff: 3200 })); },
+  unlock() { A.tone({ type: 'bell', freq: F(10), dur: 0.12, vol: 0.1, cutoff: 3200 }); A.tone({ type: 'bell', freq: F(13), dur: 0.2, vol: 0.09, at: A.now + 0.1, cutoff: 3200 }); },
+  alert() { A.tone({ type: 'sine', freq: F(7), dur: 0.12, vol: 0.18 }); A.tone({ type: 'sine', freq: F(3), dur: 0.2, vol: 0.16, at: A.now + 0.14 }); },
+  gust() { A.noiseHit('whoosh', { vol: 0.2, dur: 1.2 }); },
+  deny() { A.tone({ type: 'triangle', freq: F(-4), dur: 0.08, vol: 0.12 }); },
+  finale() {
+    [0, 2, 4, 6, 7, 9, 11, 14].forEach((d, i) => A.tone({ type: 'bell', freq: F(d), dur: 0.4, vol: 0.13, at: A.now + i * 0.12, cutoff: 3200 }));
+    [0, 4, 7].forEach(d => A.tone({ type: 'pad', freq: F(d - 7), dur: 2.4, vol: 0.05, attack: 0.4, release: 1.6, at: A.now + 1, cutoff: 1400 }));
+  },
+};
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'gust'], S: () => S, E, dbg: () => ({ gale, ptr }) };
+
+// ---------- Music: the game owns playback; music.mjs arranges the composed pads per phase ----------
+const musicKey = () => S.ended ? 'ending' : S.show ? 'gale' : 'hill' + Math.min(3, S.tier);
+let music = null, soundtrack = null, lastKey = musicKey();
+function song() { soundtrack ||= createSoundtrack(music.strudel); return soundtrack(musicKey()); }
+createMusic(A, { song }).then(m => { music = m; music.update(); if (DEBUG) Object.assign(window.__game, { music: m }); }).catch(e => console.warn('music', e));
+
+// ---------- Drawing kit: 1-bit, with ordered dither ----------
+const W = 400, H = 260;
+const stage = $('stage'), ctx = stage.getContext('2d');
+const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+const pats = {};
+function dither(level, color = INK, bg = null) {
+  const k = `${level}|${color}|${bg}`;
+  if (pats[k]) return pats[k];
+  const c = Sprites.canvas(4, 4), g = c.getContext('2d');
+  if (bg) { g.fillStyle = bg; g.fillRect(0, 0, 4, 4); }
+  g.fillStyle = color;
+  for (let i = 0; i < 16; i++) if (BAYER[i] < level) g.fillRect(i % 4, i >> 2, 1, 1);
+  return (pats[k] = ctx.createPattern(c, 'repeat'));
+}
+function stripes(color = INK, bg = PAPER, gap = 4) {
+  const k = `s${color}${bg}${gap}`;
+  if (pats[k]) return pats[k];
+  const c = Sprites.canvas(gap, gap), g = c.getContext('2d');
+  g.fillStyle = bg; g.fillRect(0, 0, gap, gap); g.fillStyle = color;
+  for (let i = 0; i < gap; i++) g.fillRect(i, gap - 1 - i, 1, 1);
+  return (pats[k] = ctx.createPattern(c, 'repeat'));
+}
+function grid(color = INK, bg = PAPER, gap = 5) {
+  const k = `g${color}${bg}${gap}`;
+  if (pats[k]) return pats[k];
+  const c = Sprites.canvas(gap, gap), g = c.getContext('2d');
+  g.fillStyle = bg; g.fillRect(0, 0, gap, gap); g.fillStyle = color; g.fillRect(0, 0, gap, 1); g.fillRect(0, 0, 1, gap);
+  return (pats[k] = ctx.createPattern(c, 'repeat'));
+}
+const poly = (g, pts) => { g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); };
+// A crisp 1-pixel line (Bresenham), so nothing gets antialiased.
+function line(g, x0, y0, x1, y1, color = INK, w = 1) {
+  x0 = Math.round(x0); y0 = Math.round(y0); x1 = Math.round(x1); y1 = Math.round(y1);
+  const dx = Math.abs(x1 - x0), dy = -Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+  let e = dx + dy; g.fillStyle = color;
+  for (;;) { g.fillRect(x0 - (w >> 1), y0 - (w >> 1), w, w); if (x0 === x1 && y0 === y1) break; const e2 = 2 * e; if (e2 >= dy) { e += dy; x0 += sx; } if (e2 <= dx) { e += dx; y0 += sy; } }
+}
+// Threshold any canvas to hard pixels of one colour (text, curves).
+function harden(c, color = INK) {
+  const g = c.getContext('2d'), img = g.getImageData(0, 0, c.width, c.height), d = img.data;
+  const [r, gg, b] = [1, 3, 5].map(i => parseInt(color.slice(i, i + 2), 16));
+  for (let i = 0; i < d.length; i += 4) { if (d[i + 3] > 110) { d[i] = r; d[i + 1] = gg; d[i + 2] = b; d[i + 3] = 255; } else d[i + 3] = 0; }
+  g.putImageData(img, 0, 0); return c;
+}
+function textSprite(txt, size, color = INK, font = 'Pixelify Sans') {
+  const c = Sprites.canvas(1, 1), g0 = c.getContext('2d');
+  g0.font = `700 ${size}px "${font}"`;
+  const w = Math.ceil(g0.measureText(txt).width) + 4, h = Math.ceil(size * 1.3);
+  const t = Sprites.canvas(w, h), g = t.getContext('2d');
+  g.font = `700 ${size}px "${font}"`; g.textBaseline = 'top'; g.fillStyle = color; g.fillText(txt, 2, 1);
+  return harden(t, color);
+}
+
+// ---------- Sprites ----------
+// The flower's head: a wilted rose hanging face-down, looking at the kite it's scratching.
+const HEAD = Sprites.register('flower head', Sprites.pixel(`
+  .....kk.kk.....
+  ....kgkkgk.....
+  ...kkkggkkk....
+  ..kpppkkppppk..
+  .kppwppppkpppk.
+  .kpwpppkpppppk.
+  kppppkpppppwppk
+  kpppkpppppppppk
+  kppppppkpppkppk
+  .kpppppppkpppk.
+  .kpkkppppppkpk.
+  ..kppkppppkppk.
+  ..kpppkkkkpppk.
+  ...kpppppppk...
+  ....kkkkkkk....`, { k: INK, p: PINK, w: PAPER, g: INK }));
+const HEAD2 = Sprites.scaleUp(HEAD, 2);
+const LEAF = Sprites.register('leaf', Sprites.pixel(`
+  ....kkkk
+  ..kkmmmk
+  .kmmkmk.
+  kmmkmmk.
+  kkkkkk..`, { k: INK, m: MINT }));
+const LEAF2 = Sprites.scaleUp(LEAF, 2);
+const WORM = [
+  Sprites.register('worm a', Sprites.pixel(`
+    ..kkk.....
+    .kpppkkkk.
+    kpkpppppppk
+    .kk.kkkkk.`, { k: INK, p: PINK })),
+  Sprites.register('worm b', Sprites.pixel(`
+    ..kkk..kk.
+    .kpppkkppk
+    kpkpppppk.
+    .kk.kkkk..`, { k: INK, p: PINK })),
+];
+const ALERT_ICON = Sprites.register('alert icon', Sprites.pixel(`
+  .......kk.......
+  ......kwwk......
+  ......kwwk......
+  .....kwwwwk.....
+  .....kwkkwk.....
+  ....kwwkkwwk....
+  ....kwwkkwwk....
+  ...kwwwkkwwwk...
+  ...kwwwkkwwwk...
+  ..kwwwwkkwwwwk..
+  ..kwwwwwwwwwwk..
+  .kwwwwwkkwwwwwk.
+  .kwwwwwkkwwwwwk.
+  kwwwwwwwwwwwwwwk
+  kkkkkkkkkkkkkkkk`, { k: INK, w: PAPER }));
+const FIRE_ICON = Sprites.register('fireball icon', Sprites.pixel(`
+  ...........kk...
+  ..........kppk..
+  ........kkppppk.
+  ......kkwpppppk.
+  ....kkwwwppppk..
+  ...kwwwwpppkk...
+  ..kwwwwwppk.....
+  .kwwkwwpkk......
+  .kwkwwwk........
+  kwwwkwk.........
+  kwkwwk..........
+  .kkkk...........`, { k: INK, w: PAPER, p: PINK }));
+const BUYER = Sprites.register('kite club kid', Sprites.pixel(`
+  ..kkk..
+  .kpppk.
+  .kpkpk.
+  .kpppk.
+  ..kkk..
+  .kwwwk.
+  kwwwwwk
+  .kwwwk.
+  .k...k.`, { k: INK, p: PINK, w: PAPER }));
+
+// Fetched source shapes (Iconify), recoloured and pixelated to 1-bit ink so they match the hill.
+const ICONS = {};
+async function loadIcons() {
+  const list = { snail: './art/mdi--snail.svg', magpie: './art/mdi--bird.svg', rooster: './art/fluent-emoji-high-contrast--rooster.svg', chair: './art/material-symbols--chair.svg' };
+  await Promise.all(Object.entries(list).map(async ([k, f]) => {
+    try {
+      const svg = await (await fetch(f)).text();
+      const big = await Sprites.svgToCanvas(Sprites.recolor(svg, INK), 96);
+      const px = Sprites.pixelate(big, { snail: 16, magpie: 16, rooster: 14, chair: 10 }[k], [INK]);
+      ICONS[k] = Sprites.register(k, k === 'chair' ? px : Sprites.outline(px, PAPER, 1));
+    } catch (e) { console.warn('icon', k, e); }
+  }));
+}
+
+// ---------- Kites: each drawn on its own canvas (the board), with a mask of where the mud goes ----------
+const CX = 170, CY = 132;
+const KITE_DRAW = {
+  diamond(g) {
+    const pts = [[CX, CY - 100], [CX + 75, CY - 25], [CX, CY + 100], [CX - 75, CY - 25]];
+    poly(g, pts); g.fillStyle = dither(2, INK, PAPER); g.fill();
+    poly(g, [[CX, CY - 100], [CX + 75, CY - 25], [CX, CY - 25]]); g.fillStyle = PINK; g.fill();
+    poly(g, [[CX, CY + 100], [CX - 75, CY - 25], [CX, CY - 25]]); g.fillStyle = PINK; g.fill();
+    pts.forEach((p, i) => { const q = pts[(i + 1) % 4]; line(g, p[0], p[1], q[0], q[1], INK, 2); });
+    line(g, CX, CY - 100, CX, CY + 100, INK, 2); line(g, CX - 75, CY - 25, CX + 75, CY - 25, INK, 2);
+  },
+  delta(g) {
+    const pts = [[CX - 115, CY - 60], [CX + 115, CY - 60], [CX, CY + 90]];
+    poly(g, pts); g.fillStyle = stripes(PINK, PAPER, 6); g.fill();
+    poly(g, [[CX - 40, CY - 60], [CX + 40, CY - 60], [CX, CY + 90]]); g.fillStyle = stripes(INK, PAPER, 6); g.fill();
+    pts.forEach((p, i) => { const q = pts[(i + 1) % 3]; line(g, p[0], p[1], q[0], q[1], INK, 2); });
+    line(g, CX, CY - 60, CX, CY + 90, INK, 3); line(g, CX - 80, CY - 34, CX + 80, CY - 34, INK, 2);
+  },
+  box(g) {
+    const x = CX - 60, y = CY - 78, w = 120, h = 155;
+    g.fillStyle = PAPER; g.fillRect(x, y, w, h);
+    g.fillStyle = stripes(PINK, PAPER, 5); g.fillRect(x, y, w, 48); g.fillRect(x, y + h - 48, w, 48);
+    g.fillStyle = dither(5, INK, PAPER); g.fillRect(x, y + 48, w, h - 96);
+    g.fillStyle = INK; g.fillRect(x, y, w, 2); g.fillRect(x, y + h - 2, w, 2); g.fillRect(x, y, 2, h); g.fillRect(x + w - 2, y, 2, h);
+    for (const yy of [y + 47, y + h - 49]) g.fillRect(x, yy, w, 2);
+    for (const xx of [x + 30, x + 60, x + 90]) g.fillRect(xx, y, 2, h);
+  },
+  stunt(g) {
+    const pts = [[CX - 150, CY - 30], [CX, CY - 75], [CX + 150, CY - 30], [CX, CY + 55]];
+    poly(g, pts); g.fillStyle = grid(INK, PAPER, 6); g.fill();
+    poly(g, [[CX - 150, CY - 30], [CX - 70, CY - 54], [CX - 40, CY + 22]]); g.fillStyle = PINK; g.fill();
+    poly(g, [[CX + 150, CY - 30], [CX + 70, CY - 54], [CX + 40, CY + 22]]); g.fillStyle = MINT; g.fill();
+    pts.forEach((p, i) => { const q = pts[(i + 1) % 4]; line(g, p[0], p[1], q[0], q[1], INK, 2); });
+    line(g, CX, CY - 75, CX, CY + 55, INK, 2); line(g, CX - 112, CY - 20, CX + 112, CY - 20, INK, 2);
+  },
+  dragon(g) {
+    g.beginPath(); g.ellipse(CX, CY, 95, 78, 0, 0, Math.PI * 2); g.fillStyle = dither(4, INK, PINK); g.fill();
+    g.beginPath(); g.ellipse(CX, CY, 70, 56, 0, 0, Math.PI * 2); g.fillStyle = PAPER; g.fill();
+    // gold thread: a checker band
+    g.beginPath(); g.ellipse(CX, CY, 82, 67, 0, 0, Math.PI * 2); g.lineWidth = 6; g.strokeStyle = dither(8, INK, MINT); g.stroke();
+    // the face
+    g.fillStyle = INK;
+    for (const s of [-1, 1]) {
+      g.beginPath(); g.ellipse(CX + s * 28, CY - 14, 13, 10, 0, 0, Math.PI * 2); g.fill();
+      g.fillStyle = PAPER; g.fillRect(CX + s * 28 - 3, CY - 18, 5, 5); g.fillStyle = INK;
+      poly(g, [[CX + s * 40, CY - 50], [CX + s * 62, CY - 92], [CX + s * 58, CY - 44]]); g.fill();
+    }
+    g.fillRect(CX - 30, CY + 18, 60, 4); for (let i = -26; i <= 22; i += 12) { poly(g, [[CX + i, CY + 22], [CX + i + 4, CY + 30], [CX + i + 8, CY + 22]]); g.fill(); }
+    g.fillRect(CX - 8, CY + 2, 4, 6); g.fillRect(CX + 4, CY + 2, 4, 6);
+  },
+  tremendous(g) {
+    const x = 30, y = 46, w = 340, h = 150;
+    g.fillStyle = stripes(PINK, PAPER, 8); g.fillRect(x, y, w, h);
+    poly(g, [[x, y], [x - 24, y + h / 2], [x, y + h]]); g.fill();
+    poly(g, [[x + w, y], [x + w + 24, y + h / 2], [x + w, y + h]]); g.fill();
+    g.fillStyle = PAPER; g.fillRect(x + 14, y + 22, w - 28, h - 44);
+    g.fillStyle = INK; g.fillRect(x, y, w, 3); g.fillRect(x, y + h - 3, w, 3); g.fillRect(x, y, 3, h); g.fillRect(x + w - 3, y, 3, h);
+    g.fillRect(x + 14, y + 22, w - 28, 2); g.fillRect(x + 14, y + h - 24, w - 28, 2);
+    const t1 = textSprite('THANK YOU, FLOWER!', 22), t2 = textSprite('SAME AGAIN NEXT YEAR?', 16), t3 = textSprite('· L.K.C. ·', 14);
+    g.drawImage(t1, Math.round(W / 2 - 30 - t1.width / 2 + 30), y + 34);
+    g.drawImage(t2, Math.round(W / 2 - t2.width / 2), y + 70);
+    g.drawImage(t3, Math.round(W / 2 - t3.width / 2), y + 98);
+  },
+};
+function tail(g, type) {
+  if (type === 'tremendous') return;
+  const start = { diamond: [CX, CY + 100], delta: [CX, CY + 90], box: [CX + 60, CY + 77], stunt: [CX, CY + 55], dragon: [CX + 20, CY + 76] }[type];
+  let [x, y] = start;
+  for (let i = 0; i < 9; i++) {
+    const nx = x - 12 + Math.sin(i * 1.3) * 6, ny = y + 8;
+    if (ny > H - 4) break;
+    line(g, x, y, nx, ny, INK, 1);
+    if (i % 2) { g.fillStyle = i % 4 === 1 ? PINK : MINT; poly(g, [[nx - 5, ny - 3], [nx + 5, ny + 3], [nx + 5, ny - 3], [nx - 5, ny + 3]]); g.fill(); line(g, nx - 5, ny - 3, nx + 5, ny + 3); line(g, nx + 5, ny - 3, nx - 5, ny + 3); }
+    x = nx; y = ny;
+  }
+}
+const CELL = 2, GW = W / CELL, GH = H / CELL;
+let board = null; // { type, kite (canvas), mud (canvas), mask Uint8Array (1 mud, 2 clean), total, cleaned, worms }
+function makeBoard(type) {
+  const kite = Sprites.canvas(W, H), g = kite.getContext('2d');
+  KITE_DRAW[type](g);
+  const img = g.getImageData(0, 0, W, H).data;
+  const mask = new Uint8Array(GW * GH);
+  let total = 0;
+  for (let gy = 0; gy < GH; gy++) for (let gx = 0; gx < GW; gx++) {
+    if (img[((gy * CELL + 1) * W + gx * CELL + 1) * 4 + 3] > 0) { mask[gy * GW + gx] = 1; total++; }
+  }
+  tail(g, type);
+  const mud = Sprites.canvas(W, H), m = mud.getContext('2d');
+  // Mud: dense dither with darker clumps and a few stones; 1-bit throughout.
+  const seed = Math.random() * 100;
+  for (let gy = 0; gy < GH; gy++) for (let gx = 0; gx < GW; gx++) {
+    if (!mask[gy * GW + gx]) continue;
+    const n = Math.sin(gx * 0.21 + seed) + Math.sin(gy * 0.17 - seed * 0.7) + Math.sin((gx + gy) * 0.09 + seed * 1.3);
+    const lv = n > 1.2 ? 16 : n > 0.2 ? 13 : 10;
+    for (let py = 0; py < CELL; py++) for (let px = 0; px < CELL; px++) {
+      const x = gx * CELL + px, y = gy * CELL + py;
+      m.fillStyle = BAYER[(y % 4) * 4 + (x % 4)] < lv ? INK : THISTLE;
+      m.fillRect(x, y, 1, 1);
+    }
+  }
+  board = { type, kite, mud, mctx: m, mask, total, cleaned: 0, enter: reduced ? 1 : 0, worms: [], tears: [] };
+  // restore progress from the save (the cells come back in random order: it's mud)
+  const k = S.show || S.cur;
+  if (k && k.clean > 0) clearCells(Math.floor(k.clean * total), null, true);
+  return board;
+}
+// Clears muddy cells: within a circle (scratch) or, with no circle, n cells at random (restore).
+function clearCell(i) {
+  const b = board; if (b.mask[i] !== 1) return false;
+  b.mask[i] = 2; b.cleaned++;
+  b.mctx.clearRect((i % GW) * CELL, Math.floor(i / GW) * CELL, CELL, CELL);
+  return true;
+}
+function clearCircle(x, y, r) {
+  let n = 0; const b = board; if (!b) return 0;
+  const gx0 = Math.max(0, Math.floor((x - r) / CELL)), gx1 = Math.min(GW - 1, Math.ceil((x + r) / CELL));
+  const gy0 = Math.max(0, Math.floor((y - r) / CELL)), gy1 = Math.min(GH - 1, Math.ceil((y + r) / CELL));
+  for (let gy = gy0; gy <= gy1; gy++) for (let gx = gx0; gx <= gx1; gx++) {
+    const dx = gx * CELL + 1 - x, dy = gy * CELL + 1 - y;
+    if (dx * dx + dy * dy <= r * r && clearCell(gy * GW + gx)) n++;
+  }
+  return n;
+}
+function clearCells(n) {
+  const b = board, left = [];
+  for (let i = 0; i < b.mask.length; i++) if (b.mask[i] === 1) left.push(i);
+  for (let k = 0; k < n && left.length; k++) { const j = Math.floor(Math.random() * left.length); clearCell(left[j]); left[j] = left[left.length - 1]; left.pop(); }
+}
+function remud(cx, cy, r) {
+  const b = board; let n = 0;
+  for (let gy = Math.max(0, Math.floor((cy - r) / CELL)); gy <= Math.min(GH - 1, (cy + r) / CELL); gy++)
+    for (let gx = Math.max(0, Math.floor((cx - r) / CELL)); gx <= Math.min(GW - 1, (cx + r) / CELL); gx++) {
+      const i = gy * GW + gx, dx = gx * CELL - cx, dy = gy * CELL - cy;
+      if (b.mask[i] !== 2 || dx * dx + dy * dy > r * r) continue;
+      b.mask[i] = 1; b.cleaned--; n++;
+      for (let py = 0; py < CELL; py++) for (let px = 0; px < CELL; px++) {
+        const x = gx * CELL + px, y = gy * CELL + py;
+        b.mctx.fillStyle = BAYER[(y % 4) * 4 + (x % 4)] < 13 ? INK : THISTLE; b.mctx.fillRect(x, y, 1, 1);
+      }
+    }
+  return n;
+}
+function drawTear(x, y) {
+  // a jagged slit through the sail, with a flap of torn paper beside it
+  const g = board.kite.getContext('2d'), a = Math.random() * Math.PI, ca = Math.cos(a), sa = Math.sin(a);
+  const top = [], bot = [];
+  for (let i = 0; i <= 6; i++) {
+    const u = (i - 3) * 3.4, w = (3 - Math.abs(i - 3)) * 0.9 + (i % 2 ? 1.2 : 0);
+    top.push([x + ca * u - sa * w, y + sa * u + ca * w]); bot.push([x + ca * u + sa * (w * 0.6), y + sa * u - ca * (w * 0.6)]);
+  }
+  poly(g, top.concat(bot.reverse())); g.fillStyle = INK; g.fill();
+  poly(g, [top[2], top[3], [top[3][0] - sa * 5, top[3][1] + ca * 5]]); g.fillStyle = PAPER; g.fill();
+  line(g, top[2][0], top[2][1], top[3][0] - sa * 5, top[3][1] + ca * 5, INK);
+}
+
+// ---------- The scene ----------
+const STALK_H = [52, 72, 92, 112, 132];
+const FX = 345, GROUND = 236;
+function hillY(x) { return GROUND - 22 * Math.exp(-(((x - 330) / 120) ** 2)) + 4; }
+let skyCache = null;
+function sky() {
+  if (skyCache) return skyCache;
+  const c = Sprites.canvas(W, H), g = c.getContext('2d');
+  g.fillStyle = PAPER; g.fillRect(0, 0, W, H);
+  // upper sky: a soft dithered band
+  for (let y = 0; y < 60; y++) { g.fillStyle = dither(Math.max(0, 4 - Math.floor(y / 15)), THISTLE, null); g.fillRect(0, y, W, 1); }
+  // clouds
+  for (const [x, y, s] of [[60, 34, 1], [250, 22, 1.3], [330, 60, 0.8]]) {
+    g.fillStyle = PAPER; for (const [dx, dy, r] of [[0, 0, 12], [14, -5, 14], [30, 0, 11]]) { g.beginPath(); g.ellipse(x + dx * s, y + dy * s, r * s, r * s * 0.7, 0, 0, 7); g.fill(); }
+    g.fillStyle = INK; g.fillRect(x - 10 * s, y + 7 * s, 50 * s, 1);
+  }
+  // distant valley line and the hill
+  g.fillStyle = dither(3, INK, null);
+  g.beginPath(); g.moveTo(0, 214); for (let x = 0; x <= W; x += 4) g.lineTo(x, 214 - 8 * Math.sin(x / 50) - 4 * Math.sin(x / 13)); g.lineTo(W, H); g.lineTo(0, H); g.fill();
+  g.fillStyle = dither(7, INK, PAPER);
+  g.beginPath(); g.moveTo(0, H); for (let x = 0; x <= W; x += 2) g.lineTo(x, hillY(x)); g.lineTo(W, H); g.fill();
+  for (let x = 0; x <= W; x++) { g.fillStyle = INK; g.fillRect(x, Math.round(hillY(x)), 1, 2); }
+  // tufts
+  for (let x = 6; x < W; x += 17) { const y = Math.round(hillY(x)); line(g, x, y, x - 2, y - 4); line(g, x + 2, y, x + 3, y - 5); }
+  return (skyCache = c);
+}
+function drawFlower(g, t, tier, happy) {
+  const h = STALK_H[tier], base = [FX, Math.round(hillY(FX))];
+  const sway = reduced ? 0 : Math.sin(t * 0.9) * 2;
+  // stalk: up, then bowed over to the left (it's wilted), head hanging face-down
+  const top = [FX + 4 + sway, base[1] - h], tipx = FX - 22 + sway * 1.5, tipy = base[1] - h + 20;
+  let px = base[0], py = base[1];
+  for (let i = 1; i <= 24; i++) {
+    const u = i / 24;
+    const x = (1 - u) ** 2 * base[0] + 2 * (1 - u) * u * top[0] + u * u * tipx;
+    const y = (1 - u) ** 2 * base[1] + 2 * (1 - u) * u * (top[1] - 18) + u * u * tipy;
+    line(g, px, py, x, y, INK, 3); px = x; py = y;
+  }
+  for (let i = 0; i < tier + 2; i++) {
+    const yy = base[1] - 12 - i * (h - 26) / (tier + 1.5), xx = FX + (i % 2 ? 2 : -7) + sway * (1 - (base[1] - yy) / h * 0.4);
+    g.save(); if (i % 2) { g.translate(xx + 18, yy); g.scale(-1, 1); g.drawImage(LEAF2, 0, 0); } else g.drawImage(LEAF2, xx - 12, yy); g.restore();
+  }
+  const hx = Math.round(px - 16), hy = Math.round(py - 4);
+  g.drawImage(HEAD2, hx, hy);
+  // face: closed, serene eyes and a guru's smile (bigger at the end)
+  g.fillStyle = INK; g.fillRect(hx + 7, hy + 31, 4, 2); g.fillRect(hx + 18, hy + 31, 4, 2);
+  g.fillRect(hx + 11, hy + 35 + (happy ? 1 : 0), 7, 2); if (happy) { g.fillRect(hx + 9, hy + 34, 2, 2); g.fillRect(hx + 18, hy + 34, 2, 2); }
+  // a headset microphone (it's a seminar)
+  line(g, hx + 27, hy + 18, hx + 31, hy + 30, INK, 2); line(g, hx + 31, hy + 30, hx + 22, hy + 37, INK, 2); g.fillRect(hx + 19, hy + 35, 4, 4);
+  return { hx, hy };
+}
+function drawQueue(g, t) {
+  const n = Math.min(S.queue, 8);
+  for (let i = 0; i < n; i++) {
+    const x = 18 + (i % 4) * 22 + (reduced ? 0 : Math.sin(t * 1.4 + i) * 3), y = 18 + Math.floor(i / 4) * 24 + (reduced ? 0 : Math.cos(t * 1.1 + i * 2) * 2);
+    poly(g, [[x, y - 8], [x + 6, y - 2], [x, y + 8], [x - 6, y - 2]]); g.fillStyle = i % 2 ? PINK : dither(10, INK, THISTLE); g.fill();
+    line(g, x, y - 8, x + 6, y - 2); line(g, x + 6, y - 2, x, y + 8); line(g, x, y + 8, x - 6, y - 2); line(g, x - 6, y - 2, x, y - 8);
+    line(g, x, y + 8, x - 3, y + 14); line(g, x - 3, y + 14, x + 1, y + 19);
+  }
+  if (S.queue > 8) g.drawImage(textSprite(`+${S.queue - 8}`, 11), 104, 38);
+}
+// Wind lines across the sky: in gusts, during the gale, on the fireball's way in.
+function drawWind(g, t, k) {
+  for (let i = 0; i < k; i++) {
+    const y = 20 + ((i * 47) % 170), x = ((t * 260 + i * 97) % (W + 120)) - 60;
+    line(g, x, y, x + 34, y); line(g, x + 34, y, x + 40, y - 3);
+  }
+}
+
+// ---------- Scratching ----------
+const ptr = { on: false, x: -99, y: -99, lx: 0, ly: 0, lt: 0, speed: 0, inside: false, lastTear: 0, touch: false };
+function toStage(e) { const r = stage.getBoundingClientRect(); return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height]; }
+stage.addEventListener('pointerdown', e => {
+  e.preventDefault(); stage.setPointerCapture(e.pointerId);
+  const [x, y] = toStage(e); Object.assign(ptr, { on: true, x, y, lx: x, ly: y, lt: performance.now(), speed: 0, touch: e.pointerType !== 'mouse' });
+  scratchAt(x, y, x, y);
+});
+stage.addEventListener('pointermove', e => {
+  const [x, y] = toStage(e), now = performance.now();
+  ptr.inside = true; ptr.touch = e.pointerType !== 'mouse';
+  if (ptr.on) {
+    const dt = Math.max(1, now - ptr.lt), v = Math.hypot(x - ptr.lx, y - ptr.ly) / dt * 1000;
+    ptr.speed = ptr.speed * 0.55 + v * 0.45;
+    scratchAt(ptr.lx, ptr.ly, x, y);
+    ptr.lx = x; ptr.ly = y; ptr.lt = now;
+  }
+  ptr.x = x; ptr.y = y;
+});
+const up = () => { ptr.on = false; };
+stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
+stage.addEventListener('pointerleave', () => { ptr.inside = false; if (!ptr.on) ptr.x = -99; });
+
+function curKite() { return S.show || S.cur; }
+function scratchAt(x0, y0, x1, y1) {
+  const k = curKite();
+  if (!board || !k || S.ended || board.enter < 1) return;
+  const r = E.radius(S) * (S.show ? 1.15 : 1);
+  const steps = Math.max(1, Math.ceil(Math.hypot(x1 - x0, y1 - y0) / (r * 0.5)));
+  let n = 0;
+  for (let i = 1; i <= steps; i++) n += clearCircle(x0 + (x1 - x0) * i / steps, y0 + (y1 - y0) * i / steps, r);
+  const now = performance.now();
+  // Too fast, and a droopy petal goes straight through the sail.
+  const limit = E.tearSpeed(S) * (S.show && gale.gust ? 0.35 : 1);
+  if (n > 0 && ptr.speed > limit && now - ptr.lastTear > 320) {
+    ptr.lastTear = now;
+    if (S.show) { S.show.grade = Math.max(0.3, S.show.grade - E.tearCost(S)); S.show.tears++; S.tears++; } else E.tear(S);
+    drawTear(x1, y1); sfx.tear(); $('gauge').classList.remove('rip'); void $('gauge').offsetWidth; $('gauge').classList.add('rip');
+    if (S.tears === 1 || Math.random() < 0.15) say(pick(TEAR_LINES), true);
+  }
+  if (n > 0) {
+    scratchN += n;
+    if (now - lastScratchSnd > 70) { lastScratchSnd = now; sfx.scratch(); }
+    const frac = board.cleaned / board.total;
+    const step = Math.floor(frac * 8);
+    if (step > (board.note ?? -1)) { board.note = step; if (step > 0) sfx.reveal(step); }
+    k.clean = frac;
+  }
+}
+
+// ---------- Worms: they eat the mud; the page clears real cells at the economy's rate ----------
+function wormsWork(dt) {
+  // In the gale the worms stay underground, holding on: the Tremendous is all yours.
+  const k = curKite(); if (!board || !k || board.enter < 1 || !S.wormN || S.show) return;
+  const rate = E.wormRate(S);
+  board.wbudget = (board.wbudget || 0) + rate * dt / (CELL * CELL);
+  const shown = Math.min(5, S.wormN);
+  while (board.worms.length < shown) { const x = CX + (Math.random() - 0.5) * 80, y = CY + (Math.random() - 0.5) * 80; board.worms.push({ x, y, tx: x, ty: y, f: 0, t: 0 }); }
+  const per = board.wbudget / shown;
+  for (const w of board.worms) {
+    // eat nearby mud, then wander toward more
+    let ate = 0, r = 3;
+    while (ate < per && r < 40) { ate += clearCircle(w.x, w.y, r); if (ate < per) r += 2; }
+    board.wbudget -= Math.min(per, ate);
+    if (ate < per * 0.5 || Math.hypot(w.tx - w.x, w.ty - w.y) < 3) {
+      for (let tries = 0; tries < 30; tries++) { const i = Math.floor(Math.random() * board.mask.length); if (board.mask[i] === 1) { w.tx = (i % GW) * CELL; w.ty = Math.floor(i / GW) * CELL; break; } }
+    }
+    const d = Math.hypot(w.tx - w.x, w.ty - w.y) || 1, sp = Math.min(d, (20 + per * 2) * dt * 4);
+    w.x += (w.tx - w.x) / d * sp; w.y += (w.ty - w.y) / d * sp; w.t += dt; w.dir = w.tx < w.x ? -1 : 1;
+  }
+  board.wbudget = Math.min(board.wbudget, 4000);
+  k.clean = board.cleaned / board.total;
+}
+
+// ---------- Log ----------
+const logEl = $('log');
+let logT = 0;
+function say(text, rhyme = false) {
+  logEl.textContent = rhyme ? `🥀 “${text}”` : text;
+  logEl.classList.toggle('rhyme', rhyme);
+  logEl.classList.remove('fresh'); void logEl.offsetWidth; if (!reduced) logEl.classList.add('fresh');
+  logT = 0;
+}
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const TEAR_LINES = [
+  'A tear in the sail is a lesson in disguise. / Slow down, little petal. Be gentle. Be wise.',
+  'Rrrip. That one’s on me, but I’ll take it in stride: / a tear is just room for the light to get inside.',
+  'I’m not clumsy, I’m bold. I just moved with conviction. / (Next time, a bit slower. That’s my one prediction.)',
+];
+const RECYCLE_LINES = [
+  'Out of the mud and onto the market: / one person’s crash is another’s new target.',
+  'Every kite that comes down is a kite I can sell. / That isn’t a setback. That’s business. Oh, well.',
+  'Scratch off the failure and what do you find? / Silk, string and profit, and peace of mind.',
+  'I don’t see a crash. I see inventory. / And inventory, friends, is the start of a story.',
+  'The wind takes it down and I build it back up. / Abundance is simply a well-scratched cup.',
+];
+const LKC_LINES = [
+  'The buyer on the ticker is L.K.C. again. Every lot, every time.',
+  'L.K.C. paid a little over the asking price. No questions asked.',
+  'L.K.C. asked for the string in long lengths, if possible.',
+  'L.K.C. bought it all and left a thank-you note in crayon. The flower assumes it was for the seminar.',
+  'L.K.C. pays in exact change. Lots of small coins.',
+];
+const WORM_LINES = [
+  'The worms are at it under the mud. You can hear them, if you lean in.',
+  'A worm finishes a whole kite on its own and looks very pleased about it.',
+  'The worms eat the mud and the mud makes more worms. The flower calls it a pyramid. It is not a pyramid.',
+];
+const SNAIL_LINES = [
+  'The snail reports: L.K.C. pays in exact change.',
+  'The snail reports: L.K.C. smells faintly of glue.',
+  'The snail reports: L.K.C. is more than one person. Several. All of them short.',
+  'The snail reports: L.K.C. was seen carrying a lot of string down to Lowmarsh. The snail is still on the first hill.',
+];
+
+// ---------- Tooltips ----------
+let tipFor = null, tipMoved = 0;
+const explained = new Set();
+function tipWire(b, tipOf, act, { onceTouch = false } = {}) {
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, tipOf()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, tipOf()); });
+  b.addEventListener('blur', hideTip);
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  b.addEventListener('click', () => {
+    const t = tipOf();
+    // On touch the first tap shows what it does; the second does it (repeat buttons: only the first time).
+    if (b.dataset.touch && tipFor !== t.id && !(onceTouch && explained.has(t.group || t.id))) { showTip(b, t); explained.add(t.group || t.id); return; }
+    if (act) act();
+    if (tipFor) showTip(b, tipOf());
+  });
+}
+function showTip(b, it) {
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('i').textContent = it.joke || ''; tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || ''; tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  if (b.closest('aside') && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 12}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    let left = r.left, top = r.bottom + 8;
+    if (left + t.width > innerWidth - 8) left = innerWidth - t.width - 8;
+    if (top + t.height > innerHeight - 8) top = Math.max(8, r.top - t.height - 8);
+    tip.style.left = `${Math.max(8, left)}px`; tip.style.top = `${top}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .tipped, .bought, .sell, .meter')) hideTip(); });
+
+// ---------- Numbers for tooltips ----------
+const money = E.money, fmt = E.fmt;
+const tierKite = s => E.KITE_IDS[Math.min(4, s.tier)];
+const perMin = s => s.wormN ? E.wormRate(s) / E.kiteArea({ type: tierKite(s) }) * 60 : 0;
+const pm = x => x < 10 ? x.toFixed(1) : Math.round(x).toString();
+const secs = x => x < 10 ? x.toFixed(1) + 's' : Math.round(x) + 's';
+const with_ = (patch) => { const s = { ...S, lv: { ...S.lv }, up: { ...S.up }, ev: null }; patch(s); return s; };
+
+const STATUS_TIPS = {
+  kiteBox: () => {
+    const k = curKite();
+    const type = S.show ? 'the Tremendous' : k ? E.KITES[k.type].name : 'no kite yet';
+    return { id: 'kiteBox', name: S.show ? 'The Tremendous' : 'The kite on the board', desc: `Drag across it to scratch the mud off. At ${Math.round(E.DONE * 100)}% clean it is recycled into scrap, and every tear takes ${Math.round(E.tearCost(S) * 100)}% off its grade (and its scrap).`,
+      foot: `${type} · ${Math.round((k?.clean || 0) * 100)}% clean · grade ${Math.round((k?.grade ?? 1) * 100)}%${k && !S.show ? `\nworth about ${money(E.kiteValue(S, k.type) * k.grade)} at usual prices` : ''}` };
+  },
+  gauge: () => ({ id: 'gauge', name: 'Scratching speed', desc: 'How fast your petal is moving. Past the line, a droopy petal goes through the sail. Steady Stem moves the line.', foot: `tears above ${E.tearSpeed(S)} px/s${S.show ? ' · a third of that in a gust' : ''}\nscraper ${Math.round(E.radius(S) * 2)} px wide${S.ev?.id === 'dew' ? ' (dew!)' : ''}` }),
+  queueBox: () => ({ id: 'queueBox', name: 'Kites on the wind', desc: 'The Tramontane drops runaway kites on the hill. They wait in the air until the board is free. Snag Lines catch more of them.', foot: `one every ${secs(E.arriveEvery(S))} · room for ${E.queueCap(S)}` }),
+  wormBox: () => ({ id: 'wormBox', name: 'Earthworms', desc: 'They eat the mud off whatever is on the board, all on their own, and never tear anything.', foot: `${S.wormN} worms · about ${pm(perMin(S))} ${E.KITES[tierKite(S)].name}s a minute${S.ev?.id === 'rain' ? ' (drizzle: doubled)' : ''}` }),
+  meter: () => ({ id: 'meter', name: 'Seven figures', desc: 'Every dollar the Exchange has ever paid you. The seminar promises a million.', foot: `${money(S.earned)} of $1,000,000${S.tier < 4 ? '\nthe biggest kites fly cloud-high' : ''}` }),
+};
+for (const [id, f] of Object.entries(STATUS_TIPS)) tipWire($(id), f, null);
+
+// ---------- The Exchange ----------
+const xrows = $('xrows');
+const xEls = {};
+let sellN = 0, xSig = '';
+function sellTip(m) {
+  const q = S.inv[m], unit = E.price(S, m), d = E.depth(S, m);
+  return { id: 'sell:' + m, group: 'sell', name: `Sell ${E.MATS[m].name.toLowerCase()}`, desc: `Sells all you have. You are the Exchange’s only supplier: the more you sell at once, the further the price sags, and it climbs back in about ${E.RECOVER}s.`,
+    foot: `${fmt(q)} ${E.MATS[m].unit} → ${money(E.quote(S, m))}\nnow ${money(unit)} each · usually ${money(E.MATS[m].base)}\nthe price halves after ${fmt(d * Math.LN2)} ${E.MATS[m].unit}` };
+}
+function buildExchange() {
+  const mats = E.unlockedMats(S), sig = mats.join('|');
+  if (sig === xSig) return;
+  xSig = sig; xrows.innerHTML = '';
+  for (const m of mats) {
+    const row = document.createElement('div'); row.className = 'xrow';
+    row.innerHTML = `<div class="nm"><b>${E.MATS[m].name}</b><small></small></div><div class="pr"><span></span><small></small></div><canvas width="50" height="18"></canvas><button type="button" class="sell" aria-describedby="tip">Sell</button>`;
+    const btn = row.querySelector('.sell');
+    tipWire(btn, () => sellTip(m), () => doSell(m), { onceTouch: true });
+    xrows.append(row);
+    xEls[m] = { row, held: row.querySelector('.nm small'), pr: row.querySelector('.pr span'), arrow: row.querySelector('.pr small'), spark: row.querySelector('canvas'), btn };
+  }
+}
+function doSell(m) {
+  if (S.inv[m] < 0.5 || S.ended) { sfx.deny(); return; }
+  const q = S.inv[m], got = E.sell(S, m);
+  sfx.sell(sellN++);
+  $('xnote').textContent = `Sold ${fmt(q)} ${E.MATS[m].unit} of ${E.MATS[m].name.toLowerCase()} → L.K.C. · ${money(got)}`;
+  if (sellN === 1) say('Sold to someone called L.K.C. The flower is delighted to have a client.');
+  else if (Math.random() < 0.08) say(pick(LKC_LINES));
+  save(); renderShop(); hud();
+}
+function drawSpark(m) {
+  const c = xEls[m].spark, g = c.getContext('2d'), h = S.mk[m].hist;
+  g.fillStyle = PAPER; g.fillRect(0, 0, 50, 18);
+  if (!S.up.ticker) { g.fillStyle = dither(3, INK, null); g.fillRect(0, 0, 50, 18); return; }
+  const base = E.MATS[m].base;
+  g.fillStyle = dither(4, INK, null); g.fillRect(0, 9, 50, 1);
+  if (h.length < 2) return;
+  const lo = Math.min(base * 0.4, ...h), hi = Math.max(base * 1.9, ...h);
+  let px = 0, py = 0;
+  h.forEach((v, i) => { const x = Math.round(i * 49 / 59), y = Math.round(16 - (v - lo) / (hi - lo) * 14); if (i) line(g, px, py, x, y); px = x; py = y; });
+}
+function renderExchange(full) {
+  const show = S.kites > 0 || E.MAT_IDS.some(m => S.inv[m] > 0);
+  $('xwin').hidden = !show || S.ended;
+  if (!show || S.ended) return;
+  buildExchange();
+  $('cash').textContent = money(S.cash);
+  for (const m of E.unlockedMats(S)) {
+    const el = xEls[m], f = E.fair(S, m), base = E.MATS[m].base;
+    el.held.textContent = `${fmt(S.inv[m])} ${E.MATS[m].unit}`;
+    el.pr.textContent = money(E.price(S, m));
+    el.arrow.textContent = S.ev?.mat === m ? (S.ev.id === 'rumour' ? '▲ rumour' : '▼ glut') : f >= base * 1.08 ? '▲ high' : f <= base * 0.92 ? '▼ low' : 'usual';
+    el.row.classList.toggle('up', S.ev?.mat === m && S.ev.id === 'rumour');
+    el.row.classList.toggle('down', S.ev?.mat === m && S.ev.id === 'glut');
+    const can = S.inv[m] >= 0.5;
+    el.btn.textContent = can ? `Sell ${money(E.quote(S, m))}` : 'Sell';
+    el.btn.setAttribute('aria-disabled', String(!can));
+    if (full) drawSpark(m);
+  }
+  if (tipFor?.startsWith('sell:')) { const m = tipFor.slice(5); if (xEls[m]) showTip(xEls[m].btn, sellTip(m)); }
+}
+
+// ---------- The shop ----------
+const BUY_LINES = {
+  mirror: 'Mirror, mirror, propped on a stone: / I’m not wilting, I’m resting. I’m in my zone.',
+  ticker: 'Buy low and sell high, says the strip on the stalk. / I wrote it myself. I’m a good one to talk.',
+  patch: 'A tear’s not a failure, it’s growth in a seam. / Glue it and grade it. That’s living the dream.',
+  worms: 'Rest is productive, so give worms a bed: / a well-rested worm cleans twice over instead.',
+  press: 'Pressure makes diamonds, and paper as well. / Press it and flatten it, stack it and sell.',
+  splitter: 'One cracked spar is two good ones. That’s simply a fact. / I call it division. The bamboo calls it an act.',
+  testimonial: '“It changed my whole life,” says a worm, on the record. / It was paid in mud, which is fair, if not stellar.',
+  magpie: 'A broker with feathers, a visor, a knack: / it sells what is shiny and never looks back.',
+  vane: 'A rooster of tin on my uppermost leaf / brings weather more often. Good weather. Or brief.',
+  iron: 'Smooth out the creases in silk and in mind: / a warm stone does both, if you’re patient and kind.',
+  vision: 'I’ve pinned up a million and forty full chairs. / If you picture it nightly, the universe shares.',
+  compost: 'Mud becomes soil and the soil becomes worms: / a circle of wealth, on extremely good terms.',
+  shears: 'Don’t cut through your problems, cut round them instead. / The tear stays a tear, but the ripstop’s ahead.',
+  snail: 'Find me L.K.C., Detective. Be discreet. / Report back by Christmas. It’s a very slow beat.',
+  lanyard: 'A lanyard for my very first VIP. / There isn’t one yet. But there will be. You’ll see.',
+  tweezers: 'Pick out the gold from the knots of the day. / That’s a metaphor. Also, the gold. Either way.',
+  chairs: 'Forty chairs on the hilltop, unfolded, in rows. / If you set them, they come. That’s how everyone knows.',
+};
+const STALK_LINES = [
+  'Reach for the sky and the sky will reach back: / silk deltas fly higher, and now I’m on track.',
+  'Head-high and rising, I’m thinking in cubes: / the box kites are coming, with bamboo in tubes.',
+  'As tall as a lamp post, I’ve never been brighter: / the stunt kites are ripstop. The future is lighter.',
+  'Up in the clouds where the dragon kites roam, / the gold thread comes down and I carry it home.',
+];
+const STALK_DESC = [
+  'Silk deltas fly higher than paper diamonds. Grow waist-high and catch them: silk, bamboo and string.',
+  'Box kites fly higher still. Head-high catches them: bamboo, paper, silk and string, lots of it.',
+  'Stunt kites are made of ripstop and fly where only lamp posts reach.',
+  'Dragon kites fly in the clouds, and they are sewn with gold thread.',
+];
+const LINE_LINES = {
+  scrape: ['A thorn is a file if you hold it with care: / the mud comes off wider. Abundance! Right there.',
+    'The edge of a leaf is as sharp as my mind: / it scrapes off the mud and leaves profit behind.',
+    'Two leaves are better than one, I have found: / twice the abundance, and half the time round.',
+    'An old rake, discarded, abandoned, unused: / I see a scraper. The rake is amused.',
+    'A comb made of petals, for mud and for hair. / Exquisite. Expensive. Worth it. I care.'],
+  steady: ['A lolly-stick splint, and my stem stands up straight. / Well, straighter. Scratch faster. But not at that rate.',
+    'Twine round the stem, like a brace for the soul: / support is a gift, and a gift makes you whole.',
+    'A bamboo stake. Posture is everything, friend. / Stand tall and the profit will follow. The end.',
+    'A trellis! I’m practically upright today. / Okay, I still droop, but in a confident way.',
+    'A posture coach, here for my stem and my mind. / “Lean in,” says the coach. I was already inclined.'],
+  advert: ['SCRAP WANTED, says the sign, in the mud, on a stick: / the buyers will come if the lettering’s thick.',
+    'An ad in the Gazette, in the classified bit: / “Quality scrap, from a flower. Legit.”',
+    'A billboard below me, my face on the hill: / it’s smiling at Lowmarsh. It’s smiling there still.',
+    'A newsletter, folded, through every front door: / “Wilt Your Way to Wealth”, issue one. There’ll be more.'],
+};
+const shop = $('shop');
+const newUntil = {};
+let shopSig = null;
+function lineEffect(id, s, s2) {
+  if (id === 'scrape') return `scraper ${Math.round(E.radius(s) * 2)} → ${Math.round(E.radius(s2) * 2)} px wide`;
+  if (id === 'steady') return `tears above ${E.tearSpeed(s)} → ${E.tearSpeed(s2)} px/s`;
+  if (id === 'advert') return `price halves after ${fmt(E.depth(s, 'paper') * Math.LN2)} → ${fmt(E.depth(s2, 'paper') * Math.LN2)} sheets of paper (every scrap ×${(E.depthMult(s2) / E.depthMult(s)).toFixed(1)})`;
+  if (id === 'stalk') { const k = E.KITE_IDS[s2.tier]; return `new: ${E.KITES[k].name}s, worth about ${money(E.kiteValue(s2, k))} each`; }
+  return '';
+}
+function lineTip(id) {
+  const L = E.LINES[id], lv = id === 'stalk' ? S.tier : S.lv[id];
+  const s2 = with_(s => { if (id === 'stalk') s.tier++; else s.lv[id]++; });
+  const name = id === 'stalk' ? `Grow ${E.STALK_NAMES[S.tier + 1]}` : L.levels[lv];
+  const desc = id === 'stalk' ? STALK_DESC[S.tier] : id === 'scrape' ? `A wider scraper takes more mud off with every stroke.` : id === 'steady' ? 'A steadier stem: you can scratch faster before the petal tears the sail.' : 'More buyers for scrap: every price sags less when you sell a lot at once.';
+  return { id: 'l:' + id, name, desc, foot: `${lineEffect(id, S, s2)}\n${money(E.lineCostOf(S, id))} · level ${lv + 1} of ${L.costs.length}` };
+}
+function upEffect(id) {
+  const s2 = with_(s => { s.up[id] = 1; });
+  const mat = { press: 'paper', splitter: 'bamboo', iron: 'silk', shears: 'ripstop', tweezers: 'gold' }[id];
+  if (mat) { const k = E.KITE_IDS.find(k => E.KITES[k].yield[mat] && E.KITES[k].tier <= Math.max(S.tier, E.MATS[mat].tier)) || 'diamond'; const q = E.KITES[k].yield[mat]; return `${E.MATS[mat].unit} of ${mat} from a ${E.KITES[k].name}: ${fmt(q * E.yieldMult(S, mat))} → ${fmt(q * E.yieldMult(s2, mat))}`; }
+  if (id === 'worms' || id === 'compost') return `the worms clean ${pm(perMin(S))} → ${pm(perMin(s2))} kites a minute`;
+  if (id === 'patch') return `a tear costs ${Math.round(E.tearCost(S) * 100)}% → ${Math.round(E.tearCost(s2) * 100)}% of the grade`;
+  if (id === 'ticker') return 'price charts: none → two minutes of every scrap';
+  if (id === 'magpie') return 'selling while you scratch (and while you’re away, at three quarters, not half): no → yes';
+  if (id === 'vane') return 'a sky event about every 100s → 66s';
+  return '';
+}
+function upTip(u) {
+  let foot = `${money(u.cost)}`;
+  if (u.kind === 'odd') foot += ' · does very little';
+  const fx = upEffect(u.id);
+  return { id: u.id, name: u.name, desc: u.desc, foot: fx ? `${fx}\n${foot}` : foot };
+}
+const wormTip = () => { const s2 = with_(s => { s.wormN++; }); return { id: 'r:worm', name: 'Earthworm', desc: 'Dig one up and put it to work. It eats the mud off the kite on the board, all on its own, and never tears anything.', foot: `the worms clean ${pm(perMin(S))} → ${pm(perMin(s2))} kites a minute\nyou have ${S.wormN} · ${money(E.wormCost(S))}` }; };
+const snagTip = () => { const s2 = with_(s => { s.lines++; }); return { id: 'r:snag', name: 'Snag Line', desc: 'Another length of recycled string between the leaves. It catches more of the kites the wind blows past.', foot: `a kite every ${secs(E.arriveEvery(S))} → ${secs(E.arriveEvery(s2))} · room for ${E.queueCap(S)} → ${E.queueCap(s2)}\nyou have ${S.lines} · ${money(E.lineCost(S))}` }; };
+// Things show up once they are within reach (and stay).
+const near = c => S.earned >= c * 0.3 || S.cash >= c * 0.5;
+function cells() {
+  const out = [];
+  if (S.ended) return out;
+  const vis = (id, c) => S.seen.includes(id) || near(c);
+  if (E.snagOpen(S) && vis('r:snag', E.lineCost(S))) out.push({ id: 'r:snag', name: 'Snag Lines', count: () => S.lines, cost: () => E.lineCost(S), tip: snagTip, go: () => buyRep('snag') });
+  if (E.wormsOpen(S) && vis('r:worm', E.wormCost(S))) out.push({ id: 'r:worm', name: 'Earthworms', count: () => S.wormN, cost: () => E.wormCost(S), tip: wormTip, go: () => buyRep('worm') });
+  for (const id of ['stalk', 'scrape', 'steady', 'advert']) {
+    if (E.lineMax(S, id) || (id === 'advert' && S.tier < 1)) continue;
+    if (!vis('l:' + id, E.lineCostOf(S, id))) continue;
+    out.push({ id: 'l:' + id, name: id === 'stalk' ? `Grow ${E.STALK_NAMES[S.tier + 1]}` : E.LINES[id].name, count: id === 'stalk' ? null : () => S.lv[id], cost: () => E.lineCostOf(S, id), tip: () => lineTip(id), go: () => buyLine(id), big: id === 'stalk' });
+  }
+  for (const u of E.items(S).sort((a, b) => a.cost - b.cost)) if (vis(u.id, u.cost)) out.push({ id: u.id, odd: u.kind === 'odd', name: u.name, cost: () => u.cost, tip: () => upTip(u), go: () => doBuy(u.id) });
+  return out;
+}
+const canBuy = c => !S.ended && !S.show && S.cash >= c.cost();
+function renderShop() {
+  const all = cells();
+  for (const c of all) if (!S.seen.includes(c.id)) {
+    S.seen.push(c.id);
+    if (S.t > 2) { sfx.unlock(); newUntil[c.id] = performance.now() + 9000; }
+  }
+  const sig = all.map(c => c.id).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig; shop.innerHTML = '';
+    for (const c of all) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (c.odd ? ' odd' : '');
+      b.innerHTML = '<b></b><em></em>'; b.setAttribute('aria-describedby', 'tip');
+      tipWire(b, () => b._c.tip(), () => { if (b.getAttribute('aria-disabled') !== 'true') b._c.go(); else sfx.deny(); });
+      b._c = c; shop.append(b);
+    }
+    if (!all.length && !S.ended && S.kites > 0) { const p = document.createElement('p'); p.className = 'none'; p.textContent = 'Nothing yet. Keep scratching, keep selling.'; shop.append(p); }
+  } else for (const b of shop.querySelectorAll('button.up')) { const c = all.find(x => x.id === b._c.id); if (c) b._c = c; }
+  const now = performance.now(); let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const c = b._c, can = canBuy(c); if (can) n++;
+    b.querySelector('b').textContent = c.count ? `${c.name} · ${c.count()}` : c.name;
+    b.querySelector('em').textContent = money(c.cost());
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[c.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  $('cwin').hidden = S.ended || (!all.length && S.kites === 0);
+  if (tipFor && !tipFor.startsWith('bought:') && !tipFor.startsWith('sell:')) { const b = [...shop.querySelectorAll('button.up')].find(b => b._c.id === tipFor); if (b) showTip(b, b._c.tip()); }
+  renderShelf();
+}
+function buyRep(k) {
+  const ok = k === 'worm' ? E.buyWorm(S) : E.buySnag(S);
+  if (!ok) { sfx.deny(); return; }
+  delete newUntil[k === 'worm' ? 'r:worm' : 'r:snag']; sfx.buy();
+  if (k === 'worm' && S.wormN === 1) say('Earthworm, my friend, here’s the mud. Eat your fill. / You’re not an employee. You’re a guru-in-skill.', true);
+  else if (k === 'snag' && S.lines === 1) say('A line of old string, tied from leaf to leaf. It catches the next kite that blows past.');
+  else if (k === 'worm' && Math.random() < 0.12) say(pick(WORM_LINES));
+  save(); renderShop(); hud();
+}
+function buyLine(id) {
+  if (!E.buyLine(S, id)) { sfx.deny(); return; }
+  delete newUntil['l:' + id]; hideTip();
+  if (id === 'stalk') {
+    sfx.stalk(); say(STALK_LINES[S.tier - 1], true);
+    xSig = ''; skyCache = null;
+    if (music) { lastKey = musicKey(); music.update(); }
+  } else { sfx.buy(); say(LINE_LINES[id][S.lv[id] - 1], true); }
+  save(); renderShop(); hud(); renderExchange(true);
+}
+function doBuy(id) {
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  delete newUntil[id]; hideTip(); sfx.buy();
+  say(BUY_LINES[id], true);
+  if (id === 'snail') S.snailT = S.t;
+  save(); renderShop(); hud(); renderExchange(true);
+}
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+const UI_KEY = window.DailyGame ? DailyGame.storageKey('ui') : 'di:15:ui';
+let ui = {};
+try { ui = JSON.parse(localStorage.getItem(UI_KEY) || '{}') || {}; } catch (e) {}
+shelfEl.open = !!ui.bought;
+const saveUi = () => { try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (e) {} };
+shelfEl.addEventListener('toggle', () => { if (!shelfEl.open) hideTip(true); if (!!ui.bought === shelfEl.open) return; ui.bought = shelfEl.open; saveUi(); });
+const boughtTip = u => ({ id: 'bought:' + u.id, name: u.name, desc: u.desc, joke: BUY_LINES[u.id] ? `“${BUY_LINES[u.id]}”` : '', foot: u.kind === 'odd' ? 'Bought · did very little' : 'Bought', inline: true });
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(u => u.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig; shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(u => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (u.kind === 'odd' ? ' odd' : '');
+    b.textContent = (u.kind === 'odd' ? '✿ ' : '') + u.name; b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, boughtTip(u)); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + u.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+
+// ---------- Sky events: classic Mac alerts over the hill ----------
+const alertEl = $('alert');
+const EV_TEXT = {
+  gust: () => ['The Tramontane is gusting', 'Kites arrive three times as fast for 30 seconds.', 'When life blows a gale, keep your petals spread wide: / the kites come to those who stay on the hillside.'],
+  rain: () => ['Drizzle', 'The earthworms come up to the surface: they clean twice as fast for 40 seconds.', 'A little rain falls on every hill. / The worms call it payday. And so do I. Still.'],
+  dew: () => ['Heavy dew', 'The mud is soft this morning: your scraper is half again as wide for 30 seconds.', 'The dew is a gift, and the gift is a sign: / scratch while it’s soft, and the profit is mine.'],
+  rumour: m => ['Rumour on the Exchange', `${E.MATS[m].name} is in this season. It sells at 1.8 times the price for 45 seconds.`, 'Buy the rumour, sell the news, / or simply sell. I’m spoiled for choose.'],
+  glut: m => ['Glut', `A craft shop in Lowmarsh is clearing out its ${E.MATS[m].name.toLowerCase()}. Prices are down to about half for 45 seconds. Hold yours.`, 'When the market is flooded, I simply stay dry. / Patience is profit. Just let it go by.'],
+  fireball: () => ['A fireball', 'A slow Taurid fireball crawls across the sky. Down in Lowmarsh everyone looks up, and lets go of their strings. Six kites are on the way.', 'Make a wish on a star as it falls into view. / I wished for more kites. Well. Wishes come true.'],
+};
+let alertBar = null, alertUntil = 0, alertLen = 1;
+function showAlert(title, text, rhyme, { icon = ALERT_ICON, until = 0, ok = 'OK' } = {}) {
+  alertEl.innerHTML = '';
+  const ic = Sprites.scaleUp(icon, 2); ic.className = 'icon'; alertEl.append(ic);
+  const h = document.createElement('h3'); h.textContent = title; alertEl.append(h);
+  const p = document.createElement('div'); p.textContent = text; alertEl.append(p);
+  if (rhyme) { const r = document.createElement('div'); r.className = 'rhyme'; r.textContent = `🥀 “${rhyme}”`; alertEl.append(r); }
+  const row = document.createElement('div'); row.className = 'row';
+  const tm = document.createElement('span'); tm.className = 'time'; alertBar = document.createElement('b'); tm.append(alertBar);
+  if (!until) tm.style.visibility = 'hidden';
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'mac def'; b.textContent = ok;
+  b.addEventListener('click', () => { alertEl.hidden = true; });
+  row.append(tm, b); alertEl.append(row);
+  alertUntil = until; alertLen = until ? until - S.t : 1;
+  alertEl.hidden = false;
+}
+function eventStarted() {
+  const ev = S.ev, [t, txt, rh] = EV_TEXT[ev.id](ev.mat);
+  sfx.alert(); if (ev.id === 'gust' || ev.id === 'fireball') sfx.gust();
+  showAlert(t, txt, rh, { icon: ev.id === 'fireball' ? FIRE_ICON : ALERT_ICON, until: ev.until });
+  if (ev.id === 'fireball') fireball = { t: 0 };
+  renderExchange(true);
+}
+let fireball = null;
+
+// ---------- The showdown: the Tremendous, in the Tramontane's last gale ----------
+const gale = { gust: false, next: 6, warn: false, t: 0 };
+function startShowdown() {
+  if (S.show || S.ended) return;
+  S.cur = null; E.startShowdown(S); board = null;
+  $('faceBtn').hidden = true; alertEl.hidden = true;
+  sfx.gust(); sfx.alert();
+  say('You’ve huffed and you’ve puffed and you’ve brought me your best. / Now bring me the big one. I’m ready. I’m blessed.', true);
+  showAlert('The Tremendous', 'The Tramontane’s last gale brings the Lowmarsh festival kite, the biggest kite in the valley, down on the hill. Scratch it clean. In a gust, hold still or go very gently: the wind makes the sail tear easily, and blows mud back on. The earthworms have gone underground until it passes.', '', { ok: 'Ready' });
+  if (music) { lastKey = musicKey(); music.update(); }
+  save(); renderShop(); hud();
+}
+$('faceBtn').addEventListener('click', startShowdown);
+function galeStep(dt) {
+  if (!S.show || !board || board.enter < 1) return;
+  gale.t += dt; gale.next -= dt;
+  if (!gale.gust && !gale.warn && gale.next <= 1.5) { gale.warn = true; sfx.alert(); }
+  if (!gale.gust && gale.next <= 0) { gale.gust = true; gale.warn = false; gale.next = 2.6; sfx.gust();
+    for (let i = 0; i < 5; i++) remud(40 + Math.random() * 320, 50 + Math.random() * 150, 10 + Math.random() * 10);
+    S.show.clean = board.cleaned / board.total;
+  } else if (gale.gust && gale.next <= 0) { gale.gust = false; gale.next = 5 + Math.random() * 3; }
+}
+
+// ---------- The kite cycle ----------
+let floaters = [];
+function finishKite() {
+  const k = S.cur, type = k.type;
+  const res = E.recycle(S);
+  const parts = Object.entries(res.got).map(([m, q]) => `+${fmt(q)} ${m}`);
+  if (!floaters.length || floaters[floaters.length - 1].t > 0.8) floaters.push({ x: CX, y: CY - 30, t: 0, text: parts.slice(0, 3).join(' ') });
+  if (byWorm) sfx.wormDone(); else sfx.recycle();
+  if (S.kites === 1) say(`Clean! The ${E.KITES[type].name} goes in the scrap pile. Sell it on the Exchange.`);
+  else if (S.kites === 3) say('A kite in the mud is a gift in disguise. / Scratch off the failure, and money will rise.', true);
+  else if (logT > 14 && Math.random() < 0.25) say(pick(RECYCLE_LINES), true);
+  board = null; E.nextKite(S);
+  save(); renderExchange(true); renderShop(); hud();
+}
+let byWorm = false;
+function finishShowdown() {
+  const sh = S.show;
+  S.grade = sh.grade; S.kites++;
+  S.ended = true; S.show = null;
+  board.cleaned = board.total; board.mctx.clearRect(0, 0, W, H);
+  end(false);
+}
+
+// ---------- HUD ----------
+function hud() {
+  const k = curKite();
+  $('kiteName').textContent = S.show ? 'the Tremendous' : k ? E.KITES[k.type].name : 'waiting for the wind';
+  $('kiteClean').parentElement.classList.toggle('idle', !k);
+  $('kiteClean').textContent = `${Math.min(100, Math.floor((k?.clean || 0) * 100))}% clean`;
+  $('kiteGrade').textContent = `${Math.round((k?.grade ?? 1) * 100)}%`;
+  $('queueN').textContent = S.show ? '—' : S.queue;
+  $('queueRate').textContent = `1 / ${secs(E.arriveEvery(S))}`;
+  $('wormBox').hidden = !S.wormN;
+  $('wormN').textContent = S.wormN; $('wormRate').textContent = pm(perMin(S));
+  $('status').hidden = S.ended;
+  const shownEarned = S.ended ? Math.max(S.earned, E.GOAL) : S.earned;
+  $('earned').textContent = money(Math.min(shownEarned, 1e9));
+  $('meterFill').style.width = `${Math.min(100, shownEarned / E.GOAL * 100)}%`;
+  $('stalkLbl').textContent = S.ended ? 'cloud-high · seminar in session' : S.show ? 'the last gale' : E.STALK_NAMES[S.tier];
+  const ready = E.ready(S), rich = S.earned >= E.GOAL && !S.show && !S.ended;
+  $('goalNote').hidden = !rich;
+  $('goalNote').textContent = ready ? 'Seven figures. The wind is picking up…' : 'Seven figures! But the biggest kite of all only flies cloud-high. Grow taller.';
+  $('faceBtn').hidden = !ready;
+  $('incRate').textContent = incRate > 0.05 ? `${money(incRate)}/s` : '';
+}
+let incRate = 0, incWin = [];
+
+// ---------- Ending ----------
+function drawEnding(g, t) {
+  // the finished hill: the clean Tremendous pinned at the back, the chairs full, the flower mid-seminar
+  g.drawImage(sky(), 0, 0);
+  if (!endKite) { endKite = Sprites.canvas(W, H); KITE_DRAW.tremendous(endKite.getContext('2d')); }
+  g.save(); g.translate(34, -16); g.scale(0.72, 0.72); g.drawImage(endKite, 0, 0); g.restore();
+  line(g, 120, 126, 150, 200); line(g, 250, 126, 226, 200);
+  drawFlower(g, t, 4, true);
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 8; c++) {
+    const x = 26 + c * 30 + r * 8, y = 196 + r * 16;
+    if (ICONS.chair) g.drawImage(ICONS.chair, x, y);
+    g.drawImage(BUYER, x + 1, y - 7 + (reduced ? 0 : Math.round(Math.sin(t * 3 + c + r) * 0.6)));
+  }
+}
+let endKite = null;
+function end(resumed) {
+  S.ended = true; S.show = null; save();
+  $('ending').hidden = false; $('cwin').hidden = true; $('xwin').hidden = true; alertEl.hidden = true;
+  $('chairWord').textContent = S.up.chairs ? 'the forty folding chairs' : 'chairs they brought themselves';
+  const mins = Math.floor((S.t || 0) / 60);
+  const time = mins >= 60 ? `${Math.floor(mins / 60)}h${String(mins % 60).padStart(2, '0')}m` : `${mins}m`;
+  const grade = Math.round((S.grade ?? 1) * 100);
+  $('endStats').textContent = `${time} on the hill · ${fmt(S.kites)} kites recycled · ${money(Math.max(S.earned, E.GOAL))} earned · the Tremendous at ${grade}% grade`;
+  $('endStats').hidden = !S.kites;
+  if (!resumed) {
+    sfx.finale();
+    say('I knew they would come. It was all in my vision. / Take notes, little ones: wilting’s a decision.', true);
+    if (music) { lastKey = musicKey(); music.update(); }
+    if (window.DailyGame) DailyGame.finish({ lines: [`⏱ ${time}`, `💰 ${money(Math.max(S.earned, E.GOAL))} earned`, `🪁 ${fmt(S.kites)} kites`, `🌬 Tremendous at ${grade}%`] });
+    setTimeout(() => $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }), 600);
+  } else say('The Lowmarsh Kite Club, all of them, in the folding chairs. The seminar is going very well.');
+  hud();
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Main loop ----------
+let last = performance.now(), saveT = 0, rateT = 0, wormLineT = 0;
+function frame(now) {
+  const dt = Math.min(0.1, (now - last) / 1000); last = now;
+  const t = now / 1000;
+  if (!S.ended) tick(dt);
+  draw(t, dt);
+  requestAnimationFrame(frame);
+}
+function tick(dt) {
+  const before = S.earned;
+  const o = E.step(S, dt, { worms: false });
+  logT += dt;
+  if (o.ev === 'start') eventStarted();
+  if (o.ev === 'end') renderExchange(true);
+  if (o.magpie) { sfx.coin(); const [m, q, got] = o.magpie[0]; $('xnote').textContent = `🐦 The magpie sold ${fmt(q)} ${E.MATS[m].unit} of ${E.MATS[m].name.toLowerCase()} → L.K.C. · ${money(o.magpie.reduce((a, x) => a + x[2], 0))}`; if (Math.random() < 0.05) say('The magpie sells a little of everything, at the top, and keeps a shiny coin for itself.'); }
+  if (o.arrived && S.queue === 1 && !S.cur) sfx.unlock();
+  // the board
+  if (!S.show && !S.cur && board == null && E.nextKite(S)) { board = null; }
+  const k = curKite();
+  if (k && !board) { makeBoard(S.show ? 'tremendous' : k.type); }
+  if (board && board.enter < 1) board.enter = Math.min(1, board.enter + dt * Math.max(2.2, 4 / E.arriveEvery(S)));
+  const before2 = k ? k.clean : 0;
+  wormsWork(dt);
+  byWorm = !!(k && k.clean > before2 && !ptr.on);
+  if (S.show) {
+    galeStep(dt);
+    if (S.show.clean >= 0.96) finishShowdown();
+  } else if (S.cur && S.cur.clean >= E.DONE) {
+    board.mctx.clearRect(0, 0, W, H); finishKite();
+  }
+  if (S.snailT != null && S.t - S.snailT > 90 && (S.snailN || 0) < SNAIL_LINES.length) { S.snailT = S.t; say(SNAIL_LINES[S.snailN = (S.snailN || 0) + 1, S.snailN - 1]); }
+  wormLineT += dt; if (S.wormN && wormLineT > 150 && logT > 20) { wormLineT = 0; if (Math.random() < 0.5) say(pick(WORM_LINES)); }
+  // income rate (a 20 s window)
+  rateT += dt; incWin.push([S.t, S.earned]); while (incWin.length && S.t - incWin[0][0] > 20) incWin.shift();
+  if (rateT > 0.5) { rateT = 0; incRate = incWin.length > 1 ? (S.earned - incWin[0][1]) / Math.max(1, S.t - incWin[0][0]) : 0; renderExchange(S.histT < 0.5); renderShop(); hud(); }
+  if (alertUntil && alertBar) { const f = Math.max(0, (alertUntil - S.t) / alertLen); alertBar.style.width = `${f * 100}%`; if (f <= 0 && S.ev == null) { alertEl.hidden = true; alertUntil = 0; } }
+  if (E.ready(S) && !$('faceBtn').dataset.said) { $('faceBtn').dataset.said = '1'; sfx.alert(); say('A million! The wind is picking up. Something very big is on its way. Press “Face the gale” when you’re ready.'); hud(); }
+  saveT += dt; if (saveT > 4) { saveT = 0; save(); }
+  const mk = musicKey(); if (mk !== lastKey) { lastKey = mk; if (music) music.update(); }
+}
+function draw(t, dt) {
+  ctx.imageSmoothingEnabled = false;
+  if (S.ended) { drawEnding(ctx, t); drawFloaters(dt); return; }
+  ctx.drawImage(sky(), 0, 0);
+  const windy = S.show ? (gale.gust ? 14 : gale.warn ? 6 : 3) : S.ev?.id === 'gust' ? 8 : 0;
+  if (windy && !reduced) drawWind(ctx, t, windy);
+  if (fireball && !reduced) {
+    fireball.t += dt; const u = fireball.t / 6;
+    if (u > 1) fireball = null;
+    else { const x = 20 + u * 360, y = 16 + u * 50; ctx.drawImage(FIRE_ICON, Math.round(x) - 14, Math.round(y) - 2); for (let i = 1; i < 8; i++) { ctx.fillStyle = i % 2 ? PINK : INK; ctx.fillRect(Math.round(x - 14 - i * 6), Math.round(y + 8 - i * 0.8), 3, 2); } }
+  }
+  if (!S.show) drawQueue(ctx, t);
+  if (S.up.magpie && ICONS.magpie) ctx.drawImage(ICONS.magpie, FX + 6, Math.round(hillY(FX)) - STALK_H[S.tier] - 22);
+  if (S.up.vane && ICONS.rooster) ctx.drawImage(ICONS.rooster, FX + 18, Math.round(hillY(FX)) - STALK_H[S.tier] - 10);
+  if (S.up.snail && ICONS.snail) ctx.drawImage(ICONS.snail, 356 + Math.round((S.t * 0.4) % 30), Math.round(hillY(370)) - 12);
+  if (S.up.chairs && ICONS.chair) for (let c = 0; c < 5; c++) ctx.drawImage(ICONS.chair, 286 + c * 11 - 40, 238);
+  drawFlower(ctx, t, S.tier, false);
+  if (board) {
+    const off = Math.round((1 - board.enter) ** 2 * -260);
+    ctx.drawImage(board.kite, off, 0); ctx.drawImage(board.mud, off, 0);
+    for (const w of board.worms) {
+      const sp = WORM[Math.floor(w.t * 6) % 2];
+      ctx.save(); ctx.translate(Math.round(w.x), Math.round(w.y)); if (w.dir < 0) ctx.scale(-1, 1); ctx.drawImage(sp, -5, -2); ctx.restore();
+    }
+    if (S.wormN > 5 && board.worms[0]) ctx.drawImage(textSprite(`×${S.wormN}`, 10), Math.round(board.worms[0].x) + 6, Math.round(board.worms[0].y) - 12);
+  } else if (!S.show) {
+    ctx.drawImage(textSprite('waiting for the wind…', 12), 104, 120);
+  }
+  if (S.show && gale.warn) ctx.drawImage(textSprite('GUST INCOMING', 16), 128, 8);
+  if (S.show && gale.gust) ctx.drawImage(textSprite('GUST! GENTLY…', 16), 136, 8);
+  // the scraper: a ring that goes jagged near tearing speed
+  if (ptr.x > -50 && (ptr.inside || ptr.on) && !(ptr.touch && !ptr.on)) {
+    const r = E.radius(S) * (S.show ? 1.15 : 1), hot = ptr.on && ptr.speed > E.tearSpeed(S) * 0.8;
+    for (let a = 0; a < 32; a++) {
+      const th = a / 32 * Math.PI * 2, rr = r + (hot && a % 2 ? 2 : 0);
+      ctx.fillStyle = a % 2 ? INK : PAPER; ctx.fillRect(Math.round(ptr.x + Math.cos(th) * rr), Math.round(ptr.y + Math.sin(th) * rr), 1, 1);
+    }
+  }
+  drawFloaters(dt);
+  // the gauge
+  const lim = E.tearSpeed(S) * (S.show && gale.gust ? 0.35 : 1);
+  if (!ptr.on) ptr.speed *= Math.pow(0.02, dt);
+  const f = Math.min(1.5, ptr.speed / lim);
+  $('gaugeFill').style.width = `${f / 1.5 * 100}%`;
+  $('gauge').classList.toggle('hot', f > 0.8);
+  $('gaugeWord').textContent = f > 1 ? 'rip!' : f > 0.8 ? 'careful' : 'steady';
+}
+function drawFloaters(dt) {
+  for (const fl of floaters) {
+    fl.t += dt;
+    if (!fl.spr) fl.spr = textSprite(fl.text, 10);
+    ctx.drawImage(fl.spr, Math.round(fl.x - fl.spr.width / 2), Math.round(fl.y - fl.t * 30));
+  }
+  floaters = floaters.filter(f => f.t < 1.6);
+}
+
+// ---------- Start ----------
+async function start() {
+  try { await document.fonts.load('700 16px "Pixelify Sans"'); await document.fonts.load('15px "DotGothic16"'); } catch (e) {}
+  await loadIcons();
+  if (Sprites.sheetRequested()) {
+    for (const k of E.KITE_IDS.concat('tremendous')) { const c = Sprites.canvas(W, H); KITE_DRAW[k](c.getContext('2d')); tail(c.getContext('2d'), k); Sprites.register('kite: ' + k, c); }
+    Sprites.register('the hill', sky());
+    Sprites.showSheet({ zoom: 2 }); return;
+  }
+  // Time away
+  if (!S.ended && S.lastSeen && S.t > 5) {
+    const away = (Date.now() - S.lastSeen) / 1000;
+    const got = E.offline(S, away);
+    if (got && got.kites > 0) {
+      const h = Math.floor(got.secs / 3600), m = Math.round((got.secs % 3600) / 60);
+      showAlert('While you were away', `${h ? h + 'h ' : ''}${m}m on the hill. Your ${S.wormN} earthworms cleaned ${fmt(got.kites)} kites, and L.K.C. came up the hill and bought the scrap${S.up.magpie ? ' from the magpie, at three quarters of the usual price' : ', at half the usual price'}: ${money(got.cash)}.`, 'The secret to wealth is to sleep while you earn. / I nap and they pay me. It’s easy to learn.');
+    }
+  }
+  if (S.ended) end(true);
+  else if (S.kites === 0) say('Kites keep landing on Tumble Hill, all caked in mud. Drag across the kite to scratch the mud off. Gently.');
+  else say('Back on the hill. The wind has been busy.');
+  renderExchange(true); renderShop(); hud();
+  save();
+  requestAnimationFrame(t => { last = t; frame(t); });
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('pagehide', save);
+start();
+</script>
+</body>
+</html>
