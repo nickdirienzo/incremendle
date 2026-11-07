@@ -1,0 +1,1171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>No Two Alike · Incremendle</title>
+<meta name="description" content="A broccoli raised by wolves bets Summer it can make the first snow itself, one hand-cranked snowflake at a time, and no two may be alike. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="No Two Alike">
+<meta property="og:description" content="A broccoli raised by wolves bets Summer it can make the first snow itself, cranking snowflakes on an old lathe while the Inspector makes sure no two are alike.">
+<meta property="og:url" content="https://incremendle.com/no-two-alike/">
+<meta property="og:image" content="https://incremendle.com/no-two-alike/og.png?v=bd7ad7c3">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="No Two Alike: A broccoli raised by wolves bets Summer it can make the first snow itself, cranking snowflakes on an old lathe while the Inspector makes sure no two are alike.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/poiret-one/font.css">
+<link rel="stylesheet" href="/shared/fonts/josefin-sans/font.css">
+<link rel="stylesheet" href="/shared/fonts/courier-prime/font.css">
+<style>
+  :root {
+    --night: #212123; --navy: #3a3858; --indigo: #43436a; --slate: #45444f; --dusk: #5f556a;
+    --cream: #f2f0e5; --grey: #b8b5b9; --frost: #a2dcc7; --ice: #68c2d3; --blue: #4b80ca;
+    --gold: #ede19e; --brass: #d3a068; --rust: #b45252; --green: #8ab060; --lime: #c2d368; --pine: #567b79;
+    --rose: #edc8c4; --head: "Poiret One", "Josefin Sans", sans-serif; --body: "Josefin Sans", system-ui, sans-serif; --memo: "Courier Prime", ui-monospace, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--night); color: var(--cream); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 15px/1.4 var(--body);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(14px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background: radial-gradient(ellipse at 50% -10%, var(--indigo), var(--night) 60%) fixed;
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { text-align: center; margin: 2px 0 10px; }
+  header h1 { font: 400 clamp(30px, 5vw, 46px)/1 var(--head); letter-spacing: .16em; text-transform: uppercase; margin: 0; color: var(--gold); }
+  header h1::before, header h1::after { content: ""; display: inline-block; width: clamp(20px, 6vw, 70px); height: 7px; margin: 0 .5em; vertical-align: middle; border-block: 2px solid var(--brass); }
+  @media (max-width: 560px) { header h1::before, header h1::after { display: none; } }
+  header p { margin: 4px 0 0; font: 600 12px/1.2 var(--body); letter-spacing: .22em; text-transform: uppercase; color: var(--brass); }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } }
+  .panel { background: var(--navy); border: 1px solid var(--brass); outline: 1px solid var(--brass); outline-offset: 3px; margin: 4px; }
+  .panel h2 { font: 400 17px/1 var(--head); letter-spacing: .12em; text-transform: uppercase; color: var(--gold); margin: 0; padding: 8px 10px 6px; border-bottom: 1px solid var(--brass); display: flex; justify-content: space-between; gap: 6px; }
+  .panel h2 small { font: 600 11px/1.6 var(--body); letter-spacing: .08em; color: var(--frost); }
+  .hud { display: flex; flex-wrap: wrap; gap: 4px 14px; padding: 6px 10px; font-size: 13.5px; border-bottom: 1px solid var(--brass); }
+  .tipped { cursor: help; white-space: nowrap; }
+  .tipped b { color: var(--gold); font-weight: 700; }
+  .tipped:focus-visible, .meter:focus-visible { outline: 1px dashed var(--gold); outline-offset: 2px; }
+  .stagewrap { position: relative; line-height: 0; }
+  canvas#stage { width: 100%; height: auto; aspect-ratio: 760 / 430; display: block; touch-action: none; cursor: grab; background: var(--night); }
+  canvas#stage:active { cursor: grabbing; }
+  canvas#stage:focus-visible { outline: 2px dashed var(--gold); outline-offset: -4px; }
+  .meter { padding: 7px 10px 8px; border-top: 1px solid var(--brass); }
+  .meter .lbl { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; margin-bottom: 4px; }
+  .meter .lbl b { color: var(--gold); }
+  .segs { display: grid; grid-template-columns: repeat(8, 1fr) 1.6fr; gap: 3px; }
+  .segs i { height: 10px; background: var(--indigo); border: 1px solid var(--dusk); transform: skewX(-24deg); }
+  .segs i.on { background: var(--frost); border-color: var(--frost); }
+  .segs i.now { background: repeating-linear-gradient(90deg, var(--rust) 0 3px, var(--navy) 3px 6px); border-color: var(--rust); }
+  .segs i.last { background: var(--slate); }
+  .segs i.last.on { background: var(--cream); }
+  .log { font: 13.5px/1.35 var(--memo); padding: 7px 10px 8px; border-top: 1px solid var(--brass); min-height: 2.7em; color: var(--cream); }
+  .log::before { content: "MEMO · "; color: var(--brass); font-weight: 700; }
+  .log.fresh { animation: fresh 1.2s ease-out; }
+  @keyframes fresh { from { background: var(--indigo); } }
+
+  #side { position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow-y: auto; scrollbar-width: thin; }
+  @media (max-width: 760px) { #side { position: static; max-height: none; overflow: visible; } }
+  .act { padding: 8px; display: grid; gap: 6px; }
+  .big { font: 400 19px/1.1 var(--head); letter-spacing: .12em; text-transform: uppercase; padding: 10px 8px 8px; color: var(--night); background: var(--gold); border: 0; outline: 1px solid var(--gold); outline-offset: 3px; cursor: pointer; }
+  .big:hover { background: var(--cream); }
+  .big:active { transform: translateY(1px); }
+  .big[aria-disabled="true"] { background: var(--slate); color: var(--grey); outline-color: var(--dusk); cursor: default; }
+  .big:focus-visible { outline: 2px dashed var(--cream); }
+  .vs { font-size: 13px; text-align: center; }
+  .vs b { color: var(--gold); }
+  .vs .hot { color: var(--rose); }
+  #shop { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px; }
+  .up { position: relative; min-width: 0; text-align: left; padding: 5px 7px 4px; background: var(--indigo); color: var(--cream); border: 1px solid var(--dusk); cursor: pointer; line-height: 1.15; font-family: var(--body); }
+  .up b { display: block; font: 600 13px/1.2 var(--body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { display: block; font-style: normal; font-size: 12.5px; color: var(--frost); }
+  .up em::before { content: "❄ "; }
+  .up.can { border-color: var(--gold); box-shadow: inset 0 -2px 0 var(--gold); }
+  .up.can:hover { background: var(--slate); }
+  .up.can:active { background: var(--gold); color: var(--night); }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up[aria-disabled="true"]:not(.can) { opacity: .6; }
+  .up.odd b::before { content: "◆ "; color: var(--brass); }
+  .up:focus-visible { outline: 2px dashed var(--gold); outline-offset: 2px; }
+  .up.new { animation: pulse 1.1s ease-in-out infinite; }
+  .up .tag { position: absolute; right: -4px; top: -7px; font: 700 10px/1 var(--body); font-style: normal; letter-spacing: .08em; text-transform: uppercase; color: var(--night); background: var(--frost); padding: 2px 4px 1px; }
+  @keyframes pulse { 50% { background: var(--pine); } }
+  .none { grid-column: 1 / -1; font-size: 13px; margin: 2px; color: var(--grey); }
+  #tip { position: fixed; z-index: 50; width: 260px; background: var(--night); color: var(--cream); border: 1px solid var(--gold); outline: 1px solid var(--brass); outline-offset: 3px; padding: 8px 10px; font-size: 13.5px; line-height: 1.35; pointer-events: none; }
+  #tip b { display: block; font: 400 17px/1.15 var(--head); letter-spacing: .06em; color: var(--gold); border-bottom: 1px solid var(--brass); padding-bottom: 3px; margin-bottom: 5px; }
+  #tip span { white-space: pre-line; }
+  #tip i { display: block; margin-top: 6px; font: italic 13px/1.35 var(--memo); color: var(--frost); white-space: pre-line; }
+  #tip small { display: block; white-space: pre-line; margin-top: 6px; font-size: 12.5px; background: var(--indigo); color: var(--gold); padding: 3px 6px; }
+  #tip.inline { position: static; width: auto; margin: 8px; pointer-events: auto; }
+  #bought { margin: 0 8px 8px; }
+  #bought summary { font: 400 15px var(--head); letter-spacing: .1em; text-transform: uppercase; color: var(--gold); cursor: pointer; list-style: none; display: flex; gap: 6px; align-items: center; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: "▸"; transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 2px dashed var(--gold); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .bought { max-width: 100%; font: 12.5px/1.1 var(--body); background: var(--night); color: var(--cream); border: 1px solid var(--brass); padding: 3px 6px 2px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd::before { content: "◆ "; color: var(--brass); }
+  .bought:hover, .bought.on { background: var(--gold); color: var(--night); }
+  .bought:focus-visible { outline: 2px dashed var(--gold); outline-offset: 2px; }
+
+  #ending { margin-top: 18px; }
+  #ending .body { padding: 12px 16px 16px; display: grid; grid-template-columns: 150px 1fr; gap: 16px; align-items: start; }
+  @media (max-width: 560px) { #ending .body { grid-template-columns: 1fr; } }
+  #ending canvas { width: 150px; height: 190px; display: block; margin: 0 auto; }
+  #ending .memo { font: 14px/1.5 var(--memo); }
+  #ending .memo p { margin: 0 0 9px; }
+  #ending .memo .hdr { color: var(--brass); }
+  #ending .tally { display: grid; grid-template-columns: auto 1fr auto; gap: 3px 10px; align-items: center; margin: 4px 0 10px; }
+  #ending .tally i { display: block; height: 9px; background: var(--frost); }
+  #ending .tally i.me { background: var(--green); }
+  #ending .btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+  #shareBtn, #againBtn { font: 400 17px/1 var(--head); letter-spacing: .12em; text-transform: uppercase; padding: 10px 14px 8px; color: var(--night); background: var(--gold); border: 0; outline: 1px solid var(--gold); outline-offset: 3px; cursor: pointer; }
+  #againBtn { background: transparent; color: var(--gold); }
+  @media (prefers-reduced-motion: reduce) { .up.new, .log.fresh { animation: none; } #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="16" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>No Two Alike</h1><p>The Boreal Snow Works · Est. 1927 · Under new management</p></header>
+  <div class="game">
+    <main class="panel">
+      <div class="hud">
+        <span class="tipped" id="flurryBox" tabindex="0" aria-describedby="tip">❄ Flurry <b id="flakesN">0</b> · cools <b id="coolN">0</b></span>
+        <span class="tipped" id="inspBox" tabindex="0" aria-describedby="tip">🔎 Inspector: <b id="minN">1</b> cuts minimum · <span id="leftN">3 of 3</span> left</span>
+        <span class="tipped" id="madeBox" tabindex="0" aria-describedby="tip" hidden>✎ Made: you <b id="meN">0</b> · Ida <b id="idaN">0</b> <span id="idaRate"></span></span>
+      </div>
+      <div class="stagewrap">
+        <canvas id="stage" width="760" height="430" tabindex="0" aria-label="The snowflake lathe. Drag round in circles to turn the crank (or tap, or press Space). Every turn makes a cut."></canvas>
+      </div>
+      <div class="meter" id="bet" tabindex="0" aria-describedby="tip">
+        <div class="lbl"><span>The bet: <b id="betTxt">0 of 8 heat waves cooled</b></span><span id="betNext"></span></div>
+        <div class="segs" id="segs"></div>
+      </div>
+      <div class="log" id="log" aria-live="polite"></div>
+    </main>
+    <aside id="side">
+      <div class="panel" id="actPanel" hidden>
+        <div class="act">
+          <button type="button" class="big" id="sendBtn" aria-describedby="tip">Send the Flurry</button>
+          <div class="vs" id="vs"></div>
+        </div>
+      </div>
+      <div class="panel" id="shopPanel" hidden>
+        <h2>Requisitions <small id="afford"></small></h2>
+        <div id="shop"></div>
+        <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      </div>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" class="panel" hidden>
+    <h2>Inspector’s Final Report <small>Re: the first snow</small></h2>
+    <div class="body">
+      <canvas id="portrait" width="150" height="190" aria-label="Ida, in the Employee of the Month frame"></canvas>
+      <div class="memo">
+        <p class="hdr">FROM: The Inspector, Bureau of Precipitation Standards<br>TO: B. Roccoli (Junior Sculptor), Summer (Seasonal Director)<br>RE: Settlement of the bet</p>
+        <p>The den is under snow. Summer has clocked out until June and asks that it be noted it “wasn’t trying”. The broccoli keeps its colour.</p>
+        <p>The Bureau has audited every flake on file. No two are alike. The Bureau further notes who cut them:</p>
+        <div class="tally" id="tally"></div>
+        <p id="verdict"></p>
+        <div class="btns"><button id="shareBtn" type="button">Share result</button></div>
+      </div>
+    </div>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const DEBUG = location.search.includes('debug');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const C = {
+  night: '#212123', navy: '#3a3858', indigo: '#43436a', slate: '#45444f', dusk: '#5f556a', plum: '#352b42', mauve: '#4b4158',
+  cream: '#f2f0e5', grey: '#b8b5b9', ash: '#868188', frost: '#a2dcc7', ice: '#68c2d3', blue: '#4b80ca',
+  gold: '#ede19e', brass: '#d3a068', rust: '#b45252', brown: '#80493a', tan: '#a77b5b', sand: '#e5ceb4',
+  lime: '#c2d368', green: '#8ab060', pine: '#567b79', moss: '#4e584a', olive: '#7b7243', rose: '#edc8c4', pink: '#cf8acb',
+};
+const fmt = n => Math.floor(n).toLocaleString('en-US');
+const pick = a => a[Math.floor(Math.random() * a.length)];
+
+// ---------- Save ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:16:save';
+let S = E.newState();
+try {
+  const raw = localStorage.getItem(KEY);
+  if (raw) {
+    const got = JSON.parse(raw), d = E.newState();
+    S = Object.assign(d, got);
+    S.lv = Object.assign(E.newState().lv, got.lv || {});
+    S.made = Object.assign({ me: 0, ida: 0 }, got.made || {});
+    S.up = got.up || {}; S.used = got.used || {}; S.seen = got.seen || [];
+    if (S.ended) S.wave = E.WAVES.length;
+  }
+} catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound: everything on D major blues (D E F F# A B), the music's scale ----------
+const A = createAudio({ sfxTrim: 3, musicTrim: 6 });
+const D = scale('major blues', 62);
+let lastHit = 0, lastTick = 0, lastIda = 0;
+// Per-effect levels, set with npm run mix (peaks near -10 dBFS, within a few dB of each other).
+const L = { crank: 2, cut: 1.6, certify: 1.1, ida: 1.8, send: 0.85, hit: 2, win: 0.5, lose: 0.75, buy: 0.75, unlock: 1.3, deny: 1.4, tick: 1.6, recount: 0.65, finale: 0.6 };
+const sfx = {
+  crank() { A.noiseHit('hat', { vol: 0.05 * L.crank, dur: 0.03 }); A.tone({ type: 'triangle', freq: D(-6), dur: 0.03, vol: 0.06 * L.crank, cutoff: 900 }); },
+  cut(i = 0) { A.tone({ type: 'bell', freq: D(4 + (i % 7)), dur: 0.12, vol: 0.09 * L.cut, cutoff: 3000 }); },
+  certify(twice) {
+    A.noiseHit('kick', { vol: 0.13 * L.certify }); A.noiseHit('snare', { vol: 0.05 * L.certify, dur: 0.05 });
+    A.tone({ type: 'bell', freq: D(9), dur: 0.2, vol: 0.09 * L.certify, at: A.now + 0.06, cutoff: 3200 });
+    if (twice) { const t = A.now + 0.16; A.noiseHit('kick', { vol: 0.1 * L.certify, at: t }); A.noiseHit('snare', { vol: 0.04 * L.certify, dur: 0.05, at: t }); }
+  },
+  ida() { A.tone({ type: 'pluck', freq: D(3 + Math.floor(Math.random() * 4)), dur: 0.12, vol: 0.08 * L.ida, cutoff: 2200 }); },
+  send() { A.noiseHit('whoosh', { vol: 0.13 * L.send, dur: 0.6 }); A.tone({ type: 'bell', freq: D(0), dur: 0.5, vol: 0.12 * L.send }); A.tone({ type: 'bell', freq: D(4), dur: 0.5, vol: 0.09 * L.send, at: A.now + 0.12 }); },
+  hit() { A.tone({ type: 'bell', freq: D(6 + Math.floor(Math.random() * 6)), dur: 0.06, vol: 0.06 * L.hit, cutoff: 3000 }); A.noiseHit('shaker', { vol: 0.03 * L.hit, dur: 0.06 }); },
+  win() {
+    // a little gong cycle: low gong, then the bonang climbs
+    A.tone({ type: 'bell', freq: D(-6), dur: 1.4, vol: 0.2 * L.win, cutoff: 1400 });
+    [0, 2, 4, 5, 7].forEach((d, i) => A.tone({ type: 'bell', freq: D(d + 3), dur: 0.22, vol: 0.11 * L.win, at: A.now + 0.12 + i * 0.11, cutoff: 3200 }));
+  },
+  lose() { [5, 3, 1].forEach((d, i) => A.tone({ type: 'triangle', freq: D(d), dur: 0.16, vol: 0.12 * L.lose, at: A.now + i * 0.13, cutoff: 1500 })); },
+  buy() { [0, 4, 7].forEach((d, i) => A.tone({ type: 'bell', freq: D(d + 2), dur: 0.16, vol: 0.12 * L.buy, at: A.now + i * 0.07, cutoff: 3000 })); },
+  unlock() { A.tone({ type: 'bell', freq: D(7), dur: 0.3, vol: 0.09 * L.unlock }); A.tone({ type: 'bell', freq: D(10), dur: 0.3, vol: 0.07 * L.unlock, at: A.now + 0.1 }); },
+  deny() { A.tone({ type: 'triangle', freq: D(-4), dur: 0.08, vol: 0.12 * L.deny, cutoff: 700 }); },
+  tick() { A.tone({ type: 'bell', freq: D(7), dur: 0.05, vol: 0.1 * L.tick, cutoff: 3000 }); },
+  recount() { A.tone({ type: 'bell', freq: D(-3), dur: 0.8, vol: 0.16 * L.recount, cutoff: 1200 }); [4, 2, 0].forEach((d, i) => A.tone({ type: 'triangle', freq: D(d), dur: 0.2, vol: 0.1 * L.recount, at: A.now + 0.2 + i * 0.15, cutoff: 1500 })); },
+  finale() {
+    A.tone({ type: 'bell', freq: D(-6), dur: 3, vol: 0.22 * L.finale, cutoff: 1200 });
+    A.tone({ type: 'pad', freq: D(0), dur: 2.4, vol: 0.06 * L.finale, attack: 0.4, cutoff: 1600 });
+    [0, 2, 3, 4, 7, 9, 10, 11, 14].forEach((d, i) => A.tone({ type: 'bell', freq: D(d), dur: 0.3, vol: 0.1 * L.finale, at: A.now + 0.3 + i * 0.14, cutoff: 3200 }));
+  },
+};
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'win'], S: () => S, E };
+
+// ---------- Music: the game owns playback; music.mjs arranges the composition per phase ----------
+const musicKey = () => E.phase(S);
+let music = null, soundtrack = null, lastKey = musicKey();
+function song() { soundtrack ||= createSoundtrack(music.strudel); return soundtrack(musicKey()); }
+createMusic(A, { song }).then(m => { music = m; music.update(); if (DEBUG) Object.assign(window.__game, { music: m }); }).catch(e => console.warn('music', e));
+
+// ---------- Stage ----------
+const W = 760, H = 430;
+const stage = $('stage'), ctx = stage.getContext('2d');
+const DPR = Math.min(2, window.devicePixelRatio || 1);
+stage.width = W * DPR; stage.height = H * DPR;
+ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+const LX = 268, LY = 214, LR = 92;          // the big lathe's faceplate
+const IX = 430, IY = 346;                    // Ida's hand lathe
+const DX = 540, DY = 318;                    // the Inspector's desk
+const SX = 662, SY = 168;                    // where the heat wave waits
+const FX = 480, FY = 120;                    // the Flurry hovers here
+const GROUND = 372;
+
+// A flake from its pattern: six arms; each cut is a pair of branches whose length and angle come from
+// its notch. Ida's are freehand: same idea, wobbly.
+function drawFlake(g, x, y, r, seq, P, { color = C.cream, wobble = 0, rot = 0, lw = null, seed = 1, partial = 1 } = {}) {
+  let sd = seed;
+  const rnd = () => { sd = (sd * 16807) % 2147483647; return sd / 2147483647; };
+  g.save(); g.translate(x, y); g.rotate(rot);
+  g.strokeStyle = color; g.lineCap = 'round'; g.lineWidth = lw ?? Math.max(1, r / 14);
+  const k = seq.length;
+  const wob = Array.from({ length: k }, () => [(rnd() - 0.5) * wobble, (rnd() - 0.5) * wobble]);
+  for (let a = 0; a < 6; a++) {
+    g.save(); g.rotate(a * Math.PI / 3);
+    const aw = wobble ? (rnd() - 0.5) * wobble * 0.3 : 0;
+    g.rotate(aw);
+    g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -r); g.stroke();
+    for (let i = 0; i < k; i++) {
+      const f = i === k - 1 ? partial : 1;
+      if (f <= 0) continue;
+      const d = r * (0.28 + 0.62 * (i + 1) / (k + 1)) * (1 + wob[i][0] * 0.3);
+      const n = seq[i] / Math.max(1, P - 1);
+      const len = r * (0.12 + 0.34 * n) * (1.05 - d / r * 0.55) * f * (1 + wob[i][1]);
+      const ang = (0.55 + 0.5 * (1 - n)) + wob[i][0];
+      g.beginPath();
+      g.moveTo(0, -d); g.lineTo(Math.sin(ang) * len, -d - Math.cos(ang) * len);
+      g.moveTo(0, -d); g.lineTo(-Math.sin(ang) * len, -d - Math.cos(ang) * len);
+      g.stroke();
+    }
+    g.restore();
+  }
+  g.beginPath();
+  for (let a = 0; a < 6; a++) { const t = a * Math.PI / 3; g.lineTo(Math.sin(t) * r * 0.16, -Math.cos(t) * r * 0.16); }
+  g.closePath(); g.stroke();
+  g.restore();
+}
+function flakeSprite(seq, P, opts = {}, size = 22) {
+  const c = Sprites.canvas(size * 2, size * 2), g = c.getContext('2d');
+  g.scale(2, 2);
+  drawFlake(g, size / 2, size / 2, size / 2 - 1, seq, P, { lw: 1.1, ...opts });
+  return c;
+}
+const idaSeq = () => Array.from({ length: E.IDA_CUTS }, () => Math.floor(Math.random() * 5));
+
+// Ida is drawn by hand: a sitting deco wolf, all facets and chevrons. The heat wave's sun is a
+// source shape (game-icons sun) filled with a gold-to-rust gradient.
+let SUN = null;
+async function loadArt() {
+  try {
+    const sun = Sprites.gradient(await Sprites.loadSvg('./art/game-icons--sun.svg'), [C.gold, C.brass, C.rust], { angle: 90 });
+    SUN = await Sprites.svgToCanvas(sun, 150);
+  } catch (e) { console.warn('art', e); }
+}
+// (x, y) is where she sits; she faces right. paw: [x, y] her front paw reaches for, or null.
+function drawWolf(g, x, y, s = 1, { paw = null, howl = false, col = C.ash, dark = C.slate } = {}) {
+  g.save(); g.translate(x, y); g.scale(s, s);
+  const poly = (pts, fill) => { g.fillStyle = fill; g.beginPath(); pts.forEach(([a, b], i) => i ? g.lineTo(a, b) : g.moveTo(a, b)); g.closePath(); g.fill(); };
+  poly([[-26, 0], [-44, -6], [-50, -22], [-40, -12], [-24, -8]], dark);                 // tail
+  poly([[-30, 0], [-26, -30], [-8, -48], [10, -50], [16, -30], [14, 0]], col);           // body
+  poly([[-30, 0], [-28, -18], [-12, -10], [-6, 0]], dark);                               // haunch
+  poly([[0, -46], [12, -48], [14, -30], [8, -18], [4, -30]], C.cream);                   // ruff
+  g.strokeStyle = C.brass; g.lineWidth = 1;
+  for (let i = 0; i < 3; i++) { g.beginPath(); g.moveTo(3 + i * 2, -40 + i * 7); g.lineTo(8 + i, -36 + i * 7); g.lineTo(12, -40 + i * 7); g.stroke(); }
+  // head
+  const hy = howl ? -6 : 0;
+  poly([[0, -50], [6, -70 + hy], [20, -66 + hy], [32, -60 + hy * 2], [20, -52], [8, -46]], col);
+  poly([[20, -66 + hy], [34, -62 + hy * 2], [32, -58 + hy * 2], [20, -58]], C.cream);    // snout
+  poly([[4, -66 + hy], [6, -82 + hy], [14, -68 + hy]], col);                             // ears
+  poly([[10, -67 + hy], [14, -80 + hy], [18, -66 + hy]], dark);
+  g.fillStyle = C.night; g.beginPath(); g.arc(33, -60 + hy * 2, 2, 0, Math.PI * 2); g.fill();
+  g.fillStyle = C.gold; g.fillRect(15, -63 + hy, 3, 2);                                 // eye
+  // front legs: one planted, one on the handle
+  g.strokeStyle = col; g.lineWidth = 5; g.lineCap = 'round';
+  g.beginPath(); g.moveTo(8, -24); g.lineTo(10, -2); g.stroke();
+  if (paw) { g.beginPath(); g.moveTo(12, -34); g.lineTo((paw[0] - x) / s, (paw[1] - y) / s); g.stroke(); }
+  g.restore();
+}
+// The poster backdrop: a night sky, a sunburst behind the moon, stepped pines.
+let bgCache = null;
+function backdrop() {
+  if (bgCache) return bgCache;
+  const c = Sprites.canvas(W * DPR, H * DPR), g = c.getContext('2d'); g.scale(DPR, DPR);
+  const sky = g.createLinearGradient(0, 0, 0, GROUND);
+  sky.addColorStop(0, C.night); sky.addColorStop(0.45, C.plum); sky.addColorStop(1, C.indigo);
+  g.fillStyle = sky; g.fillRect(0, 0, W, H);
+  // sunburst
+  const mx = 92, my = 70;
+  for (let i = 0; i < 28; i++) {
+    const a0 = i / 28 * Math.PI * 2, a1 = (i + 0.5) / 28 * Math.PI * 2;
+    g.fillStyle = 'rgba(95,85,106,0.28)';
+    g.beginPath(); g.moveTo(mx, my); g.lineTo(mx + Math.cos(a0) * 900, my + Math.sin(a0) * 900); g.lineTo(mx + Math.cos(a1) * 900, my + Math.sin(a1) * 900); g.fill();
+  }
+  for (const [r, col] of [[50, C.dusk], [42, C.rose], [36, C.cream]]) { g.fillStyle = col; g.beginPath(); g.arc(mx, my, r, 0, Math.PI * 2); g.fill(); }
+  g.strokeStyle = C.gold; g.lineWidth = 1;
+  for (const r of [58, 66]) { g.beginPath(); g.arc(mx, my, r, 0, Math.PI * 2); g.stroke(); }
+  // stepped mountains
+  g.fillStyle = C.mauve;
+  g.beginPath(); g.moveTo(0, 300);
+  [[60, 250], [120, 270], [200, 210], [260, 240], [330, 190], [400, 236], [470, 200], [560, 250], [640, 214], [720, 262], [760, 240], [760, 330], [0, 330]].forEach(([x, y]) => g.lineTo(x, y));
+  g.fill();
+  g.fillStyle = C.cream; g.globalAlpha = 0.5;
+  for (const [x, y] of [[200, 210], [330, 190], [470, 200], [640, 214]]) { g.beginPath(); g.moveTo(x, y); g.lineTo(x + 18, y + 14); g.lineTo(x - 18, y + 14); g.fill(); }
+  g.globalAlpha = 1;
+  // stepped pines
+  const pine = (x, base, h, col, col2) => {
+    for (let i = 0; i < 4; i++) {
+      const w = h * (0.42 - i * 0.08), y = base - i * h * 0.24;
+      g.fillStyle = i % 2 ? col2 : col;
+      g.beginPath(); g.moveTo(x - w, y); g.lineTo(x, y - h * 0.34); g.lineTo(x + w, y); g.fill();
+    }
+    g.fillStyle = C.brown; g.fillRect(x - 3, base, 6, 10);
+  };
+  for (const [x, h] of [[20, 120], [56, 92], [596, 104], [628, 136], [706, 118], [744, 90]]) pine(x, GROUND - 6, h, C.moss, C.pine);
+  // deco frame lines
+  g.strokeStyle = C.brass; g.lineWidth = 1;
+  g.strokeRect(6.5, 6.5, W - 13, H - 13);
+  g.beginPath(); g.moveTo(6, 22); g.lineTo(22, 6); g.moveTo(W - 22, 6); g.lineTo(W - 6, 22); g.moveTo(6, H - 22); g.lineTo(22, H - 6); g.moveTo(W - 22, H - 6); g.lineTo(W - 6, H - 22); g.stroke();
+  return (bgCache = c);
+}
+
+// The ground: snow that deepens with every wave cooled (and during the race).
+function snowDepth() {
+  if (S.ended) return 46;
+  if (S.race) return 10 + 30 * Math.min(1, S.race.snow / E.RACE.snow);
+  return 4 + S.wave * 1.2;
+}
+function drawGround(g, t) {
+  const d = snowDepth(), y = GROUND - d;
+  const sn = g.createLinearGradient(0, y, 0, H);
+  sn.addColorStop(0, C.cream); sn.addColorStop(0.5, C.frost); sn.addColorStop(1, C.ice);
+  g.fillStyle = sn; g.fillRect(0, y + 4, W, H - y);
+  g.fillStyle = C.cream;
+  g.beginPath(); g.moveTo(0, y);
+  for (let x = 0; x <= W; x += 40) g.quadraticCurveTo(x + 20, y - 4 - (x % 80 ? 2 : 0), x + 40, y);
+  g.lineTo(W, y + 8); g.lineTo(0, y + 8); g.fill();
+  g.strokeStyle = 'rgba(75,128,202,0.35)'; g.lineWidth = 1;
+  for (let i = 1; i < 4; i++) { const yy = y + 8 + i * (H - 22 - y - 8) / 4; g.beginPath(); g.moveTo(14, yy); g.lineTo(W - 14, yy); g.stroke(); }
+  g.fillStyle = C.navy; g.fillRect(0, H - 22, W, 22);
+  g.fillStyle = C.brass; g.fillRect(0, H - 22, W, 1);
+  for (let x = 12; x < W; x += 24) { g.beginPath(); g.moveTo(x, H - 8); g.lineTo(x + 6, H - 16); g.lineTo(x + 12, H - 8); g.fill(); }
+}
+
+// The den: a stepped rock arch, with the Employee of the Month frame on its face.
+function drawDen(g) {
+  g.fillStyle = C.slate;
+  g.beginPath(); g.moveTo(18, GROUND); g.lineTo(30, 300); g.lineTo(60, 276); g.lineTo(110, 270); g.lineTo(150, 290); g.lineTo(170, GROUND); g.fill();
+  g.fillStyle = C.night;
+  g.beginPath(); g.moveTo(62, GROUND); g.lineTo(62, 330); g.arc(92, 330, 30, Math.PI, 0); g.lineTo(122, GROUND); g.fill();
+  g.strokeStyle = C.brass; g.lineWidth = 1.5;
+  g.beginPath(); g.moveTo(56, GROUND); g.lineTo(56, 330); g.arc(92, 330, 36, Math.PI, 0); g.lineTo(128, GROUND); g.stroke();
+  g.fillStyle = C.brass; g.font = '600 7px "Josefin Sans"'; g.textAlign = 'center';
+  g.fillText('BOREAL SNOW WORKS', 92, 287);
+  if (S.up.frame || S.ended) {
+    g.fillStyle = C.brass; g.fillRect(134, 300, 22, 26); g.fillStyle = C.night; g.fillRect(137, 303, 16, 20);
+    if (S.ended) drawWolf(g, 143, 322, 0.2);
+  }
+}
+
+// The broccoli: florets and a stalk, two pointed floret ears (it was raised by wolves).
+function drawBroccoli(g, x, y, t, { lean = 0, howl = false } = {}) {
+  g.save(); g.translate(x, y); g.rotate(lean);
+  // stalk
+  g.fillStyle = C.lime;
+  g.beginPath(); g.moveTo(-12, 0); g.lineTo(-9, -44); g.lineTo(9, -44); g.lineTo(12, 0); g.closePath(); g.fill();
+  g.fillStyle = C.green; g.fillRect(-3, -40, 3, 38);
+  // arms toward the crank
+  g.strokeStyle = C.lime; g.lineWidth = 4; g.lineCap = 'round';
+  g.beginPath(); g.moveTo(6, -30); g.lineTo(26, -36 + Math.sin(t * 6) * 2); g.stroke();
+  g.beginPath(); g.moveTo(-6, -30); g.lineTo(-18, -18); g.stroke();
+  // tie
+  if (S.up.tie) { g.fillStyle = C.rust; g.beginPath(); g.moveTo(-3, -40); g.lineTo(3, -40); g.lineTo(4, -22); g.lineTo(0, -17); g.lineTo(-4, -22); g.fill(); g.fillStyle = C.gold; g.fillRect(-3, -33, 6, 1.5); }
+  // ears
+  g.fillStyle = C.pine;
+  g.beginPath(); g.moveTo(-28, -76); g.lineTo(-30, -104); g.lineTo(-12, -86); g.fill();
+  g.beginPath(); g.moveTo(28, -76); g.lineTo(30, -104); g.lineTo(12, -86); g.fill();
+  // florets
+  const blobs = [[-22, -58, 16], [22, -58, 16], [0, -66, 20], [-14, -80, 15], [14, -80, 15], [0, -90, 12]];
+  for (const [bx, by, r] of blobs) { g.fillStyle = C.pine; g.beginPath(); g.arc(bx, by, r + 2, 0, Math.PI * 2); g.fill(); }
+  for (const [bx, by, r] of blobs) { g.fillStyle = C.green; g.beginPath(); g.arc(bx, by, r, 0, Math.PI * 2); g.fill(); }
+  g.fillStyle = C.lime;
+  for (const [bx, by, r] of blobs) { g.beginPath(); g.arc(bx - r * 0.3, by - r * 0.35, r * 0.28, 0, Math.PI * 2); g.fill(); }
+  // face
+  g.fillStyle = C.night;
+  g.beginPath(); g.arc(-8, -62, 2.6, 0, Math.PI * 2); g.arc(8, -62, 2.6, 0, Math.PI * 2); g.fill();
+  g.strokeStyle = C.night; g.lineWidth = 2;
+  g.beginPath(); g.moveTo(-13, -69); g.lineTo(-4, -66); g.moveTo(13, -69); g.lineTo(4, -66); g.stroke();
+  if (howl) { g.fillStyle = C.night; g.beginPath(); g.ellipse(0, -52, 3.5, 5, 0, 0, Math.PI * 2); g.fill(); }
+  else { g.beginPath(); g.moveTo(-4, -53); g.lineTo(0, -51); g.lineTo(4, -53); g.stroke(); }
+  g.restore();
+}
+
+// The Inspector: an ermine in a bowler hat, at a stepped deco desk with a ledger and a stamp.
+function drawInspector(g, t, stampT) {
+  const x = DX, y = DY;
+  // ermine body
+  g.fillStyle = C.cream;
+  g.beginPath(); g.ellipse(x + 30, y - 8, 13, 26, 0.1, 0, Math.PI * 2); g.fill();
+  g.beginPath(); g.ellipse(x + 30, y - 40, 11, 10, 0, 0, Math.PI * 2); g.fill();
+  g.fillStyle = C.night; g.beginPath(); g.ellipse(x + 50, y - 2, 4, 7, 0.6, 0, Math.PI * 2); g.fill(); // tail tip
+  g.fillStyle = C.night;
+  g.beginPath(); g.arc(x + 25, y - 42, 1.6, 0, Math.PI * 2); g.arc(x + 34, y - 42, 1.6, 0, Math.PI * 2); g.fill();
+  g.fillStyle = C.rose; g.beginPath(); g.arc(x + 29.5, y - 37, 1.8, 0, Math.PI * 2); g.fill();
+  g.strokeStyle = C.gold; g.lineWidth = 1; g.beginPath(); g.arc(x + 34, y - 42, 4, 0, Math.PI * 2); g.stroke();
+  g.beginPath(); g.moveTo(x + 37, y - 40); g.lineTo(x + 39, y - 30); g.stroke();
+  // bowler
+  g.fillStyle = C.night; g.fillRect(x + 16, y - 51, 28, 3);
+  g.beginPath(); g.arc(x + 30, y - 51, 10, Math.PI, 0); g.fill();
+  g.fillStyle = C.rust; g.fillRect(x + 20, y - 53, 20, 2);
+  // stamping arm
+  const up = stampT > 0 ? Math.sin(Math.min(1, stampT / 0.25) * Math.PI) : 0;
+  const sx = x + 4, sy = y - 6 - up * 16;
+  g.strokeStyle = C.cream; g.lineWidth = 4; g.lineCap = 'round';
+  g.beginPath(); g.moveTo(x + 22, y - 18); g.lineTo(sx + 4, sy - 4); g.stroke();
+  g.fillStyle = C.brown; g.fillRect(sx - 3, sy - 12, 7, 10); g.fillStyle = C.rust; g.fillRect(sx - 7, sy - 3, 15, 4);
+  // desk
+  g.fillStyle = C.brown; g.fillRect(x - 36, y, 104, 8);
+  g.fillStyle = C.tan; g.fillRect(x - 30, y + 8, 92, GROUND - y - 8);
+  g.fillStyle = C.brass;
+  g.fillRect(x - 36, y, 104, 1.5);
+  for (let i = 0; i < 3; i++) g.fillRect(x - 22 + i * 30, y + 14, 18, 1.5);
+  g.fillStyle = C.night; g.font = '600 8px "Josefin Sans"'; g.textAlign = 'center'; g.fillText('INSPECTOR', x + 16, y + 30);
+  // ledger
+  g.fillStyle = C.cream; g.fillRect(x - 30, y - 6, 22, 6); g.fillStyle = C.ash; g.fillRect(x - 30, y - 3, 22, 1);
+}
+
+// Ida at the hand lathe: her paw goes round, a little wobbly.
+function drawIda(g, t, ang) {
+  if (!S.up.ida && !S.ended) return;
+  const x = IX, y = IY;
+  // hand lathe on a post
+  g.fillStyle = C.brown; g.fillRect(x - 3, y, 6, GROUND - y);
+  g.fillStyle = C.brass; g.beginPath(); g.arc(x, y, 22, 0, Math.PI * 2); g.fill();
+  g.fillStyle = C.navy; g.beginPath(); g.arc(x, y, 18, 0, Math.PI * 2); g.fill();
+  drawFlake(g, x, y, 14, idaCur.seq, 5, { wobble: 0.5, seed: idaCur.seed, rot: ang, partial: 1, lw: 1.2, color: C.frost });
+  const kx = x + Math.cos(ang) * 20, ky = y + Math.sin(ang) * 20;
+  g.fillStyle = C.gold; g.beginPath(); g.arc(kx, ky, 4, 0, Math.PI * 2); g.fill();
+  drawWolf(g, x - 58, GROUND - snowDepth() + 6 + Math.sin(ang) * 1.5, 1, { paw: [kx, ky] });
+  // pups on the handle
+  const n = Math.min(6, S.lv.pup);
+  for (let i = 0; i < n; i++) {
+    const px = x + 30 + i * 13, py = GROUND - snowDepth() + 2 - Math.abs(Math.sin(ang * 2 + i)) * 3;
+    g.fillStyle = C.ash; g.beginPath(); g.ellipse(px, py - 6, 6, 5, 0, 0, Math.PI * 2); g.fill();
+    g.beginPath(); g.moveTo(px - 4, py - 9); g.lineTo(px - 3, py - 15); g.lineTo(px, py - 10); g.moveTo(px + 4, py - 9); g.lineTo(px + 3, py - 15); g.lineTo(px, py - 10); g.fill();
+    g.fillStyle = C.night; g.fillRect(px - 3, py - 7, 1.5, 1.5); g.fillRect(px + 1.5, py - 7, 1.5, 1.5);
+  }
+  if (S.lv.pup > 6) { g.fillStyle = C.cream; g.font = '600 10px "Josefin Sans"'; g.textAlign = 'left'; g.fillText(`×${S.lv.pup}`, x + 30 + 6 * 13, GROUND - snowDepth() - 4); }
+  if (S.up.tag) { const ty = GROUND - snowDepth() - 34; g.fillStyle = C.cream; g.fillRect(x - 60, ty, 16, 9); g.fillStyle = C.rust; g.fillRect(x - 60, ty, 16, 2.5); g.fillStyle = C.night; g.font = '700 5px "Josefin Sans"'; g.textAlign = 'center'; g.fillText('IDA', x - 52, ty + 7.5); }
+}
+
+// The big lathe: a brass faceplate with its notches, the flake in progress, and the crank.
+function drawLathe(g, t) {
+  const P = E.notches(S), k = E.minCuts(S);
+  // stand
+  g.fillStyle = C.brown;
+  g.beginPath(); g.moveTo(LX - 46, GROUND); g.lineTo(LX - 20, LY + 60); g.lineTo(LX + 20, LY + 60); g.lineTo(LX + 46, GROUND); g.fill();
+  g.fillStyle = C.brass; g.fillRect(LX - 30, LY + 74, 60, 2); g.fillRect(LX - 38, LY + 98, 76, 2);
+  // stepped rim
+  for (const [r, col] of [[LR + 12, C.brass], [LR + 8, C.gold], [LR + 4, C.brass], [LR, C.navy]]) { g.fillStyle = col; g.beginPath(); g.arc(LX, LY, r, 0, Math.PI * 2); g.fill(); }
+  // notches round the rim (the ones the Inspector's patterns are made of)
+  g.save(); g.translate(LX, LY); g.rotate(crankAng * 0.25);
+  for (let a = 0; a < 6; a++) for (let n = 0; n < P; n++) {
+    const th = a * Math.PI / 3 + (n - (P - 1) / 2) * 0.13;
+    g.fillStyle = C.night; g.beginPath(); g.arc(Math.sin(th) * (LR + 6), -Math.cos(th) * (LR + 6), 2, 0, Math.PI * 2); g.fill();
+  }
+  g.restore();
+  // guide lines
+  g.strokeStyle = 'rgba(162,220,199,0.15)'; g.lineWidth = 1;
+  for (const r of [LR * 0.4, LR * 0.75]) { g.beginPath(); g.arc(LX, LY, r, 0, Math.PI * 2); g.stroke(); }
+  // the flake being cut
+  const idx = S.used[k] || 0, seq = E.pattern(idx, k, P);
+  const done = Math.floor(S.cuts), part = S.cuts - done;
+  const shown = seq.slice(0, Math.min(k, done + 1));
+  drawFlake(g, LX, LY, LR * 0.8, shown, P, { rot: crankAng * 0.25, partial: done >= k ? 1 : part, color: C.cream, lw: 2.2 });
+  // the crank: a handle on a spoke from the hub, the knob at the rim
+  const kx = LX + Math.cos(crankAng) * (LR + 22), ky = LY + Math.sin(crankAng) * (LR + 22);
+  g.strokeStyle = C.gold; g.lineWidth = 5; g.lineCap = 'round';
+  g.beginPath(); g.moveTo(LX, LY); g.lineTo(kx, ky); g.stroke();
+  g.fillStyle = C.brass; g.beginPath(); g.arc(LX, LY, 8, 0, Math.PI * 2); g.fill();
+  g.fillStyle = C.rust; g.beginPath(); g.arc(kx, ky, 10, 0, Math.PI * 2); g.fill();
+  g.strokeStyle = C.gold; g.lineWidth = 2; g.beginPath(); g.arc(kx, ky, 10, 0, Math.PI * 2); g.stroke();
+  // cut counter on the plate
+  g.fillStyle = C.gold; g.font = '400 15px "Poiret One"'; g.textAlign = 'center';
+  g.fillText(`${Math.min(k, done)} / ${k} cuts`, LX, LY + LR + 34);
+  g.font = '600 10px "Josefin Sans"'; g.fillStyle = C.sand;
+  g.fillText(`${E.cutsPerTurn(S)} cut${E.cutsPerTurn(S) > 1 ? 's' : ''} a turn`, LX, LY + LR + 48);
+  // first-time hint
+  if (S.made.me < 2 && !S.ended) {
+    const a = t * 2.4;
+    g.strokeStyle = C.gold; g.lineWidth = 2; g.setLineDash([5, 6]);
+    g.beginPath(); g.arc(LX, LY, LR + 32, a, a + 1.6); g.stroke(); g.setLineDash([]);
+    const hx = LX + Math.cos(a + 1.6) * (LR + 32), hy = LY + Math.sin(a + 1.6) * (LR + 32);
+    g.fillStyle = C.gold; g.beginPath(); g.arc(hx, hy, 4, 0, Math.PI * 2); g.fill();
+    g.font = '600 13px "Josefin Sans"'; g.fillText('drag round and round', LX, 34);
+  }
+}
+
+// The heat wave at the treeline: a deco sun, sized by its heat, with shimmer lines.
+function drawWave(g, t) {
+  if (S.race || S.ended || S.wave >= E.WAVES.length) return;
+  const w = E.wave(S), f = Math.max(0.25, S.heat / w.heat);
+  const scaleR = (0.55 + 0.1 * Math.min(8, S.wave)) * (0.45 + 0.55 * f);
+  const r = 70 * scaleR, wob = reduced ? 0 : Math.sin(t * 2) * 2;
+  if (SUN) { g.save(); g.translate(SX, SY + wob); g.rotate(reduced ? 0 : t * 0.15); g.drawImage(SUN, -r, -r, r * 2, r * 2); g.restore(); }
+  else { g.fillStyle = C.rust; g.beginPath(); g.arc(SX, SY, r * 0.6, 0, Math.PI * 2); g.fill(); }
+  g.strokeStyle = 'rgba(237,200,196,0.5)'; g.lineWidth = 2;
+  for (let i = 0; i < 4; i++) {
+    const yy = SY + r + 8 + i * 9;
+    g.beginPath();
+    for (let x = SX - 70; x <= SX + 70; x += 4) g.lineTo(x, yy + Math.sin(x / 9 + t * 4 + i) * 2.5);
+    g.stroke();
+  }
+  g.fillStyle = C.rose; g.textAlign = 'center';
+  g.font = '400 17px "Poiret One"'; g.fillText(w.name, SX, SY + r + 54);
+  g.font = '700 14px "Josefin Sans"'; g.fillStyle = C.gold; g.fillText(`heat ${fmt(Math.ceil(S.heat))}`, SX, SY + r + 72);
+}
+
+// The race: Summer's thermometer against the snow on the den.
+function drawRace(g, t) {
+  if (!S.race) return;
+  const gauge = (x, label, f, col, txt) => {
+    const top = 92, bot = 262, h = bot - top;
+    g.fillStyle = C.night; g.fillRect(x - 13, top - 4, 26, h + 8);
+    g.strokeStyle = C.brass; g.lineWidth = 2; g.strokeRect(x - 13, top - 4, 26, h + 8);
+    g.fillStyle = col; g.fillRect(x - 8, bot - h * f, 16, h * f);
+    g.beginPath(); g.arc(x, bot + 18, 18, 0, Math.PI * 2); g.fillStyle = C.night; g.fill(); g.stroke();
+    g.beginPath(); g.arc(x, bot + 18, 13, 0, Math.PI * 2); g.fillStyle = col; g.fill();
+    g.fillStyle = C.brass; for (let i = 0; i <= 10; i++) g.fillRect(x + 13, top + h * i / 10, i % 5 ? 4 : 8, 1);
+    g.textAlign = 'center'; g.fillStyle = C.gold; g.font = '400 15px "Poiret One"'; g.fillText(label, x, top - 30);
+    g.font = '700 12px "Josefin Sans"'; g.fillStyle = C.cream; g.fillText(txt, x, top - 13);
+  };
+  const tf = (S.race.temp - E.RACE.from) / (E.RACE.to - E.RACE.from);
+  gauge(612, 'SUMMER', tf, C.rust, `${Math.floor(S.race.temp)}°F`);
+  gauge(706, 'SNOW', Math.min(1, S.race.snow / E.RACE.snow), C.frost, `${fmt(S.race.snow)} / ${fmt(E.RACE.snow)}`);
+}
+
+// ---------- Moving bits ----------
+let crankAng = -Math.PI / 2, idaAng = 0, stampT = 0;
+let flying = [];                    // flakes in the air: lathe → desk → Flurry, Ida → Flurry, Flurry → wave
+let flurrySpr = [];                 // sprites hovering over the den (up to 40 drawn)
+let puffs = [];
+let idaCur = { seq: idaSeq(), seed: 7 };
+const MAXSHOW = 40;
+function flurrySlot(i) {
+  // a loose hexagonal cluster
+  const ring = i === 0 ? 0 : Math.floor((Math.sqrt(12 * i - 3) + 3) / 6);
+  const start = ring === 0 ? 0 : 3 * ring * (ring - 1) + 1, n = Math.max(1, ring * 6), j = i - start;
+  const a = j / n * Math.PI * 2 + ring * 0.3;
+  return [FX + Math.cos(a) * ring * 20, FY + Math.sin(a) * ring * 15];
+}
+function syncFlurry() {
+  const want = Math.min(MAXSHOW, S.flakes);
+  while (flurrySpr.length > want) flurrySpr.pop();
+  while (flurrySpr.length < want) flurrySpr.push(flakeSprite(idaSeq(), 5, { wobble: 0.4, seed: 1 + Math.floor(Math.random() * 9999), color: C.cream }, 16));
+}
+
+// ---------- Input: the crank ----------
+let budget = 1, spin = 0, drag = null, cutsSeen = 0, quarter = 0;
+const toStage = e => { const r = stage.getBoundingClientRect(); return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height]; };
+stage.addEventListener('pointerdown', e => {
+  if (S.ended) return;
+  const [x, y] = toStage(e);
+  drag = { a: Math.atan2(y - LY, x - LX), moved: 0, t: performance.now(), id: e.pointerId };
+  try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+  e.preventDefault();
+});
+stage.addEventListener('pointermove', e => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const [x, y] = toStage(e);
+  if (Math.hypot(x - LX, y - LY) < 12) return;
+  const a = Math.atan2(y - LY, x - LX);
+  let d = a - drag.a; if (d > Math.PI) d -= Math.PI * 2; if (d < -Math.PI) d += Math.PI * 2;
+  drag.a = a; drag.moved += Math.abs(d);
+  turnBy(d / (Math.PI * 2));
+});
+const endDrag = e => {
+  if (!drag || (e && e.pointerId !== drag.id)) return;
+  if (drag.moved < 0.35 && performance.now() - drag.t < 400) spin = Math.min(1, spin + 0.5); // a tap: half a turn
+  drag = null;
+};
+stage.addEventListener('pointerup', endDrag);
+stage.addEventListener('pointercancel', endDrag);
+stage.addEventListener('keydown', e => {
+  if (S.ended) return;
+  if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); spin = Math.min(1, spin + 0.5); }
+});
+// The lathe is heavy: at most E.CRANK_MAX turns a second, however fast you go.
+function turnBy(turns) {
+  const want = Math.abs(turns), got = Math.min(want, budget);
+  if (got <= 0) return;
+  budget -= got;
+  crankAng += Math.sign(turns || 1) * got * Math.PI * 2;
+  doCrank(got);
+}
+function doCrank(turns) {
+  const before = S.cuts; // the flake in progress
+  quarter += turns * 4;
+  if (quarter >= 1 && performance.now() - lastTick > 60) { quarter %= 1; lastTick = performance.now(); sfx.crank(); }
+  const k = E.minCuts(S);
+  const got = E.crank(S, turns);
+  const cutNow = Math.floor(S.cuts);
+  if (!got.length && cutNow > Math.floor(before)) sfx.cut(cutNow);
+  for (const fl of got) {
+    sfx.cut(fl.k);
+    const spr = flakeSprite(fl.seq, fl.notches, { color: C.cream }, 22);
+    if (flying.length < 14) flying.push({ spr, x: LX, y: LY, t: 0, path: 'desk' });
+    else { stampSoon = true; }
+  }
+  if (got.length) {
+    stampT = 0.01;
+    if (k !== E.minCuts(S)) ruleUp();
+    tutorial();
+  }
+}
+let stampSoon = false, lastStamp = 0;
+
+function ruleUp() {
+  const k = E.minCuts(S);
+  say(pick([
+    `The Inspector has circulated a notice: every pattern of ${k - 1} cuts is now on file. Minimum raised to ${k} cuts, effective immediately.`,
+    `Per the Bureau, ${k - 1}-cut flakes are “fully subscribed”. ${k} cuts from here on. The Inspector regrets nothing.`,
+    `NOTICE: all ${fmt(E.patterns(S, k - 1))} patterns of ${k - 1} cuts have been certified. The minimum is now ${k} cuts. A new notch would widen the field.`,
+  ]));
+  sfx.unlock();
+}
+
+// ---------- Log ----------
+const logEl = $('log');
+let logT = 0;
+function say(text) {
+  logEl.textContent = text; logT = 0;
+  logEl.classList.remove('fresh'); void logEl.offsetWidth; if (!reduced) logEl.classList.add('fresh');
+}
+const IDA_LINES = [
+  'Ida’s flakes continue to arrive. The Inspector holds each one up to the moon, then waves it through. “Unprecedented,” he notes.',
+  'Ida has finished another batch and is now sitting on the warm side of the den. The batch is perfect.',
+  'The Inspector asks for Ida’s employee number. Ida yawns. The Inspector writes “wolf” and moves on.',
+  'Quiet hours at the Works. Only the little hand lathe, going round. Ida does not take breaks; she takes naps, and keeps cranking.',
+  'Ida’s paw slipped again. The Inspector has never seen that pattern before. He has never seen any of hers before.',
+];
+const PUP_LINES = [
+  'Another pup has joined the handle. The pups do not know what a snowflake is. They are very excited about it.',
+  'The pups have unionised. Their only demand is “more turning”.',
+  'A pup fell asleep on the handle. Ida cranked it round with the pup still on. The pup enjoyed this.',
+];
+const WIN_LINES = [
+  'The wave is cooled. A little snow settles on the den. The broccoli howls, then apologises, then howls again.',
+  'Heat wave dismissed. Minutes of the meeting: “Summer left early.” The snow is a little deeper.',
+  'Cooled, and filed. The Flurry comes back to the den a little smaller and very pleased with itself.',
+];
+const TIPS = [
+  [1, 'Certified! The Inspector stamps it and it floats up to the Flurry. Keep cranking: every turn is a cut.'],
+  [3, 'Note: the Inspector keeps a ledger. No two flakes alike, so once the easy patterns are used, each flake needs more cuts.'],
+];
+let tipStep = 0;
+function tutorial() {
+  while (tipStep < TIPS.length && S.made.me >= TIPS[tipStep][0]) { say(TIPS[tipStep][1]); tipStep++; }
+}
+
+// ---------- Tooltips ----------
+let tipFor = null, tipMoved = 0;
+const explained = new Set();
+function tipWire(b, tipOf, act, { onceTouch = false } = {}) {
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, tipOf()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, tipOf()); });
+  b.addEventListener('blur', () => hideTip());
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  b.addEventListener('click', () => {
+    const t = tipOf();
+    // On touch the first tap explains; the second does it (repeat buttons: only the first time).
+    if (b.dataset.touch && tipFor !== t.id && !(onceTouch && explained.has(t.id))) { showTip(b, t); explained.add(t.id); return; }
+    if (act) act();
+    if (tipFor) { const n = tipOf(); if (n) showTip(b, n); }
+  });
+}
+function showTip(b, it) {
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('i').textContent = it.joke || ''; tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || ''; tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  if (b.closest('aside') && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 14}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    let left = r.left, top = r.bottom + 8;
+    if (left + t.width > innerWidth - 8) left = innerWidth - t.width - 8;
+    if (top + t.height > innerHeight - 8) top = Math.max(8, r.top - t.height - 8);
+    tip.style.left = `${Math.max(8, left)}px`; tip.style.top = `${top}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .tipped, .bought, .big, .meter')) hideTip(); });
+
+// ---------- Numbers for tooltips ----------
+const STEADY = 1;   // turns a second, for "at a steady crank"
+const r1 = x => x < 10 ? (Math.round(x * 10) / 10).toString() : fmt(x);
+const perMin = x => r1(x * 60);
+const withS = patch => { const s = { ...S, lv: { ...S.lv }, up: { ...S.up }, used: S.used }; patch(s); return s; };
+const myMin = s => perMin(E.myFlakeRate(s, STEADY));
+const idaMin = s => perMin(E.idaFlakeRate(s));
+const STATUS_TIPS = {
+  flurryBox: () => ({ id: 'flurryBox', name: 'The Flurry', desc: 'Certified flakes, hovering over the den. They’re what cools Summer’s heat waves, and what every requisition is pressed from: buying anything takes flakes out of the Flurry.', foot: `${fmt(S.flakes)} flakes × ${r1(E.chill(S))} chill each = cools ${fmt(E.cooling(S))} heat` }),
+  inspBox: () => {
+    const k = E.minCuts(S), P = E.notches(S);
+    return { id: 'inspBox', name: 'The Inspector’s ledger', desc: `No two flakes alike. A flake is a pattern of cuts, each at one of the lathe’s ${P} notches, so there are ${P}^k patterns of k cuts. When every pattern of one size is on file, the minimum goes up a cut. A new notch widens every size at once.`, foot: `${k} cuts minimum: ${fmt(E.left(S))} of ${fmt(E.patterns(S, k))} patterns left\nthen ${k + 1} cuts: ${fmt(E.left(S, k + 1))} left` };
+  },
+  madeBox: () => ({ id: 'madeBox', name: 'Who made them', desc: 'The Inspector keeps count of who cut every certified flake. Ida’s paw wobbles, so hers never match anything and never use up the ledger.', foot: `you: ${fmt(S.made.me)} · about ${myMin(S)}/min at a turn a second\nIda: ${fmt(S.made.ida)} · ${idaMin(S)}/min (${r1(E.idaRate(S))} turns/s, ${E.IDA_CUTS} cuts each)` }),
+  bet: () => ({ id: 'bet', name: 'The bet', desc: 'Summer bet the broccoli it couldn’t bring the first snow to the den. Cool all eight heat waves Summer sends, and then Summer calls time: snow on the den before its thermometer hits 100°F, or the broccoli has to bolt into yellow flowers.', foot: S.race ? `race: ${fmt(S.race.snow)} of ${fmt(E.RACE.snow)} snow · ${Math.floor(S.race.temp)}°F` : `${S.wave} of 8 waves cooled${S.wave < 8 ? `\nnext: ${E.wave(S).name}, heat ${fmt(Math.ceil(S.heat))}` : ''}` }),
+};
+for (const [id, f] of Object.entries(STATUS_TIPS)) tipWire($(id), f, null);
+
+const sendTip = () => {
+  if (S.race) return { id: 'send', name: 'Summer has called time', desc: 'Every flake now lands straight on the den. Crank! Ida is cranking too.', foot: `${fmt(S.race.snow)} of ${fmt(E.RACE.snow)} snow · ${Math.floor(S.race.temp)}°F of 100` };
+  const w = E.wave(S);
+  return { id: 'send', name: 'Send the Flurry', desc: `Sends the whole Flurry out to the treeline, where ${w.name} is waiting. The fight runs itself: each flake cools the wave by its chill and melts. Keep cranking; new flakes join in. If the Flurry runs out first, the wave stays put, as cool as you left it, and you can go again.`,
+    foot: `heat ${fmt(Math.ceil(S.heat))} vs Flurry ${fmt(E.cooling(S))}\n${E.cooling(S) >= S.heat ? 'enough to cool it' : `about ${fmt(Math.ceil((S.heat - E.cooling(S)) / E.chill(S)))} flakes short`}` };
+};
+tipWire($('sendBtn'), sendTip, () => {
+  if (S.race || S.battle) return;
+  if (!E.startBattle(S)) { sfx.deny(); return; }
+  sfx.send(); say(E.wave(S).memo); hud(); save();
+}, { onceTouch: true });
+
+// ---------- Shop ----------
+const shop = $('shop');
+let shopSig = '', newUntil = {};
+const LINE_DESC = {
+  notch: s => ({ desc: 'File one more notch into the faceplate. More notches, more patterns of every size: the Inspector’s minimum drops back.', foot: () => { const s2 = withS(x => { x.lv.notch++; }); return `notches ${E.notches(S)} → ${E.notches(s2)}\nminimum ${E.minCuts(S)} → ${E.minCuts(s2)} cuts\nabout ${myMin(S)} → ${myMin(s2)} flakes/min at a turn a second`; }, joke: 'Facilities would like to remind staff that notches are a form of filing.' }),
+  cutter: s => ({ desc: 'Another cutter on the arm: every turn of the crank makes one more cut.', foot: () => { const s2 = withS(x => { x.lv.cutter++; }); return `cuts per turn ${E.cutsPerTurn(S)} → ${E.cutsPerTurn(s2)}\nabout ${myMin(S)} → ${myMin(s2)} flakes/min at a turn a second`; }, joke: 'Pressed from 40 flakes of hard rime. Mind the edge; it is very edgy.' }),
+  chill: s => ({ desc: 'Hone every arm of every flake, new and old: each one cools more heat before it melts.', foot: () => { const s2 = withS(x => { x.lv.chill++; }); return `chill per flake ${r1(E.chill(S))} → ${r1(E.chill(s2))}\nthe Flurry cools ${fmt(E.cooling(S))} → ${fmt(s2.flakes * E.chill(s2))} (after paying)`; }, joke: 'Sharpened to Bureau standard 6-B: “pointy, but not rude”.' }),
+  pup: s => ({ desc: 'A pup from the pack hangs on Ida’s handle. Ida turns faster. (All credited to Ida: the pups are not on the payroll either.)', foot: () => { const s2 = withS(x => { x.lv.pup++; }); return `Ida ${r1(E.idaRate(S))} → ${r1(E.idaRate(s2))} turns/s\n${idaMin(S)} → ${idaMin(s2)} flakes/min`; }, joke: 'The pup has been told it is “helping”. It is helping.' }),
+};
+const BUY_LINES = Object.fromEntries(Object.entries(E.ITEMS).map(([id, u]) => [id, u.joke]));
+// Things show up once they're within reach, and stay.
+const near = c => S.flakes >= c * 0.5;
+function cells() {
+  const out = [];
+  if (S.ended || S.race) return out;
+  const vis = (id, c) => S.seen.includes(id) || near(c);
+  for (const id of Object.keys(E.LINES)) {
+    const L = E.LINES[id];
+    if (!E.gateOk(S, L) || E.lineMax(S, id)) continue;
+    const cid = 'l:' + id, c = E.lineCost(S, id);
+    if (!vis(cid, c)) continue;
+    const d = LINE_DESC[id]();
+    out.push({ id: cid, name: L.name, count: () => S.lv[id], cost: () => E.lineCost(S, id), tip: () => ({ id: cid, name: L.name, desc: d.desc, joke: d.joke, foot: `${d.foot()}\ncosts ${fmt(E.lineCost(S, id))} flakes from the Flurry` }), go: () => buyLine(id) });
+  }
+  for (const u of E.items(S).sort((a, b) => a.cost - b.cost)) {
+    if (!vis(u.id, u.cost)) continue;
+    const foot = u.id === 'ida' ? `Ida: about ${perMin(0.5 / E.IDA_CUTS)} flakes/min, all on her own\ncosts ${u.cost} flakes from the Flurry` : `costs ${u.cost} flakes from the Flurry${u.kind === 'odd' ? '\n(does very little)' : ''}`;
+    out.push({ id: u.id, odd: u.kind === 'odd', name: u.name, cost: () => u.cost, tip: () => ({ id: u.id, name: u.name, desc: u.desc, foot }), go: () => doBuy(u.id) });
+  }
+  return out;
+}
+const canBuy = c => !S.ended && !S.race && S.flakes >= c.cost();
+function renderShop() {
+  const all = cells();
+  for (const c of all) if (!S.seen.includes(c.id)) {
+    S.seen.push(c.id);
+    if (S.t > 1) { sfx.unlock(); newUntil[c.id] = performance.now() + 9000; }
+  }
+  const sig = all.map(c => c.id).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig; shop.innerHTML = '';
+    for (const c of all) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (c.odd ? ' odd' : '');
+      b.innerHTML = '<b></b><em></em>'; b.setAttribute('aria-describedby', 'tip');
+      tipWire(b, () => b._c.tip(), () => { if (b.getAttribute('aria-disabled') !== 'true') b._c.go(); else sfx.deny(); });
+      b._c = c; shop.append(b);
+    }
+    if (!all.length && !S.ended) { const p = document.createElement('p'); p.className = 'none'; p.textContent = S.race ? 'No requisitions during the race. Crank!' : 'Nothing on order. Keep cranking.'; shop.append(p); }
+  } else for (const b of shop.querySelectorAll('button.up')) { const c = all.find(x => x.id === b._c.id); if (c) b._c = c; }
+  const now = performance.now(); let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const c = b._c, can = canBuy(c); if (can) n++;
+    b.querySelector('b').textContent = c.count ? `${c.name} · ${c.count()}` : c.name;
+    b.querySelector('em').textContent = fmt(c.cost());
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[c.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  $('afford').textContent = n ? `${n} affordable` : '';
+  $('shopPanel').hidden = S.ended || (!all.length && !S.seen.length);
+  if (tipFor && !tipFor.startsWith('bought:') && tipFor !== 'send' && !STATUS_TIPS[tipFor]) { const b = [...shop.querySelectorAll('button.up')].find(b => b._c.id === tipFor); if (b) showTip(b, b._c.tip()); }
+  renderShelf();
+}
+function buyLine(id) {
+  const k = E.minCuts(S);
+  if (!E.buyLine(S, id)) { sfx.deny(); return; }
+  delete newUntil['l:' + id]; sfx.buy();
+  if (id === 'notch') say(`A new notch: ${E.notches(S)} in all. The Inspector recounts the patterns and, through gritted teeth, lowers the minimum to ${E.minCuts(S)} cut${E.minCuts(S) > 1 ? 's' : ''}.`);
+  else if (id === 'cutter') say(`Extra cutter fitted. One turn of the crank now makes ${E.cutsPerTurn(S)} cuts.`);
+  else if (id === 'chill') { if (S.lv.chill === 1 || Math.random() < 0.3) say(`Points sharpened. Every flake in the Flurry now cools ${r1(E.chill(S))} heat. ${pick(['Pointy, but not rude.', 'Per standard 6-B.', 'The Flurry glints.'])}`); }
+  else if (id === 'pup') say(S.lv.pup === 1 ? 'A pup has grabbed Ida’s handle with both paws. Ida, unbothered, cranks faster.' : pick(PUP_LINES));
+  if (k !== E.minCuts(S)) sfx.unlock();
+  syncFlurry(); save(); renderShop(); hud();
+}
+function doBuy(id) {
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  delete newUntil[id]; hideTip(); sfx.buy();
+  say(BUY_LINES[id]);
+  if (id === 'ida') idaLineT = 0;
+  syncFlurry(); save(); renderShop(); hud();
+}
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+const UI_KEY = window.DailyGame ? DailyGame.storageKey('ui') : 'di:16:ui';
+let ui = {};
+try { ui = JSON.parse(localStorage.getItem(UI_KEY) || '{}') || {}; } catch (e) {}
+shelfEl.open = !!ui.bought;
+const saveUi = () => { try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (e) {} };
+shelfEl.addEventListener('toggle', () => { if (!shelfEl.open) hideTip(true); if (!!ui.bought === shelfEl.open) return; ui.bought = shelfEl.open; saveUi(); });
+const boughtTip = u => ({ id: 'bought:' + u.id, name: u.name, desc: u.desc, joke: `“${BUY_LINES[u.id]}”`, foot: u.kind === 'odd' ? 'Bought · did very little' : 'Bought', inline: true });
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(u => u.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig; shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(u => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (u.kind === 'odd' ? ' odd' : '');
+    b.textContent = u.name; b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, boughtTip(u)); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', () => hideTip());
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + u.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+
+// ---------- HUD ----------
+const segs = $('segs');
+for (let i = 0; i < 9; i++) { const s = document.createElement('i'); if (i === 8) s.className = 'last'; segs.append(s); }
+function hud() {
+  $('flakesN').textContent = fmt(S.flakes);
+  $('coolN').textContent = fmt(E.cooling(S));
+  const k = E.minCuts(S);
+  $('minN').textContent = k;
+  $('leftN').textContent = `${fmt(E.left(S))} of ${fmt(E.patterns(S, k))}`;
+  $('madeBox').hidden = !S.up.ida && !S.ended;
+  $('flurryBox').hidden = $('inspBox').hidden = S.ended;
+  $('meN').textContent = fmt(S.made.me); $('idaN').textContent = fmt(S.made.ida);
+  $('idaRate').textContent = S.up.ida ? `(${idaMin(S)}/min)` : '';
+  [...segs.children].forEach((s, i) => {
+    s.classList.toggle('on', i < S.wave || (i === 8 && S.ended));
+    s.classList.toggle('now', (i === S.wave && !!S.battle) || (i === 8 && !!S.race));
+  });
+  $('betTxt').textContent = S.ended ? 'won' : S.race ? 'Summer has called time' : `${S.wave} of 8 heat waves cooled`;
+  $('betNext').textContent = S.ended ? 'snow on the den' : S.race ? `${Math.floor(S.race.temp)}°F` : S.wave === 7 ? 'then the race' : '';
+  // the action panel
+  const showAct = !S.ended && (S.made.me > 0 || S.wave > 0);
+  $('actPanel').hidden = !showAct;
+  const btn = $('sendBtn');
+  if (S.race) {
+    btn.textContent = 'Crank!'; btn.setAttribute('aria-disabled', 'true');
+    $('vs').innerHTML = `Summer <b class="hot">${Math.floor(S.race.temp)}°F</b> of 100 · snow <b>${fmt(S.race.snow)}</b> of ${fmt(E.RACE.snow)}`;
+  } else if (S.wave < E.WAVES.length) {
+    btn.textContent = S.battle ? 'The Flurry is out' : 'Send the Flurry';
+    btn.setAttribute('aria-disabled', String(!!S.battle || S.flakes === 0));
+    const w = E.wave(S);
+    $('vs').innerHTML = `<span class="hot">${w.name}</span><br>heat <b class="hot">${fmt(Math.ceil(S.heat))}</b> vs Flurry <b>${fmt(E.cooling(S))}</b>`;
+  } else {
+    btn.textContent = 'Stand by'; btn.setAttribute('aria-disabled', 'true');
+    $('vs').innerHTML = '<span class="hot">Summer is calling time…</span>';
+  }
+}
+
+// ---------- The loop ----------
+let last = 0, saveT = 0, idaLineT = 0, hudT = 0, battleSnd = 0, tickT = 0;
+function frame(now) {
+  const dt = Math.min(0.1, (now - last) / 1000 || 0); last = now;
+  step(dt);
+  draw(now / 1000, dt);
+  requestAnimationFrame(frame);
+}
+function step(dt) {
+  if (S.ended) return;
+  budget = Math.min(0.75, budget + E.CRANK_MAX * dt);
+  if (spin > 0) { const s = Math.min(spin, 3 * dt); spin -= s; turnBy(s); }
+  const flakesBefore = S.flakes, heatBefore = S.heat;
+  const ev = E.step(S, dt);
+  if (S.up.ida) {
+    idaAng += E.idaRate(S) * Math.PI * 2 * dt;
+    if (ev.ida) {
+      for (let i = 0; i < ev.ida; i++) if (flying.length < 18) flying.push({ spr: flakeSprite(idaCur.seq, 5, { wobble: 0.5, seed: idaCur.seed, color: C.frost }, 20), x: IX, y: IY, t: 0, path: 'up' });
+      idaCur = { seq: idaSeq(), seed: 1 + Math.floor(Math.random() * 99999) };
+      if (performance.now() - lastIda > 900) { lastIda = performance.now(); sfx.ida(); }
+    }
+    idaLineT += dt;
+    if (idaLineT > 75 && logT > 15) { idaLineT = 0; say(pick(IDA_LINES)); }
+  }
+  // battle: send sprites at the wave
+  if (S.battle || ev.win || ev.lose) {
+    const sent = Math.max(0, flakesBefore - S.flakes);
+    for (let i = 0; i < Math.min(sent, 3); i++) {
+      const [x, y] = flurrySlot(Math.floor(Math.random() * Math.min(MAXSHOW, Math.max(1, flakesBefore))));
+      flying.push({ spr: flurrySpr[0] || flakeSprite(idaSeq(), 5, {}, 16), x, y, t: 0, path: 'wave' });
+    }
+    if (sent && performance.now() - battleSnd > 90) { battleSnd = performance.now(); sfx.hit(); }
+  }
+  if (ev.win) {
+    sfx.win();
+    if (S.wave >= E.WAVES.length) say('The Heat Dome is cooled. Summer goes very quiet, then sends a calendar invite: “Bet: final reckoning”. It is in five seconds.');
+    else say(`${pick(WIN_LINES)} Next up: ${E.WAVES[S.wave].name}, heat ${fmt(E.WAVES[S.wave].heat)}.`);
+    if (music) { lastKey = musicKey(); music.update(); }
+    save();
+  }
+  if (ev.lose) { sfx.lose(); say(`The Flurry is spent and ${E.wave(S).name} is still there, down to ${fmt(Math.ceil(S.heat))} heat. Crank up some more and send them again.`); save(); }
+  if (ev.race) {
+    sfx.recount();
+    say('Summer has called time. Its thermometer is climbing. Every flake now goes straight onto the den, the Flurry first. Crank, broccoli, crank.');
+    if (music) { lastKey = musicKey(); music.update(); }
+    save();
+  }
+  if (S.race) {
+    tickT += dt; if (tickT > 1.5) { tickT = 0; sfx.tick(); }
+  }
+  if (ev.recount) { sfx.recount(); say('100°F. Summer demands a recount and wins it: some snow melts, the thermometer goes back to 70°F. The bet is still on. Crank!'); save(); }
+  if (ev.end) { end(false); return; }
+  syncFlurry();
+  logT += dt;
+  hudT += dt; if (hudT > 0.25) { hudT = 0; hud(); renderShop(); }
+  saveT += dt; if (saveT > 4) { saveT = 0; save(); }
+  const mk = musicKey(); if (mk !== lastKey) { lastKey = mk; if (music) music.update(); }
+}
+
+function draw(t, dt) {
+  ctx.drawImage(backdrop(), 0, 0, W, H);
+  drawGround(ctx, t);
+  drawDen(ctx);
+  if (S.ended) { drawEndScene(ctx, t, dt); return; }
+  drawWave(ctx, t);
+  drawRace(ctx, t);
+  drawLathe(ctx, t);
+  drawBroccoli(ctx, LX - 100, GROUND - snowDepth() + 6, t, { lean: drag || spin > 0 ? Math.sin(crankAng) * 0.05 : 0, howl: !!S.battle });
+  drawIda(ctx, t, idaAng);
+  if (stampT > 0) { stampT += dt; if (stampT > 0.3) stampT = 0; }
+  drawInspector(ctx, t, stampT);
+  // the Flurry
+  const bob = reduced ? 0 : t;
+  flurrySpr.forEach((spr, i) => { const [x, y] = flurrySlot(i); ctx.drawImage(spr, x - 8 + Math.sin(bob + i) * 2, y - 8 + Math.cos(bob * 0.8 + i) * 2, 16, 16); });
+  if (S.flakes > MAXSHOW) { ctx.fillStyle = C.cream; ctx.font = '600 12px "Josefin Sans"'; ctx.textAlign = 'center'; ctx.fillText(`${fmt(S.flakes)} flakes`, FX, FY + 78); }
+  // flakes in flight
+  for (const f of flying) {
+    f.t += dt;
+    if (f.path === 'desk') {
+      const u = Math.min(1, f.t / 0.35);
+      const x = LX + (DX - 6 - LX) * u, y = LY + (DY - 10 - LY) * u - Math.sin(u * Math.PI) * 40;
+      ctx.drawImage(f.spr, x - 11, y - 11, 22, 22);
+      if (u >= 1 && !f.stamped) {
+        f.stamped = true; stampT = 0.01;
+        if (performance.now() - lastStamp > 120) { lastStamp = performance.now(); sfx.certify(!!S.up.stamp); }
+        f.path = 'up'; f.t = 0; f.x = DX - 6; f.y = DY - 10; f.passed = 1;
+      }
+    } else if (f.path === 'up') {
+      const u = Math.min(1, f.t / 0.7), [tx, ty] = flurrySlot(Math.floor((f.x * 7 + f.y) % Math.max(1, Math.min(MAXSHOW, S.flakes))));
+      const x = f.x + (tx - f.x) * u, y = f.y + (ty - f.y) * u;
+      ctx.drawImage(f.spr, x - 9, y - 9, 18, 18);
+      if (f.passed && f.t < 0.5) { ctx.fillStyle = C.rust; ctx.font = '700 11px "Josefin Sans"'; ctx.textAlign = 'center'; ctx.fillText(S.up.stamp ? 'PASSED · PASSED' : 'PASSED', DX - 6, DY - 34 - f.t * 30); }
+      if (u >= 1) f.done = true;
+    } else if (f.path === 'wave') {
+      const u = Math.min(1, f.t / 0.5);
+      const x = f.x + (SX - f.x) * u, y = f.y + (SY - f.y) * u - Math.sin(u * Math.PI) * 30;
+      ctx.globalAlpha = 1 - u * 0.6; ctx.drawImage(f.spr, x - 8, y - 8, 16, 16); ctx.globalAlpha = 1;
+      if (u >= 1) { f.done = true; puffs.push({ x: SX + (Math.random() - 0.5) * 40, y: SY + (Math.random() - 0.5) * 40, t: 0 }); }
+    }
+  }
+  flying = flying.filter(f => !f.done);
+  for (const p of puffs) { p.t += dt; ctx.fillStyle = `rgba(242,240,229,${0.5 * (1 - p.t / 0.6)})`; ctx.beginPath(); ctx.arc(p.x, p.y - p.t * 30, 4 + p.t * 16, 0, Math.PI * 2); ctx.fill(); }
+  puffs = puffs.filter(p => p.t < 0.6);
+  if (S.race) { // snow falling on the den
+    ctx.fillStyle = C.cream;
+    for (let i = 0; i < 40; i++) { const x = (i * 97 + t * 20) % 540, y = (i * 53 + t * 40 * (1 + i % 3)) % GROUND; ctx.fillRect(x, y, 2, 2); }
+  }
+}
+
+// The finished world: the den deep in snow, the broccoli and Ida on top, snow still falling.
+function drawEndScene(g, t) {
+  g.fillStyle = C.cream; g.globalAlpha = 0.9;
+  g.beginPath(); g.moveTo(0, GROUND - 20); g.quadraticCurveTo(100, 250, 220, 300); g.quadraticCurveTo(380, 330, 520, 290); g.quadraticCurveTo(640, 270, 760, 300); g.lineTo(760, H); g.lineTo(0, H); g.fill();
+  g.globalAlpha = 1;
+  drawBroccoli(g, 250, 310, t, { howl: Math.sin(t * 0.7) > 0.6 });
+  drawWolf(g, 350, 312, 1.3, { howl: Math.sin(t * 0.7 + 1) > 0.6 });
+  for (let i = 0; i < 5; i++) { const px = 420 + i * 16, py = 300; g.fillStyle = C.ash; g.beginPath(); g.ellipse(px, py, 6, 5, 0, 0, Math.PI * 2); g.fill(); }
+  // a big stamped flake in the sky
+  drawFlake(g, 600, 120, 54, [0, 2, 1, 3, 4], 5, { wobble: 0.45, seed: 42, rot: reduced ? 0 : t * 0.05, color: C.frost, lw: 2.4 });
+  g.fillStyle = C.gold; g.font = '400 22px "Poiret One"'; g.textAlign = 'center';
+  g.fillText('THE FIRST SNOW', 600, 210);
+  g.font = '600 12px "Josefin Sans"'; g.fillStyle = C.cream; g.fillText('certified, every flake: no two alike', 600, 230);
+  g.fillStyle = C.cream;
+  for (let i = 0; i < 70; i++) { const x = (i * 97 + t * 14) % W, y = (i * 53 + t * 30 * (1 + i % 3)) % (H - 30); g.fillRect(x, y, 2, 2); }
+}
+
+// ---------- Ending ----------
+let finished = false;
+function end(resumed) {
+  S.ended = true; S.race = null; S.battle = null; save();
+  hideTip(true);
+  $('ending').hidden = false; $('actPanel').hidden = true; $('shopPanel').hidden = true;
+  const tot = Math.max(1, S.made.me + S.made.ida), share = Math.round(100 * S.made.ida / tot);
+  $('tally').innerHTML = '';
+  for (const [who, n, cls] of [['B. Roccoli', S.made.me, 'me'], ['Ida (temp.)', S.made.ida, '']]) {
+    const a = document.createElement('span'); a.textContent = who;
+    const bar = document.createElement('span'); const i = document.createElement('i'); i.className = cls; i.style.width = `${Math.max(2, 100 * n / tot)}%`; bar.append(i);
+    const c = document.createElement('span'); c.textContent = fmt(n);
+    $('tally').append(a, bar, c);
+  }
+  $('verdict').textContent = S.made.me + S.made.ida === 0
+    ? 'The Bureau’s tally sheets were eaten by a pup. The Inspector is prepared to state from memory that Ida cut most of them. Employee of the Month: Ida.'
+    : S.made.ida > S.made.me
+    ? `Ida, temporary, no employee number, cut ${share}% of the first snow, and not one of hers needed the ledger. Employee of the Month: Ida. ${S.up.frame ? 'Her picture is in the frame you bought.' : 'The Bureau has supplied a frame.'} ${S.up.review ? 'Her performance review is cancelled: performance noted.' : ''}`
+    : `Ida, temporary, no employee number, cut ${share}% of the first snow without once troubling the ledger. The broccoli outcranked her, which nobody, Ida included, expected. Employee of the Month: Ida, for the wobble.`;
+  drawPortrait(); hud();
+  if (!resumed && !finished && window.DailyGame) {
+    finished = true;
+    const m = Math.floor(S.t / 60), s = String(Math.floor(S.t % 60)).padStart(2, '0');
+    sfx.finale();
+    DailyGame.finish({ lines: [`⏱ ${m}m${s}s`, `❄ ${fmt(tot)} flakes, no two alike`, `🐺 Ida cut ${share}%`, S.recounts ? `🌡 ${S.recounts} recount${S.recounts > 1 ? 's' : ''}` : '🌡 beat Summer first try'] });
+    say('Summer has clocked out. The Inspector has filed his final report (below).');
+  }
+  if (music) { lastKey = musicKey(); music.update(); }
+}
+function drawPortrait() {
+  const c = $('portrait'), g = c.getContext('2d');
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.fillStyle = C.brass; g.fillRect(0, 0, 150, 190);
+  g.fillStyle = C.gold; g.fillRect(6, 6, 138, 178);
+  g.fillStyle = C.navy; g.fillRect(12, 12, 126, 140);
+  for (let i = 0; i < 14; i++) { g.fillStyle = i % 2 ? C.indigo : C.navy; g.beginPath(); g.moveTo(75, 150); g.arc(75, 150, 160, Math.PI + i * Math.PI / 14, Math.PI + (i + 1) * Math.PI / 14); g.fill(); }
+  drawWolf(g, 66, 150, 1.3);
+  g.fillStyle = C.night; g.font = '400 14px "Poiret One"'; g.textAlign = 'center';
+  g.fillText('EMPLOYEE', 75, 166); g.fillText('OF THE MONTH', 75, 180);
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Sprites ----------
+function registerSprites() {
+  Sprites.register('backdrop', backdrop());
+  const mk = (name, fn, w = 200, h = 200) => { const c = Sprites.canvas(w * 2, h * 2), g = c.getContext('2d'); g.scale(2, 2); fn(g); Sprites.register(name, c); };
+  mk('Ida', g => drawWolf(g, 100, 180, 2, { paw: [170, 120] }));
+  mk('Ida, howling', g => drawWolf(g, 100, 180, 2, { howl: true }));
+  if (SUN) Sprites.register('heat wave (sun, gradient)', SUN);
+  mk('broccoli', g => drawBroccoli(g, 100, 180, 0, {}));
+  mk('broccoli, howling, tie', g => { S.up.tie = 1; drawBroccoli(g, 100, 180, 0, { howl: true }); delete S.up.tie; });
+  mk('inspector', g => { g.translate(-DX + 70, -DY + 120); drawInspector(g, 0, 0); }, 200, 200);
+  for (const P of [3, 4, 6]) mk(`flake: 4 cuts on ${P} notches`, g => { g.fillStyle = C.navy; g.fillRect(0, 0, 120, 120); drawFlake(g, 60, 60, 50, E.pattern(P * 7 + 3, 4, P), P, { lw: 2 }); }, 120, 120);
+  mk('flake: Ida’s, freehand', g => { g.fillStyle = C.navy; g.fillRect(0, 0, 120, 120); drawFlake(g, 60, 60, 50, [1, 3, 0, 4], 5, { wobble: 0.5, seed: 9, color: C.frost, lw: 2 }); }, 120, 120);
+}
+
+// ---------- Start ----------
+async function start() {
+  try { await Promise.all(['400 16px "Poiret One"', '600 13px "Josefin Sans"', '13px "Courier Prime"'].map(f => document.fonts.load(f))); } catch (e) {}
+  await loadArt();
+  if (Sprites.sheetRequested()) { registerSprites(); Sprites.showSheet({ zoom: 1 }); return; }
+  if (S.ended) { end(true); say('The bet is settled and the den is under snow. The Inspector’s final report is below.'); }
+  else if (S.made.me === 0) say('From: B. Roccoli, Junior Sculptor. To: the Pack. RE: the bet. Summer says no snow this year. I say otherwise. Drag round the lathe to turn the crank; every turn makes a cut.');
+  else if (S.race) say('Back at the Works. Summer’s thermometer is still climbing. Crank!');
+  else say(`Back at the Works. ${E.wave(S).name} is still waiting at the treeline, heat ${fmt(Math.ceil(S.heat))}.`);
+  tipStep = TIPS.findIndex(([n]) => S.made.me < n); if (tipStep < 0) tipStep = TIPS.length;
+  syncFlurry(); renderShop(); hud(); save();
+  requestAnimationFrame(t => { last = t; frame(t); });
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('pagehide', save);
+start();
+</script>
+</body>
+</html>

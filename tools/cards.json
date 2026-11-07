@@ -1159,5 +1159,53 @@
    "iron",
    "vane"
   ]
+ },
+ "no-two-alike": {
+  "t": 760,
+  "flakes": 72,
+  "made": {
+   "me": 214,
+   "ida": 171
+  },
+  "cuts": 2.3,
+  "idaCuts": 1.5,
+  "turns": 720,
+  "used": {
+   "1": 4,
+   "2": 16,
+   "3": 64,
+   "4": 146
+  },
+  "lv": {
+   "notch": 1,
+   "cutter": 1,
+   "chill": 9,
+   "pup": 6
+  },
+  "up": {
+   "tie": 1,
+   "ida": 1,
+   "tag": 1,
+   "stamp": 1
+  },
+  "wave": 4,
+  "heat": 165,
+  "battle": null,
+  "losses": 0,
+  "wins": 4,
+  "race": null,
+  "recounts": 0,
+  "ended": false,
+  "seen": [
+   "l:notch",
+   "tie",
+   "l:chill",
+   "l:cutter",
+   "ida",
+   "tag",
+   "l:pup",
+   "stamp",
+   "frame"
+  ]
  }
 }

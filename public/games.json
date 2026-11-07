@@ -510,5 +510,46 @@
       "topic": "the Taurid meteor showers' slow fireballs (South Taurids peak 5 November, North Taurids 12 November 2026)"
     },
     "palette": "blessing"
+  },
+  {
+    "n": 16,
+    "slug": "no-two-alike",
+    "date": "2026-11-07",
+    "title": "No Two Alike",
+    "tagline": "A broccoli raised by wolves bets Summer it can make the first snow itself, cranking snowflakes on an old lathe while the Inspector makes sure no two are alike.",
+    "emoji": "🥦❄️",
+    "scale": "hundreds",
+    "minutes": "25–40",
+    "seed": 872242855,
+    "subject": {
+      "text": "a broccoli raised by wolves",
+      "emoji": "🥦",
+      "name": "broccoli",
+      "subgroup": "food-vegetable",
+      "trait": "{} raised by wolves"
+    },
+    "verb": "sculpting",
+    "object": "snowflakes",
+    "interaction": "turn a crank or dial",
+    "arc": {
+      "drive": "a bet",
+      "obstacle": "an inspector",
+      "turn": "the helper was the hero",
+      "initial": "I"
+    },
+    "length": "mini (10–60 min)",
+    "structure": [
+      "auto-battle waves of enemies"
+    ],
+    "twist": "you pay with something you need (time, light, health)",
+    "ending": "outpace a rival's ticking meter",
+    "look": "art deco poster",
+    "music": {
+      "style": "gamelan",
+      "scale": "major blues"
+    },
+    "tone": "corporate memo",
+    "context": "none",
+    "palette": "cc-29"
   }
 ]

@@ -1,0 +1,50 @@
+{
+  "libs": [
+    {
+      "name": "@strudel/web",
+      "version": "1.3.0",
+      "license": "AGPL-3.0-or-later",
+      "what": "pattern music: synths, samples, Tidal mini-notation",
+      "home": "https://strudel.cc",
+      "support": "https://opencollective.com/tidalcycles"
+    }
+  ],
+  "art": [
+    {
+      "set": "Game Icons",
+      "license": "CC-BY-3.0",
+      "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+      "home": "https://github.com/game-icons/icons",
+      "support": "https://game-icons.net",
+      "icons": [
+        {
+          "icon": "game-icons:sun",
+          "author": "Badges",
+          "source": "https://game-icons.net/1x1/badges/sun.html"
+        }
+      ]
+    }
+  ],
+  "fonts": [
+    {
+      "name": "Poiret One",
+      "license": "OFL-1.1",
+      "home": "https://fonts.google.com/specimen/Poiret+One"
+    },
+    {
+      "name": "Josefin Sans",
+      "license": "OFL-1.1",
+      "home": "https://fonts.google.com/specimen/Josefin+Sans"
+    },
+    {
+      "name": "Courier Prime",
+      "license": "OFL-1.1",
+      "home": "https://fonts.google.com/specimen/Courier+Prime"
+    }
+  ],
+  "palette": {
+    "name": "CC-29",
+    "author": "Alpha6",
+    "home": "https://lospec.com/palette-list/cc-29"
+  }
+}

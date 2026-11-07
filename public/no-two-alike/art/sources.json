@@ -1,0 +1,11 @@
+{
+  "game-icons--sun.svg": {
+    "icon": "game-icons:sun",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Badges",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/badges/sun.html"
+  }
+}
