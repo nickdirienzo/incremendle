@@ -49,6 +49,11 @@ Every game should have these bones:
   shown up it stays until bought: never hide one again because the player spent resources, or
   they lose the goal they were saving for. Mix real upgrades
   with a few silly one-offs that do little but add story.
+  Every purchase shows up in the play area, and the silly ones most of all: a picture is their
+  whole payoff. The tooltip and the log line set up the joke; the scene delivers it (buy the
+  second coffee mug and a mug sits on the desk from then on). If an upgrade's name, text or
+  joke describes a thing (a hat, a sign, a sticker, a radio, a dent), draw that thing, and keep
+  it drawn. A purchase that only changes a number or a log line feels like nothing happened.
   On desktop the column never runs below the fold: make it sticky, no taller than the window, with
   its own scroll for emergencies (`npm run check` measures it with the game's busy save from
   `tools/cards.json`). Aim for no scrolling at all at the busiest point, the way real incrementals
