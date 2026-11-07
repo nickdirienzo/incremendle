@@ -74,7 +74,7 @@ export const UP = {
                desc: 'Someone to look at the Fold-O-Matic. It starts folding and shipping cranes on its own, beat or no beat.',
                joke: 'Wanda from Maintenance comes round with a toolbox and a thermos, says she’ll take a look from the inside, and draws the little curtain. The machine starts working at once.' },
   mug:       { name: 'Second Coffee Mug', cost: 3e+07, need: 3e+06, odd: true, needUp: 'maint',
-               desc: 'A second mug for the desk. Does nothing.', joke: 'Pinchworth doesn’t drink coffee. He leaves it by the Fold-O-Matic. When he looks back, it’s empty.' },
+               desc: 'A second mug, for by the Fold-O-Matic. Does nothing.', joke: 'Pinchworth doesn’t drink coffee. He leaves it by the Fold-O-Matic. When he looks back, it’s empty.' },
   laugh:     { name: 'Laugh Track', cost: 400000, need: 30000, streakCap: 16,
                desc: 'The streak bonus keeps climbing to 16 beats in a row (×5) instead of stopping at 8 (×3).',
                joke: 'Canned laughter on every beat. Pinchworth has never been this funny.' },
@@ -118,7 +118,9 @@ export function load(raw) {
 // A save of just { ended: true } is drawn as the finished world.
 function finishWorld(S) {
   if (S.cranes < GOAL) S.cranes = GOAL;
-  if (!S.up.maint) S.up.maint = true;
+  // Everything bought, so the finished set has every prop on it.
+  for (const id of UP_IDS) S.up[id] = true;
+  for (const id of LINE_IDS) S.lv[id] = Math.max(S.lv[id], LINES[id].max);
 }
 
 // ---------- Rates ----------

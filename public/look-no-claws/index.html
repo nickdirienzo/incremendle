@@ -10,7 +10,7 @@
 <meta property="og:title" content="Look, No Claws!">
 <meta property="og:description" content="3 a.m. on Channel 61. A homesick crab herds runaway paper cranes on the beat of the gamelan band, live, to win the station van and drive to the sea.">
 <meta property="og:url" content="https://incremendle.com/look-no-claws/">
-<meta property="og:image" content="https://incremendle.com/look-no-claws/og.png?v=46c6cc61">
+<meta property="og:image" content="https://incremendle.com/look-no-claws/og.png?v=a449f050">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Look, No Claws!: 3 a.m. on Channel 61. A homesick crab herds runaway paper cranes on the beat of the gamelan band, live, to win the station van and drive to the sea.">
@@ -379,19 +379,26 @@ function drawBackground() {
   inked(x, C.c7, () => x.rect(-4, LANE_Y - 26, W + 8, 52), 3);
   x.fillStyle = C.c5; x.fillRect(0, LANE_Y - 23, 76, 46);
   x.font = '400 16px Bangers, Impact, sans-serif'; x.fillStyle = C.c1; x.textAlign = 'center'; x.fillText('CALL', 38, LANE_Y - 3); x.fillText('NOW!', 38, LANE_Y + 15);
-  x.font = '700 11px Comic Neue, sans-serif'; x.fillStyle = C.c3; x.textAlign = 'right'; x.fillText('1-800-CRAB-NOW · $19.99 · SHIPPING IS FREE · CRANES FLY THEMSELVES', W - 10, LANE_Y + 21);
+  x.font = '700 11px Comic Neue, sans-serif'; x.fillStyle = C.c3; x.textAlign = 'right'; x.fillText('$19.99 · SHIPPING IS FREE · CRANES FLY THEMSELVES · NOT AVAILABLE IN THE OCEAN', W - 104, LANE_Y + 21);
   return c;
 }
 
 // Pinchworth: berry shell, eyes on stalks, a bow tie, two claws. `snap` 0..1 closes the right claw.
-function drawCrab(x, snap, t, look = 0) {
+function drawCrab(x, snap, t, look = 0, mo = false) {
   x.save(); x.lineJoin = 'round';
+  const dress = !mo;
   // Legs.
   for (const s of [-1, 1]) for (let i = 0; i < 3; i++) S_(x, () => { x.moveTo(s * 34, -18 + i * 7); x.lineTo(s * (52 + i * 4), -8 + i * 9); x.lineTo(s * (58 + i * 3), 6 + i * 6); }, 4);
   // Shell.
   inked(x, C.c5, () => x.ellipse(0, -28, 46, 30, 0, 0, Math.PI * 2));
   dots(x, () => x.ellipse(0, -28, 46, 30, 0, 0, Math.PI * 2), C.ink, 0.45, 4);
   x.fillStyle = C.c4; P(x, () => x.ellipse(-14, -42, 16, 8, -0.3, 0, Math.PI * 2));
+  // The Unbreakable Streak: a champion's sash.
+  if (dress && gift('bigstreak')) {
+    x.save(); x.beginPath(); x.ellipse(0, -28, 46, 30, 0, 0, Math.PI * 2); x.clip();
+    S_(x, () => { x.moveTo(-40, -54); x.lineTo(44, -6); }, 13); x.beginPath(); x.moveTo(-40, -54); x.lineTo(44, -6); x.lineWidth = 8; x.strokeStyle = C.c1; x.stroke();
+    x.restore(); star(x, 20, -20, 7, C.c2);
+  }
   // Bow tie (he's the host).
   inked(x, C.c1, () => { x.moveTo(0, -6); x.lineTo(-12, -12); x.lineTo(-12, 0); x.closePath(); x.moveTo(0, -6); x.lineTo(12, -12); x.lineTo(12, 0); x.closePath(); }, 2);
   inked(x, C.c2, () => x.arc(0, -6, 3, 0, Math.PI * 2), 1.5);
@@ -404,19 +411,40 @@ function drawCrab(x, snap, t, look = 0) {
   // A small smile; homesick eyebrows.
   S_(x, () => { x.arc(0, -30, 9, 0.25, Math.PI - 0.25); }, 2.5);
   S_(x, () => { x.moveTo(-22, -88); x.lineTo(-8, -86); x.moveTo(22, -88); x.lineTo(8, -86); }, 2.5);
+  // Testimonials: it's Pinchworth in a moustache.
+  if (mo) inked(x, C.ink, () => { x.moveTo(0, -24); x.quadraticCurveTo(-10, -32, -22, -20); x.quadraticCurveTo(-12, -22, 0, -18); x.quadraticCurveTo(12, -22, 22, -20); x.quadraticCurveTo(10, -32, 0, -24); }, 1);
+  // Metronome Hat: a tiny metronome on a tiny hat, ticking with the band.
+  if (dress && gift('hat')) {
+    inked(x, C.c7, () => x.ellipse(0, -58, 15, 4, 0, 0, Math.PI * 2), 2);
+    inked(x, C.c7, () => x.rect(-8, -72, 16, 13), 2);
+    inked(x, C.c2, () => { x.moveTo(-6, -72); x.lineTo(-3, -90); x.lineTo(3, -90); x.lineTo(6, -72); x.closePath(); }, 2);
+    const sw = Math.sin(beatNow() * Math.PI) * 0.6;
+    S_(x, () => { x.moveTo(0, -73); x.lineTo(Math.sin(sw) * 16, -73 - Math.cos(sw) * 16); }, 2);
+  }
   // Claws: the left one raised, holding a cue card; the right one does the clicking.
-  claw(x, -62, -56, -0.5, 0.15, t);
-  claw(x, 64, -62, 0.6, snap, t);
+  const shell = dress && gift('goldclaws') ? C.c1 : C.c5;
+  claw(x, -62, -56, -0.5, 0.15, t, shell);
+  claw(x, 64, -62, 0.6, snap, t, shell);
+  // Claw Polish: the more coats, the bigger the twinkle.
+  if (dress && (S.lv.polish || shell !== C.c5)) {
+    const lv = S.lv.polish + (shell !== C.c5 ? 6 : 0), tw = 0.6 + 0.4 * Math.sin(t * 5);
+    star(x, 78, -96, (3 + Math.min(lv, 16) * 0.5) * tw, C.c1);
+    if (lv >= 8) star(x, -76, -88, (2 + Math.min(lv, 16) * 0.3) * (1.6 - tw), C.c1);
+  }
   x.restore();
 }
-function claw(x, cx, cy, rot, snap, t) {
+// A four-point twinkle.
+function star(x, cx, cy, r, color) {
+  inked(x, color, () => { for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2, q = i % 2 ? r * 0.3 : r; x.lineTo(cx + Math.cos(a) * q, cy + Math.sin(a) * q); } x.closePath(); }, 1.5);
+}
+function claw(x, cx, cy, rot, snap, t, shell = C.c5) {
   x.save();
   S_(x, () => { x.moveTo(cx * 0.55, cy * 0.4); x.lineTo(cx * 0.85, cy * 0.8); x.lineTo(cx, cy); }, 7);
   x.translate(cx, cy); x.rotate(rot);
   const open = 0.55 * (1 - snap);
-  inked(x, C.c5, () => { x.moveTo(-6, 6); x.quadraticCurveTo(-18, -10, -4, -26); x.quadraticCurveTo(4, -18, 2, -4); x.closePath(); });
+  inked(x, shell, () => { x.moveTo(-6, 6); x.quadraticCurveTo(-18, -10, -4, -26); x.quadraticCurveTo(4, -18, 2, -4); x.closePath(); });
   x.save(); x.rotate(open);
-  inked(x, C.c5, () => { x.moveTo(4, 6); x.quadraticCurveTo(18, -6, 10, -22); x.quadraticCurveTo(4, -12, 0, -2); x.closePath(); });
+  inked(x, shell, () => { x.moveTo(4, 6); x.quadraticCurveTo(18, -6, 10, -22); x.quadraticCurveTo(4, -12, 0, -2); x.closePath(); });
   x.restore();
   inked(x, C.c4, () => x.ellipse(0, 8, 9, 7, 0, 0, Math.PI * 2), 2.5);
   x.restore();
@@ -446,9 +474,172 @@ function drawMachine(x, t, open = 0) {
   }
   inked(x, C.c6, () => x.rect(mx + 22, my + 132, w - 64, 56), 2.5);
   x.fillStyle = S.up.maint ? C.c1 : C.c4; x.font = '400 14px Bangers, Impact, sans-serif'; x.fillText(S.up.maint ? 'WORKING!' : 'OUT OF ORDER', mx + (w - 20) / 2, my + 166);
+  // Spare Parts: a row of gears along the bottom, every third one a biscuit.
+  for (let i = 0; i < S.lv.parts; i++) {
+    const gx = mx + 16 + i * 17, gy = my + h - 13;
+    if (i % 3 === 2) { inked(x, C.c2, () => x.arc(gx, gy, 7, 0, Math.PI * 2), 2); x.fillStyle = C.ink; for (const [a, b] of [[-2, -2], [3, 0], [-1, 3]]) P(x, () => x.arc(gx + a, gy + b, 1.1, 0, Math.PI * 2)); continue; }
+    const r0 = (S.up.maint ? t * 2 : 0) * (i % 2 ? 1 : -1);
+    inked(x, C.c2, () => { for (let j = 0; j < 16; j++) { const a = r0 + j / 16 * Math.PI * 2, q = j % 2 ? 5.5 : 8; x.lineTo(gx + Math.cos(a) * q, gy + Math.sin(a) * q); } x.closePath(); }, 2);
+    x.fillStyle = C.ink; P(x, () => x.arc(gx, gy, 2, 0, Math.PI * 2));
+  }
+  // Kick the Machine: a dent in the chute, and a plaster on it.
+  if (S.up.kick) {
+    S_(x, () => { x.moveTo(mx + 66, my + 6); x.quadraticCurveTo(mx + 74, my + 12, mx + 70, my + 20); }, 2);
+    x.save(); x.translate(mx + 92, my + 10); x.rotate(0.5);
+    for (const r of [0, Math.PI / 2]) { x.save(); x.rotate(r); inked(x, C.c2, () => x.roundRect(-13, -4, 26, 8, 3), 1.8); x.restore(); }
+    x.restore();
+  }
   // Little feet.
   for (const fx of [mx + 12, mx + w - 44]) inked(x, C.c4, () => x.rect(fx, my + h - 2, 18, 8), 2.5);
   x.restore();
+}
+// Everything else the shop sells, drawn where it went. back: the wall; machine: on and around
+// the Fold-O-Matic; desk: on the desk; front: in front of the set.
+const gift = g => E.DEMO_IDS.some(d => S.gifts[d] === g);
+const cue = { oooh: -9, laugh: -9 };
+function drawProps(x, layer) {
+  const t = clock, up = S.up;
+  const label = (text, px, py, size, color = C.ink, font = 'Bangers, Impact, sans-serif') => { x.font = `400 ${size}px ${font}`; x.textAlign = 'center'; x.fillStyle = color; x.fillText(text, px, py); };
+  if (layer === 'back') {
+    // Act Now!: the clock that's been counting down from ten minutes for three hours.
+    if (up.actnow) {
+      x.save(); x.translate(86, 46); x.rotate(-0.03);
+      inked(x, C.c5, () => x.roundRect(-74, -26, 148, 52, 6), 3);
+      label('ACT NOW! OFFER ENDS IN', 0, -7, 13, C.c2);
+      const s = 600 - Math.floor(t % 47);
+      label(`${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`, 0, 18, 24, C.c1);
+      x.restore();
+    }
+    // Warranty Card, pinned up: signed W.
+    if (up.warranty) {
+      x.save(); x.translate(48, 120); x.rotate(0.07);
+      inked(x, C.c1, () => x.rect(-32, -22, 64, 44), 2.5);
+      label('WARRANTY', 0, -6, 12);
+      label('Signed, W.', 0, 13, 13, C.c5, 'Comic Neue, sans-serif');
+      x.fillStyle = C.c5; P(x, () => x.arc(0, -22, 3.5, 0, Math.PI * 2));
+      x.restore();
+    }
+    // Night Shift Overtime: a punch clock, with Wanda's card in it.
+    if (gift('overtime')) {
+      x.save(); x.translate(124, 126);
+      inked(x, C.c2, () => x.rect(-9, -38, 18, 22), 2); label('W', 0, -24, 11);
+      inked(x, C.c3, () => x.roundRect(-20, -22, 40, 46, 4), 2.5);
+      inked(x, C.c1, () => x.arc(0, -2, 11, 0, Math.PI * 2), 2);
+      S_(x, () => { x.moveTo(0, -2); x.lineTo(Math.cos(t / 6) * 7, -2 + Math.sin(t / 6) * 7); x.moveTo(0, -2); x.lineTo(Math.cos(t) * 9, -2 + Math.sin(t) * 9); }, 1.5);
+      label('OT', 0, 20, 9, C.c1);
+      x.restore();
+    }
+    // Studio Audience and Laugh Track: cue lights that light up when they go off.
+    const cueLight = (y, text, lit) => {
+      x.save(); x.translate(276, y);
+      inked(x, lit ? C.c1 : C.c6, () => x.roundRect(-40, -15, 80, 30, 6), 3);
+      label(text, 0, 8, 19, lit ? C.c5 : C.c3);
+      x.restore();
+    };
+    if (up.audience) cueLight(124, 'OOOH', t - cue.oooh < 0.4);
+    if (up.laugh) cueLight(162, 'LAUGH', t - cue.laugh < 0.3);
+    // Testimonials: a framed photo of a satisfied crab.
+    if (up.testimony) {
+      x.save(); x.translate(394, 142); x.rotate(0.03);
+      inked(x, C.c2, () => x.rect(-44, -42, 88, 84), 3);
+      x.fillStyle = C.c7; x.fillRect(-36, -34, 72, 58);
+      x.save(); x.beginPath(); x.rect(-36, -34, 72, 58); x.clip(); x.translate(0, 12); x.scale(0.42, 0.42); drawCrab(x, 0.2, 0, 0, true); x.restore();
+      label('A SATISFIED CRAB', 0, 37, 11);
+      x.restore();
+    }
+    // The Big Spotlight.
+    if (gift('spotlight')) {
+      x.save(); x.globalAlpha = 0.17; x.fillStyle = C.c1;
+      x.beginPath(); x.moveTo(372, 0); x.lineTo(418, 0); x.lineTo(500, 334); x.lineTo(290, 334); x.fill();
+      x.restore();
+      inked(x, C.c3, () => x.roundRect(374, -8, 42, 18, 4), 3);
+    }
+  } else if (layer === 'machine') {
+    const { x: mx, y: my, w, h } = MACH;
+    // Operators Standing By: a phone on the machine, its cord running down the chute.
+    if (up.operators && ART.phone) {
+      S_(x, () => { x.moveTo(mx + 26, my + 18); x.bezierCurveTo(mx + 30, my + 34, mx + 60, my + 2, mx + 72, my - 4); }, 2.5);
+      x.drawImage(ART.phone, mx + 4, my - 4, 34, 34);
+    }
+    // Second Coffee Mug: left by the curtain. Now and then it empties itself.
+    if (up.mug) {
+      const ph = t % 14, mgx = mx + w - 46, mgy = my + 6;
+      if (ph > 10 && ph < 11.6) {
+        x.save(); x.lineCap = 'round';
+        x.beginPath(); x.moveTo(mx + w - 8, my + 46); x.quadraticCurveTo(mx + w + 4, my + 4, mgx + 16, mgy + 4);
+        x.lineWidth = 8; x.strokeStyle = C.ink; x.stroke(); x.lineWidth = 4.5; x.strokeStyle = C.c4; x.stroke(); x.restore();
+      }
+      inked(x, C.c2, () => x.arc(mgx + 15, mgy + 9, 5, -Math.PI / 2, Math.PI / 2), 2);
+      inked(x, C.c2, () => x.rect(mgx, mgy, 15, 18), 2.5);
+      if (ph < 10.4 && !reduced) for (const o of [4, 10]) S_(x, () => { x.moveTo(mgx + o, mgy - 3); x.quadraticCurveTo(mgx + o + 4 * Math.sin(t * 2 + o), mgy - 9, mgx + o, mgy - 16); }, 1.5);
+    }
+    // Tune the Machine: it hums along now, in tune.
+    if (up.hum && up.maint) for (let i = 0; i < 3; i++) {
+      const p = (t * 0.35 + i / 3) % 1, nx = mx + 150 + Math.sin(p * 6 + i) * 8, ny = my - 12 - p * 70;
+      x.save(); x.globalAlpha = 1 - p; x.font = '700 22px Comic Neue, sans-serif'; x.textAlign = 'center';
+      x.lineWidth = 4; x.strokeStyle = C.ink; x.strokeText('♪', nx, ny); x.fillStyle = C.c2; x.fillText('♪', nx, ny); x.restore();
+    }
+    // Wanda's Thermos, by the machine's foot.
+    if (gift('thermos')) {
+      inked(x, C.c4, () => x.roundRect(10, my + h - 40, 24, 48, 5), 2.5);
+      inked(x, C.c7, () => x.rect(13, my + h - 48, 18, 9), 2);
+      x.fillStyle = C.c1; x.fillRect(12, my + h - 22, 20, 5);
+    }
+    // Wanda's Radio, by the curtain, antenna up.
+    if (gift('radio')) {
+      S_(x, () => { x.moveTo(mx + w + 26, my + h - 10); x.lineTo(mx + w + 40, my + h - 40); }, 2);
+      inked(x, C.c3, () => x.roundRect(mx + w + 6, my + h - 12, 40, 24, 4), 2.5);
+      inked(x, C.c7, () => x.arc(mx + w + 18, my + h, 6, 0, Math.PI * 2), 2);
+      x.fillStyle = C.c1; x.fillRect(mx + w + 28, my + h - 6, 13, 4);
+    }
+    // Conveyor Belt: overhead, from the chute to the boxes.
+    if (gift('conveyor')) {
+      x.save(); x.lineJoin = 'round'; x.lineCap = 'round';
+      x.beginPath(); x.moveTo(mx + 104, my - 4); x.lineTo(mx + 124, my + 32); x.lineTo(586, my + 32); x.lineTo(606, 296);
+      x.lineWidth = 11; x.strokeStyle = C.ink; x.stroke(); x.lineWidth = 6; x.strokeStyle = C.c3; x.stroke();
+      if (!reduced) { x.setLineDash([3, 9]); x.lineDashOffset = -t * 40; }
+      x.lineWidth = 6; x.strokeStyle = C.c6; x.stroke(); x.setLineDash([]);
+      const fr = Math.floor(t * 4);
+      for (let i = 0; i < 6; i++) { const p = ((reduced ? 0 : t * 0.1) + i / 6) % 1; x.drawImage(ART.crane[(i + fr) % 2], mx + 124 + p * (586 - mx - 124) - 11, my + 14, 22, 16); }
+      x.restore();
+    }
+  } else if (layer === 'desk') {
+    // Seashell Phone, on the end of the desk.
+    if (up.seashell) {
+      x.save(); x.translate(DESK.x + DESK.w - 24, DESK.y);
+      inked(x, C.c2, () => { x.moveTo(0, 0); x.arc(0, 0, 17, Math.PI * 1.08, Math.PI * 1.92); x.closePath(); }, 2.5);
+      for (let i = 1; i < 5; i++) { const a = Math.PI * (1.08 + i * 0.168); S_(x, () => { x.moveTo(0, 0); x.lineTo(Math.cos(a) * 17, Math.sin(a) * 17); }, 1.5); }
+      x.restore();
+    }
+    // But Wait, There's More!: a sticker on the desk that keeps doubling.
+    if (S.lv.wait) {
+      x.save(); x.translate(DESK.x + DESK.w - 26, DESK.y + 36); x.rotate(0.12);
+      inked(x, C.c1, () => { for (let i = 0; i < 20; i++) { const a = i / 20 * Math.PI * 2, r = i % 2 ? 22 : 30; x.lineTo(Math.cos(a) * r * 1.25, Math.sin(a) * r); } x.closePath(); }, 2.5);
+      label('BUT WAIT!', 0, -5, 11, C.c5); label(`×${E.fmtShort(2 ** S.lv.wait)}`, 0, 13, 16, C.c5);
+      x.restore();
+    }
+  } else if (layer === 'front') {
+    // Not Available in Stores: stamped across the boxes.
+    if (up.stores) {
+      x.save(); x.translate(692, 384); x.rotate(-0.06);
+      inked(x, C.c5, () => x.rect(-98, -13, 196, 26), 3);
+      label('NOT AVAILABLE IN STORES', 0, 7, 17, C.c1);
+      x.restore();
+    }
+  } else if (layer === 'audience') {
+    // Studio Audience: the security guard and his mum, in the front row. Perfect taps get an "oooh".
+    if (up.audience) {
+      const lift = t - cue.oooh < 0.4 ? 4 : 0;
+      for (const [hx, cap] of [[724, true], [770, false]]) {
+        x.save(); x.translate(hx, 466 - lift);
+        inked(x, C.c7, () => x.ellipse(0, 30, 26, 18, 0, 0, Math.PI * 2), 2.5);
+        inked(x, C.c7, () => x.arc(0, 0, 15, 0, Math.PI * 2), 2.5);
+        if (cap) inked(x, C.c3, () => { x.rect(-15, -16, 30, 8); x.rect(4, -10, 17, 4); }, 2.5);
+        else inked(x, C.c4, () => x.arc(0, -17, 7, 0, Math.PI * 2), 2.5);
+        x.restore();
+      }
+    }
+  }
 }
 // Wanda from Maintenance: an octopus in a hairnet, eight arms, a crane in most of them.
 function drawWanda(x, t) {
@@ -495,14 +686,17 @@ function render() {
   x.save(); x.translate((rnd() - 0.5) * sh, (rnd() - 0.5) * sh);
   x.drawImage(bg, 0, 0, W, H);
   drawSky(x);
+  drawProps(x, 'back');
   drawMachine(x, clock);
+  drawProps(x, 'machine');
   // Desk, phone, the boxes.
   inked(x, C.c4, () => x.rect(DESK.x, DESK.y, DESK.w, DESK.h), 3.5);
   dots(x, () => x.rect(DESK.x, DESK.y, DESK.w, DESK.h), C.ink, 0.4, 5);
-  x.fillStyle = C.c1; x.font = '400 20px Bangers, Impact, sans-serif'; x.textAlign = 'center'; x.fillText('AS SEEN ON TV', DESK.x + DESK.w / 2, DESK.y + 44);
+  x.fillStyle = C.c1; x.font = '400 20px Bangers, Impact, sans-serif'; x.textAlign = 'center'; x.fillText(S.up.tollfree ? '1-800-CRAB-NOW' : 'ONLY $19.99', DESK.x + DESK.w / 2 - 14, DESK.y + 44);
   if (ART.phone) x.drawImage(ART.phone, DESK.x + 8, DESK.y - 40, 46, 46);
-  if (S.up.mug || S.ended) { inked(x, C.c2, () => x.rect(DESK.x + DESK.w - 40, DESK.y - 20, 16, 20), 2.5); }
+  drawProps(x, 'desk');
   drawBoxes(x);
+  drawProps(x, 'front');
   if (reveal || S.ended) drawRevealed(x);
   // Pinchworth.
   x.save(); x.translate(CRAB.x, CRAB.y + (reduced ? 0 : Math.sin(clock * Math.PI * 2 / E.BEAT / 2) * 1.5)); drawCrab(x, snap, clock, look); x.restore();
@@ -511,6 +705,7 @@ function render() {
   for (const c of flock) x.drawImage((c.dark ? ART.craneDark : ART.crane)[(fr + (c.ph > 3 ? 1 : 0)) % 2], c.x - 17, c.y - 12, 34, 24);
   for (const c of flying) x.drawImage(ART.crane[fr], c.x - 14, c.y - 10, 28, 20);
   drawLane(x);
+  drawProps(x, 'audience');
   for (const b of bursts) drawBurst(x, b);
   for (const f of floats) {
     x.save(); x.globalAlpha = Math.max(0, 1 - f.t / 1.2); x.font = `400 ${f.big ? 26 : 19}px Bangers, Impact, sans-serif`; x.textAlign = 'center';
@@ -536,6 +731,7 @@ function drawBoxes(x) {
     const row = i < 4 ? 0 : i < 7 ? 1 : i < 9 ? 2 : 3, col = i < 4 ? i : i < 7 ? i - 4 : i - 7;
     const bx = BOX.x + col * 44 + row * 22 - 10, by = BOX.y - 56 - row * 44;
     x.drawImage(ART.box, bx, by, 56, 40);
+    if (S.up.sticker) { star(x, bx + 44, by + 10, 9, C.c1); x.fillStyle = C.ink; x.font = '400 7px Bangers, Impact, sans-serif'; x.textAlign = 'center'; x.fillText('TV', bx + 44, by + 13); }
   }
 }
 function drawRevealed(x) {
@@ -621,6 +817,7 @@ function tap() {
   const n = E.herd(S, grade);
   if (grade === 'miss') { sfx.miss(); if (was >= 4) float(CRAB.x + 70, CRAB.y - 110, 'off the beat', C.c3); return; }
   if (grade === 'perfect') sfx.perfect(S.streak); else sfx.good(S.streak);
+  cue.laugh = clock; if (grade === 'perfect') cue.oooh = clock;
   if (S.streak % 8 === 0) { sfx.flock(S.streak); burst(['CLICK!', 'SNAP!', 'FWOOSH!', 'OOOH!'][(S.streak / 8 - 1) % 4], CRAB.x + 110, CRAB.y - 150, C.c1, 24); }
   else if (grade === 'perfect' && rnd() < 0.25) burst('CLICK!', CRAB.x + 90, CRAB.y - 120, C.c1, 18);
   herdVisual(n, grade);
@@ -708,7 +905,7 @@ function giftFx(g) {
 function pickGift(id, g) {
   if (!E.pickGift(S, id, g)) return;
   $('over').hidden = true; $('over').innerHTML = '';
-  sfx.gift();
+  sfx.gift(); landed(g);
   const G = E.GIFTS[g];
   say('FREE GIFT', `${G.name}. ${G.side === 'machine' ? 'Wanda says thank you from inside the machine. Her voice is a little muffled.' : 'Pinchworth holds it up to the camera. The camera holds very still.'}`);
   save(); hud(); renderShop(); cv.focus({ preventScroll: true });
@@ -1008,7 +1205,21 @@ function doBuy(id) {
   if (L) say('ORDER', `${L.name} (${S.lv[id]}). ${L.desc}`);
   else say(id === 'maint' ? 'MAINTENANCE' : 'ORDER', E.UP[id].joke);
   if (id === 'maint') refreshMusic();
+  landed(id);
   save(); renderShop(); hud();
+}
+const LANDS = {
+  kick: ['OW!', 140, 150], mug: ['MUG!', 180, 150], warranty: ['W.', 48, 96], seashell: ['HI!', 496, 300], hum: ['HMM!', 196, 120],
+  tollfree: ['RING!', 380, 380], audience: ['OOOH!', 276, 124], laugh: ['HA HA!', 276, 162], actnow: ['NOW!', 86, 46],
+  testimony: ['WOW!', 394, 100], operators: ['RING!', 70, 150], sticker: ['TV!', 680, 270], stores: ['EXCLUSIVE!', 692, 350],
+  polish: ['SHINE!', 470, 210], wait: ['MORE!', 494, 360], parts: ['CLUNK!', 120, 350],
+  goldclaws: ['BLING!', 470, 220], thermos: ['SOUP!', 40, 330], hat: ['TICK!', 395, 200], overtime: ['OT!', 124, 90],
+  bigstreak: ['CHAMP!', 395, 260], conveyor: ['WHIRR!', 380, 190], spotlight: ['TA-DA!', 395, 60], radio: ['♪♪', 250, 330],
+};
+function landed(id) {
+  const l = LANDS[id]; if (!l) return;
+  burst(l[0], l[1], l[2], C.c1, 20);
+  if (id === 'kick') shake = 1;
 }
 
 // ---------- Input ----------
