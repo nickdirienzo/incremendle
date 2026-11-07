@@ -1207,5 +1207,55 @@
    "stamp",
    "frame"
   ]
+ },
+ "look-no-claws": {
+  "cranes": 600000000.0,
+  "cash": 2500000000.0,
+  "t": 700,
+  "streak": 19,
+  "best": 31,
+  "hits": 400,
+  "perfects": 220,
+  "misses": 40,
+  "lv": {
+   "polish": 11,
+   "wait": 5,
+   "parts": 7
+  },
+  "up": {
+   "tollfree": true,
+   "audience": true,
+   "laugh": true,
+   "maint": true,
+   "mug": true,
+   "seashell": true,
+   "kick": true,
+   "actnow": true,
+   "testimony": true
+  },
+  "gifts": {
+   "oneclaw": "goldclaws",
+   "lights": "thermos"
+  },
+  "demos": {
+   "oneclaw": "done",
+   "lights": "done"
+  },
+  "seen": {
+   "polish": true,
+   "wait": true,
+   "parts": true,
+   "warranty": true,
+   "tollfree": true,
+   "audience": true,
+   "laugh": true,
+   "maint": true,
+   "mug": true,
+   "seashell": true,
+   "kick": true,
+   "actnow": true,
+   "testimony": true
+  },
+  "boughtOpen": false
  }
 }

@@ -1,0 +1,1094 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Look, No Claws! · Incremendle</title>
+<meta name="description" content="3 a.m. on Channel 61. A homesick crab herds paper cranes to the beat of the gamelan band, live, to win the station van and drive to the sea. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Look, No Claws!">
+<meta property="og:description" content="3 a.m. on Channel 61. A homesick crab herds runaway paper cranes on the beat of the gamelan band, live, to win the station van and drive to the sea.">
+<meta property="og:url" content="https://incremendle.com/look-no-claws/">
+<meta property="og:image" content="https://incremendle.com/look-no-claws/og.png?v=46c6cc61">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Look, No Claws!: 3 a.m. on Channel 61. A homesick crab herds runaway paper cranes on the beat of the gamelan band, live, to win the station van and drive to the sea.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/bangers/font.css">
+<link rel="stylesheet" href="/shared/fonts/comic-neue/font.css">
+<style>
+  /* A late-night comic: Berry Nebula inks on a dark page, Ben-Day dots, thick black lines. */
+  :root {
+    --c1: #6ceded; --c2: #6cb9c9; --c3: #6d85a5; --c4: #6e5181; --c5: #6f1d5c; --c6: #4f1446; --c7: #2e0a30; --ink: #0d001a;
+    --head: 'Bangers', 'Impact', sans-serif; --body: 'Comic Neue', 'Comic Sans MS', sans-serif;
+    color-scheme: dark;
+  }
+  html, body { background: var(--c7); color: var(--c1); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 700 15px/1.35 var(--body);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(10px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image: radial-gradient(#6f1d5c66 1.3px, transparent 1.6px); background-size: 8px 8px;
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 2px 0 6px; }
+  h1 { font: 400 40px/1 var(--head); margin: 0; letter-spacing: 1.5px; color: var(--c1); -webkit-text-stroke: 1.5px var(--ink); text-shadow: 3px 3px 0 var(--c5), 4px 4px 0 var(--ink); transform: rotate(-1.5deg); }
+  header p { margin: 0; font: 400 17px var(--head); letter-spacing: 1.5px; color: var(--c2); }
+  header p b { font-weight: 400; color: var(--ink); background: var(--c1); padding: 0 6px; margin-right: 6px; }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } h1 { font-size: 32px; } }
+  main { min-width: 0; }
+
+  /* The bet, the till, the numbers you pay for. */
+  .hud { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 5px 14px; align-items: center; margin-bottom: 7px; }
+  .meter { position: relative; height: 28px; border: 3px solid var(--ink); background: var(--c6); box-shadow: 3px 3px 0 var(--ink); overflow: hidden; }
+  .meter i { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--c2); background-image: radial-gradient(var(--c1) 1.6px, transparent 2px); background-size: 6px 6px; transition: width .4s; }
+  .meter span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 9px; font: 700 14px var(--body); color: var(--ink); white-space: nowrap; text-shadow: 0 0 3px var(--c1), 0 0 3px var(--c1); }
+  .meter span em { font-style: normal; }
+  @media (max-width: 560px) { .meter span em:first-child { display: none; } .meter span { justify-content: center; } }
+  .cash { font: 400 30px/1 var(--head); letter-spacing: 1px; color: var(--c1); -webkit-text-stroke: 1px var(--ink); text-shadow: 2px 2px 0 var(--c5); white-space: nowrap; }
+  .sub { grid-column: 1 / -1; display: flex; gap: 4px 16px; flex-wrap: wrap; align-items: center; font: 700 13px var(--body); color: var(--c2); min-height: 18px; }
+  .sub b { color: var(--c1); }
+
+  .stagewrap { position: relative; }
+  canvas#stage { display: block; width: 100%; touch-action: none; cursor: pointer; border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); background: var(--c7); -webkit-tap-highlight-color: transparent; user-select: none; }
+  canvas#stage:focus-visible { outline: 3px dashed var(--c1); outline-offset: 3px; }
+  /* Panels over the stage: free gifts, the demo's result. */
+  .over { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 12px; background: #0d001acc; }
+  .card { max-width: 560px; width: 100%; text-align: center; background: var(--c7); border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--c5); padding: 10px 14px 14px; }
+  .card h3 { font: 400 28px/1 var(--head); letter-spacing: 1.5px; margin: 2px 0 6px; color: var(--c1); -webkit-text-stroke: 1px var(--ink); text-shadow: 2px 2px 0 var(--c5); }
+  .card p { margin: 4px 0 10px; color: var(--c2); }
+  .gifts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 480px) { .gifts { grid-template-columns: 1fr; } }
+  .gift { text-align: left; font: 700 13px/1.3 var(--body); color: var(--ink); background: var(--c1); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--c5); padding: 7px 9px 9px; cursor: pointer; }
+  .gift b { display: block; font: 400 20px/1.05 var(--head); letter-spacing: 1px; margin-bottom: 3px; }
+  .gift small { display: block; margin-top: 5px; font-size: 12px; color: var(--c6); }
+  .gift.machine { background: var(--c2); }
+  .gift:hover, .gift:focus-visible { transform: translate(-1px, -2px); box-shadow: 4px 5px 0 var(--c5); outline: none; }
+  .bigbtn { font: 400 22px var(--head); letter-spacing: 1px; color: var(--ink); background: var(--c1); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--c5); padding: 6px 18px; cursor: pointer; margin: 4px; }
+  .bigbtn.quiet { background: var(--c4); color: var(--c1); }
+  .bigbtn:focus-visible { outline: 3px dashed var(--c1); outline-offset: 2px; }
+
+  /* The log: a speech balloon. */
+  .log { position: relative; margin: 14px 2px 0; min-height: 2.7em; font: 700 15px/1.35 var(--body); color: var(--ink); background: var(--c1); border: 3px solid var(--ink); border-radius: 14px; padding: 6px 12px; box-shadow: 3px 3px 0 var(--c5); }
+  .log::before { content: ""; position: absolute; top: -13px; left: 40px; border: 10px solid transparent; border-bottom-color: var(--ink); border-top: 0; }
+  .log::after { content: ""; position: absolute; top: -8px; left: 43px; border: 7px solid transparent; border-bottom-color: var(--c1); border-top: 0; }
+  .log b { font: 400 15px var(--head); letter-spacing: 1px; color: var(--c1); background: var(--ink); padding: 0 6px; margin-right: 6px; }
+  .log.fresh { animation: pop .3s ease-out; }
+  @keyframes pop { from { transform: scale(.97); } }
+
+  /* Offers: sticky, never taller than the window. */
+  aside { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; scrollbar-width: thin; padding: 2px 6px 8px 2px; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  aside h2 { font: 400 26px/1 var(--head); letter-spacing: 1.5px; margin: 2px 0 9px; color: var(--c1); -webkit-text-stroke: 1px var(--ink); text-shadow: 2px 2px 0 var(--c5); }
+  #afford { font: 700 13px var(--body); letter-spacing: 0; -webkit-text-stroke: 0; text-shadow: none; color: var(--c2); }
+  #calls { display: grid; gap: 8px; margin-bottom: 10px; }
+  #calls:empty { display: none; }
+  .call { position: relative; text-align: left; font: 700 13px/1.25 var(--body); color: var(--ink); background: var(--c1); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--c5); padding: 6px 9px 7px; cursor: pointer; animation: nudge 1.6s ease-in-out infinite; }
+  .call b { display: block; font: 400 20px/1.05 var(--head); letter-spacing: 1px; }
+  .call.final { background: var(--c5); color: var(--c1); box-shadow: 3px 3px 0 var(--c1); }
+  .call:focus-visible { outline: 3px dashed var(--c1); outline-offset: 2px; }
+  @keyframes nudge { 50% { transform: translate(-1px, -2px); box-shadow: 4px 5px 0 var(--c5); } }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  @media (max-width: 760px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up {
+    position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 700 13px/1.2 var(--body); color: var(--c2);
+    background: var(--c6); border: 3px solid var(--ink); padding: 5px 8px 6px; cursor: pointer;
+  }
+  .up b { font: 400 16px/1.1 var(--head); letter-spacing: .6px; color: var(--c1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { background: var(--c5); box-shadow: 3px 3px 0 var(--c1); }
+  .up.can em { color: var(--c1); }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up[aria-disabled="true"]:not(.can) { opacity: .66; }
+  .up.odd { border-style: dashed; }
+  .up .tag { position: absolute; top: -10px; right: 5px; font: 400 13px var(--head); letter-spacing: 1px; font-style: normal; color: var(--ink); background: var(--c1); border: 2px solid var(--ink); padding: 0 5px; transform: rotate(5deg); }
+  .up.new { animation: pulse 1.4s ease-in-out 4; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 4px #6ceded88; } }
+  .up:focus-visible, .bought:focus-visible { outline: 3px dashed var(--c1); outline-offset: 2px; }
+  #tip {
+    position: fixed; z-index: 50; width: 260px; padding: 8px 12px 10px; pointer-events: none; font: 700 14px/1.35 var(--body); color: var(--ink);
+    background: var(--c1); border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--c5);
+  }
+  #tip b { display: block; font: 400 22px/1.05 var(--head); letter-spacing: 1px; color: var(--c5); margin-bottom: 4px; }
+  #tip .fx { display: block; margin-top: 6px; color: var(--c6); }
+  #tip i { display: block; margin-top: 6px; padding-top: 5px; border-top: 2px dashed #0d001a66; font-size: 13px; }
+  #tip small { display: block; margin-top: 6px; font: 400 15px var(--head); letter-spacing: 1px; color: var(--c5); }
+  #tip.inline { position: static; width: auto; margin-top: 10px; box-shadow: 3px 3px 0 var(--c5); }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 400 20px/1 var(--head); letter-spacing: 1px; color: var(--c1); cursor: pointer; list-style: none; padding: 3px 2px; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: "\25B8"; font-size: 14px; color: var(--c2); transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 3px dashed var(--c1); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 2px 2px; }
+  .bought { max-width: 100%; font: 700 12px/1.2 var(--body); color: var(--c2); background: var(--c6); border: 2px solid var(--ink); padding: 2px 7px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { border-style: dashed; }
+  .bought.gifted { background: var(--c4); color: var(--c1); }
+  .bought:hover, .bought.on { border-color: var(--c1); }
+
+  #ending { margin: 20px auto 0; max-width: 680px; text-align: center; padding: 14px 20px 20px; background: var(--c7); border: 3px solid var(--ink); box-shadow: 6px 6px 0 var(--c5); }
+  #ending h2 { font: 400 40px/1.05 var(--head); letter-spacing: 2px; margin: 0 0 8px; color: var(--c1); -webkit-text-stroke: 1.5px var(--ink); text-shadow: 3px 3px 0 var(--c5); }
+  #ending p { margin: 8px 0; text-align: left; color: var(--c2); }
+  #ending .memo { font: 700 13px var(--body); border: 2px dashed var(--c4); padding: 8px 10px; }
+  #shareBtn, #againBtn { font: 400 22px var(--head); letter-spacing: 1px; color: var(--ink); background: var(--c1); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--c5); padding: 6px 18px; margin: 12px 4px 0; cursor: pointer; }
+  #againBtn { background: var(--c4); color: var(--c1); }
+  #shareBtn:focus-visible, #againBtn:focus-visible { outline: 3px dashed var(--c1); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .call, .log.fresh { animation: none; } .meter i, #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="17" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Look, No Claws!</h1>
+    <p><b>LIVE</b>Channel 61 · <span id="clock">3:00 a.m.</span> · operators standing by</p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="hud">
+        <div class="meter" title="Mr. Dobbs's bet: a sky full of paper cranes (one quadrillion) and the station van is Pinchworth's. The meter climbs by powers of ten."><i id="meterFill"></i><span><em>The bet: a sky full</em><em id="skyTxt">0 / 1 quadrillion cranes</em></span></div>
+        <div class="cash" id="cash" title="Sales, at $19.99 a crane">$0.00</div>
+        <div class="sub" id="sub"></div>
+      </div>
+      <div class="stagewrap">
+        <canvas id="stage" tabindex="0" aria-label="The Channel 61 studio. Tap, click or press space on the beat of the gamelan band to click Pinchworth's claws and herd the paper cranes into the shipping boxes."></canvas>
+        <div class="over" id="over" hidden></div>
+      </div>
+      <p class="log" id="log" aria-live="polite"></p>
+    </main>
+    <aside id="side">
+      <h2 hidden>Offers <span id="afford"></span></h2>
+      <div id="calls"></div>
+      <div id="shop"></div>
+      <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" hidden>
+    <h2>Look, no claws.</h2>
+    <p id="endText"></p>
+    <p class="memo" id="endMemo"></p>
+    <button id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale, midiToHz } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import { halftone, grain } from '/shared/kit/fx.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const fmt = E.fmt, money = E.money;
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const C = { c1: '#6ceded', c2: '#6cb9c9', c3: '#6d85a5', c4: '#6e5181', c5: '#6f1d5c', c6: '#4f1446', c7: '#2e0a30', ink: '#0d001a' };
+
+// ---------- State ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:17:save';
+let raw = null;
+try { raw = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+const S = E.load(raw);
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound: G mixolydian, like the band ----------
+// Trims measured with npm run mix (music near -24 dBFS RMS, effects peaking near -10).
+const A = createAudio({ sfxTrim: 1.64, musicTrim: 3.6 });
+const notes = scale('mixolydian', 67);
+const sfx = {
+  // The claw: a dry little click.
+  click() { A.noiseHit('hat', { vol: 0.5, dur: 0.018 }); A.tone({ type: 'square', freq: notes(16), dur: 0.012, vol: 0.16, cutoff: 3200 }); },
+  good(s = 0) { A.tone({ type: 'pluck', freq: notes(4 + (s % 5)), dur: 0.12, vol: 0.28 }); },
+  perfect(s = 0) {
+    const d = Math.min(s, 14) % 8;
+    A.tone({ type: 'bell', freq: notes(7 + d), dur: 0.22, vol: 0.17 });
+    A.tone({ type: 'pluck', freq: notes(d), dur: 0.12, vol: 0.13, at: A.now + 0.02 });
+  },
+  miss() { A.tone({ type: 'triangle', freq: notes(-4), dur: 0.09, vol: 0.24, glide: 0.85 }); },
+  // Every eight in a row: the flock wheels round.
+  flock(s = 8) { [0, 2, 4, 7].forEach((d, i) => A.tone({ type: 'bell', freq: notes(d + 7 + Math.min(4, s / 8 | 0)), dur: 0.2, vol: 0.16, at: A.now + i * 0.06 })); },
+  buy() { [0, 2, 4, 7].forEach((d, i) => A.tone({ type: 'pluck', freq: notes(d + 7), dur: 0.12, vol: 0.22, at: A.now + i * 0.06 })); },
+  unlock() { A.tone({ type: 'bell', freq: notes(11), dur: 0.35, vol: 0.2 }); A.tone({ type: 'bell', freq: notes(13), dur: 0.45, vol: 0.17, at: A.now + 0.12 }); },
+  deny() { A.tone({ type: 'triangle', freq: notes(-2), dur: 0.07, vol: 0.29 }); },
+  // The Fold-O-Matic, now and then: a paper rustle and a soft tick.
+  // Kept a few dB under the rest: it plays every other beat once Maintenance comes.
+  machine() { A.noiseHit('shaker', { vol: 0.1, dur: 0.05 }); A.tone({ type: 'sine', freq: notes(9), dur: 0.03, vol: 0.12 }); },
+  demoStart() {
+    [[0, 0], [4, 0.14], [7, 0.28]].forEach(([d, at]) => A.tone({ type: 'square', freq: notes(d), dur: 0.1, vol: 0.19, cutoff: 1800, at: A.now + at }));
+    A.tone({ type: 'bell', freq: notes(14), dur: 0.5, vol: 0.26, at: A.now + 0.42 });
+  },
+  count(i) { A.tone({ type: 'bell', freq: notes(i === 3 ? 14 : 7), dur: 0.12, vol: 0.36 }); },
+  demoPass() {
+    [0, 2, 4, 5, 7, 9, 11, 14].forEach((d, i) => A.tone({ type: 'pluck', freq: notes(d), dur: 0.14, vol: 0.2, at: A.now + i * 0.07 }));
+    A.tone({ type: 'bell', freq: notes(14), dur: 0.6, vol: 0.14, at: A.now + 0.6 });
+  },
+  demoFail() { [4, 3, 2].forEach((d, i) => A.tone({ type: 'triangle', freq: notes(d), dur: 0.22, vol: 0.3, glide: 0.94, at: A.now + i * 0.26 })); },
+  gift() { [0, 4, 7].forEach(d => A.tone({ type: 'bell', freq: notes(d + 7), dur: 0.6, vol: 0.1 })); A.tone({ type: 'bell', freq: notes(14), dur: 0.8, vol: 0.1, at: A.now + 0.2 }); },
+  handsOff() { A.tone({ type: 'bell', freq: notes(-7), dur: 1.2, vol: 0.17 }); A.tone({ type: 'bell', freq: notes(0), dur: 1, vol: 0.1, at: A.now + 0.05 }); },
+  circle() { A.noiseHit('whoosh', { vol: 0.22, dur: 0.45 }); A.tone({ type: 'triangle', freq: notes(2), dur: 0.2, vol: 0.25, glide: 0.8, at: A.now + 0.2 }); },
+  // The ending: the motif (B A B G, D E D B) on bells, then the gong, then the long road.
+  finale() {
+    const m = [2, 1, 2, 0, 4, 5, 4, 2, 6, 5, 4, 7];
+    m.forEach((d, i) => A.tone({ type: 'bell', freq: notes(d + 7), dur: 0.4, vol: 0.11, at: A.now + i * 0.24 }));
+    [0, 4, 7].forEach(d => A.tone({ type: 'pad', freq: notes(d - 7), dur: 2.6, vol: 0.033, attack: 0.5, release: 1.6, cutoff: 900, at: A.now + 1.4 }));
+    A.tone({ type: 'bell', freq: notes(-7), dur: 2, vol: 0.17, at: A.now + 2.9 });
+  },
+};
+if (location.search.includes('debug')) window.__game = { A, sfx, long: ['finale', 'demoPass', 'handsOff', 'demoFail'], S: () => S, E, beat: () => beatNow(), music: () => music, demo: () => demo && { phase: demo.phase, start: demo.start, hits: demo.hits, misses: demo.misses, claimed: [...demo.claimed], calib } };
+
+// ---------- Music: the band's piece, arranged per phase; the beat clock follows it ----------
+let music = null, soundtrack = null, demo = null;
+const phaseKey = () => S.ended ? 'ending' : S.final ? 'final' : demo ? 'demo' : S.cranes >= 1e10 ? 'late' : S.up.maint ? 'machine' : 'show';
+function song() { return (soundtrack ??= createSoundtrack(music.strudel))(phaseKey()); }
+createMusic(A, { song }).then(m => { music = m; music.update(); }).catch(e => console.warn('music', e));
+const refreshMusic = () => { if (music) music.update(); };
+
+// The beat the player hears. With the band playing, it's read off Strudel's scheduler (the audio
+// time each cycle is scheduled for, plus output latency). Without music, a steady clock of our own.
+const T0 = performance.now();
+function beatNow() {
+  const sch = music && music.playing && music.repl && music.repl.scheduler;
+  const ctx = A.ctx;
+  if (sch && sch.started && sch.seconds_at_cps_change != null && ctx && ctx.state === 'running') {
+    const t = ctx.currentTime - (ctx.outputLatency || ctx.baseLatency || 0);
+    return ((t - sch.latency - sch.seconds_at_cps_change) * sch.cps + sch.num_cycles_at_cps_change) * 4;
+  }
+  return (performance.now() - T0) / 1000 / E.BEAT;
+}
+// Quiet calibration: the judge drifts toward the player's average offset (at most 90 ms).
+let calib = 0;
+const learn = off => { calib = Math.max(-0.09, Math.min(0.09, calib + (off - calib) * 0.08)); };
+
+// ---------- Art ----------
+const W = 800, H = 500, LANE_Y = 438, HIT_X = 110, PX_BEAT = 150;
+const DESK = { x: 270, y: 334, w: 250, h: 70 }, CRAB = { x: 395, y: 318 }, MACH = { x: 46, y: 172, w: 170, h: 214 };
+const BOX = { x: 610, y: 400 }, WIN = { x: 452, y: 22, w: 320, h: 168 };
+let seed = 61;
+const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+const P = (x, f) => { x.beginPath(); f(); x.fill(); };
+const S_ = (x, f, w = 3) => { x.beginPath(); f(); x.lineWidth = w; x.strokeStyle = C.ink; x.stroke(); };
+// Ink line + flat fill, the comic way.
+function inked(x, color, f, w = 3) { x.beginPath(); f(); x.fillStyle = color; x.fill(); x.lineWidth = w; x.strokeStyle = C.ink; x.lineJoin = 'round'; x.stroke(); }
+// A halftone shading layer clipped to a path.
+function dots(x, f, color, alpha = 0.5, cell = 5) {
+  const c = Sprites.canvas(W, H), q = c.getContext('2d');
+  const g = q.createLinearGradient(0, 0, W, H); g.addColorStop(0, 'rgba(0,0,0,0.15)'); g.addColorStop(1, 'rgba(0,0,0,0.9)');
+  q.fillStyle = g; q.fillRect(0, 0, W, H);
+  x.save(); x.beginPath(); f(); x.clip(); x.globalAlpha = alpha; x.drawImage(halftone(c, { cell, color }), 0, 0); x.restore();
+}
+
+// A paper crane, 34 x 24, wings up or down: the comic version of an origami crane.
+function drawCrane(up, tint = C.c1) {
+  const c = Sprites.canvas(40, 30), x = c.getContext('2d');
+  x.translate(3, 3); x.lineJoin = 'round';
+  const wing = up ? [[14, 14], [10, 0], [22, 12]] : [[14, 14], [8, 24], [22, 14]];
+  inked(x, C.c2, () => { x.moveTo(...wing[0]); x.lineTo(...wing[1]); x.lineTo(...wing[2]); x.closePath(); }, 2);
+  inked(x, tint, () => { x.moveTo(2, 8); x.lineTo(8, 13); x.lineTo(14, 18); x.lineTo(24, 18); x.lineTo(32, 6); x.lineTo(26, 15); x.lineTo(16, 12); x.closePath(); }, 2);
+  // Head and tail points.
+  inked(x, tint, () => { x.moveTo(2, 8); x.lineTo(0, 4); x.lineTo(5, 10); x.closePath(); }, 1.5);
+  S_(x, () => { x.moveTo(14, 18); x.lineTo(18, 13); }, 1.2);
+  return c;
+}
+// The shipping box: CRANES · THIS WAY UP.
+function drawBox() {
+  const c = Sprites.canvas(80, 56), x = c.getContext('2d');
+  inked(x, C.c4, () => x.rect(3, 12, 74, 41));
+  inked(x, C.c3, () => { x.moveTo(3, 12); x.lineTo(14, 3); x.lineTo(66, 3); x.lineTo(77, 12); x.closePath(); }, 2.5);
+  dots(x, () => x.rect(3, 12, 74, 41), C.ink, 0.35, 4);
+  x.fillStyle = C.c1; x.font = '400 13px Bangers, Impact, sans-serif'; x.textAlign = 'center'; x.fillText('CRANES', 40, 32); x.font = '700 8px Comic Neue, sans-serif'; x.fillText('THIS WAY UP ↑', 40, 44);
+  return c;
+}
+// Icons from game-icons and Tabler, as comic cutouts: a flat colour, an ink outline.
+async function icon(file, w, h, color, line = 2) {
+  const svg = await Sprites.loadSvg(`./art/${file}`);
+  const src = await Sprites.svgToCanvas(Sprites.recolor(svg, color), w, h);
+  return Sprites.outline(src, C.ink, line);
+}
+// A gong on its beat: a bronze disc with a raised boss, hung from two cords.
+function drawGong() {
+  const c = Sprites.canvas(36, 36), x = c.getContext('2d');
+  S_(x, () => { x.moveTo(8, 2); x.lineTo(13, 9); x.moveTo(28, 2); x.lineTo(23, 9); }, 2);
+  inked(x, C.c2, () => x.arc(18, 20, 14, 0, Math.PI * 2), 2.5);
+  inked(x, C.c1, () => x.arc(18, 20, 5.5, 0, Math.PI * 2), 2);
+  x.fillStyle = C.c3; P(x, () => x.arc(14, 15, 3, 0, Math.PI * 2));
+  return c;
+}
+const ART = { crane: [drawCrane(true), drawCrane(false)], craneDark: [drawCrane(true, C.c3), drawCrane(false, C.c3)], box: drawBox(), gong: drawGong(), cactus: null, phone: null };
+Sprites.register('beat gong', ART.gong);
+Sprites.register('paper crane (wings up)', ART.crane[0]); Sprites.register('paper crane (wings down)', ART.crane[1]);
+Sprites.register('shipping box', ART.box);
+const artReady = Promise.all([
+  icon('tabler--cactus-filled.svg', 40, 52, C.c6, 2).then(c => { ART.cactus = Sprites.register('cactus (in the window)', c); }),
+  icon('game-icons--rotary-phone.svg', 46, 46, C.c3, 2).then(c => { ART.phone = Sprites.register('line 1 (Mr. Dobbs)', c); }),
+]).catch(e => console.warn('art', e));
+// Pinchworth, the Fold-O-Matic and Wanda are drawn live; stills for the sprite sheet.
+const stills = artReady.then(() => {
+  const a = Sprites.canvas(170, 150), q = a.getContext('2d'); q.translate(85, 120); drawCrab(q, 0, 0); Sprites.register('Pinchworth', a);
+  const m = Sprites.canvas(190, 240), r = m.getContext('2d'); r.translate(-MACH.x + 10, -MACH.y + 16); drawMachine(r, 0); Sprites.register('the Fold-O-Matic', m);
+  const w = Sprites.canvas(130, 130), s = w.getContext('2d'); s.translate(65, 80); drawWanda(s, 0); Sprites.register('Wanda (spoiler)', w);
+});
+if (Sprites.sheetRequested()) stills.then(() => Sprites.showSheet({ zoom: 2 }));
+
+// ---------- The stage ----------
+const cv = $('stage'), ctx = cv.getContext('2d');
+let k = 1, dpr = 1, bg = null;
+function layout() {
+  const w = cv.clientWidth || 800;
+  dpr = Math.min(2, devicePixelRatio || 1);
+  k = w / W;
+  cv.style.height = `${Math.round(H * k)}px`;
+  cv.width = Math.round(W * k * dpr); cv.height = Math.round(H * k * dpr);
+  bg = drawBackground();
+}
+// The studio: a dotted back wall, the big window on the desert night, the CHANNEL 61 sign, the floor.
+function drawBackground() {
+  const c = Sprites.canvas(W, H), x = c.getContext('2d');
+  x.fillStyle = C.c7; x.fillRect(0, 0, W, H);
+  dots(x, () => x.rect(0, 0, W, 410), C.c5, 0.55, 7);
+  // The window: night sky (deep), stars, a moon, the cactus horizon.
+  inked(x, C.ink, () => x.rect(WIN.x, WIN.y, WIN.w, WIN.h), 4);
+  const g = x.createLinearGradient(0, WIN.y, 0, WIN.y + WIN.h); g.addColorStop(0, C.ink); g.addColorStop(1, C.c6);
+  x.fillStyle = g; x.fillRect(WIN.x + 3, WIN.y + 3, WIN.w - 6, WIN.h - 6);
+  for (let i = 0; i < 40; i++) { x.fillStyle = i % 3 ? C.c3 : C.c1; x.fillRect(WIN.x + 6 + rnd() * (WIN.w - 12), WIN.y + 6 + rnd() * (WIN.h - 50), 1.5, 1.5); }
+  inked(x, C.c2, () => x.arc(WIN.x + WIN.w - 46, WIN.y + 36, 16, 0, Math.PI * 2), 2);
+  x.fillStyle = C.c7; x.beginPath(); x.moveTo(WIN.x + 3, WIN.y + WIN.h - 22); x.quadraticCurveTo(WIN.x + 120, WIN.y + WIN.h - 40, WIN.x + 210, WIN.y + WIN.h - 26); x.quadraticCurveTo(WIN.x + 270, WIN.y + WIN.h - 18, WIN.x + WIN.w - 3, WIN.y + WIN.h - 30); x.lineTo(WIN.x + WIN.w - 3, WIN.y + WIN.h - 3); x.lineTo(WIN.x + 3, WIN.y + WIN.h - 3); x.fill();
+  // Window frame mullion.
+  x.fillStyle = C.ink; x.fillRect(WIN.x + WIN.w / 2 - 2, WIN.y, 4, WIN.h);
+  // CHANNEL 61 sign.
+  x.save(); x.translate(250, 64); x.rotate(-0.04);
+  inked(x, C.c6, () => x.roundRect(-82, -30, 164, 60, 8), 3);
+  x.font = '400 34px Bangers, Impact, sans-serif'; x.textAlign = 'center'; x.lineWidth = 5; x.strokeStyle = C.ink; x.strokeText('CHANNEL 61', 0, 12); x.fillStyle = C.c1; x.fillText('CHANNEL 61', 0, 12);
+  x.restore();
+  // Floor and the set's riser.
+  x.fillStyle = C.c6; x.fillRect(0, 404, W, 96);
+  dots(x, () => x.rect(0, 404, W, 96), C.ink, 0.5, 5);
+  x.fillStyle = C.ink; x.fillRect(0, 402, W, 4);
+  // The lower third (the beat lane lives on it).
+  inked(x, C.c7, () => x.rect(-4, LANE_Y - 26, W + 8, 52), 3);
+  x.fillStyle = C.c5; x.fillRect(0, LANE_Y - 23, 76, 46);
+  x.font = '400 16px Bangers, Impact, sans-serif'; x.fillStyle = C.c1; x.textAlign = 'center'; x.fillText('CALL', 38, LANE_Y - 3); x.fillText('NOW!', 38, LANE_Y + 15);
+  x.font = '700 11px Comic Neue, sans-serif'; x.fillStyle = C.c3; x.textAlign = 'right'; x.fillText('1-800-CRAB-NOW · $19.99 · SHIPPING IS FREE · CRANES FLY THEMSELVES', W - 10, LANE_Y + 21);
+  return c;
+}
+
+// Pinchworth: berry shell, eyes on stalks, a bow tie, two claws. `snap` 0..1 closes the right claw.
+function drawCrab(x, snap, t, look = 0) {
+  x.save(); x.lineJoin = 'round';
+  // Legs.
+  for (const s of [-1, 1]) for (let i = 0; i < 3; i++) S_(x, () => { x.moveTo(s * 34, -18 + i * 7); x.lineTo(s * (52 + i * 4), -8 + i * 9); x.lineTo(s * (58 + i * 3), 6 + i * 6); }, 4);
+  // Shell.
+  inked(x, C.c5, () => x.ellipse(0, -28, 46, 30, 0, 0, Math.PI * 2));
+  dots(x, () => x.ellipse(0, -28, 46, 30, 0, 0, Math.PI * 2), C.ink, 0.45, 4);
+  x.fillStyle = C.c4; P(x, () => x.ellipse(-14, -42, 16, 8, -0.3, 0, Math.PI * 2));
+  // Bow tie (he's the host).
+  inked(x, C.c1, () => { x.moveTo(0, -6); x.lineTo(-12, -12); x.lineTo(-12, 0); x.closePath(); x.moveTo(0, -6); x.lineTo(12, -12); x.lineTo(12, 0); x.closePath(); }, 2);
+  inked(x, C.c2, () => x.arc(0, -6, 3, 0, Math.PI * 2), 1.5);
+  // Eyes on stalks, looking about.
+  for (const s of [-1, 1]) {
+    S_(x, () => { x.moveTo(s * 10, -52); x.lineTo(s * 14, -74); }, 4);
+    inked(x, C.c1, () => x.arc(s * 14, -78, 8, 0, Math.PI * 2), 2.5);
+    x.fillStyle = C.ink; P(x, () => x.arc(s * 14 + look * 3, -78, 3.4, 0, Math.PI * 2));
+  }
+  // A small smile; homesick eyebrows.
+  S_(x, () => { x.arc(0, -30, 9, 0.25, Math.PI - 0.25); }, 2.5);
+  S_(x, () => { x.moveTo(-22, -88); x.lineTo(-8, -86); x.moveTo(22, -88); x.lineTo(8, -86); }, 2.5);
+  // Claws: the left one raised, holding a cue card; the right one does the clicking.
+  claw(x, -62, -56, -0.5, 0.15, t);
+  claw(x, 64, -62, 0.6, snap, t);
+  x.restore();
+}
+function claw(x, cx, cy, rot, snap, t) {
+  x.save();
+  S_(x, () => { x.moveTo(cx * 0.55, cy * 0.4); x.lineTo(cx * 0.85, cy * 0.8); x.lineTo(cx, cy); }, 7);
+  x.translate(cx, cy); x.rotate(rot);
+  const open = 0.55 * (1 - snap);
+  inked(x, C.c5, () => { x.moveTo(-6, 6); x.quadraticCurveTo(-18, -10, -4, -26); x.quadraticCurveTo(4, -18, 2, -4); x.closePath(); });
+  x.save(); x.rotate(open);
+  inked(x, C.c5, () => { x.moveTo(4, 6); x.quadraticCurveTo(18, -6, 10, -22); x.quadraticCurveTo(4, -12, 0, -2); x.closePath(); });
+  x.restore();
+  inked(x, C.c4, () => x.ellipse(0, 8, 9, 7, 0, 0, Math.PI * 2), 2.5);
+  x.restore();
+}
+// The Fold-O-Matic: a steel cabinet with dials, a crane chute on top, a little curtain at the back.
+function drawMachine(x, t, open = 0) {
+  const { x: mx, y: my, w, h } = MACH;
+  x.save(); x.lineJoin = 'round';
+  // Back curtain (Wanda's), peeking out on the right side.
+  inked(x, C.c4, () => x.rect(mx + w - 26, my + 40, 30, h - 70), 2.5);
+  for (let i = 0; i < 4; i++) S_(x, () => { x.moveTo(mx + w - 20 + i * 6, my + 44); x.lineTo(mx + w - 20 + i * 6, my + h - 34); }, 1.2);
+  // Cabinet.
+  inked(x, C.c3, () => x.roundRect(mx, my + 24, w - 20, h - 24, 6), 3.5);
+  dots(x, () => x.roundRect(mx, my + 24, w - 20, h - 24, 6), C.ink, 0.45, 5);
+  // Chute.
+  inked(x, C.c3, () => { x.moveTo(mx + 46, my + 26); x.lineTo(mx + 56, my - 6); x.lineTo(mx + 106, my - 6); x.lineTo(mx + 116, my + 26); x.closePath(); }, 3);
+  x.fillStyle = C.ink; x.fillRect(mx + 60, my - 9, 42, 6);
+  // Label plate.
+  inked(x, C.c1, () => x.rect(mx + 14, my + 40, w - 48, 26), 2.5);
+  x.fillStyle = C.ink; x.font = '400 17px Bangers, Impact, sans-serif'; x.textAlign = 'center'; x.fillText('FOLD-O-MATIC', mx + (w - 20) / 2, my + 60);
+  // Dials and a big lever.
+  for (let i = 0; i < 3; i++) {
+    const dx = mx + 34 + i * 44, dy = my + 102;
+    inked(x, C.c2, () => x.arc(dx, dy, 13, 0, Math.PI * 2), 2.5);
+    const a = -Math.PI / 2 + Math.sin(t * (1.2 + i * 0.7) + i) * (S.up.maint ? 1.2 : 0.2);
+    S_(x, () => { x.moveTo(dx, dy); x.lineTo(dx + Math.cos(a) * 10, dy + Math.sin(a) * 10); }, 2.5);
+  }
+  inked(x, C.c6, () => x.rect(mx + 22, my + 132, w - 64, 56), 2.5);
+  x.fillStyle = S.up.maint ? C.c1 : C.c4; x.font = '400 14px Bangers, Impact, sans-serif'; x.fillText(S.up.maint ? 'WORKING!' : 'OUT OF ORDER', mx + (w - 20) / 2, my + 166);
+  // Little feet.
+  for (const fx of [mx + 12, mx + w - 44]) inked(x, C.c4, () => x.rect(fx, my + h - 2, 18, 8), 2.5);
+  x.restore();
+}
+// Wanda from Maintenance: an octopus in a hairnet, eight arms, a crane in most of them.
+function drawWanda(x, t) {
+  x.save(); x.lineJoin = 'round';
+  for (let i = 0; i < 8; i++) {
+    const a = Math.PI * (0.05 + i / 7 * 0.9), w = Math.sin(t * 6 + i) * 0.15;
+    const ex = Math.cos(a + w) * 54, ey = -Math.sin(a + w) * 30 + 34;
+    x.beginPath(); x.moveTo(Math.cos(a) * 14, 10); x.quadraticCurveTo(Math.cos(a) * 40, 30, ex, ey);
+    x.lineWidth = 9; x.strokeStyle = C.ink; x.lineCap = 'round'; x.stroke(); x.lineWidth = 5.5; x.strokeStyle = C.c4; x.stroke();
+    if (i % 4 !== 3) x.drawImage(ART.crane[(i + Math.floor(t * 4)) % 2], ex - 12, ey - 14, 24, 18);
+  }
+  inked(x, C.c4, () => x.ellipse(0, -10, 30, 32, 0, 0, Math.PI * 2));
+  dots(x, () => x.ellipse(0, -10, 30, 32, 0, 0, Math.PI * 2), C.ink, 0.4, 4);
+  // Hairnet.
+  x.save(); x.beginPath(); x.ellipse(0, -24, 30, 20, 0, Math.PI, 0); x.clip();
+  x.strokeStyle = C.c2; x.lineWidth = 1; for (let i = -30; i < 30; i += 6) { x.beginPath(); x.moveTo(i, -46); x.lineTo(i + 14, -4); x.moveTo(i + 14, -46); x.lineTo(i, -4); x.stroke(); }
+  x.restore();
+  for (const s of [-1, 1]) { inked(x, C.c1, () => x.arc(s * 11, -10, 7, 0, Math.PI * 2), 2); x.fillStyle = C.ink; P(x, () => x.arc(s * 11, -9, 3, 0, Math.PI * 2)); }
+  S_(x, () => x.arc(0, 4, 7, 0.3, Math.PI - 0.3), 2.5);
+  x.restore();
+}
+
+// ---------- The scene state ----------
+let clock = 0, snap = 0, look = 0, floats = [], bursts = [], flock = [], flying = [], shake = 0, reveal = null;
+const FLOCK_MAX = 34;
+function spawnCrane(fromChute = true) {
+  if (flock.length >= FLOCK_MAX) return;
+  flock.push({ x: fromChute ? MACH.x + 80 : 260 + rnd() * 300, y: fromChute ? MACH.y - 10 : 90 + rnd() * 200, vx: 30 + rnd() * 50, vy: -40 - rnd() * 30, ph: rnd() * 6, dark: rnd() < 0.3 });
+}
+for (let i = 0; i < 14; i++) spawnCrane(false);
+function herdVisual(n, grade) {
+  const take = Math.min(flock.length, grade === 'perfect' ? 4 : 2);
+  for (let i = 0; i < take; i++) { const c = flock.shift(); flying.push({ ...c, t: 0, sx: c.x, sy: c.y }); }
+  for (let i = 0; i < take; i++) spawnCrane();
+  float(CRAB.x + 70, CRAB.y - 110, `+${E.fmtShort(n)}`, grade === 'perfect' ? C.c1 : C.c2, grade === 'perfect');
+}
+function float(x, y, text, color = C.c1, big = false) { if (floats.length < 10) floats.push({ x, y, text, color, big, t: 0 }); }
+function burst(text, x, y, color = C.c1, size = 26) { if (bursts.length < 5) bursts.push({ text, x, y, color, size, t: 0, r: (rnd() - 0.5) * 0.4 }); }
+
+function render() {
+  const x = ctx;
+  x.setTransform(dpr * k, 0, 0, dpr * k, 0, 0);
+  const sh = reduced ? 0 : shake * 3;
+  x.save(); x.translate((rnd() - 0.5) * sh, (rnd() - 0.5) * sh);
+  x.drawImage(bg, 0, 0, W, H);
+  drawSky(x);
+  drawMachine(x, clock);
+  // Desk, phone, the boxes.
+  inked(x, C.c4, () => x.rect(DESK.x, DESK.y, DESK.w, DESK.h), 3.5);
+  dots(x, () => x.rect(DESK.x, DESK.y, DESK.w, DESK.h), C.ink, 0.4, 5);
+  x.fillStyle = C.c1; x.font = '400 20px Bangers, Impact, sans-serif'; x.textAlign = 'center'; x.fillText('AS SEEN ON TV', DESK.x + DESK.w / 2, DESK.y + 44);
+  if (ART.phone) x.drawImage(ART.phone, DESK.x + 8, DESK.y - 40, 46, 46);
+  if (S.up.mug || S.ended) { inked(x, C.c2, () => x.rect(DESK.x + DESK.w - 40, DESK.y - 20, 16, 20), 2.5); }
+  drawBoxes(x);
+  if (reveal || S.ended) drawRevealed(x);
+  // Pinchworth.
+  x.save(); x.translate(CRAB.x, CRAB.y + (reduced ? 0 : Math.sin(clock * Math.PI * 2 / E.BEAT / 2) * 1.5)); drawCrab(x, snap, clock, look); x.restore();
+  // The flock and the cranes heading for the boxes.
+  const fr = Math.floor(clock * 6) % 2;
+  for (const c of flock) x.drawImage((c.dark ? ART.craneDark : ART.crane)[(fr + (c.ph > 3 ? 1 : 0)) % 2], c.x - 17, c.y - 12, 34, 24);
+  for (const c of flying) x.drawImage(ART.crane[fr], c.x - 14, c.y - 10, 28, 20);
+  drawLane(x);
+  for (const b of bursts) drawBurst(x, b);
+  for (const f of floats) {
+    x.save(); x.globalAlpha = Math.max(0, 1 - f.t / 1.2); x.font = `400 ${f.big ? 26 : 19}px Bangers, Impact, sans-serif`; x.textAlign = 'center';
+    x.lineWidth = 5; x.strokeStyle = C.ink; x.strokeText(f.text, f.x, f.y - f.t * 30); x.fillStyle = f.color; x.fillText(f.text, f.x, f.y - f.t * 30); x.restore();
+  }
+  if (S.final && !S.final.done) drawHandsOff(x);
+  if (demo) drawDemo(x);
+  x.restore();
+  grain(x, W, H, { amount: 0.05 });
+}
+// The sky through the window fills with cranes as the bet does (the meter's log scale).
+const SKY = Array.from({ length: 260 }, (_, i) => ({ x: WIN.x + 8 + ((i * 97) % 300), y: WIN.y + 8 + ((i * 53) % 120), s: 0.35 + ((i * 31) % 10) / 22 }));
+function drawSky(x) {
+  const n = Math.floor(SKY.length * (S.ended ? 1 : E.progress(S)));
+  x.save(); x.beginPath(); x.rect(WIN.x + 3, WIN.y + 3, WIN.w - 6, WIN.h - 6); x.clip();
+  for (let i = 0; i < n; i++) { const c = SKY[i], b = reduced ? 0 : Math.sin(clock * 0.7 + i) * 2; x.drawImage(ART.crane[(i + Math.floor(clock * 3)) % 2], c.x + b, c.y, 30 * c.s, 22 * c.s); }
+  if (ART.cactus) { x.drawImage(ART.cactus, WIN.x + 30, WIN.y + WIN.h - 62, 34, 46); x.drawImage(ART.cactus, WIN.x + 240, WIN.y + WIN.h - 52, 26, 36); }
+  x.restore();
+}
+function drawBoxes(x) {
+  const n = S.ended ? 9 : Math.min(9, 1 + Math.floor(E.progress(S) * 9));
+  for (let i = 0; i < n; i++) {
+    const row = i < 4 ? 0 : i < 7 ? 1 : i < 9 ? 2 : 3, col = i < 4 ? i : i < 7 ? i - 4 : i - 7;
+    const bx = BOX.x + col * 44 + row * 22 - 10, by = BOX.y - 56 - row * 44;
+    x.drawImage(ART.box, bx, by, 56, 40);
+  }
+}
+function drawRevealed(x) {
+  // The curtain pulled back: Wanda behind the machine, still folding.
+  const p = S.ended ? 1 : Math.min(1, reveal.t / 2.5);
+  if (p <= 0) return;
+  x.save(); x.globalAlpha = Math.min(1, p * 1.5);
+  x.translate(MACH.x + MACH.w + 24 - 30 * (1 - p), MACH.y + 96); x.scale(1.1, 1.1);
+  drawWanda(x, clock); x.restore();
+}
+function drawBurst(x, b) {
+  if (!b.text) return;
+  const s = 1 + Math.min(1, b.t * 6) * 0.15, a = Math.max(0, 1 - b.t / 0.7);
+  x.save(); x.globalAlpha = a; x.translate(b.x, b.y); x.rotate(b.r); x.scale(s, s);
+  x.beginPath();
+  for (let i = 0; i < 18; i++) { const r = i % 2 ? b.size * 0.75 : b.size * 1.35, an = i / 18 * Math.PI * 2; x.lineTo(Math.cos(an) * r * 1.6, Math.sin(an) * r); }
+  x.closePath(); x.fillStyle = C.c1; x.fill(); x.lineWidth = 3; x.strokeStyle = C.ink; x.stroke();
+  x.font = `400 ${b.size}px Bangers, Impact, sans-serif`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillStyle = C.c5; x.fillText(b.text, 0, 2);
+  x.restore();
+}
+// The lower third: gongs slide in along the chyron to the CALL NOW box. Tap as one reaches it.
+function drawLane(x) {
+  if (S.ended || (S.final && !S.final.done)) return;
+  const now = beatNow() - calib / E.BEAT;
+  x.save(); x.beginPath(); x.rect(76, LANE_Y - 23, W - 76, 46); x.clip();
+  // The hit ring.
+  const pulse = Math.max(0, 1 - Math.abs(now - Math.round(now)) * 4);
+  x.lineWidth = 3 + pulse * 3; x.strokeStyle = C.c1; x.beginPath(); x.arc(HIT_X, LANE_Y, 17 + pulse * 3, 0, Math.PI * 2); x.stroke();
+  let targets;
+  if (demo) {
+    targets = demo.targets.map((b, i) => ({ b: demo.start + b, i, claimed: demo.claimed.has(i) }));
+    if (DEMO_DARK()) targets = targets.filter(t => t.i < 4);
+  } else {
+    targets = [];
+    for (let b = Math.ceil(now - 0.5); b < now + 5; b++) targets.push({ b, claimed: b === lastBeat, major: b % 2 === 0 });
+  }
+  for (const t of targets) {
+    const px = HIT_X + (t.b - now) * PX_BEAT;
+    if (px < 60 || px > W + 20) continue;
+    x.globalAlpha = t.claimed ? 0.25 : 1;
+    if (ART.gong) x.drawImage(ART.gong, px - 15, LANE_Y - 15, 30, 30);
+    x.globalAlpha = 1;
+  }
+  x.restore();
+  if (demo && DEMO_DARK() && demo.phase === 'run') {
+    x.save(); x.font = '400 18px Bangers, Impact, sans-serif'; x.fillStyle = C.c3; x.textAlign = 'center'; x.fillText('LIGHTS OUT · KEEP TIME', 440, LANE_Y + 6); x.restore();
+  }
+}
+function drawHandsOff(x) {
+  const left = Math.ceil(S.final.left);
+  x.save(); x.translate(W / 2, 250); x.rotate(-0.05);
+  inked(x, C.c5, () => x.roundRect(-170, -62, 340, 124, 10), 5);
+  x.font = '400 62px Bangers, Impact, sans-serif'; x.textAlign = 'center'; x.lineWidth = 7; x.strokeStyle = C.ink; x.strokeText('HANDS OFF!', 0, 6); x.fillStyle = C.c1; x.fillText('HANDS OFF!', 0, 6);
+  x.font = '700 16px Comic Neue, sans-serif'; x.fillStyle = C.c2; x.fillText(`Live, no claws: ${left} s on air`, 0, 42);
+  x.restore();
+}
+function drawDemo(x) {
+  const D = E.DEMOS[demo.id];
+  x.save();
+  inked(x, C.ink, () => x.rect(10, 12, 300, 66), 3);
+  x.fillStyle = C.c1; x.font = '400 21px Bangers, Impact, sans-serif'; x.textAlign = 'left'; x.fillText(`LIVE DEMO: ${D.name.toUpperCase()}`, 20, 38);
+  x.font = '700 14px Comic Neue, sans-serif'; x.fillStyle = C.c2;
+  x.fillText(`${demo.hits} / ${D.need} cranes · ${Math.max(0, D.beats - D.need - demo.misses)} slips left`, 20, 62);
+  if (demo.phase === 'count') {
+    const left = Math.ceil(demo.start - beatNow());
+    const word = left > 3 ? '' : left >= 1 ? String(left) : 'ACTION!';
+    if (word) { x.font = '400 90px Bangers, Impact, sans-serif'; x.textAlign = 'center'; x.lineWidth = 8; x.strokeStyle = C.ink; x.strokeText(word, 400, 250); x.fillStyle = C.c1; x.fillText(word, 400, 250); }
+  }
+  x.restore();
+}
+
+// ---------- Playing ----------
+let lastBeat = null;
+function tap() {
+  if (S.ended || $('over').hidden === false) return;
+  sfx.click(); snap = 1; look = (rnd() - 0.5) * 2;
+  if (S.final) { if (!S.final.done) { E.finalTap(S); sfx.circle(); burst('NO!', CRAB.x + 80, CRAB.y - 100, C.c1, 28); say('DIRECTOR', 'Hands OFF, Pinchworth. The cranes circle back to your claws and the clock starts over. Forty seconds. No claws.'); save(); } return; }
+  if (demo) return demoTap();
+  const b = beatNow() - calib / E.BEAT, near = Math.round(b), off = (b - near) * E.BEAT;
+  let grade = near === lastBeat ? 'miss' : E.judge(S, off);
+  if (grade !== 'miss') { lastBeat = near; learn(off + calib); }
+  const was = S.streak;
+  const n = E.herd(S, grade);
+  if (grade === 'miss') { sfx.miss(); if (was >= 4) float(CRAB.x + 70, CRAB.y - 110, 'off the beat', C.c3); return; }
+  if (grade === 'perfect') sfx.perfect(S.streak); else sfx.good(S.streak);
+  if (S.streak % 8 === 0) { sfx.flock(S.streak); burst(['CLICK!', 'SNAP!', 'FWOOSH!', 'OOOH!'][(S.streak / 8 - 1) % 4], CRAB.x + 110, CRAB.y - 150, C.c1, 24); }
+  else if (grade === 'perfect' && rnd() < 0.25) burst('CLICK!', CRAB.x + 90, CRAB.y - 120, C.c1, 18);
+  herdVisual(n, grade);
+}
+// ---------- Demos ----------
+const DEMO_DARK = () => demo && E.DEMOS[demo.id].pattern === 'dark';
+function startDemo(id) {
+  if (demo || S.final || S.ended) return;
+  const D = E.DEMOS[id];
+  hideTip(true);
+  const start = Math.ceil(beatNow() / 4) * 4 + 4;
+  demo = { id, start, targets: E.demoTargets(id), claimed: new Set(), hits: 0, misses: 0, phase: 'count', counted: -1 };
+  sfx.demoStart();
+  say('PINCHWORTH', `“Can your old crane herder do THIS? ${D.name}, folks! ${D.desc}”`);
+  refreshMusic(); renderCalls(); cv.focus({ preventScroll: true });
+}
+function demoTap() {
+  if (demo.phase !== 'run') return;
+  const now = beatNow() - calib / E.BEAT;
+  let best = -1, bestOff = Infinity;
+  demo.targets.forEach((b, i) => { if (demo.claimed.has(i)) return; const off = (now - (demo.start + b)) * E.BEAT; if (Math.abs(off) < Math.abs(bestOff)) { bestOff = off; best = i; } });
+  // Old-herder rules: one crane a tap, no gadgets (no streaks, no gifts, no metronome hat).
+  if (best >= 0 && Math.abs(bestOff) <= E.GOOD) {
+    demo.claimed.add(best); demo.hits++; learn(bestOff + calib);
+    if (Math.abs(bestOff) <= E.PERFECT) sfx.perfect(demo.hits); else sfx.good(demo.hits);
+    herdVisual(1, Math.abs(bestOff) <= E.PERFECT ? 'perfect' : 'good');
+  } else { demo.misses++; sfx.miss(); float(CRAB.x + 70, CRAB.y - 110, 'slip!', C.c3); }
+}
+function demoStep() {
+  if (!demo) return;
+  const D = E.DEMOS[demo.id], now = beatNow() - calib / E.BEAT;
+  if (demo.phase === 'count') {
+    const left = Math.ceil(demo.start - now);
+    if (left !== demo.counted && left <= 3 && left >= 0) { demo.counted = left; sfx.count(3 - left); }
+    if (now >= demo.start - 0.4) demo.phase = 'run';
+    return;
+  }
+  if (demo.phase !== 'run') return;
+  demo.targets.forEach((b, i) => {
+    if (!demo.claimed.has(i) && now > demo.start + b + E.GOOD / E.BEAT) { demo.claimed.add(i); demo.misses++; }
+  });
+  const slack = D.beats - D.need;
+  if (demo.misses > slack) return endDemo(false);
+  if (demo.hits >= D.need && demo.claimed.size === demo.targets.length) return endDemo(true);
+  if (demo.claimed.size === demo.targets.length) endDemo(demo.hits >= D.need);
+}
+function endDemo(ok) {
+  const id = demo.id, D = E.DEMOS[id];
+  demo.phase = 'done';
+  demo = null; refreshMusic();
+  if (ok) {
+    E.passDemo(S, id); save();
+    sfx.demoPass();
+    say('STUDIO AUDIENCE', `“Oooh!” ${D.name}: nailed it. And for the folks at home who act now, a FREE GIFT. One. Not both.`);
+    showGifts(id);
+  } else {
+    sfx.demoFail();
+    say('DIRECTOR', `Cut to commercial. ${D.name} needs ${D.need} of ${D.beats}, and the audience saw that. Go again when you're ready.`);
+  }
+  renderCalls(); hud();
+}
+function showGifts(id) {
+  const D = E.DEMOS[id], over = $('over');
+  over.innerHTML = '<div class="card"><h3>FREE GIFT! Choose one.</h3><p>You can only take one. The other goes back in the cupboard.</p><div class="gifts"></div></div>';
+  for (const g of D.gifts) {
+    const G = E.GIFTS[g], b = document.createElement('button');
+    b.type = 'button'; b.className = 'gift ' + G.side;
+    b.innerHTML = '<b></b><span></span><small></small>';
+    b.querySelector('b').textContent = G.name;
+    b.querySelector('span').textContent = G.desc;
+    b.querySelector('small').textContent = giftFx(g);
+    b.addEventListener('click', () => pickGift(id, g));
+    over.querySelector('.gifts').append(b);
+  }
+  over.hidden = false;
+  over.querySelector('.gift').focus({ preventScroll: true });
+}
+function giftFx(g) {
+  const G = E.GIFTS[g], T = clone(); T.gifts[Object.keys(E.DEMOS).find(d => E.DEMOS[d].gifts.includes(g))] = g;
+  if (G.side === 'machine') return S.up.maint ? `Fold-O-Matic: ${fmt(E.machineRate(S))}/s → ${fmt(E.machineRate(T))}/s` : 'The Fold-O-Matic (once Maintenance comes)';
+  if (G.perfectGoods) return 'Every good tap herds like a perfect one';
+  if (G.streakCap) return `Streak bonus: up to ×${E.streakMult(S, 999)} → ×${E.streakMult(T, 999)}`;
+  return `Per tap: ${fmt(E.clawPer(S))} → ${fmt(E.clawPer(T))} cranes`;
+}
+function pickGift(id, g) {
+  if (!E.pickGift(S, id, g)) return;
+  $('over').hidden = true; $('over').innerHTML = '';
+  sfx.gift();
+  const G = E.GIFTS[g];
+  say('FREE GIFT', `${G.name}. ${G.side === 'machine' ? 'Wanda says thank you from inside the machine. Her voice is a little muffled.' : 'Pinchworth holds it up to the camera. The camera holds very still.'}`);
+  save(); hud(); renderShop(); cv.focus({ preventScroll: true });
+}
+const clone = () => JSON.parse(JSON.stringify(S));
+
+// ---------- The finale ----------
+function startFinal() {
+  if (!E.startFinal(S)) return;
+  hideTip(true);
+  sfx.handsOff();
+  say('DOBBS (LINE 1)', '“That’s a sky, Pinchworth. Doesn’t count unless the machine does the last of it. Alone. Live. Not one claw for forty seconds.”');
+  save(); refreshMusic(); renderCalls(); hud();
+}
+function startReveal() {
+  reveal = { t: 0 };
+  const lines = [
+    [0.5, 'CHYRON', 'SOLD OUT. The sky over Channel 61 is full of paper cranes.'],
+    [3, 'PINCHWORTH', '“Look, folks. No claws.”'],
+    [6, 'DIRECTOR', 'The little curtain at the back of the Fold-O-Matic slides open. Inside: Wanda from Maintenance. Eight arms. Still folding.'],
+    [11, 'WANDA', '“It never worked, love. Not once. I just like the band.”'],
+    [15.5, 'DOBBS (LINE 1)', '“Rule said no claws. She hasn’t got any.”'],
+    [19.5, 'DOBBS (LINE 1)', '“Van keys are on the desk. Wanda drives. Crabs can’t reach the pedals.”'],
+  ];
+  lines.forEach(([at, who, txt]) => setTimeout(() => say(who, txt), at * 1000));
+  setTimeout(() => end(false), 23500);
+}
+function end(resumed) {
+  S.ended = true; if (S.final) S.final.done = true; save();
+  $('ending').hidden = false;
+  const n = fmt(Math.max(S.cranes, E.GOAL));
+  $('endText').textContent = `The Fold-O-Matic never worked. Not once. Every paper crane over Channel 61, all ${n} of them, was folded by hand behind a little curtain by Wanda from Maintenance, eight arms at a time, because she liked the band. Mr. Dobbs paid the bet anyway: the rule said no claws, and she hasn’t got any. Wanda drove, because crabs can’t reach the pedals. At dawn the van came over the last hill and there it was, the sea, and above it a sky full of paper cranes, all going the same way.`;
+  $('endMemo').textContent = `CHANNEL 61 · overnight sales: ${n} cranes at $19.99.` + (S.hits ? ` Claws: ${fmt(S.clawCranes)} cranes herded on the beat, best streak ${S.best}, ${S.perfects} perfect clicks. Fold-O-Matic: ${fmt(S.machineCranes)} (Wanda). Live demos passed: ${Object.keys(S.gifts).length} of 4.` : ' Mascot suit: unworn.');
+  if (!resumed) {
+    sfx.finale();
+    if (window.DailyGame) {
+      const m = Math.floor(S.t / 60), s = String(Math.floor(S.t % 60)).padStart(2, '0');
+      DailyGame.finish({ lines: [`⏱ ${m}m${s}s`, '🕊️ a sky full of paper cranes', `🦀 best streak ${S.best}`, '📞 operators standing by'] });
+    }
+    setTimeout(() => $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' }), 600);
+  } else { say('CHYRON', 'SOLD OUT. Thank you for watching Channel 61. The band will be here all night.'); setTimeout(() => $('ending').scrollIntoView({ behavior: 'auto', block: 'nearest' }), 300); }
+  refreshMusic(); hud(); renderShop(); renderCalls();
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Log ----------
+let logT = 0;
+function say(who, text) {
+  const el = $('log');
+  el.innerHTML = '<b></b><span></span>';
+  el.querySelector('b').textContent = who;
+  el.querySelector('span').textContent = text;
+  el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
+  logT = 0;
+}
+const AMBIENT = [
+  ['CHYRON', 'Operators are standing by.'],
+  ['CHYRON', 'Not available in stores. Or in the ocean.'],
+  ['PINCHWORTH', '“Folks, that’s a crane. And another crane. And folks, that’s also a crane.”'],
+  ['DOBBS (LINE 1)', '“Still not a sky, Pinchworth.”'],
+  ['PINCHWORTH', '“Out there, past the cactus, past the highway, past another highway: the sea.”'],
+  ['BAND', 'The gamelan band plays on. Nobody told them the show started.'],
+  ['MANUAL', 'Fold-O-Matic manual, page 4: “Cranes respond to rhythm. Gamelan recommended.”'],
+  ['CHYRON', 'Shipping is free. Cranes fly themselves.'],
+  ['PINCHWORTH', '“Do you smell that? That’s not the sea. It’s never the sea.”'],
+  ['DOBBS (LINE 1)', '“If you lose, you’re the station mascot. Forever. There’s a little suit.”'],
+];
+const MACHINE_LINES = [
+  ['FOLD-O-MATIC', '*hums along to the band, a little off-key*'],
+  ['WANDA (BEHIND THE CURTAIN)', '“Don’t mind me, love! Loose gear!”'],
+  ['FOLD-O-MATIC', '*clunk* *rustle rustle rustle* *rustle*'],
+  ['WANDA (BEHIND THE CURTAIN)', '“Lovely bit of gong, that.”'],
+];
+function ambient(dt) {
+  logT += dt;
+  if (logT < 24 || S.final || S.ended || demo) return;
+  logT = 0;
+  if (S.up.maint && rnd() < 0.4) {
+    if (rnd() < 0.5) return say('FOLD-O-MATIC', `Shipped ${fmt(machineShipped)} cranes while nobody was looking.`);
+    const [w, t] = MACHINE_LINES[Math.floor(rnd() * MACHINE_LINES.length)]; return say(w, t);
+  }
+  const [w, t] = AMBIENT[Math.floor(rnd() * AMBIENT.length)];
+  say(w, t);
+}
+
+// ---------- HUD ----------
+function hud() {
+  $('cash').textContent = money(S.cash, innerWidth < 560);
+  $('skyTxt').textContent = `${fmt(Math.min(S.cranes, E.GOAL))} / 1 quadrillion cranes`;
+  $('meterFill').style.width = `${(S.ended ? 1 : E.progress(S)) * 100}%`;
+  const parts = [];
+  if (!S.ended) {
+    parts.push(`Per tap <b>${fmt(E.clawPer(S))}</b>`);
+    parts.push(`perfect <b>×${E.perfectMult(S)}</b>`);
+    parts.push(`streak <b>×${E.streakMult(S)}</b> (${S.streak} in a row, up to ${E.streakCap(S)})`);
+    if (S.up.maint) parts.push(`Fold-O-Matic <b>${fmt(E.machineRate(S))}/s</b>`);
+  }
+  $('sub').innerHTML = parts.join(' · ');
+  // The studio clock: 3 a.m. plus the minutes on air.
+  const mins = 180 + Math.floor(S.t / 60) * 2 + (S.ended ? 60 : 0), h = Math.floor(mins / 60) % 12 || 12, m = String(mins % 60).padStart(2, '0');
+  $('clock').textContent = `${h}:${m} a.m.`;
+}
+
+// ---------- Calls: the demo and the finale, at the top of the column ----------
+let callSig = '';
+function renderCalls() {
+  const el = $('calls');
+  const id = !S.ended && !S.final && !E.giftPending(S) ? E.nextDemo(S) : null;
+  const fin = !S.ended && !S.final && E.skyFull(S) && !id;
+  const sig = `${id}|${fin}|${!!demo}`;
+  if (sig === callSig) return;
+  callSig = sig;
+  el.innerHTML = '';
+  if (id && !demo) {
+    const D = E.DEMOS[id], b = document.createElement('button');
+    b.type = 'button'; b.className = 'call'; b.id = 'demoBtn';
+    b.innerHTML = '<b></b><span></span>';
+    b.querySelector('b').textContent = `🎬 Live Demo: ${D.name}`;
+    b.querySelector('span').textContent = `${D.need} of ${D.beats} on the beat · win a free gift`;
+    wireTip(b, () => ({ id: 'demo', name: `Live Demo: ${D.name}`, desc: `${D.desc} Old-herder rules: one crane a tap, no streaks, no gadgets. Land ${D.need} of ${D.beats}; ${D.beats - D.need} slips and it's a commercial break.`, fx: 'The main show keeps everything. It’s a short segment on the side, and you can try again.', foot: 'Reward: one of two free gifts' }), () => startDemo(id));
+    el.append(b);
+  }
+  if (fin) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'call final'; b.id = 'finalBtn';
+    b.innerHTML = '<b>📺 Look, No Claws!</b><span>Dobbs wants the last of it done by the machine</span>';
+    wireTip(b, () => ({ id: 'final', name: 'Look, No Claws!', desc: 'The sky’s full. Mr. Dobbs says the bet only counts if the Fold-O-Matic does the last of it alone, live on air. Keep your claws off for 40 seconds.', fx: 'Any tap and the cranes come back to you: the 40 seconds start over.', foot: 'The last segment of the night' }), startFinal);
+    el.append(b);
+  }
+}
+
+// ---------- Shop ----------
+const shop = $('shop');
+const newUntil = {};
+let shopSig = '';
+function renderShop() {
+  if (S.ended || S.final) { shop.innerHTML = ''; shopSig = ''; document.querySelector('aside h2').hidden = true; renderShelf(); return; }
+  const fresh = E.reveal(S);
+  for (const id of fresh) { if (S.t > 3) sfx.unlock(); newUntil[id] = performance.now() + 9000; }
+  const all = E.items(S).sort((a, b) => a.price - b.price);
+  const sig = all.map(i => i.id + ':' + i.price).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    for (const it of all) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (it.odd ? ' odd' : '');
+      b.dataset.id = it.id; b.dataset.cost = it.price;
+      b.innerHTML = '<b></b><em></em>';
+      b.querySelector('b').textContent = it.name;
+      b.querySelector('em').textContent = money(it.price, true) + (it.kind === 'line' ? ` · ${it.level}` : '');
+      b.setAttribute('aria-describedby', 'tip');
+      b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, upTip(it.id)); });
+      b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+      b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, upTip(it.id)); });
+      b.addEventListener('blur', hideTip);
+      b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+      // On touch the first tap shows what it does; the second buys.
+      b.addEventListener('click', () => {
+        if (b.dataset.touch && tipFor !== it.id) { showTip(b, upTip(it.id)); return; }
+        if (b.getAttribute('aria-disabled') !== 'true') doBuy(it.id); else sfx.deny();
+      });
+      shop.append(b);
+    }
+  }
+  const now = performance.now();
+  let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = S.cash >= Number(b.dataset.cost);
+    if (can) n++;
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  document.querySelector('aside h2').hidden = !all.length;
+  renderShelf();
+}
+// What an upgrade changes, now → after.
+function effect(id) {
+  const T = clone();
+  if (E.LINES[id]) T.lv[id]++; else T.up[id] = true;
+  const u = E.UP[id] || {};
+  if (u.odd) return 'Does nothing. Probably.';
+  if (id === 'maint') return `Fold-O-Matic: 0 → ${fmt(E.machineRate(T))} cranes/s`;
+  if (u.perfect) return `Perfect tap: ×${E.perfectMult(S)} → ×${E.perfectMult(T)}`;
+  if (u.streakCap) return `Streak bonus: up to ×${E.streakMult(S, 999)} → ×${E.streakMult(T, 999)}`;
+  if (u.grace) return 'A miss: streak back to 0 → streak halved';
+  const out = [];
+  if (E.clawPer(T) !== E.clawPer(S)) out.push(`Per tap: ${fmt(E.clawPer(S))} → ${fmt(E.clawPer(T))}`);
+  if (S.up.maint && E.machineRate(T) !== E.machineRate(S)) out.push(`Fold-O-Matic: ${fmt(E.machineRate(S))} → ${fmt(E.machineRate(T))}/s`);
+  return out.join(' · ');
+}
+let tipFor = null;
+function upTip(id) {
+  const it = E.LINES[id] ? { ...E.LINES[id], price: E.lineCost(S, id), level: S.lv[id] } : { ...E.UP[id], price: E.upCost(id) };
+  let foot = money(it.price);
+  if (E.LINES[id]) foot += ` · level ${it.level} of ${it.max}`;
+  return { id, name: it.name, desc: it.desc, fx: effect(id), joke: it.joke || '', foot };
+}
+function showTip(b, it) {
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><span class="fx"></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('.fx').textContent = it.fx || '';
+  tip.querySelector('.fx').hidden = !it.fx;
+  tip.querySelector('i').textContent = it.joke || '';
+  tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || '';
+  tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  const inSide = !!b.closest('#side');
+  if (inSide && r.left > t.width + 24 && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 12}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - t.width - 8, r.left))}px`;
+    tip.style.top = `${r.bottom + 8 + t.height < innerHeight ? r.bottom + 8 : Math.max(8, r.top - t.height - 8)}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+let tipMoved = 0;
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .call, .bought')) hideTip(); });
+
+// Buttons whose effect isn't obvious explain themselves (on touch, the first tap of the session).
+const explained = new Set();
+function wireTip(b, info, act) {
+  b.setAttribute('aria-describedby', 'tip');
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, info()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, info()); });
+  b.addEventListener('blur', hideTip);
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  b.addEventListener('click', () => {
+    if (b.dataset.touch && !explained.has(b.id)) { explained.add(b.id); showTip(b, info()); return; }
+    hideTip(); act();
+  });
+}
+
+// ---------- The Bought shelf (one-time upgrades and free gifts) ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!S.boughtOpen === shelfEl.open) return;
+  S.boughtOpen = shelfEl.open; save();
+});
+let shelfSig = null;
+function renderShelf() {
+  const ups = S.ended ? [] : E.bought(S);
+  const gifts = S.ended ? [] : E.DEMO_IDS.filter(d => S.gifts[d]).map(d => ({ id: S.gifts[d], gift: true, ...E.GIFTS[S.gifts[d]] }));
+  const list = [...ups, ...gifts];
+  const sig = list.map(i => i.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (it.odd ? ' odd' : '') + (it.gift ? ' gifted' : '');
+    b.textContent = it.gift ? `🎁 ${it.name}` : it.name; b.dataset.id = it.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, { id: 'bought:' + it.id, name: it.name, desc: it.desc, joke: it.joke, foot: it.gift ? 'Free gift' : it.odd ? 'Bought · does very little' : 'Bought', inline: true }); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + it.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+function doBuy(id) {
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  delete newUntil[id];
+  hideTip();
+  sfx.buy();
+  const L = E.LINES[id];
+  if (L) say('ORDER', `${L.name} (${S.lv[id]}). ${L.desc}`);
+  else say(id === 'maint' ? 'MAINTENANCE' : 'ORDER', E.UP[id].joke);
+  if (id === 'maint') refreshMusic();
+  save(); renderShop(); hud();
+}
+
+// ---------- Input ----------
+cv.addEventListener('pointerdown', e => { e.preventDefault(); cv.focus({ preventScroll: true }); tap(); });
+document.addEventListener('keydown', e => {
+  if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+  const tag = document.activeElement?.tagName;
+  if ((e.key === ' ' || e.key === 'Enter') && (document.activeElement === cv || tag === 'BODY' || !tag)) { e.preventDefault(); tap(); }
+});
+
+// ---------- Loop ----------
+let last = performance.now(), saveAcc = 0, uiAcc = 0, lastFrame = performance.now(), phaseWas = phaseKey(), machineShipped = 0, beatWas = 0;
+function step(dt) {
+  if (!S.ended) {
+    const n = E.tick(S, dt);
+    machineShipped += n;
+    if (S.final && !S.final.done) {
+      const before = Math.ceil(S.final.left);
+      if (E.finalTick(S, dt)) { save(); startReveal(); }
+      else if (Math.ceil(S.final.left) !== before && Math.ceil(S.final.left) % 10 === 0) sfx.handsOff();
+    }
+  }
+  demoStep();
+  const ph = phaseKey();
+  if (ph !== phaseWas) { phaseWas = ph; refreshMusic(); }
+  saveAcc += dt; if (saveAcc > 5) { saveAcc = 0; save(); }
+  ambient(dt);
+  uiAcc += dt; if (uiAcc > 0.2) { uiAcc = 0; hud(); renderShop(); renderCalls(); }
+}
+function frame(now) {
+  const dt = Math.max(0, Math.min(0.1, (now - last) / 1000)); last = now; lastFrame = now;
+  step(dt);
+  clock += dt;
+  snap = Math.max(0, snap - dt * 8); shake = Math.max(0, shake - dt * 4);
+  // The Fold-O-Matic pops a crane on each beat once it's "fixed".
+  const b = Math.floor(beatNow());
+  if (b !== beatWas) { beatWas = b; if (S.up.maint && !S.ended) { spawnCrane(); if (b % 2 === 0) sfx.machine(); } }
+  // The flock wanders the set; cranes on their way fly into the boxes.
+  for (const c of flock) {
+    c.ph += dt; c.vx += Math.sin(c.ph * 1.3) * 18 * dt; c.vy += Math.cos(c.ph * 0.9) * 18 * dt;
+    c.vx *= 0.99; c.vy *= 0.99;
+    c.x += c.vx * dt; c.y += c.vy * dt;
+    if (c.x < 230) c.vx += 40 * dt; if (c.x > 590) c.vx -= 40 * dt; if (c.y < 80) c.vy += 40 * dt; if (c.y > 300) c.vy -= 50 * dt;
+    if (S.final && !S.final.done) { c.vx += (WIN.x + 160 - c.x) * dt * 0.5; c.vy += (WIN.y + 80 - c.y) * dt * 0.5; }
+  }
+  if (S.final && !S.final.done && rnd() < dt * 4) { const c = flock.shift(); if (c) flying.push({ ...c, t: 0, sx: c.x, sy: c.y, sky: true }); spawnCrane(); }
+  for (const c of flying) {
+    c.t += dt * 1.4; const p = Math.min(1, c.t);
+    const tx = c.sky ? WIN.x + 40 + (c.sx % 240) : BOX.x + 40, ty = c.sky ? WIN.y + 40 : BOX.y - 120;
+    c.x = c.sx + (tx - c.sx) * p; c.y = c.sy + (ty - c.sy) * p - Math.sin(p * Math.PI) * 50;
+  }
+  flying = flying.filter(c => c.t < 1);
+  for (const f of floats) f.t += dt; floats = floats.filter(f => f.t < 1.2);
+  for (const q of bursts) q.t += dt; bursts = bursts.filter(q => q.t < 0.7);
+  if (reveal) reveal.t += dt;
+  render();
+  requestAnimationFrame(frame);
+}
+// In a background tab, rAF stops: keep the machine going on a timer.
+setInterval(() => {
+  const now = performance.now();
+  if (now - lastFrame < 400) return;
+  const dt = Math.min(1, (now - last) / 1000); last = now;
+  step(dt);
+}, 250);
+addEventListener('pagehide', save);
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('resize', layout);
+
+layout();
+if (S.ended) end(true);
+else if (S.final) {
+  if (S.final.done) startReveal();
+  else say('DIRECTOR', 'Welcome back. We’re live, the sky’s full, and it’s hands off: forty seconds, no claws.');
+} else if (E.giftPending(S)) { say('STUDIO AUDIENCE', 'Welcome back. You still have a free gift to choose.'); showGifts(E.giftPending(S)); }
+else if (!S.t) say('MANUAL', 'Fold-O-Matic manual, page 4: “Cranes respond to rhythm. Gamelan recommended.” The band is set up. The cranes are loose. Tap on the beat, as each gong reaches CALL NOW, to click your claws and herd them into the boxes.');
+else say('DIRECTOR', 'Welcome back to Channel 61. We never went off the air. The band never stopped. Tap on the beat.');
+hud(); renderShop(); renderCalls();
+document.fonts?.ready.then(layout);
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

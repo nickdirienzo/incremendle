@@ -551,5 +551,46 @@
     "tone": "corporate memo",
     "context": "none",
     "palette": "cc-29"
+  },
+  {
+    "n": 17,
+    "slug": "look-no-claws",
+    "date": "2026-11-08",
+    "title": "Look, No Claws!",
+    "tagline": "3 a.m. on Channel 61. A homesick crab herds runaway paper cranes on the beat of the gamelan band, live, to win the station van and drive to the sea.",
+    "emoji": "🦀🕊️",
+    "scale": "absurd",
+    "minutes": "25–40",
+    "seed": 3899830539,
+    "subject": {
+      "text": "a homesick crab",
+      "emoji": "🦀",
+      "name": "crab",
+      "subgroup": "animal-marine",
+      "trait": "homesick {}"
+    },
+    "verb": "herding",
+    "object": "paper cranes",
+    "interaction": "rhythm taps",
+    "arc": {
+      "drive": "a bet",
+      "obstacle": "a broken machine",
+      "turn": "the helper was the hero",
+      "initial": "W"
+    },
+    "length": "mini (10–60 min)",
+    "structure": [
+      "challenges: replay under a handicap for a reward"
+    ],
+    "twist": "hard tradeoffs",
+    "ending": "an ending reached by holding back",
+    "look": "comic book",
+    "music": {
+      "style": "gamelan",
+      "scale": "mixolydian"
+    },
+    "tone": "late-night infomercial",
+    "context": "none",
+    "palette": "berry-nebula"
   }
 ]

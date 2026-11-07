@@ -1,0 +1,20 @@
+{
+  "tabler--cactus-filled.svg": {
+    "icon": "tabler:cactus-filled",
+    "set": "Tabler Icons",
+    "setUrl": "https://github.com/tabler/tabler-icons",
+    "author": "Pawe\u0142 Kuna",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/tabler/tabler-icons/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/tabler/cactus-filled/"
+  },
+  "game-icons--rotary-phone.svg": {
+    "icon": "game-icons:rotary-phone",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Caro Asercion",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/caro-asercion/rotary-phone.html"
+  }
+}
