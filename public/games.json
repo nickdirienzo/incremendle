@@ -592,5 +592,51 @@
     "tone": "late-night infomercial",
     "context": "none",
     "palette": "berry-nebula"
+  },
+  {
+    "n": 18,
+    "slug": "over-the-moon",
+    "date": "2026-11-09",
+    "title": "Over the Moon",
+    "tagline": "A dramatic rabbit ferments umbrellas until they float, and flicks them up one by one until its whole kitchen rises toward the Moon, live, for anyone who looks up.",
+    "emoji": "🐇☂️",
+    "scale": "billions",
+    "minutes": "75–110",
+    "seed": 1517729463,
+    "subject": {
+      "text": "a dramatic rabbit",
+      "emoji": "🐇",
+      "name": "rabbit",
+      "subgroup": "animal-mammal",
+      "trait": "dramatic {}"
+    },
+    "verb": "fermenting",
+    "object": "umbrellas",
+    "interaction": "swipe/flick",
+    "arc": {
+      "drive": "fame",
+      "obstacle": "gravity",
+      "turn": "the small thing was the point",
+      "initial": "K"
+    },
+    "length": "short (1–3 hours)",
+    "structure": [
+      "one long build that eats everything you make",
+      "straight line of upgrades"
+    ],
+    "twist": "a choice you can't take back changes the world",
+    "ending": "a story reveal",
+    "look": "paper cutout",
+    "music": {
+      "style": "bossa nova",
+      "scale": "phrygian"
+    },
+    "tone": "cooking show",
+    "context": {
+      "kind": "calendar",
+      "nod": "a household ritual of that time of year",
+      "topic": "kimjang, the late-autumn kimchi-making weekend (Korea, November and December)"
+    },
+    "palette": "hollow"
   }
 ]

@@ -1,0 +1,1275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Over the Moon · Incremendle</title>
+<meta name="description" content="A dramatic rabbit ferments umbrellas until they float, and flicks them up one by one until its whole kitchen rises toward the Moon, live, for anyone who looks up. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Over the Moon">
+<meta property="og:description" content="A dramatic rabbit ferments umbrellas until they float, and flicks them up one by one until its whole kitchen rises toward the Moon, live, for anyone who looks up.">
+<meta property="og:url" content="https://incremendle.com/over-the-moon/">
+<meta property="og:image" content="https://incremendle.com/over-the-moon/og.png?v=3c17a7eb">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Over the Moon: A dramatic rabbit ferments umbrellas until they float, and flicks them up one by one until its whole kitchen rises toward the Moon, live, for anyone who looks up.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/shrikhand/font.css">
+<link rel="stylesheet" href="/shared/fonts/patrick-hand/font.css">
+<link rel="stylesheet" href="/shared/fonts/special-elite/font.css">
+<style>
+  /* Paper cutout, in Hollow: ink, slate, rose-grey and paper white. Everything casts a little shadow. */
+  :root {
+    --ink: #0f0f1b; --slate: #565a75; --rose: #c6b7be; --paper: #fafbf6;
+    --head: 'Shrikhand', Georgia, serif; --body: 'Patrick Hand', 'Comic Sans MS', sans-serif; --type: 'Special Elite', 'Courier New', monospace;
+    color-scheme: light;
+  }
+  html, body { background: var(--rose); color: var(--ink); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 17px/1.35 var(--body);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(10px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image: radial-gradient(#565a7522 1px, transparent 1.4px); background-size: 9px 9px;
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 2px 0 6px; }
+  h1 { font: 400 38px/1.05 var(--head); margin: 0; color: var(--paper); text-shadow: 3px 3px 0 var(--ink); transform: rotate(-1.5deg); }
+  header p { margin: 0; font-size: 17px; color: var(--slate); }
+  header p b { font-weight: 400; color: var(--paper); background: var(--ink); padding: 0 7px; margin-right: 6px; border-radius: 3px; }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } h1 { font-size: 30px; } }
+  main { min-width: 0; }
+
+  /* Cut paper: flat colour, a hard little shadow. */
+  .cut { background: var(--paper); box-shadow: 3px 4px 0 #0f0f1b40; border-radius: 3px; }
+
+  .hud { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 5px 14px; align-items: center; margin-bottom: 8px; }
+  .meter { position: relative; height: 30px; background: var(--paper); box-shadow: 3px 4px 0 #0f0f1b40; border-radius: 15px; overflow: hidden; }
+  .meter i { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--slate); border-radius: 15px; transition: width .4s; }
+  .meter .tick { position: absolute; top: 5px; bottom: 5px; width: 3px; background: var(--rose); border-radius: 2px; }
+  .meter span { z-index: 1; }
+  .meter span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font-size: 16px; color: var(--ink); white-space: nowrap; }
+  .meter span em { font-style: normal; background: #fafbf6dd; padding: 0 6px; border-radius: 8px; }
+  @media (max-width: 560px) { .meter span em:last-child { display: none; } .meter span { justify-content: center; } }
+  .cash { font: 400 28px/1 var(--head); color: var(--paper); text-shadow: 2px 2px 0 var(--ink); white-space: nowrap; }
+  .sub { grid-column: 1 / -1; display: flex; gap: 2px 14px; flex-wrap: wrap; align-items: center; font-size: 15px; color: var(--ink); min-height: 20px; }
+  .sub b { font-weight: 400; color: var(--paper); background: var(--slate); padding: 0 5px; border-radius: 3px; }
+
+  .stagewrap { position: relative; }
+  canvas#stage { display: block; width: 100%; touch-action: none; cursor: pointer; box-shadow: 5px 6px 0 #0f0f1b55; border-radius: 4px; background: var(--rose); -webkit-tap-highlight-color: transparent; user-select: none; }
+  canvas#stage:focus-visible { outline: 3px dashed var(--ink); outline-offset: 3px; }
+  .over { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 12px; background: #0f0f1b99; border-radius: 4px; overflow: auto; }
+  .panel { max-width: 560px; width: 100%; text-align: center; background: var(--paper); box-shadow: 5px 6px 0 var(--ink); border-radius: 4px; padding: 10px 16px 14px; transform: rotate(-.5deg); }
+  .panel h3 { font: 400 26px/1.1 var(--head); margin: 2px 0 6px; color: var(--slate); }
+  .panel p { margin: 4px 0 10px; }
+  .picks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 480px) { .picks { grid-template-columns: 1fr; } }
+  .pick { text-align: left; font: 15px/1.3 var(--body); color: var(--ink); background: var(--rose); border: 0; border-radius: 3px; box-shadow: 3px 4px 0 var(--slate); padding: 8px 10px 10px; cursor: pointer; }
+  .pick b { display: block; font: 400 19px/1.1 var(--head); color: var(--ink); margin-bottom: 4px; }
+  .pick small { display: block; margin-top: 6px; font-size: 14px; color: var(--slate); }
+  .pick:hover, .pick:focus-visible { transform: translate(-1px, -2px); box-shadow: 4px 6px 0 var(--slate); outline: none; }
+  .bigbtn { font: 400 20px var(--head); color: var(--paper); background: var(--slate); border: 0; border-radius: 4px; box-shadow: 3px 4px 0 var(--ink); padding: 6px 18px; cursor: pointer; margin: 4px; }
+  .bigbtn:focus-visible { outline: 3px dashed var(--ink); outline-offset: 2px; }
+  /* Kiki's card: a typed index card. */
+  .card { text-align: left; font: 15px/1.5 var(--type); background: var(--paper); padding: 12px 16px; margin: 6px 0 10px; box-shadow: inset 0 0 0 1px var(--rose); background-image: repeating-linear-gradient(transparent 0 23px, #c6b7be 23px 24px); }
+  .card h4 { font: 400 17px var(--type); margin: 0 0 6px; text-decoration: underline; }
+  .card p { margin: 0 0 6px; }
+  .card mark { background: var(--ink); color: var(--paper); padding: 0 3px; }
+  .card .sig { text-align: right; font-style: italic; }
+
+  .log { position: relative; margin: 14px 2px 0; min-height: 2.7em; font-size: 17px; color: var(--ink); background: var(--paper); border-radius: 3px; padding: 7px 12px; box-shadow: 3px 4px 0 #0f0f1b40; transform: rotate(.3deg); }
+  .log b { font: 400 13px var(--body); letter-spacing: 1px; color: var(--paper); background: var(--slate); padding: 1px 6px; margin-right: 7px; border-radius: 3px; text-transform: uppercase; }
+  .log.fresh { animation: pop .3s ease-out; }
+  @keyframes pop { from { transform: rotate(.3deg) translateY(3px); opacity: .5; } }
+
+  aside { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; scrollbar-width: thin; padding: 2px 6px 8px 2px; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  aside h2 { font: 400 25px/1 var(--head); margin: 2px 0 9px; color: var(--paper); text-shadow: 2px 2px 0 var(--ink); }
+  #afford { font: 400 15px var(--body); text-shadow: none; color: var(--ink); }
+  #calls { display: grid; gap: 8px; margin-bottom: 10px; }
+  #calls:empty { display: none; }
+  .call { text-align: left; font: 15px/1.25 var(--body); color: var(--paper); background: var(--ink); border: 0; border-radius: 3px; box-shadow: 3px 4px 0 var(--slate); padding: 7px 10px 8px; cursor: pointer; animation: nudge 1.6s ease-in-out infinite; }
+  .call b { display: block; font: 400 19px/1.1 var(--head); }
+  .call:focus-visible { outline: 3px dashed var(--ink); outline-offset: 2px; }
+  @keyframes nudge { 50% { transform: translate(-1px, -2px); box-shadow: 4px 6px 0 var(--slate); } }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  @media (max-width: 760px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up {
+    position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 15px/1.15 var(--body); color: var(--slate);
+    background: var(--paper); border: 0; border-radius: 3px; box-shadow: 3px 4px 0 #0f0f1b33; padding: 6px 9px 7px; cursor: pointer;
+  }
+  .up b { font-weight: 400; font-size: 17px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { box-shadow: 3px 4px 0 var(--ink); }
+  .up.can em { color: var(--ink); text-decoration: underline wavy var(--slate) 1px; text-underline-offset: 3px; }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up[aria-disabled="true"]:not(.can) { opacity: .6; }
+  .up.later { background: var(--rose); }
+  .up.odd { outline: 2px dashed var(--rose); outline-offset: -5px; }
+  .up .tag { position: absolute; top: -9px; right: 6px; font: 400 13px var(--head); font-style: normal; color: var(--paper); background: var(--ink); padding: 0 6px 1px; border-radius: 3px; transform: rotate(5deg); }
+  .up.new { animation: pulse 1.4s ease-in-out 4; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 5px #fafbf6; } }
+  .up:focus-visible, .bought:focus-visible { outline: 3px dashed var(--ink); outline-offset: 2px; }
+  #tip {
+    position: fixed; z-index: 50; width: 270px; padding: 9px 13px 11px; pointer-events: none; font: 16px/1.35 var(--body); color: var(--ink);
+    background: var(--paper); border-radius: 3px; box-shadow: 5px 6px 0 var(--slate); transform: rotate(-.6deg);
+  }
+  #tip b { display: block; font: 400 20px/1.1 var(--head); color: var(--slate); margin-bottom: 4px; }
+  #tip .fx { display: block; margin-top: 6px; padding: 2px 6px; background: var(--rose); border-radius: 3px; }
+  #tip i { display: block; margin-top: 6px; padding-top: 5px; border-top: 2px dotted var(--rose); }
+  #tip small { display: block; margin-top: 6px; font: 400 15px var(--head); color: var(--ink); }
+  #tip.inline { position: static; width: auto; margin-top: 10px; transform: none; }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 400 19px/1 var(--head); color: var(--paper); text-shadow: 1px 1px 0 var(--ink); cursor: pointer; list-style: none; padding: 3px 2px; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: "\25B8"; font-size: 14px; color: var(--ink); text-shadow: none; transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 3px dashed var(--ink); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 2px 2px; }
+  .bought { max-width: 100%; font: 14px/1.2 var(--body); color: var(--ink); background: var(--paper); border: 0; border-radius: 3px; box-shadow: 2px 3px 0 #0f0f1b33; padding: 2px 8px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { outline: 2px dashed var(--rose); outline-offset: -4px; }
+  .bought:hover, .bought.on { box-shadow: 2px 3px 0 var(--ink); }
+
+  #ending { margin: 22px auto 0; max-width: 680px; text-align: center; padding: 14px 22px 22px; background: var(--paper); border-radius: 4px; box-shadow: 6px 7px 0 var(--ink); transform: rotate(-.4deg); }
+  #ending h2 { font: 400 38px/1.1 var(--head); margin: 0 0 8px; color: var(--slate); }
+  #ending p { margin: 8px 0; text-align: left; }
+  #ending .memo { font: 14px/1.5 var(--type); background: var(--rose); padding: 8px 12px; border-radius: 3px; }
+  #shareBtn, #againBtn { font: 400 20px var(--head); color: var(--paper); background: var(--slate); border: 0; border-radius: 4px; box-shadow: 3px 4px 0 var(--ink); padding: 6px 18px; margin: 12px 4px 0; cursor: pointer; }
+  #againBtn { background: var(--rose); color: var(--ink); }
+  #shareBtn:focus-visible, #againBtn:focus-visible { outline: 3px dashed var(--ink); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .call, .log.fresh { animation: none; } .meter i, #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/soundfonts": "/shared/lib/@strudel/soundfonts@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="18" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Over the Moon</h1>
+    <p><b>LIVE</b>from Clover’s kitchen · <span id="where">on the ground</span></p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="hud">
+        <div class="meter" id="meter" title="How high the kitchen is, on its way to the Moon. The meter climbs by powers of ten; the notches are the rain cloud, the edge of space and the satellites."><i id="meterFill"></i><span><em id="altTxt">0 m up · seen by 12</em><em>→ the Moon, 384,400 km</em></span></div>
+        <div class="cash" id="cash" title="Tips, from the onlookers, in the basket on the string">$0.00</div>
+        <div class="sub" id="sub"></div>
+      </div>
+      <div class="stagewrap">
+        <canvas id="stage" tabindex="0" aria-label="Clover's kitchen. Umbrellas proof in the crocks on the shelves. When one has puffed up into a full dome, swipe across it (or tap it, or press space) to flick it up to the bouquet over the roof. Every umbrella lifts the kitchen a little higher."></canvas>
+        <div class="over" id="over" hidden></div>
+      </div>
+      <p class="log" id="log" aria-live="polite"></p>
+    </main>
+    <aside id="side">
+      <h2 hidden>The Recipe <span id="afford"></span></h2>
+      <div id="calls"></div>
+      <div id="shop"></div>
+      <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" hidden>
+    <h2>Over the Moon.</h2>
+    <p id="endText"></p>
+    <p class="memo" id="endMemo"></p>
+    <button id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import { grain } from '/shared/kit/fx.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const fmt = E.fmt, money = E.money;
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const C = { ink: '#0f0f1b', slate: '#565a75', rose: '#c6b7be', paper: '#fafbf6' };
+const DEBUG = location.search.includes('debug');
+
+// ---------- State ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:18:save';
+let raw = null;
+try { raw = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+const S = E.load(raw);
+const save = () => { S.savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound: E phrygian, like the band ----------
+// Trims measured with npm run mix (music near -24 dBFS RMS, effects peaking near -10; the bubble
+// and the sous-chefs' sweep sit about 5-8 dB under on purpose: with a wall of crocks they never stop).
+const A = createAudio({ sfxTrim: 2.66, musicTrim: 5 });
+const notes = scale('phrygian', 64);
+let lastRipe = 0, lastSweep = 0, lastFlop = 0;
+const sfx = {
+  // The flick: a soft upward pluck, climbing with each umbrella in the swipe.
+  flick(i = 0) {
+    A.tone({ type: 'pluck', freq: notes(7 + (i % 6)), dur: 0.1, vol: 0.26, glide: 1.06 });
+    A.noiseHit('whoosh', { vol: 0.065, dur: 0.16 });
+  },
+  // Too soon: gravity wins, a soft downward plop.
+  flop() { const t = performance.now(); if (t - lastFlop < 250) return; lastFlop = t; A.tone({ type: 'triangle', freq: notes(-2), dur: 0.12, vol: 0.165, glide: 0.7 }); },
+  // An umbrella finishes puffing: a tiny bubble. Kept soft: with a wall of crocks it's a constant fizz.
+  ripe() { const t = performance.now(); if (t - lastRipe < 600) return; lastRipe = t; A.tone({ type: 'sine', freq: notes(14 + (Math.random() * 3 | 0)), dur: 0.04, vol: 0.101, glide: 1.25 }); },
+  // A sous-chef sweeps a shelf: a brush and a little run. Soft, like the bubbles: it's background.
+  sweep() { const t = performance.now(); if (t - lastSweep < 1200) return; lastSweep = t; A.noiseHit('shaker', { vol: 0.196, dur: 0.12 }); A.tone({ type: 'pluck', freq: notes(9), dur: 0.08, vol: 0.22 }); },
+  // Tips landing in the basket: a coin, now and then.
+  tip() { A.tone({ type: 'bell', freq: notes(11), dur: 0.08, vol: 0.135 }); A.tone({ type: 'bell', freq: notes(13), dur: 0.1, vol: 0.105, at: A.now + 0.06 }); },
+  buy() { [0, 2, 4, 7].forEach((d, i) => A.tone({ type: 'pluck', freq: notes(d + 7), dur: 0.12, vol: 0.143, at: A.now + i * 0.06 })); },
+  unlock() { A.tone({ type: 'bell', freq: notes(9), dur: 0.3, vol: 0.136 }); A.tone({ type: 'bell', freq: notes(11), dur: 0.4, vol: 0.112, at: A.now + 0.12 }); },
+  deny() { A.tone({ type: 'triangle', freq: notes(-3), dur: 0.07, vol: 0.188 }); },
+  // Passing a sight on the way up: the phrygian turn, B C B.
+  landmark() { [4, 5, 4, 7].forEach((d, i) => A.tone({ type: 'bell', freq: notes(d + 7), dur: 0.25, vol: 0.105, at: A.now + i * 0.13 })); },
+  // The cloud, decided.
+  choice() {
+    [0, 2, 4].forEach(d => A.tone({ type: 'pad', freq: notes(d), dur: 1.4, vol: 0.009, attack: 0.3, release: 1, cutoff: 1200 }));
+    [7, 9, 11, 14].forEach((d, i) => A.tone({ type: 'bell', freq: notes(d), dur: 0.4, vol: 0.038, at: A.now + 0.2 + i * 0.1 }));
+  },
+  // Touchdown on the Moon: a soft thump and the chord.
+  land() { A.noiseHit('kick', { vol: 0.087 }); [0, 4, 7, 11].forEach((d, i) => A.tone({ type: 'bell', freq: notes(d), dur: 0.8, vol: 0.03, at: A.now + 0.1 + i * 0.08 })); },
+  // The card unfolds: paper.
+  unfold() { A.noiseHit('whoosh', { vol: 0.168, dur: 0.3 }); A.noiseHit('shaker', { vol: 0.14, dur: 0.2, at: A.now + 0.25 }); },
+  // The little umbrella lands in the glass.
+  clink() { A.tone({ type: 'bell', freq: notes(21), dur: 0.5, vol: 0.091 }); A.tone({ type: 'bell', freq: notes(23), dur: 0.6, vol: 0.063, at: A.now + 0.03 }); },
+  // The ending: the phrygian cadence, F major falling to E, then the toast.
+  finale() {
+    [1, 3, 5, 8].forEach((d, i) => A.tone({ type: 'pluck', freq: notes(d), dur: 0.3, vol: 0.054, at: A.now + i * 0.11 }));
+    [0, 2, 4, 7].forEach((d, i) => A.tone({ type: 'pluck', freq: notes(d), dur: 0.4, vol: 0.054, at: A.now + 0.7 + i * 0.11 }));
+    [0, 4, 7].forEach(d => A.tone({ type: 'pad', freq: notes(d - 7), dur: 2.4, vol: 0.009, attack: 0.5, release: 1.6, cutoff: 900, at: A.now + 1.2 }));
+    A.tone({ type: 'bell', freq: notes(14), dur: 1.4, vol: 0.039, at: A.now + 1.5 });
+  },
+};
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'choice', 'land', 'landmark'], S: () => S, E };
+
+// ---------- Music: one bossa nova, arranged per stretch of the trip ----------
+let music = null, soundtrack = null;
+const phaseKey = () => E.phase(S);
+function song() { return (soundtrack ??= createSoundtrack(music.strudel))(phaseKey()); }
+createMusic(A, { soundfonts: true, packs: ['vcsl'], song }).then(m => { music = m; music.update(); if (DEBUG) window.__game.music = m; }).catch(e => console.warn('music', e));
+const refreshMusic = () => { if (music) music.update(); };
+
+// ---------- Paper ----------
+const W = 800, H = 540;
+const KIT = { x: 150, y: 204, w: 500, h: 246 };                       // the kitchen, inside the walls
+const SH = { x: 166, bottom: 446, colW: 33, rowH: 29, cols: E.PER_SHELF };  // the crock shelves
+const CLOVER = { x: 564, y: 446 };
+let seed = 18;
+const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+// Scissor-cut: a polygon with its points nudged a little, filled flat, with a hard drop shadow.
+function cut(x, color, f, { shadow = 0.25, dx = 2.5, dy = 3 } = {}) {
+  if (shadow) { x.save(); x.translate(dx, dy); x.beginPath(); f(); x.fillStyle = `rgba(15,15,27,${shadow})`; x.fill(); x.restore(); }
+  x.beginPath(); f(); x.fillStyle = color; x.fill();
+}
+const jag = (x, pts, j = 0.8) => { pts.forEach(([a, b], i) => { const p = [a + (rnd() - 0.5) * j, b + (rnd() - 0.5) * j]; i ? x.lineTo(...p) : x.moveTo(...p); }); x.closePath(); };
+const oval = (x, cx, cy, rx, ry, a0 = 0, a1 = Math.PI * 2) => x.ellipse(cx, cy, rx, ry, 0, a0, a1);
+
+// ---------- The umbrellas: eleven kinds, each one bigger than the last ----------
+// shape: dome / flat / peak / square. Stripes alternate a and b.
+const TIERS = [
+  { a: C.ink, b: C.ink, shape: 'dome', ribs: 6, hook: true },        // a plain black brolly
+  { a: C.paper, b: C.slate, shape: 'dome', ribs: 8, hook: true },    // golf
+  { a: C.slate, b: C.slate, shape: 'dome', ribs: 8, hook: true, trim: C.paper }, // doorman
+  { a: C.paper, b: C.rose, shape: 'flat', ribs: 10, fringe: true },  // beach
+  { a: C.paper, b: C.paper, shape: 'flat', ribs: 6, valance: C.slate, text: 'FIZZ' }, // café
+  { a: C.rose, b: C.rose, shape: 'flat', ribs: 8, trim: C.slate },   // patio
+  { a: C.slate, b: C.paper, shape: 'square', ribs: 6 },               // market parasol
+  { a: C.paper, b: C.paper, shape: 'dome', ribs: 8, scallop: C.slate, finial: true }, // bandstand
+  { a: C.paper, b: C.rose, shape: 'peak', ribs: 4, pennant: C.slate },   // marquee
+  { a: C.slate, b: C.slate, shape: 'flat', ribs: 12, ribColor: C.paper, wide: true }, // stadium
+  { a: C.rose, b: C.paper, shape: 'peak', ribs: 8, flags: true },    // big top
+];
+function canopyPath(x, t, w, h) {
+  const hw = w / 2;
+  if (t.shape === 'peak') { x.moveTo(-hw, 0); x.quadraticCurveTo(-hw * 0.35, -h * 0.35, 0, -h); x.quadraticCurveTo(hw * 0.35, -h * 0.35, hw, 0); x.closePath(); return; }
+  if (t.shape === 'square') { x.moveTo(-hw, 0); x.lineTo(-hw * 0.55, -h * 0.75); x.lineTo(0, -h); x.lineTo(hw * 0.55, -h * 0.75); x.lineTo(hw, 0); x.closePath(); return; }
+  const k = t.shape === 'flat' ? 0.62 : 1;
+  x.moveTo(-hw, 0); x.bezierCurveTo(-hw, -h * 1.25 * k - h * (1 - k) * 0.6, hw, -h * 1.25 * k - h * (1 - k) * 0.6, hw, 0);
+  // Scalloped hem between the ribs.
+  const n = t.ribs;
+  for (let i = n; i > 0; i--) { const xa = -hw + (w * i) / n, xb = -hw + (w * (i - 1)) / n; x.quadraticCurveTo((xa + xb) / 2, h * 0.16, xb, 0); }
+  x.closePath();
+}
+// One umbrella, its handle down, open by `open` (0 folded .. 1 a full dome).
+function drawUmbrella(x, tier, w, open = 1, shadow = 0.22) {
+  const t = TIERS[tier];
+  const ww = w * (t.wide ? 1.25 : 1) * (0.25 + 0.75 * open), h = w * 0.42 * (0.55 + 0.45 * open);
+  x.save(); x.lineCap = 'round';
+  // Handle or pole.
+  x.strokeStyle = C.ink; x.lineWidth = Math.max(1, w / 26);
+  x.beginPath(); x.moveTo(0, -h); x.lineTo(0, w * 0.42);
+  if (t.hook) x.arc(-w * 0.06, w * 0.42, w * 0.06, 0, Math.PI);
+  x.stroke();
+  if (shadow) { x.save(); x.translate(w * 0.04, w * 0.05); x.beginPath(); canopyPath(x, t, ww, h); x.fillStyle = `rgba(15,15,27,${shadow})`; x.fill(); x.restore(); }
+  x.beginPath(); canopyPath(x, t, ww, h); x.fillStyle = t.a; x.fill();
+  if (t.b !== t.a) {   // stripes: every other rib wedge
+    x.save(); x.beginPath(); canopyPath(x, t, ww, h); x.clip();
+    x.fillStyle = t.b;
+    for (let i = 0; i < t.ribs; i += 2) { x.beginPath(); x.moveTo(0, -h * 1.1); x.lineTo(-ww / 2 + (ww * i) / t.ribs, h * 0.3); x.lineTo(-ww / 2 + (ww * (i + 1)) / t.ribs, h * 0.3); x.closePath(); x.fill(); }
+    x.restore();
+  }
+  // Ribs.
+  x.strokeStyle = t.ribColor || (t.a === C.ink ? C.slate : 'rgba(15,15,27,0.35)'); x.lineWidth = Math.max(0.6, w / 60);
+  for (let i = 1; i < t.ribs; i++) { x.beginPath(); x.moveTo(0, -h * 0.98); x.lineTo(-ww / 2 + (ww * i) / t.ribs, 0); x.stroke(); }
+  if (t.trim) { x.strokeStyle = t.trim; x.lineWidth = Math.max(1, w / 30); x.beginPath(); canopyPath(x, t, ww * 0.98, h * 0.98); x.stroke(); }
+  if (t.valance) { x.fillStyle = t.valance; for (let i = 0; i < 6; i++) { const xa = -ww / 2 + (ww * i) / 6; x.beginPath(); x.moveTo(xa, 0); x.lineTo(xa + ww / 6, 0); x.lineTo(xa + ww / 12, h * 0.25); x.closePath(); x.fill(); } }
+  if (t.text && w > 28) { x.fillStyle = C.slate; x.font = `${Math.round(w / 7)}px 'Special Elite', monospace`; x.textAlign = 'center'; x.fillText(t.text, 0, -h * 0.35); }
+  if (t.fringe) { x.strokeStyle = C.slate; x.lineWidth = Math.max(0.6, w / 70); for (let i = 0; i <= 12; i++) { const xa = -ww / 2 + (ww * i) / 12; x.beginPath(); x.moveTo(xa, 0); x.lineTo(xa, h * 0.14); x.stroke(); } }
+  if (t.scallop) { x.fillStyle = t.scallop; for (let i = 0; i < 8; i++) { x.beginPath(); x.arc(-ww / 2 + (ww * (i + 0.5)) / 8, 0, ww / 16, 0, Math.PI); x.fill(); } }
+  if (t.finial || t.pennant || t.flags) {
+    x.strokeStyle = C.ink; x.lineWidth = Math.max(0.8, w / 40);
+    x.beginPath(); x.moveTo(0, -h); x.lineTo(0, -h - w * 0.14); x.stroke();
+    x.fillStyle = t.pennant || C.ink;
+    if (t.finial) { x.beginPath(); x.arc(0, -h - w * 0.15, w * 0.04, 0, Math.PI * 2); x.fill(); }
+    else { x.beginPath(); x.moveTo(0, -h - w * 0.14); x.lineTo(w * 0.14, -h - w * 0.11); x.lineTo(0, -h - w * 0.08); x.closePath(); x.fill(); }
+    if (t.flags) for (const s of [-1, 1]) { x.beginPath(); x.moveTo(s * ww * 0.45, -h * 0.1); x.lineTo(s * ww * 0.45, -h * 0.45); x.lineTo(s * ww * 0.45 + w * 0.1, -h * 0.38); x.lineTo(s * ww * 0.45, -h * 0.32); x.stroke(); x.fill(); }
+  }
+  x.restore();
+}
+// Pre-cut sprites: each kind open, at bouquet size.
+const UMB = TIERS.map((_, i) => {
+  const c = Sprites.canvas(84, 76), x = c.getContext('2d'); x.translate(40, 44); drawUmbrella(x, i, 62, 1); return c;
+});
+const TIER_NAMES = ['Black brolly', 'Golf umbrella', 'Doorman’s umbrella', 'Beach umbrella', 'Café umbrella', 'Patio umbrella', 'Market parasol', 'Bandstand canopy', 'Wedding marquee', 'Stadium roof', 'Circus big top'];
+UMB.forEach((c, i) => Sprites.register(TIER_NAMES[i], c));
+const umb = (x, tier, cx, cy, s = 1, rot = 0) => { x.save(); x.translate(cx, cy); if (rot) x.rotate(rot); x.scale(s, s); x.drawImage(UMB[tier], -40, -44); x.restore(); };
+
+// A crock (or, once the neighbours lend them, an onggi): 22 x 18.
+function drawCrock(onggi) {
+  const c = Sprites.canvas(30, 26), x = c.getContext('2d'); x.translate(4, 3);
+  if (onggi) {
+    cut(x, C.ink, () => { x.moveTo(5, 2); x.bezierCurveTo(-3, 6, -1, 19, 5, 20); x.lineTo(17, 20); x.bezierCurveTo(23, 19, 25, 6, 17, 2); x.closePath(); }, { dx: 1.5, dy: 2 });
+    x.fillStyle = C.slate; x.beginPath(); oval(x, 11, 2.5, 7, 2); x.fill();
+    x.strokeStyle = C.slate; x.lineWidth = 1; x.beginPath(); x.moveTo(3, 9); x.quadraticCurveTo(11, 12, 19, 9); x.stroke();
+  } else {
+    cut(x, C.slate, () => { x.moveTo(3, 2); x.lineTo(2, 18); x.quadraticCurveTo(11, 21, 20, 18); x.lineTo(19, 2); x.closePath(); }, { dx: 1.5, dy: 2 });
+    x.fillStyle = C.paper; x.fillRect(4, 8, 14, 4);
+    x.fillStyle = C.ink; x.beginPath(); oval(x, 11, 2, 8, 2); x.fill();
+  }
+  return c;
+}
+const CROCK = [drawCrock(false), drawCrock(true)];
+Sprites.register('crock', CROCK[0]); Sprites.register('onggi (from next door)', CROCK[1]);
+
+// Clover: a white rabbit in an apron, one ear up and one flopped for drama. Drawn live.
+function drawClover(x, t, { flourish = 0, cape = false, boots = false, whistle = false, glass = 0 } = {}) {
+  x.save();
+  const bob = Math.sin(t * 2.2) * 1.2;
+  x.translate(0, bob);
+  if (cape) cut(x, C.ink, () => { x.moveTo(-16, -86); x.bezierCurveTo(-40, -50, -44, -10, -34, 0); x.lineTo(30, 0); x.bezierCurveTo(38, -20, 30, -60, 16, -86); x.closePath(); }, { shadow: 0.2 });
+  // Legs and feet.
+  if (boots) {
+    for (const s of [-1, 1]) { cut(x, C.rose, () => { x.moveTo(s * 9 - 9, -18); x.lineTo(s * 9 - 12, 0); x.lineTo(s * 9 + 14, 0); x.lineTo(s * 9 + 8, -18); x.closePath(); }, { shadow: 0.35 }); x.strokeStyle = C.slate; x.lineWidth = 1.4; x.beginPath(); x.moveTo(s * 9 - 11, -9); x.lineTo(s * 9 + 11, -9); x.moveTo(s * 9 - 10, -3); x.lineTo(s * 9 + 12, -3); x.stroke(); }
+  } else for (const s of [-1, 1]) cut(x, C.paper, () => oval(x, s * 9 + 2, -3, 11, 4.5));
+  // Body.
+  cut(x, C.paper, () => { x.moveTo(-20, -6); x.bezierCurveTo(-26, -40, -18, -70, 0, -72); x.bezierCurveTo(18, -70, 26, -40, 20, -6); x.closePath(); });
+  // Apron with a pocket.
+  cut(x, C.slate, () => { x.moveTo(-13, -50); x.lineTo(13, -50); x.lineTo(16, -8); x.lineTo(-16, -8); x.closePath(); }, { shadow: 0 });
+  x.fillStyle = C.paper; x.fillRect(-6, -30, 12, 8);
+  if (whistle) { x.strokeStyle = C.ink; x.lineWidth = 1.2; x.beginPath(); x.moveTo(-9, -68); x.quadraticCurveTo(0, -50, 9, -68); x.stroke(); cut(x, C.ink, () => { x.rect(-2, -57, 11, 6); x.moveTo(-2, -54); x.arc(-2, -54, 3.5, 0, 7); }, { shadow: 0.2 }); }
+  // Arms: the left on the hip, the right in a flourish (up when flicking or toasting).
+  cut(x, C.paper, () => { x.moveTo(-18, -56); x.quadraticCurveTo(-32, -44, -20, -32); x.lineTo(-17, -36); x.quadraticCurveTo(-24, -44, -14, -52); x.closePath(); });
+  const ang = -0.4 - flourish * 1.5;
+  x.save(); x.translate(16, -56); x.rotate(ang);
+  cut(x, C.paper, () => { x.moveTo(-3, -3); x.lineTo(24, -4); x.quadraticCurveTo(30, 0, 24, 4); x.lineTo(-3, 4); x.closePath(); });
+  if (glass) { x.translate(28, 0); x.rotate(-ang); drawGlass(x, glass, 0.8); }
+  x.restore();
+  // Head.
+  cut(x, C.paper, () => oval(x, 0, -86, 17, 15));
+  // Ears: one up, one flopped.
+  cut(x, C.paper, () => { x.moveTo(-9, -98); x.bezierCurveTo(-16, -130, -6, -146, -2, -132); x.bezierCurveTo(0, -120, -2, -108, -3, -98); x.closePath(); });
+  x.fillStyle = C.rose; x.beginPath(); x.moveTo(-7, -102); x.bezierCurveTo(-12, -126, -6, -138, -4, -128); x.bezierCurveTo(-3, -118, -4, -108, -5, -102); x.fill();
+  cut(x, C.paper, () => { x.moveTo(5, -98); x.bezierCurveTo(14, -112, 34, -112, 40, -100); x.bezierCurveTo(34, -102, 18, -100, 10, -94); x.closePath(); });
+  x.fillStyle = C.rose; x.beginPath(); x.moveTo(9, -98); x.bezierCurveTo(16, -106, 30, -106, 35, -101); x.bezierCurveTo(28, -101, 18, -99, 11, -96); x.fill();
+  // Face: closed, dramatic eyes with lashes; a pink nose; a little smile.
+  x.strokeStyle = C.ink; x.lineWidth = 1.6; x.lineCap = 'round';
+  for (const s of [-1, 1]) { x.beginPath(); x.arc(s * 6.5, -88, 3.2, 0.15 * Math.PI, 0.85 * Math.PI); x.stroke(); x.beginPath(); x.moveTo(s * 9.5, -87); x.lineTo(s * 11.5, -89.5); x.stroke(); }
+  x.fillStyle = C.rose; x.beginPath(); oval(x, 0, -81, 2.6, 1.8); x.fill();
+  x.beginPath(); x.moveTo(-3, -78); x.quadraticCurveTo(0, -75.5, 3, -78); x.stroke();
+  x.fillStyle = 'rgba(198,183,190,0.8)'; for (const s of [-1, 1]) { x.beginPath(); oval(x, s * 10, -80, 3, 1.8); x.fill(); }
+  x.restore();
+}
+// The little glass. fill 0 empty, 1 plum fizz, 2 with the tiny umbrella in it.
+function drawGlass(x, fill, s = 1) {
+  x.save(); x.scale(s, s);
+  if (fill >= 1) { x.fillStyle = C.slate; x.beginPath(); x.moveTo(-9, -15); x.quadraticCurveTo(0, -4, 9, -15); x.closePath(); x.fill(); x.fillStyle = C.paper; for (let i = 0; i < 3; i++) { x.beginPath(); x.arc(-4 + i * 4, -12 + (i % 2), 0.9, 0, 7); x.fill(); } }
+  x.strokeStyle = C.ink; x.lineWidth = 1.4;
+  x.beginPath(); x.moveTo(-10, -16); x.quadraticCurveTo(0, -2, 10, -16); x.moveTo(0, -7); x.lineTo(0, 4); x.moveTo(-6, 4); x.lineTo(6, 4); x.stroke();
+  if (fill >= 2) { x.save(); x.translate(5, -16); x.rotate(0.35); miniUmbrella(x, 0.5); x.restore(); }
+  x.restore();
+}
+// The very small paper umbrella (a cocktail umbrella): rose and paper, a toothpick handle.
+function miniUmbrella(x, s = 1) {
+  x.save(); x.scale(s, s);
+  x.strokeStyle = C.ink; x.lineWidth = 1.2; x.beginPath(); x.moveTo(0, -10); x.lineTo(0, 9); x.stroke();
+  x.beginPath(); x.moveTo(-11, -4); x.quadraticCurveTo(0, -18, 11, -4); x.closePath(); x.fillStyle = C.rose; x.fill();
+  x.fillStyle = C.paper; for (let i = 0; i < 4; i += 2) { x.beginPath(); x.moveTo(0, -11); x.lineTo(-11 + i * 5.5, -4); x.lineTo(-5.5 + i * 5.5, -4); x.closePath(); x.fill(); }
+  x.restore();
+}
+// A paper-doll sous-chef with a tall hat (and, with the right upgrades, a spoon and skates).
+function drawChef(x, sweep = 0, spoon = false, skates = false) {
+  x.save();
+  if (skates) { x.fillStyle = C.ink; x.fillRect(-6, -2, 12, 2); x.beginPath(); x.arc(-4, 1, 1.5, 0, 7); x.arc(4, 1, 1.5, 0, 7); x.fill(); x.translate(0, -3); }
+  cut(x, C.paper, () => jag(x, [[-5, 0], [-4, -9], [-7, -11], [-6, -14], [-3, -13], [-3, -16], [3, -16], [3, -13], [6, -14], [7, -11], [4, -9], [5, 0], [1, 0], [0, -5], [-1, 0]], 0.3), { dx: 1, dy: 1.5 });
+  cut(x, C.paper, () => oval(x, 0, -19, 3.4, 3.4), { dx: 1, dy: 1.5 });
+  cut(x, C.paper, () => { x.moveTo(-3.5, -21); x.lineTo(-4.5, -28); x.quadraticCurveTo(0, -31, 4.5, -28); x.lineTo(3.5, -21); x.closePath(); }, { dx: 1, dy: 1.5 });
+  x.fillStyle = C.ink; x.fillRect(-1.6, -19.5, 0.9, 0.9); x.fillRect(0.8, -19.5, 0.9, 0.9);
+  if (spoon) { x.save(); x.translate(6, -12); x.rotate(-0.8 + sweep * 1.4); x.strokeStyle = C.slate; x.lineWidth = 1.4; x.beginPath(); x.moveTo(0, 0); x.lineTo(0, -12); x.stroke(); x.fillStyle = C.slate; x.beginPath(); oval(x, 0, -13, 2, 3); x.fill(); x.restore(); }
+  x.restore();
+}
+// Culture jars on the shelf over the fridge.
+function drawJar(x, label, i) {
+  const h = 18 + (i % 2) * 3;
+  cut(x, C.paper, () => { x.rect(-7, -h, 14, h); }, { dx: 1.5, dy: 2 });
+  x.fillStyle = [C.rose, C.slate, C.rose][i % 3]; x.fillRect(-6, -h * 0.55, 12, h * 0.55 - 1);
+  x.fillStyle = C.ink; x.fillRect(-8, -h - 3, 16, 3);
+  x.fillStyle = C.ink; x.font = "5px 'Special Elite', monospace"; x.textAlign = 'center'; x.fillText(label.slice(0, 6), 0, -h * 0.62);
+}
+// The tip basket: wider with every size.
+function drawBasket(x, lv) {
+  const w = 14 + Math.min(lv, 40) * 0.9;
+  cut(x, C.rose, () => { x.moveTo(-w / 2, 0); x.lineTo(w / 2, 0); x.lineTo(w * 0.38, 12); x.lineTo(-w * 0.38, 12); x.closePath(); }, { dx: 1.5, dy: 2 });
+  x.strokeStyle = C.slate; x.lineWidth = 1; for (let i = 1; i < 4; i++) { x.beginPath(); x.moveTo(-w / 2 + i * 0.7, i * 3); x.lineTo(w / 2 - i * 0.7, i * 3); x.stroke(); }
+  x.strokeStyle = C.ink; x.beginPath(); x.moveTo(-w / 2, 0); x.lineTo(0, -10); x.lineTo(w / 2, 0); x.stroke();
+  // Coins heaped in it.
+  x.fillStyle = C.paper; for (let i = 0; i < Math.min(8, 1 + lv / 4); i++) { x.beginPath(); oval(x, -w * 0.3 + (i * w * 0.6) / 7, -1 - (i % 2), 2.4, 1.4); x.fill(); }
+}
+
+// ---------- The world outside: sights on the way up, by altitude ----------
+const SIGHTS = [
+  { at: 25, kind: 'steeple' }, { at: 160, kind: 'birds' }, { at: 700, kind: 'kite' }, { at: E.CLOUD, kind: 'cloud' },
+  { at: 10000, kind: 'jet' }, { at: 32000, kind: 'balloon' }, { at: E.SPACE, kind: 'karman' }, { at: 400000, kind: 'station' },
+  { at: E.SATS, kind: 'sats' },
+];
+const PX_DECADE = 250, KY = 300;
+const lg = a => Math.log10(1 + Math.max(0, a));
+const sightY = (at, alt) => KY - (lg(at) - lg(alt)) * PX_DECADE;
+function drawSight(x, s, y, t) {
+  x.save(); x.translate(0, y);
+  if (s.kind === 'steeple') { /* the rooftops: only a line in the log */ }
+  else if (s.kind === 'birds') { x.strokeStyle = C.ink; x.lineWidth = 2; for (let i = 0; i < 5; i++) { const bx = 690 + i * 16 + Math.sin(t + i) * 3, by = -10 + Math.abs(i - 2) * 9; x.beginPath(); x.moveTo(bx - 6, by - 3); x.quadraticCurveTo(bx - 3, by - 5, bx, by); x.quadraticCurveTo(bx + 3, by - 5, bx + 6, by - 3); x.stroke(); } }
+  else if (s.kind === 'kite') { cut(x, C.paper, () => jag(x, [[80, -30], [100, -6], [80, 30], [60, -6]])); x.strokeStyle = C.ink; x.lineWidth = 1; x.beginPath(); x.moveTo(80, 30); x.bezierCurveTo(70, 80, 100, 110, 60, 160); x.stroke(); }
+  else if (s.kind === 'cloud') {
+    if (S.choice !== 'bottle') {
+      const shade = S.choice === 'rain' ? C.slate : C.paper;
+      cut(x, shade, () => { for (const [cx, cy, r] of [[110, 0, 60], [190, -30, 70], [290, -10, 80], [390, -40, 75], [490, -5, 85], [600, -25, 70], [700, 5, 65]]) { x.moveTo(cx + r, cy); x.arc(cx, cy, r, 0, Math.PI * 2); } x.rect(60, 0, 700, 50); }, { shadow: 0.18, dx: 4, dy: 5 });
+    }
+  }
+  else if (s.kind === 'jet') { const jx = ((t * 40) % 1000) - 100; cut(x, C.paper, () => jag(x, [[jx, 0], [jx + 60, -4], [jx + 70, 0], [jx + 60, 4]])); cut(x, C.slate, () => jag(x, [[jx + 30, 0], [jx + 22, -16], [jx + 40, 0]])); x.strokeStyle = C.paper; x.lineWidth = 3; x.globalAlpha = 0.6; x.beginPath(); x.moveTo(jx, 0); x.lineTo(jx - 200, 0); x.stroke(); }
+  else if (s.kind === 'balloon') { cut(x, C.paper, () => oval(x, 110, -20, 22, 26)); x.strokeStyle = C.paper; x.beginPath(); x.moveTo(110, 6); x.lineTo(110, 40); x.stroke(); x.fillStyle = C.rose; x.fillRect(104, 40, 12, 9); }
+  else if (s.kind === 'karman') { x.strokeStyle = C.rose; x.setLineDash([8, 7]); x.lineWidth = 2; x.beginPath(); x.moveTo(0, 0); x.lineTo(W, 0); x.stroke(); x.setLineDash([]); x.fillStyle = C.rose; x.font = "13px 'Special Elite', monospace"; x.fillText('EDGE OF SPACE · 100 KM', 20, -6); }
+  else if (s.kind === 'station') { const sx = 690; x.fillStyle = C.rose; x.fillRect(sx - 30, -3, 60, 6); x.fillStyle = C.slate; x.fillRect(sx - 44, -10, 12, 20); x.fillRect(sx + 32, -10, 12, 20); x.fillStyle = C.paper; x.fillRect(sx - 6, -6, 12, 12); }
+  else if (s.kind === 'sats') { for (let i = 0; i < 7; i++) { const sx = 40 + i * 120 + Math.sin(t * 0.3 + i) * 6; x.fillStyle = C.paper; x.fillRect(sx - 4, -4, 8, 8); x.fillStyle = C.slate; x.fillRect(sx - 16, -2, 10, 4); x.fillRect(sx + 6, -2, 10, 4); } x.fillStyle = C.rose; x.font = "12px 'Special Elite', monospace"; x.fillText('GEOSTATIONARY · 35,786 KM', 560, -14); }
+  x.restore();
+}
+// Sky bands: strips of paper whose colour depends on how high each one is.
+function skyColor(a) { return a < 3000 ? (a < 400 ? C.paper : C.rose) : a < 60000 ? C.slate : C.ink; }
+const STARS = Array.from({ length: 70 }, (_, i) => ({ x: (i * 211) % W, y: (i * 97) % H, r: 0.6 + ((i * 13) % 5) / 4 }));
+
+// ---------- The stage ----------
+const cv = $('stage'), ctx = cv.getContext('2d');
+let k = 1, dpr = 1, grainTile = null;
+function layout() {
+  const w = cv.clientWidth || 800;
+  dpr = Math.min(2, devicePixelRatio || 1);
+  k = w / W;
+  cv.style.height = `${Math.round(H * k)}px`;
+  cv.width = Math.round(W * k * dpr); cv.height = Math.round(H * k * dpr);
+  grainTile = Sprites.canvas(W, H); grain(grainTile.getContext('2d'), W, H, { amount: 0.5, size: 96 });
+}
+
+// The bouquet: the umbrellas tied over the roof. Kept on the page, rebuilt on load.
+let bouquet = [];
+const bouquetN = () => Math.min(90, Math.round(5 + 11 * Math.log10(1 + S.sent)));
+function tierOf() { return E.umbrellaTier(S); }
+function slot(i) {
+  const a = (i * 2.399) % (Math.PI * 2), r = Math.sqrt((i + 0.5) / 90);
+  return { dx: Math.cos(a) * r * 240, dy: Math.sin(a) * r * 52 - 10 + r * 6, rot: (rnd() - 0.5) * 0.5, s: 0.62 + rnd() * 0.18 };
+}
+function buildBouquet() {
+  const n = bouquetN(), cur = tierOf();
+  bouquet = Array.from({ length: n }, (_, i) => ({ ...slot(i), tier: Math.max(0, cur - Math.floor(rnd() * rnd() * 3.5)) }));
+}
+function joinBouquet(tier) {
+  const n = bouquetN();
+  if (bouquet.length < n) bouquet.push({ ...slot(bouquet.length), tier });
+  else bouquet[Math.floor(rnd() * bouquet.length)].tier = tier;
+}
+
+// Moving bits: flicked umbrellas on their way up, flops, town umbrellas, floating words.
+let flying = [], floats = [], trail = [], townUms = [], clock = 0, flourish = 0, lastLand = 0;
+const cellOf = i => { const r = Math.floor(i / SH.cols), c = i % SH.cols; return { x: SH.x + c * SH.colW + SH.colW / 2, y: SH.bottom - r * SH.rowH }; };
+const FLOP = new Map();   // crock index -> time of the flop (for the bounce)
+
+function render() {
+  const x = ctx;
+  x.setTransform(k * dpr, 0, 0, k * dpr, 0, 0);
+  const alt = S.alt, landed = S.landed;
+  // Sky.
+  if (landed) { x.fillStyle = C.ink; x.fillRect(0, 0, W, H); }
+  else {
+    const bands = 7;
+    for (let i = 0; i < bands; i++) {
+      const y0 = (H * i) / bands, aBand = Math.max(0, alt) * Math.pow(10, (bands / 2 - i) * 0.35) + (bands - i) * 60;
+      x.fillStyle = skyColor(aBand);
+      x.beginPath(); x.moveTo(0, y0 - 10);
+      for (let px = 0; px <= W; px += 40) x.lineTo(px, y0 - 6 + Math.sin(px * 0.03 + i) * 4);
+      x.lineTo(W, H); x.lineTo(0, H); x.closePath(); x.fill();
+    }
+  }
+  // Stars, once the sky is dark.
+  const dark = landed ? 1 : Math.max(0, Math.min(1, (lg(alt) - 4.4) / 0.8));
+  if (dark > 0) { x.fillStyle = C.paper; x.globalAlpha = dark; for (const s of STARS) { x.beginPath(); x.arc(s.x, s.y, s.r, 0, 7); x.fill(); } x.globalAlpha = 1; }
+  // The Moon (or, once landed, the Earth).
+  if (landed) drawEarth(x, 660, 90, 46);
+  else {
+    const p = Math.max(0, (lg(alt) - 4) / (lg(E.GOAL) - 4));
+    const r = 16 + 210 * Math.pow(p, 3.2);
+    const mx = 660 - Math.pow(p, 3) * 120, my = 70 - Math.pow(p, 3) * 40;
+    cut(x, C.paper, () => oval(x, mx, my, r, r), { shadow: 0.15, dx: 4, dy: 4 });
+    x.fillStyle = C.rose; for (const [a, b, c] of [[-0.3, -0.2, 0.18], [0.35, 0.1, 0.12], [-0.1, 0.4, 0.1], [0.2, -0.45, 0.08]]) { x.beginPath(); oval(x, mx + a * r, my + b * r, c * r, c * r); x.fill(); }
+  }
+  // Sights going by.
+  if (!landed) for (const s of SIGHTS) { const y = sightY(s.at, alt); if (y > -160 && y < H + 160) drawSight(x, s, y, clock); }
+  // The ground below: the town while it's in sight, then the Earth's curve, then the Earth.
+  drawBelow(x, alt);
+  // The world after the cloud.
+  if (S.choice === 'rain') for (const u of townUms) umb(x, u.tier, u.x, u.y, 0.28, u.rot);
+  // Strings, bouquet, kitchen.
+  drawStrings(x);
+  for (const b of bouquet) umb(x, b.tier, 400 + b.dx, 96 + b.dy + Math.sin(clock * 0.8 + b.dx) * 1.5, b.s, b.rot + Math.sin(clock * 0.6 + b.dy) * 0.03);
+  if (E.stuck(S)) drawStuckCloud(x);
+  drawKitchen(x);
+  for (const f of flying) {
+    const p = Math.min(1, f.t);
+    if (f.flop) { const yy = f.y - Math.sin(p * Math.PI) * 18; x.save(); x.translate(f.x, yy); drawUmbrella(x, f.tier, 20, 1, 0.15); x.restore(); continue; }
+    // Up, fast at first, slowing as gravity pulls, then tied on.
+    const e = 1 - Math.pow(1 - p, 2.2);
+    const cx = f.x + (f.tx - f.x) * e + Math.sin(p * Math.PI) * f.sway, cy = f.y + (f.ty - f.y) * e;
+    umb(x, f.tier, cx, cy, 0.32 + 0.3 * e, f.sway * 0.004 * (1 - e));
+  }
+  // The swipe: a paper streak.
+  if (trail.length > 1) { x.strokeStyle = 'rgba(250,251,246,0.8)'; x.lineCap = 'round'; x.lineJoin = 'round'; x.lineWidth = 6; x.beginPath(); trail.forEach((q, i) => i ? x.lineTo(q.x, q.y) : x.moveTo(q.x, q.y)); x.stroke(); }
+  for (const f of floats) { x.globalAlpha = Math.max(0, 1 - f.t / 1.2); x.fillStyle = f.color || C.ink; x.font = `${f.size || 15}px 'Patrick Hand', sans-serif`; x.textAlign = 'center'; x.fillText(f.text, f.x, f.y - f.t * 30); x.globalAlpha = 1; }
+  if (S.flicked < 3 && !S.landed && !finale) drawHint(x);
+  if (finale) drawFinale(x);
+  x.globalAlpha = 0.07; x.drawImage(grainTile, 0, 0); x.globalAlpha = 1;
+}
+// The first few flicks: a paper label pointing at the first crock.
+function drawHint(x) {
+  const { x: cx, y: cy } = cellOf(0), ripe = S.cr[0] >= 1, bob = Math.sin(clock * 4) * 3;
+  x.save(); x.translate(cx + 34, cy - 70 + bob); x.rotate(-0.05);
+  const text = ripe ? 'Puffed! Swipe across it' : 'Wait for the dome…';
+  x.font = "17px 'Patrick Hand', sans-serif"; x.textAlign = 'left';
+  const w = x.measureText(text).width + 16;
+  cut(x, C.ink, () => x.rect(-4, -18, w, 30), { shadow: 0.3 });
+  x.fillStyle = C.paper; x.fillText(text, 4, 3);
+  x.strokeStyle = C.ink; x.lineWidth = 2.5; x.beginPath(); x.moveTo(6, 12); x.quadraticCurveTo(-10, 30, -22, 42); x.stroke();
+  x.beginPath(); x.moveTo(-22, 42); x.lineTo(-20, 32); x.moveTo(-22, 42); x.lineTo(-12, 40); x.stroke();
+  x.restore();
+}
+// Wedged in the rain cloud: it swallows the bouquet, raining a little on the roof.
+function drawStuckCloud(x) {
+  x.save(); x.globalAlpha = 0.92;
+  cut(x, C.slate, () => { for (const [cx, cy, r] of [[170, 120, 55], [250, 80, 70], [340, 60, 75], [440, 70, 80], [540, 85, 70], [630, 120, 55], [400, 130, 90]]) { x.moveTo(cx + r, cy); x.arc(cx, cy, r, 0, Math.PI * 2); } }, { shadow: 0.2, dx: 4, dy: 6 });
+  x.globalAlpha = 1;
+  x.strokeStyle = 'rgba(250,251,246,0.6)'; x.lineWidth = 1.5;
+  for (let i = 0; i < 26; i++) { const rx = 180 + ((i * 53) % 440), ry = 170 + ((i * 37 + clock * 160) % 30); x.beginPath(); x.moveTo(rx, ry); x.lineTo(rx - 2, ry + 7); x.stroke(); }
+  x.restore();
+}
+function drawEarth(x, cx, cy, r) {
+  cut(x, C.slate, () => oval(x, cx, cy, r, r), { shadow: 0.2, dx: 4, dy: 4 });
+  x.save(); x.beginPath(); oval(x, cx, cy, r, r); x.clip();
+  x.fillStyle = C.rose; for (const [a, b, w, h] of [[-0.4, -0.3, 0.45, 0.3], [0.2, 0.25, 0.5, 0.35], [0.5, -0.5, 0.25, 0.2]]) { x.beginPath(); oval(x, cx + a * r, cy + b * r, w * r, h * r); x.fill(); }
+  x.fillStyle = C.paper; x.globalAlpha = 0.8; for (const [a, b] of [[-0.6, 0.2], [0.1, -0.6], [0.4, 0.55]]) { x.beginPath(); oval(x, cx + a * r, cy + b * r, 0.35 * r, 0.08 * r); x.fill(); } x.globalAlpha = 1;
+  x.restore();
+}
+// Below the kitchen floor.
+function drawBelow(x, alt) {
+  const floor = KIT.y + KIT.h + 4;
+  if (S.landed) {
+    cut(x, C.rose, () => { x.moveTo(0, floor); for (let px = 0; px <= W; px += 50) x.lineTo(px, floor - 4 + Math.sin(px * 0.05) * 5); x.lineTo(W, H); x.lineTo(0, H); x.closePath(); }, { shadow: 0 });
+    x.fillStyle = C.slate; for (const [cx, cy, r] of [[80, floor + 40, 26], [300, floor + 60, 16], [720, floor + 35, 22], [520, floor + 70, 12]]) { x.beginPath(); oval(x, cx, cy, r, r * 0.35); x.fill(); }
+    x.save(); x.translate(230, floor + 30); drawBasket(x, S.lv.basket); x.restore();
+    if (S.choice === 'bottle') drawBottled(x, 620, floor + 40);
+    return;
+  }
+  // The town shrinks away under you; then it's the curve of the Earth, then the whole Earth.
+  const u = lg(alt);
+  if (u < 4.2) {
+    const s = 1 / (1 + alt / 150), gy = floor + Math.min(70, u * 20);
+    x.save(); x.translate(400, gy); x.scale(s, s);
+    const sunny = S.choice === 'bottle';
+    if (sunny) cut(x, C.paper, () => oval(x, -330, -150, 40, 40), { shadow: 0 });
+    // Houses either side of the gap where the kitchen was.
+    const houses = [[-760, 70, 90], [-660, 60, 120], [-580, 80, 70], [-470, 90, 100], [-360, 70, 80], [-270, 30, 60], [270, 50, 60], [330, 80, 90], [430, 70, 110], [520, 90, 80], [620, 70, 100], [700, 60, 120]];
+    for (const [hx, hw, hh] of houses) {
+      cut(x, C.slate, () => jag(x, [[hx, 0], [hx, -hh], [hx + hw / 2, -hh - 26], [hx + hw, -hh], [hx + hw, 0]]));
+      x.fillStyle = C.paper; for (let wy = -hh + 14; wy < -14; wy += 26) for (let wx = hx + 10; wx < hx + hw - 14; wx += 22) x.fillRect(wx, wy, 9, 11);
+    }
+    cut(x, C.ink, () => x.rect(-30000, 0, 60000, 4000), { shadow: 0 });
+    // Onlookers in the street, looking up.
+    x.fillStyle = C.paper;
+    const n = Math.min(60, 6 + Math.floor(u * 9));
+    for (let i = 0; i < n; i++) { const px = -700 + ((i * 263) % 1400); if (Math.abs(px) < 220) continue; x.beginPath(); x.arc(px, -18, 5, 0, 7); x.fill(); x.fillRect(px - 4, -14, 8, 14); }
+    if (S.choice === 'rain') { x.strokeStyle = 'rgba(250,251,246,0.5)'; x.lineWidth = 2; for (let i = 0; i < 50; i++) { const rx = -800 + ((i * 331 + clock * 300) % 1600), ry = -260 + ((i * 97 + clock * 500) % 260); x.beginPath(); x.moveTo(rx, ry); x.lineTo(rx - 4, ry + 14); x.stroke(); } }
+    x.restore();
+  } else {
+    // The Earth from above: a curve that rounds into a ball.
+    const p = Math.min(1, (u - 4.2) / 3.6), r = 3000 * Math.pow(1 - p, 3) + 70, cx = 400 - 310 * p, cy = floor + 34 - 30 * p + r;
+    drawEarth(x, cx, cy, r);
+  }
+  // The string down to the tip basket, and the basket.
+  x.strokeStyle = C.ink; x.lineWidth = 1; x.beginPath(); x.moveTo(300, floor - 2); x.lineTo(300, H - 22); x.stroke();
+  x.save(); x.translate(300, H - 20 + Math.sin(clock * 1.3) * 2); drawBasket(x, S.lv.basket); x.restore();
+  if (S.choice === 'bottle') drawBottled(x, 520, floor + 44 + Math.sin(clock) * 2, true);
+}
+// The bottled cloud: in a net, with a tap.
+function drawBottled(x, px, py, hanging = false) {
+    x.save(); x.translate(px, py);
+    cut(x, C.paper, () => { for (const [cx, cy, r] of [[-30, 4, 20], [-8, -8, 24], [18, -2, 22], [36, 8, 16]]) { x.moveTo(cx + r, cy); x.arc(cx, cy, r, 0, 7); } x.rect(-46, 4, 92, 18); });
+    x.strokeStyle = C.slate; x.lineWidth = 1; for (let i = -40; i <= 40; i += 10) { x.beginPath(); x.moveTo(i, -26); x.lineTo(i * 1.1, 24); x.stroke(); }
+    x.beginPath(); x.moveTo(-46, 0); x.quadraticCurveTo(0, 30, 46, 0); x.stroke();
+    if (hanging) { x.strokeStyle = C.ink; x.beginPath(); x.moveTo(0, -30); x.lineTo(0, -44); x.stroke(); }
+    x.fillStyle = C.ink; x.fillRect(-3, 22, 6, 6);
+    x.restore();
+}
+function drawStrings(x) {
+  x.strokeStyle = C.ink; x.lineWidth = 1;
+  for (const [ax, bx] of [[KIT.x + 20, 300], [KIT.x + KIT.w - 20, 500], [400, 400], [KIT.x + 120, 350], [KIT.x + KIT.w - 120, 450]]) { x.beginPath(); x.moveTo(ax, KIT.y - 30); x.quadraticCurveTo((ax + bx) / 2, 140, bx, 104); x.stroke(); }
+}
+// The kitchen: a cutaway with a roof, the shelves of crocks, the fridge and Kiki's card, the window, Clover.
+function drawKitchen(x) {
+  const { x: kx, y: ky, w: kw, h: kh } = KIT;
+  // Roof and walls.
+  cut(x, C.slate, () => jag(x, [[kx - 22, ky], [kx + 30, ky - 44], [kx + kw - 30, ky - 44], [kx + kw + 22, ky], [kx + kw + 12, ky], [kx + kw + 12, ky + kh + 8], [kx - 12, ky + kh + 8], [kx - 12, ky]]), { shadow: 0.3, dx: 5, dy: 6 });
+  cut(x, C.paper, () => x.rect(kx, ky, kw, kh), { shadow: 0 });
+  // Wallpaper: little rose diamonds.
+  x.fillStyle = 'rgba(198,183,190,0.55)';
+  for (let yy = ky + 10; yy < ky + kh; yy += 22) for (let xx = kx + 10 + ((yy / 22) % 2) * 11; xx < kx + kw; xx += 22) { x.beginPath(); x.moveTo(xx, yy - 3); x.lineTo(xx + 3, yy); x.lineTo(xx, yy + 3); x.lineTo(xx - 3, yy); x.fill(); }
+  // A sign on the roof: the show.
+  x.fillStyle = C.paper; x.font = "18px 'Shrikhand', Georgia, serif"; x.textAlign = 'center'; x.fillText('Clover’s Kitchen', 400, ky - 14);
+  if (has('song')) { x.fillStyle = C.rose; x.font = "13px 'Patrick Hand', sans-serif"; x.fillText('♪ da-da-DA ♪', 400 + Math.sin(clock * 3) * 4, ky - 36); }
+  // Window (the sky outside), with the sill.
+  const wx = 560, wy = 220, ww = 76, wh = 62;
+  x.fillStyle = S.landed ? C.ink : skyColor(S.alt + 200); x.fillRect(wx, wy, ww, wh);
+  x.strokeStyle = C.slate; x.lineWidth = 4; x.strokeRect(wx, wy, ww, wh); x.lineWidth = 2; x.beginPath(); x.moveTo(wx + ww / 2, wy); x.lineTo(wx + ww / 2, wy + wh); x.moveTo(wx, wy + wh / 2); x.lineTo(wx + ww, wy + wh / 2); x.stroke();
+  cut(x, C.slate, () => x.rect(wx - 6, wy + wh, ww + 12, 6), { dx: 1, dy: 2 });
+  if (has('mini')) { x.save(); x.translate(wx + 14, wy + wh - 2); cut(x, C.rose, () => x.rect(-5, -10, 10, 10), { dx: 1, dy: 1 }); if (!S.toasted) { x.translate(0, -12); miniUmbrella(x, 0.75); } x.restore(); }
+  if (has('glass') && !S.landed) { x.save(); x.translate(wx + ww - 16, wy + wh - 4); drawGlass(x, 0, 0.75); x.restore(); }
+  // Culture jars on the shelf over the fridge.
+  const jars = E.bought(S).filter(u => u.kind === 'culture' && u.label);
+  cut(x, C.slate, () => x.rect(450, 300, 100, 4), { dx: 1, dy: 2 });
+  jars.forEach((u, i) => { x.save(); x.translate(460 + i * 16, 300); drawJar(x, u.label, i); x.restore(); });
+  // Fridge, with Kiki's card under a magnet.
+  cut(x, C.rose, () => jag(x, [[454, 312], [512, 312], [512, 446], [454, 446]]), { dx: 2, dy: 3 });
+  x.strokeStyle = C.slate; x.lineWidth = 1.5; x.beginPath(); x.moveTo(454, 352); x.lineTo(512, 352); x.moveTo(506, 322); x.lineTo(506, 342); x.moveTo(506, 362); x.lineTo(506, 392); x.stroke();
+  x.save(); x.translate(464, 362); x.rotate(-0.05);
+  cut(x, C.paper, () => x.rect(0, 0, 34, 24), { dx: 1, dy: 1.5 });
+  x.fillStyle = C.ink; x.font = "5.5px 'Special Elite', monospace"; x.textAlign = 'left';
+  x.fillText('FERMENT', 3, 8); x.fillText('UMBRELLAS', 3, 15); x.fillText('LET RISE', 3, 22);
+  x.fillStyle = C.slate; x.beginPath(); x.arc(17, 1, 3.5, 0, 7); x.fill();
+  x.restore();
+  if (has('card')) { x.save(); x.translate(500, 392); x.rotate(0.4); x.strokeStyle = C.ink; x.lineWidth = 2; x.beginPath(); x.arc(0, 0, 6, 0, 7); x.moveTo(4, 4); x.lineTo(10, 12); x.stroke(); x.fillStyle = 'rgba(250,251,246,0.6)'; x.beginPath(); x.arc(0, 0, 5, 0, 7); x.fill(); x.restore(); }
+  // The counter on the right, with plums and the radio.
+  cut(x, C.slate, () => x.rect(604, 404, 46, 42), { dx: 2, dy: 3 });
+  cut(x, C.ink, () => x.rect(600, 400, 50, 5), { shadow: 0 });
+  if (has('plums')) { x.save(); x.translate(624, 398); cut(x, C.paper, () => { x.moveTo(-12, -6); x.quadraticCurveTo(0, 6, 12, -6); x.closePath(); }); x.fillStyle = C.slate; for (const [a, b] of [[-6, -8], [1, -9], [7, -7], [-2, -13], [4, -14]]) { x.beginPath(); x.arc(a, b, 3.6, 0, 7); x.fill(); } x.restore(); }
+  if (has('song')) { x.save(); x.translate(642, 399); cut(x, C.rose, () => x.rect(-8, -11, 16, 11), { dx: 1, dy: 1 }); x.fillStyle = C.ink; x.beginPath(); x.arc(-3, -5.5, 3, 0, 7); x.fill(); x.fillRect(2, -9, 4, 1); x.strokeStyle = C.ink; x.beginPath(); x.moveTo(4, -11); x.lineTo(8, -17); x.stroke(); x.restore(); }
+  // Shelves and crocks.
+  drawShelves(x);
+  // Clover.
+  x.save(); x.translate(CLOVER.x, CLOVER.y);
+  drawClover(x, clock, { flourish, cape: has('cape'), boots: has('boots'), whistle: has('whistle'), glass: S.toasted ? 2 : 0 });
+  x.restore();
+  // Floor line.
+  x.fillStyle = C.ink; x.fillRect(kx, ky + kh - 3, kw, 3);
+}
+const has = id => E.has(S, id);
+function drawShelves(x) {
+  const n = S.cr.length, rows = Math.ceil(n / SH.cols), onggi = has('onggi');
+  const tier = tierOf(), spoon = has('spoons'), skates = has('skates');
+  for (let r = 0; r < rows; r++) {
+    const y = SH.bottom - r * SH.rowH;
+    cut(x, C.slate, () => x.rect(SH.x - 6, y, SH.cols * SH.colW + 12, 3), { dx: 1, dy: 2 });
+  }
+  for (let i = 0; i < n; i++) {
+    const { x: cx, y: cy } = cellOf(i), p = S.cr[i];
+    const fl = FLOP.get(i), bounce = fl ? Math.max(0, 1 - (clock - fl) * 3) : 0;
+    // The umbrella, puffing out of the crock: a stick, then a folded canopy, then a full dome.
+    if (p > 0.05 && !S.landed) {
+      x.save();
+      const ripe = p >= 1, bob = ripe ? Math.sin(clock * 5 + i) * 1.2 : 0;
+      x.translate(cx, cy - 15 - p * 4 + bob - Math.sin(bounce * Math.PI) * 4);
+      drawUmbrella(x, tier, 14 + 12 * p, Math.min(1, p * p), 0.18);
+      if (ripe) { x.fillStyle = C.paper; x.globalAlpha = 0.5 + 0.5 * Math.sin(clock * 6 + i); x.beginPath(); x.arc(8, -10, 1.5, 0, 7); x.fill(); x.globalAlpha = 1; }
+      x.restore();
+    }
+    x.drawImage(CROCK[onggi ? 1 : 0], cx - 15, cy - 22);
+  }
+  // Sous-chefs: one per shelf, sweeping along it on their turn.
+  const ct = E.chefTime(S);
+  for (let s = 0; s < S.lv.chef; s++) {
+    const y = SH.bottom - s * SH.rowH;
+    const ph = Math.min(1, ((S.chefT[s] || 0) / ct)), sweepT = ph > 0.75 ? (ph - 0.75) / 0.25 : 0;
+    const cxp = SH.x + SH.cols * SH.colW + 2 - Math.sin(sweepT * Math.PI) * SH.cols * SH.colW * 0.9;
+    x.save(); x.translate(cxp, y - 1); drawChef(x, sweepT, spoon, skates); x.restore();
+  }
+}
+
+// ---------- The finale: Kiki's card, then one small flick ----------
+let finale = null;   // { stage: 'flick' | 'flying' | 'done', t }
+function drawFinale(x) {
+  x.fillStyle = 'rgba(15,15,27,0.55)'; x.fillRect(0, 0, W, H);
+  cut(x, C.rose, () => oval(x, 400, 262, 120, 120), { shadow: 0.35, dx: 5, dy: 6 });
+  x.save(); x.translate(400, 300); drawGlass(x, finale.stage === 'done' ? 2 : 1, 5); x.restore();
+  if (finale.stage === 'flick') {
+    x.save(); x.translate(400, 470 + Math.sin(clock * 3) * 4); miniUmbrella(x, 2.4); x.restore();
+    x.fillStyle = C.paper; x.font = "22px 'Shrikhand', Georgia, serif"; x.textAlign = 'center'; x.fillText('Flick the little umbrella into the glass', 400, 60);
+  } else if (finale.stage === 'flying') {
+    const p = Math.min(1, finale.t / 0.9), e = 1 - Math.pow(1 - p, 2);
+    x.save(); x.translate(400 + 25 * e, 470 - (470 - 220) * e - Math.sin(p * Math.PI) * 80); x.rotate(p * 0.35); miniUmbrella(x, 2.4 - 0.4 * e); x.restore();
+  }
+}
+function finaleFlick() {
+  if (!finale || finale.stage !== 'flick') return;
+  finale.stage = 'flying'; finale.t = 0;
+  sfx.flick(3);
+}
+
+// ---------- Playing ----------
+let swipe = null, swipeN = 0;
+function toLogical(e) { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) / k, y: (e.clientY - r.top) / k }; }
+function crockAt(px, py) {
+  // Generous cells: anything in a crock's column, from its shelf up to the umbrella.
+  const c = Math.floor((px - SH.x) / SH.colW), r = Math.floor((SH.bottom + 4 - py) / SH.rowH);
+  if (c < 0 || c >= SH.cols || r < 0) return -1;
+  const i = r * SH.cols + c;
+  return i < S.cr.length ? i : -1;
+}
+function tryFlick(i) {
+  if (i < 0 || swipe?.done.has(i)) return;
+  swipe?.done.add(i);
+  const res = E.flick(S, i);
+  if (res === 'up') launch(i, swipeN++);
+  else if (res === 'flop') { FLOP.set(i, clock); sfx.flop(); flying.push({ flop: true, x: cellOf(i).x, y: cellOf(i).y - 18, tier: tierOf(), t: 0 }); if (S.flops === 1 || S.flops === 25) say('CLOVER', '“Not yet, darling! Rush a puff and gravity wins. Wait for the full dome, then flick.”'); }
+}
+function launch(i, n, byChef = false) {
+  const { x: cx, y: cy } = cellOf(i), tier = tierOf();
+  const slotI = Math.floor(rnd() * Math.max(1, bouquet.length));
+  const b = bouquet[slotI] || { dx: 0, dy: 0 };
+  if (flying.length < 90) flying.push({ x: cx, y: cy - 20, tx: 400 + b.dx, ty: 96 + b.dy, tier, t: 0, sway: (rnd() - 0.5) * 60, speed: 1.3 + rnd() * 0.4 });
+  else joinBouquet(tier);
+  if (!byChef) { sfx.flick(n); flourish = 1; }
+  checkSights();
+}
+cv.addEventListener('pointerdown', e => {
+  e.preventDefault(); cv.focus({ preventScroll: true });
+  if (finale) { finaleFlick(); return; }
+  if (S.landed) return;
+  cv.setPointerCapture?.(e.pointerId);
+  const p = toLogical(e);
+  swipe = { last: p, done: new Set() }; swipeN = 0; trail = [{ ...p, t: clock }];
+  tryFlick(crockAt(p.x, p.y));
+});
+cv.addEventListener('pointermove', e => {
+  if (!swipe) return;
+  const p = toLogical(e), a = swipe.last, d = Math.hypot(p.x - a.x, p.y - a.y);
+  for (let s = 0; s <= d; s += 6) { const q = { x: a.x + ((p.x - a.x) * s) / Math.max(d, 1), y: a.y + ((p.y - a.y) * s) / Math.max(d, 1) }; tryFlick(crockAt(q.x, q.y)); }
+  swipe.last = p; trail.push({ ...p, t: clock }); if (trail.length > 24) trail.shift();
+});
+const endSwipe = () => { swipe = null; };
+cv.addEventListener('pointerup', endSwipe); cv.addEventListener('pointercancel', endSwipe);
+document.addEventListener('keydown', e => {
+  if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+  const tag = document.activeElement?.tagName;
+  if ((e.key === ' ' || e.key === 'Enter') && (document.activeElement === cv || tag === 'BODY' || !tag)) {
+    e.preventDefault();
+    if (finale) { finaleFlick(); return; }
+    // The keyboard swipe: every puffed umbrella on the two lowest shelves that have one.
+    swipe = { done: new Set() }; swipeN = 0;
+    const ripe = S.cr.map((p, i) => [p, i]).filter(([p]) => p >= 1).slice(0, 12);
+    if (!ripe.length) { const i = S.cr.findIndex(p => p > 0.35); if (i >= 0) tryFlick(i); }
+    for (const [, i] of ripe) tryFlick(i);
+    swipe = null;
+  }
+});
+
+// ---------- Sights and milestones ----------
+const SIGHT_LINES = {
+  steeple: ['THE TOWN', '“Is that a kitchen?” “It’s a kitchen.” “Is it… waving?”'],
+  birds: ['CLOVER', '“Birds! Hello, birds. Yes, it’s me. From the kitchen.”'],
+  kite: ['THE TOWN', 'A child’s kite goes by. The child waves. The kite has never seen anything like it.'],
+  cloud: ['CLOVER', '“Oh! Darlings, we’ve hit weather. A rain cloud, right on the roof. This calls for a decision.”'],
+  jet: ['CLOVER', '“The pilots are waving. They are not allowed to wave. I wave back, sternly.”'],
+  balloon: ['CLOVER', '“A weather balloon! Forecast: fabulous, with a chance of rabbit.”'],
+  karman: ['CLOVER', '“That dotted line is the edge of space. Gravity’s already a little weaker, darlings. Every umbrella counts for more up here.”'],
+  station: ['CLOVER', '“A space station. Seven people at the window. Seven! That’s a studio audience.”'],
+  sats: ['CLOVER', '“The satellites are pointing at us. Every television on Earth. Gravity’s barely trying now.”'],
+};
+let sightIdx = SIGHTS.filter(s => S.alt >= s.at).length;
+function checkSights() {
+  while (sightIdx < SIGHTS.length && S.alt >= SIGHTS[sightIdx].at) {
+    const s = SIGHTS[sightIdx++], line = SIGHT_LINES[s.kind];
+    if (line) say(...line);
+    if (s.kind !== 'cloud') sfx.landmark();
+  }
+}
+
+// ---------- The cloud: a choice you can't take back ----------
+function showChoice() {
+  const o = $('over');
+  o.innerHTML = '';
+  const p = document.createElement('div'); p.className = 'panel';
+  p.innerHTML = '<h3>The Rain Cloud</h3><p>The kitchen is stuck in a fat grey rain cloud, two kilometres up. The umbrellas you flick now pile up under it. Pick one, and it stays picked for the rest of the trip.</p><div class="picks"></div>';
+  for (const id of ['rain', 'bottle']) {
+    const c = E.CHOICES[id], b = document.createElement('button');
+    b.type = 'button'; b.className = 'pick'; b.id = 'pick-' + id;
+    b.innerHTML = '<b></b><span></span><small></small>';
+    b.querySelector('b').textContent = c.name; b.querySelector('span').textContent = c.desc; b.querySelector('small').textContent = c.after;
+    b.addEventListener('click', () => choose(id));
+    p.querySelector('.picks').append(b);
+  }
+  const later = document.createElement('button'); later.type = 'button'; later.className = 'bigbtn'; later.textContent = 'Think about it'; later.style.background = 'var(--rose)'; later.style.color = 'var(--ink)';
+  later.addEventListener('click', () => { o.hidden = true; });
+  p.append(later);
+  o.append(p); o.hidden = false;
+  p.querySelector('.pick').focus({ preventScroll: true });
+}
+function choose(id) {
+  if (!E.choose(S, id)) return;
+  E.release(S);
+  $('over').hidden = true;
+  sfx.choice();
+  if (id === 'rain') say('CLOVER', '“A pinch of starter, stirred into the cloud… and down it goes on the town. Look! Every umbrella in town is puffing up. Here they come, darlings.”');
+  else say('CLOVER', '“Into the bag, you big soggy thing. A brine tank the size of a cloud! And look at that: sunshine, all over town.”');
+  save(); refreshMusic(); renderCalls(); renderShop(); hud(); checkSights();
+}
+
+// ---------- Landing, the card and the toast ----------
+function showCard() {
+  const o = $('over');
+  o.innerHTML = '';
+  const p = document.createElement('div'); p.className = 'panel';
+  p.innerHTML = `<h3>The Tasting</h3><p>Live from the Moon, with the whole world looking up, Clover takes Kiki’s card off the fridge for the grand finale and, for the first time, unfolds it all the way.</p>
+    <div class="card"><h4>Kiki’s November Plum Fizz</h4>
+    <p>Halve two pounds of ripe plums. Pack them in a crock with sugar and a splash of brine. <mark>FERMENT</mark> a week, and give it a stir every day.</p>
+    <p>Strain into small glasses. Garnish each with one of the little paper <mark>UMBRELLAS</mark> (I keep a box of them by the door).</p>
+    <p>Then <mark>LET RISE</mark>: the bubbles first, then your glass, to whoever is in the kitchen.</p>
+    <p class="sig">Serves everyone who looks in. — K.</p></div>
+    <p>It was never umbrellas. It was plums.</p>`;
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'bigbtn'; b.id = 'pourBtn'; b.textContent = 'Pour the fizz';
+  b.addEventListener('click', () => { o.hidden = true; finale = { stage: 'flick', t: 0 }; say('CLOVER', '“One glass. One very small umbrella. The one that lifted nothing.”'); renderCalls(); });
+  p.append(b); o.append(p); o.hidden = false;
+  sfx.unfold();
+  b.focus({ preventScroll: true });
+}
+
+function end(resumed) {
+  S.ended = true; S.toasted = true; S.landed = true; save();
+  finale = null; $('over').hidden = true;
+  $('ending').hidden = false;
+  const town = S.choice === 'bottle'
+    ? 'Down in town, under a sky the cloud left clear, people bring out chairs.'
+    : 'Down in town it is still raining, and every umbrella in town is up there on the Moon, so everyone is soaked, and nobody minds.';
+  $('endText').textContent = `It was never umbrellas. It was plums. Great-Aunt Kiki’s card was a recipe for plum fizz, folded so the only words that showed were FERMENT, UMBRELLAS and LET RISE. On the Moon, with all eight billion people on Earth looking up, Clover pours one small glass and sets the little paper umbrella in it, the one that lifted nothing at all, and raises it “to whoever is in the kitchen.” Then, for the first time in the whole show, Clover says nothing at all, and has a sip. ${town} The next day, nobody talks about the flying kitchen. They all want to know about the little umbrella.`;
+  const sent = Math.max(S.sent, 1);
+  $('endMemo').textContent = `Umbrellas fermented and flicked: ${fmt(sent)} (${fmt(S.flicked)} by paw, ${fmt(S.chefSent)} by the sous-chefs). Too soon, flopped back: ${fmt(S.flops)}. Tips in the basket: ${money(S.tipsAll)}. Onlookers: everyone. The cloud: ${S.choice === 'bottle' ? 'bottled' : 'rained on the town'}.`;
+  if (!resumed) {
+    sfx.finale();
+    if (window.DailyGame) {
+      const h = Math.floor(S.t / 3600), m = Math.floor((S.t % 3600) / 60), s = String(Math.floor(S.t % 60)).padStart(2, '0');
+      DailyGame.finish({ lines: [`⏱ ${h ? h + 'h' + String(m).padStart(2, '0') + 'm' : m + 'm' + s + 's'}`, `🐇🌕 8.1 billion looked up`, `☂️ ${fmt(sent)} umbrellas`, '🍸 it was a garnish'] });
+    }
+    setTimeout(() => $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' }), 700);
+  } else say('CLOVER', '“To whoever is in the kitchen.” The glass is very small, and very good.');
+  refreshMusic(); hud(); renderShop(); renderCalls();
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Log ----------
+let logT = 0;
+function say(who, text) {
+  const el = $('log');
+  el.innerHTML = '<b></b><span></span>';
+  el.querySelector('b').textContent = who;
+  el.querySelector('span').textContent = text;
+  el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
+  logT = 0;
+}
+const AMBIENT = [
+  ['CLOVER', '“See how it domes? That’s the bubbles. That’s the drama.”'],
+  ['CLOVER', '“And here’s one I flicked earlier.”'],
+  ['CLOVER', '“Gravity, darlings, is a heckler. We do not feed the hecklers.”'],
+  ['KIKI’S CARD', 'The bit that sticks out under the magnet: “FERMENT … UMBRELLAS … LET RISE.”'],
+  ['CLOVER', '“Don’t rush a puff. An unpuffed umbrella is just a stick with ambitions.”'],
+  ['CLOVER', '“Ten seconds to the ad break. There are no ad breaks. Keep flicking.”'],
+  ['THE BASKET', '*clink* A coin from someone on a balcony.'],
+  ['CLOVER', '“Season to taste. I taste of greatness.”'],
+  ['THE TOWN', 'Someone down there has brought binoculars. Someone else has brought snacks.'],
+];
+const LATE = {
+  plums: ['CLOVER', '“The plums are watching me. Kiki, what were the plums for?”'],
+  mini: ['CLOVER', '“The little one on the windowsill lifted nothing. Never mind. Not everything has to.”'],
+  glass: ['CLOVER', '“I’m saving that little glass for the top. For a toast. To me, presumably.”'],
+  boots: ['CLOVER', '“Moon boots: on. Cape: dramatic. Plums: still unexplained.”'],
+};
+const CHEF_LINES = [
+  ['SOUS-CHEF', '*swish swish* (a paper doll sweeps a shelf and flicks the lot)'],
+  ['SOUS-CHEF', '“Yes, chef!” (nobody said anything)'],
+];
+let lastChefSent = S.chefSent;
+function ambient(dt) {
+  logT += dt;
+  if (logT < 26 || S.landed || S.ended || !$('over').hidden) return;
+  logT = 0;
+  if (S.lv.chef && rnd() < 0.35) {
+    const n = S.chefSent - lastChefSent; lastChefSent = S.chefSent;
+    if (n >= 1 && rnd() < 0.6) return say('SOUS-CHEFS', `${fmt(n)} umbrellas flicked up on their own since the last line. They’d like a round of applause.`);
+    return say(...CHEF_LINES[Math.floor(rnd() * CHEF_LINES.length)]);
+  }
+  const late = Object.keys(LATE).filter(id => has(id));
+  if (late.length && rnd() < 0.3) return say(...LATE[late[Math.floor(rnd() * late.length)]]);
+  if (S.choice === 'rain' && rnd() < 0.2) return say('THE TOWN', 'It’s still raining down there, and nobody has an umbrella any more. They’re all up here. Everyone seems delighted.');
+  if (S.choice === 'bottle' && rnd() < 0.2) return say('THE TOWN', 'Not a cloud in the sky over town. People keep pointing at the one under the kitchen.');
+  say(...AMBIENT[Math.floor(rnd() * AMBIENT.length)]);
+}
+
+// ---------- HUD ----------
+const where = () => S.landed ? 'on the Moon' : S.alt < 1 ? 'on the ground' : E.stuck(S) ? 'in a rain cloud' : S.alt < E.CLOUD ? 'over the rooftops' : S.alt < E.SPACE ? 'in the sky' : S.alt < E.PULL ? 'in space' : 'falling toward the Moon';
+function gfmt(g) { return g > 0.995 ? '1.00 g' : g >= 0.01 ? `${g.toFixed(2)} g` : `${g.toPrecision(2)} g`; }
+function liftFmt(m) { return m < 1 ? `${Math.round(m * 100)} cm` : m < 1000 ? `${+m.toPrecision(3)} m` : `${+(m / 1000).toPrecision(3)} km`; }
+function hud() {
+  $('cash').textContent = money(S.tips, innerWidth < 560);
+  $('altTxt').textContent = `${E.height(S.alt)} up · seen by ${fmt(E.onlookers(S.alt))}`;
+  $('meterFill').style.width = `${(S.ended ? 1 : E.progress(S)) * 100}%`;
+  $('where').textContent = where();
+  const parts = [];
+  if (!S.landed) {
+    parts.push(`Tips <b>${money(E.tipRate(S))}/s</b>`);
+    parts.push(`each umbrella lifts <b>${liftFmt(E.liftEach(S))}</b>`);
+    parts.push(`puffs in <b>${E.proofTime(S).toFixed(1)} s</b>`);
+    parts.push(`gravity <b>${gfmt(E.gravity(S.alt))}</b>`);
+    if (S.lv.chef) parts.push(`sous-chefs <b>${E.idleRate(S).toFixed(1)}/s</b>`);
+  } else parts.push('Landed. Onlookers: <b>everyone</b>');
+  $('sub').innerHTML = parts.join(' · ');
+}
+// Notches on the meter: the cloud, the edge of space, the satellites.
+for (const m of [E.CLOUD, E.SPACE, E.SATS]) { const t = document.createElement('b'); t.className = 'tick'; t.style.left = `${(Math.log10(1 + m) / Math.log10(1 + E.GOAL)) * 100}%`; $('meter').insertBefore(t, $('meter').lastElementChild); }
+
+// ---------- Calls: the cloud and the tasting, at the top of the column ----------
+let callSig = '';
+function renderCalls() {
+  const el = $('calls');
+  const cloud = E.choiceDue(S) && !S.ended, taste = S.landed && !S.ended && !finale;
+  const sig = `${cloud}|${taste}`;
+  if (sig === callSig) return;
+  callSig = sig;
+  el.innerHTML = '';
+  if (cloud) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'call'; b.id = 'cloudBtn';
+    b.innerHTML = '<b>☁️ The Rain Cloud</b><span>The kitchen is stuck. Decide what to do with it.</span>';
+    wireTip(b, () => ({ id: 'cloud', name: 'The Rain Cloud', desc: 'Two kilometres up, the kitchen is wedged in a rain cloud. Rain the starter on the town (lift ×2), or bottle the cloud as brine (umbrellas puff twice as fast).', fx: 'You can’t take it back. Umbrellas you flick meanwhile pile up under the cloud and go up after you choose.', foot: 'A choice for the rest of the trip' }), showChoice);
+    el.append(b);
+  }
+  if (taste) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'call'; b.id = 'tasteBtn';
+    b.innerHTML = '<b>🍸 The Tasting</b><span>Live from the Moon: Kiki’s card, at last.</span>';
+    wireTip(b, () => ({ id: 'taste', name: 'The Tasting', desc: 'The kitchen has landed on the Moon. Every person on Earth is looking up. Time for the grand finale: unfold Kiki’s card all the way.', foot: 'The last segment of the show' }), showCard);
+    el.append(b);
+  }
+}
+
+// ---------- Shop ----------
+const shop = $('shop');
+const newUntil = {};
+let shopSig = '';
+const clone = () => JSON.parse(JSON.stringify(S));
+function renderShop() {
+  if (S.landed || S.ended) { shop.innerHTML = ''; shopSig = ''; document.querySelector('aside h2').hidden = true; renderShelf(); return; }
+  const fresh = E.reveal(S);
+  for (const id of fresh) { if (S.t > 3) sfx.unlock(); newUntil[id] = performance.now() + 9000; }
+  const all = E.items(S);
+  const sig = all.map(i => i.id + ':' + i.price + ':' + i.level + ':' + i.next).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    for (const it of all) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (it.odd ? ' odd' : '') + (it.kind === 'line' && !it.next ? ' later' : '');
+      b.dataset.id = it.id; b.dataset.cost = it.price; b.dataset.ok = it.kind === 'line' ? String(it.next) : String(!it.capped);
+      b.innerHTML = '<b></b><em></em>';
+      b.querySelector('b').textContent = it.name;
+      b.querySelector('em').textContent = it.kind === 'line' && !it.next ? `then · ${money(it.price, true)}` : money(it.price, true) + (it.kind === 'level' ? ` · ${it.level}` : '');
+      b.setAttribute('aria-describedby', 'tip');
+      b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, upTip(it.id)); });
+      b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+      b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, upTip(it.id)); });
+      b.addEventListener('blur', hideTip);
+      b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+      // On touch the first tap shows what it does; the second buys.
+      b.addEventListener('click', () => {
+        if (b.dataset.touch && tipFor !== it.id) { showTip(b, upTip(it.id)); return; }
+        if (b.getAttribute('aria-disabled') !== 'true') doBuy(it.id); else sfx.deny();
+      });
+      shop.append(b);
+    }
+  }
+  const now = performance.now();
+  let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = b.dataset.ok === 'true' && S.tips >= Number(b.dataset.cost);
+    if (can) n++;
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  document.querySelector('aside h2').hidden = !all.length;
+  renderShelf();
+}
+// What an upgrade changes, now → after.
+function effect(id) {
+  const T = clone();
+  const L = E.LINE_BY_ID[id];
+  if (L) { if (L.i !== S.line) T.line = S.line; T.line = L.i + 1; }
+  else if (id === 'crock') { T.lv.crock++; E.fixCrocks(T); }
+  else T.lv[id]++;
+  if (L?.odd) return 'Does nothing. Probably.';
+  if (L?.lift) return `Each umbrella lifts: ${liftFmt(E.liftEach(S))} → ${liftFmt(E.liftEach(T))}`;
+  if (L?.proof) return `Puffs in: ${E.proofTime(S).toFixed(2)} s → ${E.proofTime(T).toFixed(2)} s`;
+  if (L?.chef) return `A sous-chef sweeps every: ${E.chefTime(S).toFixed(2)} s → ${E.chefTime(T).toFixed(2)} s` + (S.lv.chef ? ` · on their own: ${E.idleRate(S).toFixed(1)} → ${E.idleRate(T).toFixed(1)} umbrellas/s` : '');
+  if (id === 'crock') return `Crocks: ${S.lv.crock} → ${T.lv.crock} · up to ${(S.lv.crock / E.proofTime(S)).toFixed(1)} → ${(T.lv.crock / E.proofTime(T)).toFixed(1)} umbrellas/s`;
+  if (id === 'chef') return `Shelves swept on their own: ${S.lv.chef} → ${T.lv.chef} · ${E.idleRate(S).toFixed(1)} → ${E.idleRate(T).toFixed(1)} umbrellas/s`;
+  if (id === 'basket') return `Tips: ${money(E.tipRate(S))}/s → ${money(E.tipRate(T))}/s`;
+  return '';
+}
+let tipFor = null;
+function upTip(id) {
+  const L = E.LINE_BY_ID[id];
+  if (L) {
+    const later = L.i !== S.line;
+    return { id, name: L.name, desc: L.desc, fx: effect(id), joke: '', foot: later ? `${money(L.cost)} · next on the card, after ${E.LINE[S.line].name}` : money(L.cost) };
+  }
+  const V = E.LEVELS[id], lv = id === 'crock' ? S.lv.crock : S.lv[id];
+  const capped = id === 'chef' && S.lv.chef >= Math.ceil(S.lv.crock / E.PER_SHELF);
+  return { id, name: V.name, desc: V.desc, fx: effect(id), foot: `${money(E.levelCost(S, id))} · ${lv} of ${V.max}` + (capped ? ' · needs another shelf of crocks first' : '') };
+}
+function showTip(b, it) {
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><span class="fx"></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('.fx').textContent = it.fx || '';
+  tip.querySelector('.fx').hidden = !it.fx;
+  tip.querySelector('i').textContent = it.joke || '';
+  tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || '';
+  tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  const inSide = !!b.closest('#side');
+  if (inSide && r.left > t.width + 24 && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 12}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - t.width - 8, r.left))}px`;
+    tip.style.top = `${r.bottom + 8 + t.height < innerHeight ? r.bottom + 8 : Math.max(8, r.top - t.height - 8)}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+let tipMoved = 0;
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .call, .bought')) hideTip(); });
+
+// Buttons whose effect isn't obvious explain themselves (on touch, the first tap of the session).
+const explained = new Set();
+function wireTip(b, info, act) {
+  b.setAttribute('aria-describedby', 'tip');
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, info()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, info()); });
+  b.addEventListener('blur', hideTip);
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  b.addEventListener('click', () => {
+    if (b.dataset.touch && !explained.has(b.id)) { explained.add(b.id); showTip(b, info()); return; }
+    hideTip(); act();
+  });
+}
+
+// ---------- The Bought shelf (the recipe so far) ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!S.boughtOpen === shelfEl.open) return;
+  S.boughtOpen = shelfEl.open; save();
+});
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(i => i.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (it.odd ? ' odd' : '');
+    b.textContent = it.name; b.dataset.id = it.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, { id: 'bought:' + it.id, name: it.name, desc: it.desc, joke: it.joke, foot: it.odd ? 'Bought · does very little' : 'Bought', inline: true }); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + it.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+function doBuy(id) {
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  delete newUntil[id];
+  hideTip();
+  sfx.buy();
+  const L = E.LINE_BY_ID[id];
+  if (L) {
+    say('CLOVER', L.joke);
+    if (L.kind === 'umbrella') { for (const b of bouquet) if (rnd() < 0.25) b.tier = tierOf(); }
+    const spot = { cape: [CLOVER.x, 330], boots: [CLOVER.x, 430], plums: [624, 380], mini: [574, 270], glass: [620, 270], song: [642, 380], card: [500, 380], spoons: [440, 300], skates: [440, 420], whistle: [CLOVER.x, 380] }[id] || (L.kind === 'culture' ? [500, 280] : L.kind === 'umbrella' ? [400, 90] : [CLOVER.x, 300]);
+    floats.push({ text: L.kind === 'umbrella' ? 'bigger!' : L.odd ? 'ta-da!' : '✓', x: spot[0], y: spot[1], t: 0, color: C.ink, size: 18 });
+  } else {
+    const V = E.LEVELS[id];
+    say(id === 'chef' ? 'SOUS-CHEF' : 'CLOVER', id === 'crock' ? `“Another crock. That’s ${S.lv.crock}. A kitchen is only as good as its crocks.”` : id === 'chef' ? `A paper doll in a tall hat takes shelf ${S.lv.chef}. “Yes, chef!”` : `“A bigger basket, darlings. For your generosity.” (size ${S.lv.basket})`);
+    if (id === 'basket') floats.push({ text: 'clink!', x: 300, y: H - 30, t: 0, size: 16 });
+    void V;
+  }
+  save(); renderShop(); hud();
+}
+
+// ---------- Loop ----------
+let last = performance.now(), saveAcc = 0, uiAcc = 0, lastFrame = performance.now(), phaseWas = phaseKey(), tipAcc = 0;
+let ripeWas = S.cr.map(p => p >= 1);
+function step(dt) {
+  if (!S.ended && !S.landed) {
+    const swept = E.tick(S, dt);
+    if (swept.length) { swept.forEach((i, n) => launch(i, n, true)); sfx.sweep(); }
+    // Bubbles as umbrellas finish puffing (only the ones that just did).
+    for (let i = 0; i < S.cr.length; i++) { const r = S.cr[i] >= 1; if (r && !ripeWas[i]) sfx.ripe(); ripeWas[i] = r; }
+    ripeWas.length = S.cr.length;
+    if (S.landed) { sfx.land(); save(); say('CLOVER', '“And… touchdown. Darlings, we are live from the Moon. Everyone on Earth can see us. Everyone. Now: the tasting.”'); renderCalls(); renderShop(); hud(); }
+    if (E.pulled(S) && !step.pullSaid) { step.pullSaid = true; say('CLOVER', '“Feel that? The Moon’s gravity has us now. No more flicking, darlings. Just hold on to your crocks.”'); }
+    checkSights();
+    tipAcc += dt;
+    if (tipAcc > 4 && E.tipRate(S) > 0.05) { tipAcc = 0; sfx.tip(); floats.push({ text: `+${money(E.tipRate(S) * 4, true)}`, x: 300, y: H - 36, t: 0, size: 14 }); }
+  } else if (!S.ended) E.tick(S, dt);
+  const ph = phaseKey();
+  if (ph !== phaseWas) { phaseWas = ph; refreshMusic(); }
+  saveAcc += dt; if (saveAcc > 5) { saveAcc = 0; save(); }
+  ambient(dt);
+  uiAcc += dt; if (uiAcc > 0.2) { uiAcc = 0; hud(); renderShop(); renderCalls(); }
+}
+function frame(now) {
+  const dt = Math.max(0, Math.min(0.1, (now - last) / 1000)); last = now; lastFrame = now;
+  step(dt);
+  clock += dt;
+  flourish = Math.max(0, flourish - dt * 3);
+  for (const f of flying) f.t += dt * (f.flop ? 2.4 : f.speed || 1.4);
+  for (const f of flying) if (!f.flop && f.t >= 1) joinBouquet(f.tier);
+  flying = flying.filter(f => f.t < 1);
+  for (const f of floats) f.t += dt; floats = floats.filter(f => f.t < 1.2);
+  trail = trail.filter(q => clock - q.t < 0.25);
+  if (S.choice === 'rain' && !S.landed) {
+    if (townUms.length < 14 && rnd() < dt * 3) townUms.push({ x: 40 + rnd() * 720, y: H + 20, v: 40 + rnd() * 50, tier: Math.floor(rnd() * 4), rot: (rnd() - 0.5) * 0.4 });
+    for (const u of townUms) u.y -= u.v * dt;
+    townUms = townUms.filter(u => u.y > 80);
+  }
+  if (finale) {
+    finale.t += dt;
+    if (finale.stage === 'flying' && finale.t >= 0.9) { finale.stage = 'done'; finale.t = 0; S.toasted = true; sfx.clink(); }
+    else if (finale.stage === 'done' && finale.t >= 1.4) end(false);
+  }
+  render();
+  requestAnimationFrame(frame);
+}
+// In a background tab, rAF stops: keep the kitchen going on a timer.
+setInterval(() => {
+  const now = performance.now();
+  if (now - lastFrame < 400) return;
+  const dt = Math.min(1, (now - last) / 1000); last = now;
+  step(dt);
+}, 250);
+addEventListener('pagehide', save);
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('resize', layout);
+
+// ---------- Start ----------
+// Sprite stills for the sheet.
+{
+  const a = Sprites.canvas(120, 170), q = a.getContext('2d'); q.translate(60, 160); drawClover(q, 0, {}); Sprites.register('Clover', a);
+  const b = Sprites.canvas(120, 170), r = b.getContext('2d'); r.translate(60, 160); drawClover(r, 0, { cape: true, boots: true, whistle: true, glass: 2, flourish: 1 }); Sprites.register('Clover, everything on', b);
+  const c = Sprites.canvas(40, 44), s = c.getContext('2d'); s.translate(20, 40); drawChef(s, 0.5, true, true); Sprites.register('sous-chef', c);
+  const d = Sprites.canvas(50, 40), u = d.getContext('2d'); u.translate(25, 34); drawGlass(u, 2, 1.3); Sprites.register('the little glass (spoiler)', d);
+  const e = Sprites.canvas(60, 30), v = e.getContext('2d'); v.translate(30, 20); drawBasket(v, 20); Sprites.register('tip basket', e);
+  const f = Sprites.canvas(120, 30), w = f.getContext('2d'); w.translate(10, 26); ['DORIS', 'KEFIR', 'MOTHER', 'KOJI', 'GINGER', 'BRINE'].forEach((l, i) => { w.save(); w.translate(i * 18, 0); drawJar(w, l, i); w.restore(); }); Sprites.register('culture jars', f);
+}
+if (Sprites.sheetRequested()) Sprites.showSheet({ zoom: 2 });
+
+layout();
+buildBouquet();
+// Time away: the sous-chefs kept sweeping (slowly), the onlookers kept tipping.
+if (!S.ended && !S.landed && S.savedAt && S.t > 0) {
+  const away = (Date.now() - S.savedAt) / 1000;
+  const r = E.offline(S, away);
+  if (r) {
+    const h = Math.floor(away / 3600), m = Math.floor((away % 3600) / 60), span = h ? `${h} h ${m} min` : `${m} min`;
+    const capped = E.LANDMARKS.includes(Math.round(S.alt + 1)) ? ' They stopped just short of the next sight: Clover wouldn’t want to miss it.' : '';
+    say('WHILE YOU WERE AWAY', r.sent >= 1
+      ? `${span}. The sous-chefs kept sweeping, slowly: ${fmt(r.sent)} umbrellas went up, the kitchen rose ${E.height(r.alt)}, and the onlookers tipped ${money(r.tips)}.${capped}`
+      : `${span}. Nobody flicked anything (no sous-chefs yet), but the onlookers tipped ${money(r.tips)} anyway.`);
+    buildBouquet();
+  }
+}
+sightIdx = SIGHTS.filter(s => S.alt >= s.at).length;
+if (S.ended) end(true);
+else if (S.landed) { say('CLOVER', '“Welcome back, darlings. We’re live from the Moon, and it’s time for the tasting.”'); }
+else if (E.choiceDue(S)) say('CLOVER', '“Welcome back! We’re still stuck in this rain cloud. Decide, darlings: rain it on the town, or bottle it.”');
+else if (!S.t) say('CLOVER', '“Welcome to Clover’s Kitchen! Today: Great-Aunt Kiki’s recipe. Ferment the umbrellas, and when one puffs up into a full dome, flick it up. Swipe across the crock. Like so.”');
+else if (logT === 0 && !$('log').textContent) say('CLOVER', '“Welcome back to the show. We never went off the air. Flick when they dome.”');
+save();
+hud(); renderShop(); renderCalls();
+document.fonts?.ready.then(layout);
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
