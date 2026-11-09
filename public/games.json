@@ -638,5 +638,47 @@
       "topic": "kimjang, the late-autumn kimchi-making weekend (Korea, November and December)"
     },
     "palette": "hollow"
+  },
+  {
+    "n": 19,
+    "slug": "fair-weather",
+    "date": "2026-11-10",
+    "title": "Fair Weather",
+    "tagline": "Once upon a time on Lake Linden, a little motor boat and its unpaid intern dusted pearls and put them to bed two by two, to beat the yacht that wins the Pearl Fair every year.",
+    "emoji": "🛥️🦪",
+    "scale": "millions",
+    "minutes": "240–300",
+    "seed": 150807326,
+    "subject": {
+      "text": "a motor boat with an intern",
+      "emoji": "🛥️",
+      "name": "motor boat",
+      "subgroup": "transport-water",
+      "trait": "{} with an intern"
+    },
+    "verb": "dusting",
+    "object": "pearls",
+    "interaction": "merge two alike into one",
+    "arc": {
+      "drive": "rivalry",
+      "obstacle": "the weather",
+      "turn": "the obstacle switches sides",
+      "initial": "R"
+    },
+    "length": "story (3–10 hours, over several sittings)",
+    "structure": [
+      "limited space to arrange (a grid, shelf or map)",
+      "reset loop (prestige for a permanent bonus)"
+    ],
+    "twist": "the core action gets a new verb",
+    "ending": "the game ends itself",
+    "look": "embroidery",
+    "music": {
+      "style": "music box lullaby",
+      "scale": "major pentatonic"
+    },
+    "tone": "fairy tale narrator",
+    "context": "none",
+    "palette": "bubblegum-16"
   }
 ]

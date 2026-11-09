@@ -1335,5 +1335,154 @@
    "parasol"
   ],
   "savedAt": 0
+ },
+ "fair-weather": {
+  "v": 1,
+  "t": 4200,
+  "fairs": 2,
+  "season": 2,
+  "lastFair": 10,
+  "pennies": 48270,
+  "earned": 90000,
+  "pAll": 3000000,
+  "ribbons": 14,
+  "rAll": 40,
+  "best": 10,
+  "bestAll": 10,
+  "lv": {
+   "dive": 14,
+   "polish": 12,
+   "duster": 5,
+   "feed": 3,
+   "pair": 6
+  },
+  "rl": {
+   "deck": 3,
+   "pride": 3,
+   "wage": 1,
+   "seed": 2,
+   "start": 1
+  },
+  "one": {
+   "pinwheel": true,
+   "hat": true,
+   "cozy": true,
+   "bell": true
+  },
+  "sewn": [
+   true,
+   true,
+   true,
+   true,
+   true,
+   true
+  ],
+  "deck": [
+   {
+    "t": 3,
+    "d": true
+   },
+   {
+    "t": 5,
+    "d": false
+   },
+   {
+    "t": 6,
+    "d": false
+   },
+   {
+    "t": 8,
+    "d": false
+   },
+   {
+    "t": 7,
+    "d": false
+   },
+   null,
+   null,
+   {
+    "t": 4,
+    "d": true
+   },
+   {
+    "t": 9,
+    "d": false
+   },
+   {
+    "t": 3,
+    "d": false
+   },
+   {
+    "t": 10,
+    "d": false
+   },
+   {
+    "t": 5,
+    "d": false
+   },
+   null,
+   null,
+   {
+    "t": 4,
+    "d": false
+   },
+   {
+    "t": 6,
+    "d": true
+   },
+   {
+    "t": 7,
+    "d": false
+   },
+   {
+    "t": 3,
+    "d": false
+   },
+   {
+    "t": 8,
+    "d": false
+   },
+   null,
+   null,
+   {
+    "t": 5,
+    "d": false
+   },
+   {
+    "t": 2,
+    "d": false
+   },
+   null,
+   {
+    "t": 9,
+    "d": false
+   },
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ],
+  "seen": [
+   "dive",
+   "polish",
+   "duster",
+   "feed",
+   "pair",
+   "bell",
+   "spyglass",
+   "deck",
+   "pride",
+   "wage",
+   "seed",
+   "start"
+  ],
+  "tab": "p",
+  "savedAt": 0
  }
 }

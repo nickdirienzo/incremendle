@@ -1,0 +1,1472 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fair Weather · Incremendle</title>
+<meta name="description" content="Once upon a time on Lake Linden, a little motor boat with an unpaid intern dusted pearls, merged them two by two, and swore to beat the yacht that wins the Pearl Fair every year. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Fair Weather">
+<meta property="og:description" content="Once upon a time on Lake Linden, a little motor boat and its unpaid intern dusted pearls and put them to bed two by two, to beat the yacht that wins the Pearl Fair every year.">
+<meta property="og:url" content="https://incremendle.com/fair-weather/">
+<meta property="og:image" content="https://incremendle.com/fair-weather/og.png?v=43b0593f">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Fair Weather: Once upon a time on Lake Linden, a little motor boat and its unpaid intern dusted pearls and put them to bed two by two, to beat the yacht that wins the Pearl Fair every year.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/alegreya/font.css">
+<link rel="stylesheet" href="/shared/fonts/uncial-antiqua/font.css">
+<style>
+  /* Embroidery, in Bubblegum 16: everything is thread on linen. Stitched borders are dashed lines. */
+  :root {
+    --ink: #16171a; --maroon: #7f0622; --red: #d62411; --orange: #ff8426; --gold: #ffd100; --linen: #fafdff;
+    --pink: #ff80a4; --rose: #ff2674; --plum: #94216a; --purple: #430067; --navy: #234975; --sky: #68aed4;
+    --lime: #bfff3c; --green: #10d275; --teal: #007899; --deep: #002859;
+    --head: 'Uncial Antiqua', Georgia, serif; --body: 'Alegreya', Georgia, serif;
+    color-scheme: light;
+  }
+  html, body { background: var(--deep); color: var(--linen); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 17px/1.35 var(--body);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(10px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    /* Navy linen: a fine weave. */
+    background-image:
+      repeating-linear-gradient(0deg, #ffffff08 0 1px, transparent 1px 4px),
+      repeating-linear-gradient(90deg, #00000018 0 1px, transparent 1px 4px);
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 2px 0 8px; }
+  h1 { font: 400 36px/1.05 var(--head); margin: 0; color: var(--gold); letter-spacing: .5px; text-shadow: 0 0 0 var(--gold), 2px 2px 0 var(--maroon); }
+  header p { margin: 0; font-size: 17px; color: var(--sky); font-style: italic; }
+  header p b { font-style: normal; font-weight: 400; color: var(--linen); }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } h1 { font-size: 29px; } }
+  main { min-width: 0; }
+
+  /* A patch of linen with a running-stitch border. */
+  .patch { background: var(--linen); color: var(--ink); border-radius: 6px; position: relative; }
+  .patch::after { content: ''; position: absolute; inset: 4px; border: 2px dashed var(--pink); border-radius: 4px; pointer-events: none; }
+
+  .hud { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 14px; align-items: center; margin-bottom: 8px; }
+  .meter { position: relative; height: 32px; color: var(--ink); background: var(--linen); border-radius: 16px; overflow: hidden; box-shadow: inset 0 0 0 3px var(--navy); }
+  .meter i { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: 16px; transition: width .5s;
+    background: repeating-linear-gradient(115deg, var(--pink) 0 3px, var(--rose) 3px 5px); }
+  .meter .tick { position: absolute; top: 6px; bottom: 6px; width: 3px; background: var(--navy); border-radius: 2px; z-index: 1; }
+  .meter span { position: absolute; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font-size: 16px; white-space: nowrap; }
+  .meter span em { font-style: normal; background: #fafdffdd; padding: 0 7px; border-radius: 8px; }
+  @media (max-width: 560px) { .hud { grid-template-columns: 1fr; } .meter span em:last-child { display: none; } .meter span { justify-content: center; } }
+  .cash { display: flex; gap: 12px; align-items: baseline; font: 400 26px/1 var(--head); color: var(--gold); white-space: nowrap; text-shadow: 2px 2px 0 var(--maroon); }
+  .cash small { font: 700 18px var(--body); color: var(--sky); text-shadow: none; }
+  .sub { grid-column: 1 / -1; display: flex; gap: 2px 12px; flex-wrap: wrap; align-items: center; font-size: 15px; color: var(--linen); min-height: 20px; }
+  .sub b { font-weight: 700; color: var(--gold); }
+  .sub .warn b { color: var(--orange); }
+
+  .stagewrap { position: relative; }
+  canvas#stage { display: block; width: 100%; touch-action: none; cursor: grab; border-radius: 8px; background: var(--linen); -webkit-tap-highlight-color: transparent; user-select: none; }
+  canvas#stage:focus-visible { outline: 3px dashed var(--gold); outline-offset: 3px; }
+  .over { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 12px; background: #002859b0; border-radius: 8px; overflow: auto; }
+  .panel { max-width: 560px; width: 100%; text-align: center; padding: 14px 20px 16px; }
+  .panel h3 { font: 400 26px/1.1 var(--head); margin: 4px 0 6px; color: var(--rose); }
+  .panel p { margin: 6px 0; }
+  .vs { display: flex; justify-content: center; gap: 28px; margin: 8px 0; }
+  .vs figure { margin: 0; font-size: 15px; }
+  .vs img { display: block; margin: 0 auto 2px; width: 84px; height: 84px; }
+  .vs figcaption b { display: block; font-family: var(--head); font-weight: 400; color: var(--navy); }
+  .bigbtn { font: 400 19px var(--head); color: var(--linen); background: var(--rose); border: 0; border-radius: 6px; box-shadow: 0 0 0 3px var(--linen), 0 0 0 5px var(--rose); padding: 6px 18px; cursor: pointer; margin: 8px 4px 2px; }
+  .bigbtn:focus-visible { outline: 3px dashed var(--navy); outline-offset: 6px; }
+
+  .log { margin: 12px 2px 0; min-height: 2.8em; font-size: 17px; padding: 9px 16px 10px; }
+  .log b { font: 400 13px var(--head); letter-spacing: 1px; color: var(--linen); background: var(--navy); padding: 1px 7px; margin-right: 8px; border-radius: 3px; }
+  .log span { font-style: italic; }
+  .log.fresh { animation: pop .35s ease-out; }
+  @keyframes pop { from { transform: translateY(3px); opacity: .5; } }
+
+  aside { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; scrollbar-width: thin; padding: 2px 6px 8px 2px; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  aside h2 { font: 400 24px/1 var(--head); margin: 2px 0 9px; color: var(--gold); }
+  #afford { font: 400 15px var(--body); color: var(--sky); }
+  #calls { display: grid; gap: 8px; margin-bottom: 10px; }
+  #calls:empty { display: none; }
+  .call { text-align: left; font: 15px/1.25 var(--body); color: var(--linen); background: var(--rose); border: 0; border-radius: 6px; padding: 8px 12px 9px; cursor: pointer;
+    box-shadow: 0 0 0 3px var(--deep), 0 0 0 5px var(--pink); }
+  .call b { display: block; font: 400 19px/1.1 var(--head); }
+  .call.ready { animation: nudge 1.8s ease-in-out infinite; }
+  .call[aria-disabled="true"] { background: var(--navy); color: var(--sky); cursor: default; }
+  .call:focus-visible { outline: 3px dashed var(--gold); outline-offset: 5px; }
+  @keyframes nudge { 50% { transform: translateY(-2px); } }
+  #tabs { display: flex; gap: 6px; margin: 0 0 9px; }
+  .tab { flex: 1; position: relative; font: 400 15px var(--head); color: var(--sky); background: transparent; border: 2px dashed var(--navy); border-radius: 6px; padding: 5px 6px; cursor: pointer; }
+  .tab[aria-selected="true"] { color: var(--deep); background: var(--gold); border-color: var(--gold); }
+  .tab .dot { position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; border-radius: 50%; background: var(--rose); }
+  .tab:focus-visible { outline: 3px dashed var(--gold); outline-offset: 2px; }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  @media (max-width: 760px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up {
+    position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 15px/1.15 var(--body); color: var(--navy);
+    background: var(--linen); border: 0; border-radius: 6px; padding: 7px 10px 8px; cursor: pointer; box-shadow: inset 0 0 0 2px var(--sky);
+  }
+  .up b { font-weight: 700; font-size: 15px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { box-shadow: inset 0 0 0 2px var(--rose), 0 0 0 2px var(--deep), 0 0 0 4px var(--pink); }
+  .up.can em { color: var(--rose); font-weight: 700; }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up[aria-disabled="true"]:not(.can) { opacity: .62; }
+  .up.odd { box-shadow: inset 0 0 0 2px var(--sky), inset 0 0 0 5px var(--linen), inset 0 0 0 6px var(--pink); }
+  .up.odd.can { box-shadow: inset 0 0 0 2px var(--rose), inset 0 0 0 5px var(--linen), inset 0 0 0 6px var(--pink), 0 0 0 2px var(--deep), 0 0 0 4px var(--pink); }
+  .up .tag { position: absolute; top: -9px; right: 6px; font: 400 12px var(--head); font-style: normal; color: var(--ink); background: var(--gold); padding: 0 6px 1px; border-radius: 3px; transform: rotate(4deg); }
+  .up.new { animation: pulse 1.4s ease-in-out 4; }
+  @keyframes pulse { 50% { box-shadow: inset 0 0 0 2px var(--gold), 0 0 0 6px var(--gold); } }
+  .up:focus-visible, .bought:focus-visible { outline: 3px dashed var(--gold); outline-offset: 2px; }
+  #tip {
+    position: fixed; z-index: 50; width: 272px; padding: 11px 15px 12px; pointer-events: none; font: 16px/1.35 var(--body); color: var(--ink);
+    background: var(--linen); border-radius: 6px; box-shadow: 0 0 0 3px var(--navy), 6px 7px 0 3px #00000044;
+  }
+  #tip::after { content: ''; position: absolute; inset: 5px; border: 2px dashed var(--pink); border-radius: 4px; pointer-events: none; }
+  #tip b { display: block; font: 400 19px/1.15 var(--head); color: var(--rose); margin-bottom: 4px; }
+  #tip .fx { display: block; margin-top: 6px; padding: 2px 7px; background: #68aed433; border-radius: 4px; font-weight: 700; color: var(--navy); }
+  #tip i { display: block; margin-top: 6px; padding-top: 5px; border-top: 2px dotted var(--sky); }
+  #tip small { display: block; margin-top: 6px; font: 700 15px var(--body); color: var(--plum); }
+  #tip.inline { position: relative; width: auto; margin-top: 10px; box-shadow: 0 0 0 3px var(--navy); }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 400 18px/1 var(--head); color: var(--gold); cursor: pointer; list-style: none; padding: 3px 2px; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: "\25B8"; font-size: 14px; color: var(--sky); transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 3px dashed var(--gold); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 2px 2px; }
+  .bought { max-width: 100%; font: 14px/1.2 var(--body); color: var(--ink); background: var(--linen); border: 0; border-radius: 4px; box-shadow: inset 0 0 0 2px var(--sky); padding: 3px 8px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { box-shadow: inset 0 0 0 2px var(--pink); }
+  .bought:hover, .bought.on { box-shadow: inset 0 0 0 2px var(--rose); }
+
+  #ending { margin: 22px auto 0; max-width: 700px; text-align: center; padding: 18px 26px 24px; }
+  #ending h2 { font: 400 36px/1.1 var(--head); margin: 2px 0 8px; color: var(--rose); }
+  #ending p { margin: 8px 0; text-align: left; }
+  #ending .memo { font-size: 15px; color: var(--navy); background: #68aed426; padding: 8px 12px; border-radius: 4px; }
+  #shareBtn, #againBtn { font: 400 19px var(--head); color: var(--linen); background: var(--rose); border: 0; border-radius: 6px; box-shadow: 0 0 0 3px var(--linen), 0 0 0 5px var(--rose); padding: 6px 18px; margin: 14px 6px 0; cursor: pointer; }
+  #againBtn { background: var(--navy); box-shadow: 0 0 0 3px var(--linen), 0 0 0 5px var(--navy); }
+  #shareBtn:focus-visible, #againBtn:focus-visible { outline: 3px dashed var(--navy); outline-offset: 6px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .call.ready, .log.fresh { animation: none; } .meter i, #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/soundfonts": "/shared/lib/@strudel/soundfonts@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="19" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Fair Weather</h1>
+    <p>Once upon a time, on Lake Linden · <b id="where">the first summer</b></p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="hud">
+        <div class="meter" id="meter" title="Pim's needlework: every pearl sewn into the hoop. The notches are where one piece of needlework ends and a bigger one begins."><i id="meterFill"></i><span><em id="meterL">Best pearl: none yet</em><em id="meterR">Regina: first, every year</em></span></div>
+        <div class="cash"><span id="cash" title="Pennies, from the lake folk, a penny a look at every clean pearl">0d</span><small id="rib" title="Second-Place Ribbons, from the Pearl Fair" hidden></small></div>
+        <div class="sub" id="sub"></div>
+      </div>
+      <div class="stagewrap">
+        <canvas id="stage" tabindex="0" aria-label="Tuppence's deck: a grid of mussel cups holding pearls. Drag a pearl onto its twin (or tap one, then the other) to put them to bed together as one bigger pearl. Tap or rub a gritty pearl to dust it. Drag a pearl into the lake to put it back. Later, drag a pearl onto its chalk outline in Pim's hoop to sew it. Keyboard: arrows move, Enter picks up and puts down, S sews, Delete puts a pearl back in the lake."></canvas>
+        <div class="over" id="over" hidden></div>
+      </div>
+      <p class="log patch" id="log" aria-live="polite"></p>
+    </main>
+    <aside id="side">
+      <h2 id="shopH" hidden>The Chandlery <span id="afford"></span></h2>
+      <div id="calls"></div>
+      <div id="tabs" role="tablist" hidden></div>
+      <div id="shop"></div>
+      <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" class="patch" hidden>
+    <h2>The End.</h2>
+    <p id="endText"></p>
+    <p class="memo" id="endMemo"></p>
+    <button id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const fmt = E.fmt, pence = E.pence;
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DEBUG = location.search.includes('debug');
+const C = {
+  ink: '#16171a', maroon: '#7f0622', red: '#d62411', orange: '#ff8426', gold: '#ffd100', linen: '#fafdff',
+  pink: '#ff80a4', rose: '#ff2674', plum: '#94216a', purple: '#430067', navy: '#234975', sky: '#68aed4',
+  lime: '#bfff3c', green: '#10d275', teal: '#007899', deep: '#002859',
+};
+
+// ---------- State ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:19:save';
+let raw = null;
+try { raw = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+const S = E.load(raw);
+const save = () => { S.savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound: G major pentatonic, like the music box ----------
+const A = createAudio({ sfxTrim: 2.5, musicTrim: 5.45 });
+const notes = scale('major pentatonic', 67);
+const gate = {};
+const every = (k, ms) => { const t = performance.now(); if (t - (gate[k] || 0) < ms) return false; gate[k] = t; return true; };
+const sfx = {
+  // Picking up a pearl: a soft tick of thread.
+  pick() { A.tone({ type: 'bell', freq: notes(9), dur: 0.05, vol: 0.08 }); },
+  // Two pearls become one: a music-box pluck that climbs with the size.
+  merge(t = 1) { const d = 3 + (t % 8); A.tone({ type: 'pluck', freq: notes(d), dur: 0.1, vol: 0.2 }); A.tone({ type: 'bell', freq: notes(d + 2), dur: 0.16, vol: 0.12, at: A.now + 0.07 }); },
+  // Pim matches a pair: the same, quieter (it's background).
+  pimMerge(t = 1) { if (!every('pm', 500)) return; A.tone({ type: 'bell', freq: notes(5 + (t % 8)), dur: 0.08, vol: 0.05 }); },
+  // Dusting: a soft feather swish.
+  dust() { if (!every('dust', 90)) return; A.noiseHit('shaker', { vol: 0.24, dur: 0.1 }); A.tone({ type: 'sine', freq: notes(9), dur: 0.05, vol: 0.1 }); },
+  // A new pearl surfaces: a bubble (and, with the bell, a ding).
+  dive() { if (!every('dive', 700)) return; A.tone({ type: 'sine', freq: notes(10), dur: 0.05, vol: 0.13, glide: 1.4 }); },
+  bell() { if (!every('bell', 1600)) return; A.tone({ type: 'bell', freq: notes(12), dur: 0.25, vol: 0.17 }); },
+  // The West Wind: a breathy whoosh.
+  gust() { A.noiseHit('whoosh', { vol: 0.16, dur: 0.9 }); },
+  // Pennies from the lake folk.
+  coin() { A.tone({ type: 'bell', freq: notes(11), dur: 0.08, vol: 0.12 }); A.tone({ type: 'bell', freq: notes(13), dur: 0.1, vol: 0.1, at: A.now + 0.06 }); },
+  // Back in the lake: a plop that falls.
+  plop() { A.tone({ type: 'sine', freq: notes(4), dur: 0.14, vol: 0.2, glide: 0.5 }); A.noiseHit('snare', { vol: 0.04, dur: 0.08 }); },
+  // Sewing: two quick stitches and a pull of thread.
+  sew() { A.tone({ type: 'pluck', freq: notes(12), dur: 0.06, vol: 0.14 }); A.tone({ type: 'pluck', freq: notes(14), dur: 0.08, vol: 0.14, at: A.now + 0.09 }); A.noiseHit('shaker', { vol: 0.06, dur: 0.25, at: A.now + 0.16 }); },
+  buy() { [0, 2, 4, 7].forEach((d, i) => A.tone({ type: 'pluck', freq: notes(d + 5), dur: 0.12, vol: 0.13, at: A.now + i * 0.06 })); },
+  unlock() { A.tone({ type: 'bell', freq: notes(10), dur: 0.3, vol: 0.12 }); A.tone({ type: 'bell', freq: notes(12), dur: 0.4, vol: 0.1, at: A.now + 0.12 }); },
+  deny() { A.tone({ type: 'triangle', freq: notes(-2), dur: 0.07, vol: 0.15 }); },
+  // A piece of needlework finished: a little rising run.
+  panel() { [0, 1, 2, 3, 4, 5, 7].forEach((d, i) => A.tone({ type: 'bell', freq: notes(d + 5), dur: 0.3, vol: 0.085, at: A.now + i * 0.09 })); },
+  // The Fair: a fanfare that settles on second place.
+  fair() {
+    [0, 2, 4, 5, 7].forEach((d, i) => A.tone({ type: 'pluck', freq: notes(d + 3), dur: 0.18, vol: 0.11, at: A.now + i * 0.11 }));
+    [4, 6].forEach((d, i) => A.tone({ type: 'bell', freq: notes(d + 3), dur: 0.6, vol: 0.07, at: A.now + 0.7 + i * 0.25 }));
+  },
+  // The ending: the whole scale up, then the home chord.
+  finale() {
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach((d, i) => A.tone({ type: 'pluck', freq: notes(d), dur: 0.2, vol: 0.08, at: A.now + i * 0.08 }));
+    [0, 2, 4].forEach(d => A.tone({ type: 'pad', freq: notes(d - 5), dur: 2.6, vol: 0.008, attack: 0.6, release: 1.6, cutoff: 900, at: A.now + 0.9 }));
+    A.tone({ type: 'bell', freq: notes(10), dur: 1.4, vol: 0.08, at: A.now + 1.1 });
+  },
+};
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'fair', 'panel', 'gust'], S: () => S, E };
+
+// ---------- Music: one music-box lullaby, arranged per stretch of the story ----------
+let music = null, soundtrack = null;
+const phaseKey = () => E.phase(S);
+function song() { return (soundtrack ??= createSoundtrack(music.strudel))(phaseKey()); }
+createMusic(A, { soundfonts: true, song }).then(m => { music = m; music.update(); if (DEBUG) window.__game.music = m; }).catch(e => console.warn('music', e));
+const refreshMusic = () => { if (music) music.update(); };
+
+// ---------- Stitches ----------
+let seed = 19;
+const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+// Running stitch along a polyline: dashes of thread with gaps of linen.
+function running(x, pts, color, { w = 2, on = 6, off = 4, phase = 0 } = {}) {
+  x.save(); x.strokeStyle = color; x.lineWidth = w; x.lineCap = 'round'; x.setLineDash([on, off]); x.lineDashOffset = phase;
+  x.beginPath(); pts.forEach(([a, b], i) => i ? x.lineTo(a, b) : x.moveTo(a, b)); x.stroke(); x.restore();
+}
+// Satin stitch: a shape filled with close parallel threads, with a slightly lighter sheen thread now and then.
+function satin(x, path, color, { angle = 0.6, gap = 2.6, w = 2.2, sheen = 'rgba(255,255,255,0.28)', outline = null, ow = 1.6 } = {}) {
+  x.save();
+  x.beginPath(); path(); x.fillStyle = color; x.fill();
+  x.clip();
+  const b = 400, c = Math.cos(angle), s = Math.sin(angle);
+  x.lineWidth = w * 0.5; x.lineCap = 'round';
+  let i = 0;
+  for (let d = -b; d < b; d += gap, i++) {
+    x.strokeStyle = i % 3 === 0 ? sheen : 'rgba(0,0,0,0.13)';
+    x.beginPath(); x.moveTo(-b * c - d * s, -b * s + d * c); x.lineTo(b * c - d * s, b * s + d * c); x.stroke();
+  }
+  x.restore();
+  if (outline) { x.save(); x.beginPath(); path(); x.strokeStyle = outline; x.lineWidth = ow; x.setLineDash([4, 1.5]); x.stroke(); x.restore(); }
+}
+function cross(x, cx, cy, s, color, w = 1.6) {
+  x.save(); x.strokeStyle = color; x.lineWidth = w; x.lineCap = 'round';
+  x.beginPath(); x.moveTo(cx - s, cy - s); x.lineTo(cx + s, cy + s); x.moveTo(cx + s, cy - s); x.lineTo(cx - s, cy + s); x.stroke(); x.restore();
+}
+function knot(x, cx, cy, r, color) {
+  x.save(); x.fillStyle = color; x.beginPath(); x.arc(cx, cy, r, 0, 7); x.fill();
+  x.strokeStyle = 'rgba(0,0,0,0.25)'; x.lineWidth = 0.7; x.beginPath(); x.arc(cx, cy, r * 0.55, 0.5, 4.2); x.stroke(); x.restore();
+}
+const oval = (x, cx, cy, rx, ry) => x.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+function label(x, text, cx, cy, { size = 14, color = C.navy, font = 'body', align = 'center', bold = false, italic = false } = {}) {
+  x.save(); x.fillStyle = color; x.textAlign = align; x.textBaseline = 'middle';
+  x.font = `${italic ? 'italic ' : ''}${bold ? '700 ' : ''}${size}px ${font === 'head' ? "'Uncial Antiqua', Georgia, serif" : "'Alegreya', Georgia, serif"}`;
+  x.fillText(text, cx, cy); x.restore();
+}
+// Linen: the background cloth, with the faint grid of aida.
+function linen(x, w, h, tint = C.linen) {
+  x.fillStyle = tint; x.fillRect(0, 0, w, h);
+  x.fillStyle = 'rgba(104,174,212,0.13)';
+  for (let i = 0; i < w; i += 5) x.fillRect(i, 0, 1, h);
+  for (let j = 0; j < h; j += 5) x.fillRect(0, j, w, 1);
+}
+
+// ---------- Pearls: sixteen sizes, each in its own thread ----------
+const PEARL_COLORS = [C.linen, C.gold, C.pink, C.sky, C.lime, C.orange, C.rose, C.green, C.teal, C.red, C.plum, C.navy, C.purple, C.maroon, C.ink, C.linen];
+const PR = 40;   // sprite radius
+function drawPearl(x, t, r) {
+  const col = PEARL_COLORS[t - 1], moon = t === E.TOP, dark = t >= 10 && !moon;
+  x.save();
+  if (moon) { x.fillStyle = 'rgba(255,209,0,0.35)'; x.beginPath(); x.arc(0, 0, r * 1.18, 0, 7); x.fill(); }
+  satin(x, () => x.arc(0, 0, r, 0, 7), col, { angle: 0.9 + t * 0.4, gap: Math.max(1.6, r / 8), w: 2, sheen: dark ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.5)', outline: dark ? C.linen : C.navy, ow: Math.max(1.5, r / 12) });
+  // The sheen: a curved highlight in white thread, and a pink glint.
+  x.strokeStyle = 'rgba(250,253,255,0.9)'; x.lineWidth = Math.max(1.2, r / 7); x.lineCap = 'round';
+  x.beginPath(); x.arc(-r * 0.08, -r * 0.08, r * 0.62, Math.PI * 1.05, Math.PI * 1.45); x.stroke();
+  knot(x, r * 0.35, -r * 0.4, Math.max(1, r / 10), dark ? C.pink : C.linen);
+  if (moon) { x.strokeStyle = C.gold; x.lineWidth = r / 10; x.setLineDash([r / 5, r / 10]); x.beginPath(); x.arc(0, 0, r * 0.98, 0, 7); x.stroke(); for (const [a, b] of [[-0.3, 0.2], [0.25, 0.35], [0.05, -0.1]]) knot(x, a * r, b * r, r / 9, 'rgba(104,174,212,0.6)'); }
+  // Size pips: French knots under the shine, one per two sizes, so twins read at a glance.
+  const n = Math.ceil(t / 2);
+  if (r > 9 && !moon) for (let i = 0; i < n; i++) { const a = Math.PI * (0.62 + 0.11 * (i - (n - 1) / 2)); knot(x, Math.cos(a) * r * 0.62, Math.sin(a) * r * 0.62, Math.max(0.9, r / 13), dark ? C.gold : C.navy); }
+  x.restore();
+}
+const PEARL = Array.from({ length: E.TOP }, (_, i) => {
+  const c = Sprites.canvas(PR * 2 + 12, PR * 2 + 12), x = c.getContext('2d'); x.translate(PR + 6, PR + 6); drawPearl(x, i + 1, PR); return c;
+});
+PEARL.forEach((c, i) => Sprites.register(E.tierName(i + 1), c));
+const pearlR = (t, cell) => cell * Math.min(0.44, 0.17 + 0.018 * t);
+function pearlAt(x, t, cx, cy, r, { gritty = false, alpha = 1, scale = 1 } = {}) {
+  x.save(); x.globalAlpha = alpha; x.translate(cx, cy); x.scale(scale, scale);
+  x.drawImage(PEARL[t - 1], -r * (PR + 6) / PR, -r * (PR + 6) / PR, r * 2 * (PR + 6) / PR, r * 2 * (PR + 6) / PR);
+  if (gritty) {
+    x.fillStyle = 'rgba(255,132,38,0.42)'; x.beginPath(); x.arc(0, 0, r, 0, 7); x.fill();
+    let s2 = t * 7 + 3;
+    const rr = () => { s2 = (s2 * 16807) % 2147483647; return s2 / 2147483647; };
+    for (let i = 0; i < 9; i++) { const a = rr() * 7, d = rr() * r * 0.85; cross(x, Math.cos(a) * d, Math.sin(a) * d, Math.max(1.2, r / 9), i % 3 ? C.maroon : C.orange, 1.3); }
+  }
+  x.restore();
+}
+
+// A mussel cup: an open shell, navy outside, nacre inside.
+function drawCup(x, cx, cy, s) {
+  satin(x, () => oval(x, cx, cy + s * 0.04, s * 0.44, s * 0.36), C.deep, { angle: 0.2, gap: 2.2, outline: C.navy });
+  satin(x, () => oval(x, cx, cy, s * 0.36, s * 0.28), '#8fc3e0', { angle: 1.2, gap: 2.4, sheen: 'rgba(255,128,164,0.4)' });
+  running(x, [[cx - s * 0.3, cy + s * 0.27], [cx, cy + s * 0.37], [cx + s * 0.3, cy + s * 0.27]], C.sky, { w: 1.2, on: 3, off: 2 });
+}
+
+// ---------- The cast ----------
+// Tuppence: a little red motor boat facing east (right), with a cabin, an engine at the stern and a
+// flagpole. `o` lists what's been bought (props stay drawn).
+function drawTuppence(x, t, o) {
+  x.save();
+  const rock = Math.sin(t * 1.7) * 0.02;
+  x.rotate(rock);
+  // The flagpole at the stern (and, at the end, the mast).
+  x.strokeStyle = C.maroon; x.lineWidth = 3; x.beginPath(); x.moveTo(-88, -10); x.lineTo(-88, -110); x.stroke();
+  knot(x, -88, -112, 3, C.gold);
+  // The washing line, from the flagpole to the cabin roof, with whatever Pim has hung on it.
+  if (!o.sail) {
+    x.strokeStyle = C.navy; x.lineWidth = 1; x.beginPath(); x.moveTo(-88, -86); x.quadraticCurveTo(-30, -66, 18, -62); x.stroke();
+    const flap = Math.sin(t * 5) * (o.gusty ? 3 : 1);
+    const cloths = [];
+    for (let i = 0; i < o.panels; i++) cloths.push({ w: 12 + i * 4, h: 9 + i * 3, c: [C.linen, C.pink, C.sky, C.linen, C.gold][i] });
+    if (o.sock) cloths.push({ sock: true });
+    if (o.lantern) cloths.push({ lantern: true });
+    let px = -80;
+    for (const cl of cloths) {
+      const py = -86 + ((px + 88) / 106) * 20 + Math.sin((px + 88) / 106 * Math.PI) * 6;
+      if (cl.sock) {
+        satin(x, () => { x.moveTo(px, py); x.lineTo(px + 6, py); x.lineTo(px + 6, py + 10); x.quadraticCurveTo(px + 6, py + 15, px + 12 + flap, py + 15); x.lineTo(px + 12 + flap, py + 19); x.quadraticCurveTo(px, py + 20, px, py + 12); x.closePath(); }, C.lime, { outline: C.green });
+        knot(x, px + 8 + flap, py + 15, 2, C.linen);
+        px += 16;
+      } else if (cl.lantern) {
+        x.strokeStyle = C.navy; x.lineWidth = 1; x.beginPath(); x.moveTo(px + 6, py); x.lineTo(px + 6, py + 4); x.stroke();
+        satin(x, () => oval(x, px + 6, py + 11, 7, 8), C.pink, { angle: 1.57, gap: 2, outline: C.rose });
+        x.fillStyle = 'rgba(255,209,0,0.35)'; x.beginPath(); x.arc(px + 6, py + 11, 11, 0, 7); x.fill();
+        px += 16;
+      } else {
+        satin(x, () => { x.moveTo(px, py); x.lineTo(px + cl.w, py + 1); x.lineTo(px + cl.w + flap, py + cl.h); x.lineTo(px + flap * 0.6, py + cl.h - 1); x.closePath(); }, cl.c, { angle: 0.3, gap: 2, outline: C.rose, ow: 1 });
+        knot(x, px + 1, py, 1.5, C.orange); knot(x, px + cl.w - 1, py + 1, 1.5, C.orange);
+        px += cl.w + 4;
+      }
+    }
+  }
+  // The little flag (it flutters east: the Wind is always behind us).
+  const fl = Math.sin(t * (o.gusty ? 14 : 5)) * (o.gusty ? 4 : 1.5);
+  satin(x, () => { x.moveTo(-87, -108); x.quadraticCurveTo(-74, -106 + fl, -62, -100 + fl); x.quadraticCurveTo(-74, -96 - fl * 0.5, -87, -94); x.closePath(); }, C.rose, { angle: 0.1, gap: 2 });
+  // The sail, at the end: every piece of Pim's needlework sewn into one, pearls and all.
+  if (o.sail) {
+    const fill = o.sailFill ?? 1, bulge = 18 * fill;
+    satin(x, () => { x.moveTo(-86, -104); x.quadraticCurveTo(-30 + bulge, -60, -84, -14); x.closePath(); }, C.linen, { angle: 1.2, gap: 2.4, outline: C.rose, ow: 2 });
+    // Patchwork seams, and the ribbons round the edge.
+    running(x, [[-86, -80], [-62 + bulge * 0.6, -78]], C.pink, { w: 1.4, on: 3, off: 2 });
+    running(x, [[-86, -56], [-55 + bulge * 0.8, -56]], C.sky, { w: 1.4, on: 3, off: 2 });
+    running(x, [[-86, -34], [-66 + bulge * 0.6, -34]], C.gold, { w: 1.4, on: 3, off: 2 });
+    for (const [a, b, tt] of [[-78, -92, 4], [-72, -70, 8], [-66 + bulge * 0.4, -60, 12], [-76, -44, 15], [-70, -28, 16]]) pearlAt(x, tt, a, b, 4);
+    for (let i = 0; i < 6; i++) { const yy = -100 + i * 15; knot(x, -86, yy, 2.2, [C.sky, C.gold][i % 2]); }
+  }
+  // Engine housing at the stern, with its exhaust (or, knitted, its tea cozy).
+  if (o.cozy) {
+    satin(x, () => { x.moveTo(-82, -6); x.quadraticCurveTo(-82, -30, -66, -30); x.quadraticCurveTo(-50, -30, -50, -6); x.closePath(); }, C.lime, { angle: 1.57, gap: 3, outline: C.green });
+    for (let i = 0; i < 4; i++) running(x, [[-80, -10 - i * 5], [-52, -10 - i * 5]], C.green, { w: 1.2, on: 2, off: 2 });
+    knot(x, -66, -33, 4, C.rose);
+  } else {
+    satin(x, () => x.rect(-80, -26, 28, 20), C.navy, { angle: 0, gap: 2.4, outline: C.deep });
+    x.strokeStyle = C.ink; x.lineWidth = 3; x.beginPath(); x.moveTo(-58, -26); x.lineTo(-58, -36); x.stroke();
+  }
+  // Put-put smoke: little knots drifting up and east (the Wind is behind us).
+  if (!o.sail || o.engine) for (let i = 0; i < (o.cozy ? 2 : 4); i++) {
+    const p = (t * 0.7 + i / 4) % 1;
+    knot(x, -58 + p * 22, -40 - p * 26, 2 + p * 3, `rgba(104,174,212,${0.75 * (1 - p)})`);
+  }
+  // The hull: red with a white stripe and a navy waterline; the bow lifts to the east.
+  const hull = () => { x.moveTo(-100, -8); x.lineTo(96, -8); x.quadraticCurveTo(116, -12, 122, -22); x.quadraticCurveTo(116, 18, 70, 22); x.lineTo(-82, 22); x.quadraticCurveTo(-98, 18, -100, -8); x.closePath(); };
+  satin(x, hull, C.red, { angle: 0.15, gap: 2.6, outline: C.maroon, ow: 2 });
+  x.save(); x.beginPath(); hull(); x.clip();
+  satin(x, () => x.rect(-110, 2, 240, 6), C.linen, { angle: 0, gap: 2 });
+  satin(x, () => x.rect(-110, 16, 240, 8), C.deep, { angle: 0, gap: 2 });
+  x.restore();
+  // The name, in gold chain stitch.
+  if (o.name) { label(x, 'TUPPENCE', 60, -1, { size: 9, color: C.gold, bold: true }); running(x, [[28, 5], [92, 5]], C.gold, { w: 1, on: 2, off: 1.5 }); }
+  // The rail, and the Second-Place Ribbons hanging off it (one per Fair).
+  running(x, [[-98, -12], [100, -12]], C.linen, { w: 1.4, on: 4, off: 2 });
+  for (let i = 0; i < Math.min(o.ribbons, 12); i++) {
+    const rx = -92 + i * 15, sw = Math.sin(t * 2 + i) * (o.gusty ? 2.5 : 0.6);
+    x.strokeStyle = C.sky; x.lineWidth = 2; x.beginPath(); x.moveTo(rx, -10); x.lineTo(rx - 2 + sw, -1); x.moveTo(rx, -10); x.lineTo(rx + 2 + sw, -1); x.stroke();
+    knot(x, rx, -12, 3.6, C.sky); knot(x, rx, -12, 1.5, C.linen);
+  }
+  if (o.first) { knot(x, 104, -10, 7, C.gold); knot(x, 104, -10, 3.5, C.rose); x.strokeStyle = C.gold; x.lineWidth = 2.5; x.beginPath(); x.moveTo(101, -4); x.lineTo(99, 8); x.moveTo(107, -4); x.lineTo(109, 8); x.stroke(); }
+  // The cabin: linen walls, a navy roof, two portholes.
+  satin(x, () => x.rect(-30, -50, 66, 42), C.linen, { angle: 1.57, gap: 2.6, outline: C.navy, ow: 1.6 });
+  satin(x, () => { x.moveTo(-36, -50); x.lineTo(42, -50); x.lineTo(38, -58); x.lineTo(-32, -58); x.closePath(); }, C.navy, { angle: 0, gap: 2.2 });
+  for (const wx of [-12, 18]) { satin(x, () => x.arc(wx, -30, 7, 0, 7), C.sky, { angle: 0.8, gap: 2, outline: C.navy, ow: 2 }); }
+  // Regina's autograph, framed in the back porthole.
+  if (o.autograph) { satin(x, () => x.rect(-18, -36, 12, 12), C.gold, { angle: 0, gap: 1.8, outline: C.maroon }); x.fillStyle = C.linen; x.fillRect(-16, -34, 8, 8); running(x, [[-15, -29], [-13, -31], [-11, -28], [-9, -31]], C.navy, { w: 0.9, on: 1.5, off: 0.6 }); }
+  // A plaque on the cabin for every level of Second-Place Pride.
+  if (o.pride) { satin(x, () => x.rect(-24, -19, 22, 8), C.gold, { angle: 0, gap: 1.6, outline: C.maroon, ow: 1 }); label(x, '2nd', -13, -15, { size: 7, color: C.maroon, bold: true }); for (let i = 0; i < Math.min(5, o.pride); i++) knot(x, -22 + i * 4.5, -9, 1.2, C.gold); }
+  // Pim's matchmaking: a little heart sign on the cabin wall.
+  if (o.pair) { satin(x, () => { x.moveTo(30, -18); x.bezierCurveTo(30, -26, 22, -24, 22, -20); x.bezierCurveTo(22, -24, 14, -26, 14, -18); x.lineTo(22, -10); x.closePath(); }, C.rose, { angle: 0.6, gap: 1.8 }); }
+  // The brass bell by the door.
+  if (o.bell) { x.strokeStyle = C.maroon; x.lineWidth = 1.5; x.beginPath(); x.moveTo(36, -44); x.lineTo(44, -44); x.stroke(); x.save(); x.translate(44, -44); x.rotate(Math.sin(o.ding * 20) * o.ding * 0.6); satin(x, () => { x.moveTo(-4, 9); x.quadraticCurveTo(-4, 1, 0, 1); x.quadraticCurveTo(4, 1, 4, 9); x.closePath(); }, C.gold, { angle: 1.57, gap: 1.6, outline: C.maroon, ow: 1 }); knot(x, 0, 10, 1.4, C.maroon); x.restore(); }
+  // On the roof: the cake for Regina, and the weathervane (which points at Regina, until the end).
+  if (o.cake) { satin(x, () => x.rect(-24, -68, 18, 10), C.pink, { angle: 1.57, gap: 1.8, outline: C.rose }); satin(x, () => x.rect(-24, -70, 18, 3), C.linen, { angle: 0, gap: 1.4 }); knot(x, -15, -73, 2.2, C.red); }
+  if (o.vane) {
+    x.strokeStyle = C.ink; x.lineWidth = 1.5; x.beginPath(); x.moveTo(20, -58); x.lineTo(20, -82); x.moveTo(14, -76); x.lineTo(26, -76); x.stroke();
+    x.save(); x.translate(20, -86); x.scale(o.vaneDir || 1, 1);
+    satin(x, () => { x.moveTo(-9, 3); x.quadraticCurveTo(-6, -6, 2, -5); x.lineTo(4, -10); x.lineTo(7, -5); x.lineTo(10, -2); x.lineTo(6, 3); x.closePath(); }, C.gold, { angle: 0.3, gap: 1.6, outline: C.maroon, ow: 1 });
+    x.restore();
+  }
+  // A beeswax pot and a sack of porridge oats on the foredeck.
+  if (o.polish) { satin(x, () => x.rect(48, -20, 10, 11), C.gold, { angle: 1.57, gap: 1.6, outline: C.orange, ow: 1 }); satin(x, () => x.rect(47, -22, 12, 3), C.orange, { angle: 0, gap: 1.4 }); }
+  if (o.feed) { satin(x, () => { x.moveTo(64, -9); x.quadraticCurveTo(62, -24, 70, -26); x.quadraticCurveTo(78, -24, 76, -9); x.closePath(); }, C.linen, { angle: 0.4, gap: 2, outline: C.orange, ow: 1.2 }); label(x, 'OATS', 70, -16, { size: 5, color: C.orange, bold: true }); }
+  // The pinwheel at the bow: it spins whenever the Wind goes by.
+  if (o.pinwheel) {
+    x.strokeStyle = C.maroon; x.lineWidth = 1.5; x.beginPath(); x.moveTo(110, -16); x.lineTo(112, -40); x.stroke();
+    x.save(); x.translate(112, -42); x.rotate(o.spin);
+    for (let i = 0; i < 4; i++) { x.rotate(Math.PI / 2); satin(x, () => { x.moveTo(0, 0); x.lineTo(9, -2); x.lineTo(5, 5); x.closePath(); }, [C.rose, C.gold, C.sky, C.lime][i], { gap: 1.5 }); }
+    knot(x, 0, 0, 1.8, C.linen); x.restore();
+  }
+  // The diving rope: longer with every level of Deeper Dives.
+  if (o.seed) { const len = 10 + o.seed * 7; x.strokeStyle = C.orange; x.lineWidth = 1.4; x.setLineDash([3, 1.5]); x.beginPath(); x.moveTo(-98, -6); x.quadraticCurveTo(-110, 10, -104, 20 + len); x.stroke(); x.setLineDash([]); knot(x, -104, 22 + len, 3, C.ink); }
+  // Pim, between the engine and the cabin.
+  x.save(); x.translate(-42, -8); drawPim(x, t, o); x.restore();
+  x.restore();
+}
+// Pim: an unpaid intern in a striped jumper. Goggles, a feather duster, a sou'wester, a spyglass,
+// and a ribbon for every raise, as bought.
+function drawPim(x, t, o) {
+  const bob = o.diving ? -Math.abs(Math.sin(o.diving * Math.PI)) * 8 : Math.sin(t * 2.4) * 0.6;
+  x.save(); x.translate(0, bob);
+  // Legs.
+  x.strokeStyle = C.navy; x.lineWidth = 3; x.lineCap = 'round'; x.beginPath(); x.moveTo(-3, 0); x.lineTo(-3, -9); x.moveTo(3, 0); x.lineTo(3, -9); x.stroke();
+  // Jumper: rose and linen stripes.
+  satin(x, () => { x.moveTo(-7, -9); x.lineTo(7, -9); x.lineTo(6, -24); x.lineTo(-6, -24); x.closePath(); }, C.rose, { angle: 1.57, gap: 1.8 });
+  for (let i = 0; i < 3; i++) running(x, [[-6.5, -12 - i * 4.5], [6.5, -12 - i * 4.5]], C.linen, { w: 1.4, on: 2, off: 1 });
+  for (let i = 0; i < Math.min(5, o.wage); i++) { knot(x, -4 + i * 2.2, -20, 1.3, C.sky); }
+  // Arms: one holds the duster (when there is one) or the spyglass (when there's nothing to dust).
+  const sw = o.dusting ? Math.sin(o.dusting * 30) * 0.5 : 0;
+  x.strokeStyle = C.rose; x.lineWidth = 2.6;
+  x.beginPath(); x.moveTo(-6, -22); x.lineTo(-10, -13); x.stroke();
+  // With the spyglass in one hand, the feather duster lives in the other.
+  if (o.spyglass && o.duster && !o.dusting) { x.strokeStyle = C.maroon; x.lineWidth = 1.4; x.beginPath(); x.moveTo(-10, -13); x.lineTo(-15, -4); x.stroke(); for (let i = 0; i < 5; i++) { x.strokeStyle = [C.pink, C.linen, C.gold][i % 3]; x.lineWidth = 2; x.beginPath(); x.moveTo(-15, -4); x.lineTo(-20 - i * 0.8, 1 + i * 1.2); x.stroke(); } x.strokeStyle = C.rose; x.lineWidth = 2.6; }
+  if (o.spyglass && !o.dusting) {
+    x.beginPath(); x.moveTo(6, -22); x.lineTo(10, -29); x.stroke();
+    satin(x, () => { x.save(); x.translate(12, -31); x.rotate(-0.15); x.rect(-3, -2, 14, 4); x.restore(); }, C.gold, { angle: 0, gap: 1.4, outline: C.maroon, ow: 0.8 });
+  } else {
+    x.save(); x.translate(6, -22); x.rotate(-0.6 + sw);
+    x.beginPath(); x.moveTo(0, 0); x.lineTo(8, -3); x.stroke();
+    if (o.duster) { x.strokeStyle = C.maroon; x.lineWidth = 1.4; x.beginPath(); x.moveTo(8, -3); x.lineTo(16, -8); x.stroke(); for (let i = 0; i < 5; i++) { x.strokeStyle = [C.pink, C.linen, C.gold][i % 3]; x.lineWidth = 2; x.beginPath(); x.moveTo(16, -8); x.lineTo(22 + i, -14 + i * 2.2); x.stroke(); } }
+    x.restore();
+  }
+  // Head.
+  satin(x, () => x.arc(0, -30, 6, 0, 7), '#ffd9c2', { angle: 0.5, gap: 1.6, sheen: 'rgba(255,128,164,0.3)' });
+  knot(x, -2.2, -30.5, 0.9, C.ink); knot(x, 2.4, -30.5, 0.9, C.ink);
+  x.strokeStyle = C.rose; x.lineWidth = 0.9; x.beginPath(); x.arc(0, -28.5, 2, 0.3, 2.8); x.stroke();
+  if (o.goggles) { x.strokeStyle = C.navy; x.lineWidth = 1.2; x.beginPath(); x.moveTo(-6, -34); x.lineTo(6, -34); x.stroke(); knot(x, -2.5, -34, 2, C.sky); knot(x, 2.5, -34, 2, C.sky); }
+  if (o.hat) satin(x, () => { x.moveTo(-9, -33); x.quadraticCurveTo(-7, -42, 0, -42); x.quadraticCurveTo(7, -42, 8, -35); x.lineTo(11, -31); x.lineTo(-10, -32); x.closePath(); }, C.gold, { angle: 0.2, gap: 1.8, outline: C.orange, ow: 1 });
+  else { x.fillStyle = C.orange; x.beginPath(); x.arc(0, -33, 6, Math.PI, 0); x.fill(); }
+  x.restore();
+}
+// Regina: a tall white racing yacht, the Wind's darling. `limp` slackens the sail (at the end).
+function drawRegina(x, t, limp = 0) {
+  x.save(); x.rotate(Math.sin(t * 1.3 + 1) * 0.015);
+  x.strokeStyle = C.ink; x.lineWidth = 2; x.beginPath(); x.moveTo(0, -4); x.lineTo(0, -118); x.stroke();
+  const b = 26 * (1 - limp);
+  satin(x, () => { x.moveTo(2, -116); x.quadraticCurveTo(30 + b, -60, 4 + (1 - limp) * 40, -10); x.lineTo(2, -10); x.closePath(); }, C.linen, { angle: 1.4, gap: 2.4, outline: C.navy });
+  satin(x, () => { x.moveTo(-2, -100); x.quadraticCurveTo(-18 - b * 0.4, -54, -26 * (1 - limp * 0.6), -12); x.lineTo(-2, -12); x.closePath(); }, C.linen, { angle: 1.8, gap: 2.4, outline: C.navy });
+  label(x, 'R', 18 + b * 0.3, -66, { size: 16, color: C.rose, font: 'head' });
+  satin(x, () => { x.moveTo(-44, -6); x.lineTo(54, -6); x.quadraticCurveTo(44, 12, 30, 12); x.lineTo(-34, 12); x.closePath(); }, C.linen, { angle: 0.1, gap: 2.2, outline: C.navy, ow: 1.6 });
+  running(x, [[-40, 2], [48, 2]], C.gold, { w: 2, on: 5, off: 2 });
+  x.restore();
+}
+// The West Wind: a cloud with cheeks, in satin stitch, blowing east. mood: -1 cross, 0 puffing, 1 in love.
+function drawWind(x, t, puff, mood) {
+  x.save();
+  const s = 1 + puff * 0.08;
+  x.scale(s, s);
+  const cloud = () => { for (const [a, b, r] of [[-30, 4, 22], [-6, -12, 26], [22, -4, 24], [36, 12, 18], [6, 16, 22], [-22, 18, 18]]) { x.moveTo(a + r, b); x.arc(a, b, r, 0, Math.PI * 2); } };
+  satin(x, cloud, '#e3f1f9', { angle: 0.4, gap: 2.4, sheen: 'rgba(255,255,255,0.7)' });
+  x.save(); x.beginPath(); cloud(); x.strokeStyle = C.sky; x.lineWidth = 2; x.setLineDash([4, 2]); x.stroke(); x.restore();
+  // Cheeks.
+  knot(x, -10, 12, 6 + puff * 3, mood > 0 ? C.rose : C.pink);
+  knot(x, 22, 12, 5 + puff * 3, mood > 0 ? C.rose : C.pink);
+  // Eyes and brows.
+  x.strokeStyle = C.deep; x.lineWidth = 2; x.lineCap = 'round';
+  if (mood > 0) { for (const ex of [-6, 16]) { x.beginPath(); x.arc(ex, 1, 3.5, Math.PI * 1.1, Math.PI * 1.9); x.stroke(); } }
+  else {
+    knot(x, -6, 0, 2.2, C.deep); knot(x, 16, 0, 2.2, C.deep);
+    x.beginPath(); x.moveTo(-11, -8 + (mood < 0 ? -2 : 0)); x.lineTo(-1, -5 + (mood < 0 ? 2 : 0)); x.moveTo(11, -5 + (mood < 0 ? 2 : 0)); x.lineTo(21, -8 + (mood < 0 ? -2 : 0)); x.stroke();
+  }
+  // Mouth: pursed and blowing, or smiling.
+  if (mood > 0 && puff < 0.3) { x.beginPath(); x.arc(6, 12, 6, 0.2, Math.PI - 0.2); x.stroke(); }
+  else { satin(x, () => oval(x, 34 + puff * 2, 12, 4 + puff * 2, 3.5 + puff), C.rose, { gap: 1.5 }); }
+  x.restore();
+}
+
+// ---------- Layout ----------
+const cv = $('stage'), g = cv.getContext('2d');
+let W = 800, H = 600, k = 1, tall = false;
+let SC = { x: 0, y: 0, s: 1, h: 220 }, DK = {}, HP = {};
+function layout() {
+  const cw = cv.clientWidth || 800;
+  tall = cw < 560;
+  if (tall) {
+    W = 440; SC = { x: 0, y: 0, s: 440 / 800, h: 220 * 440 / 800 };
+    DK = { x: 6, y: SC.h + 8, w: 428, h: 344 };
+    HP = { x: 6, y: DK.y + DK.h + 8, w: 428, h: 300 };
+    H = HP.y + HP.h + 6;
+  } else {
+    W = 800; SC = { x: 0, y: 0, s: 1, h: 220 };
+    DK = { x: 12, y: 228, w: 392, h: 362 };
+    HP = { x: 414, y: 228, w: 374, h: 362 };
+    H = 600;
+  }
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  k = cw / W;
+  cv.width = Math.round(cw * dpr); cv.height = Math.round(H * k * dpr);
+  cv.style.height = `${H * k}px`;
+  g.setTransform(k * dpr, 0, 0, k * dpr, 0, 0);
+  bgLayer = null; deckSig = '';
+}
+// Grid geometry for the current deck size.
+function grid() {
+  const [c, r] = E.size(S);
+  const top = DK.y + 30, avail = DK.h - 56;
+  const cell = Math.min(66, (DK.w - 44) / c, avail / r);
+  const gw = cell * c, gh = cell * r;
+  const ox = DK.x + 30 + (DK.w - 36 - gw) / 2, oy = top + (avail - gh) / 2;
+  return { c, r, cell, ox, oy, gw, gh };
+}
+const cellXY = (G, i) => [G.ox + (i % E.MAXC + 0.5) * G.cell, G.oy + (Math.floor(i / E.MAXC) + 0.5) * G.cell];
+function hoopGeo() {
+  const r = Math.min(HP.w * 0.4, (HP.h - 70) / 2);
+  return { cx: HP.x + HP.w / 2, cy: HP.y + 44 + r, r };
+}
+function spotGeo(sp, j) {
+  const h = hoopGeo(), d = h.r * 0.5;
+  const pos = [[0, -d], [-d, 0.05 * d], [d, 0.05 * d], [0, d]][j];
+  return { x: h.cx + pos[0], y: h.cy + pos[1], r: Math.min(h.r * 0.3, 10 + sp.t * 1.6) };
+}
+
+// ---------- Drawing ----------
+let bgLayer = null;
+function background() {
+  const c = document.createElement('canvas'), dpr = Math.min(2, devicePixelRatio || 1);
+  c.width = Math.round(W * k * dpr); c.height = Math.round(H * k * dpr);
+  const x = c.getContext('2d'); x.setTransform(k * dpr, 0, 0, k * dpr, 0, 0);
+  seed = 19;
+  linen(x, W, H);
+  // The scene: sky stitches, the far shore with the Fair, the lake.
+  x.save(); x.translate(SC.x, SC.y); x.scale(SC.s, SC.s);
+  for (let j = 0; j < 4; j++) running(x, [[140 + j * 90, 30 + j * 12], [230 + j * 90, 30 + j * 12]], 'rgba(104,174,212,0.45)', { w: 1.4, on: 8, off: 6 });
+  satin(x, () => { x.moveTo(560, 172); x.quadraticCurveTo(620, 112, 700, 128); x.quadraticCurveTo(760, 110, 800, 124); x.lineTo(800, 172); x.closePath(); }, C.green, { angle: 0.5, gap: 2.6, outline: C.teal });
+  // The Fair: a striped tent with pennants.
+  satin(x, () => { x.moveTo(712, 132); x.lineTo(736, 106); x.lineTo(760, 132); x.closePath(); }, C.pink, { angle: 1.57, gap: 3 });
+  for (let i = 0; i < 4; i++) satin(x, () => { x.moveTo(716 + i * 12, 132); x.lineTo(736, 106); x.lineTo(722 + i * 12, 132); x.closePath(); }, C.linen, { gap: 2 });
+  running(x, [[736, 106], [736, 96]], C.maroon, { w: 1.5, on: 3, off: 0.1 });
+  satin(x, () => { x.moveTo(736, 96); x.lineTo(748, 99); x.lineTo(736, 102); x.closePath(); }, C.rose, { gap: 1.5 });
+  for (let i = 0; i < 6; i++) satin(x, () => { const px = 690 + i * 10; x.moveTo(px, 118); x.lineTo(px + 8, 119); x.lineTo(px + 4, 125); x.closePath(); }, [C.gold, C.sky, C.rose][i % 3], { gap: 1.4 });
+  label(x, 'THE PEARL FAIR', 736, 142, { size: 10, color: C.maroon, bold: true });
+  // The lake: rows of running stitch in three blues.
+  for (let j = 0; j < 9; j++) {
+    const y = 166 + j * 6.4, col = [C.sky, C.teal, C.navy][j % 3];
+    running(x, [[0, y], [800, y]], col, { w: 2, on: 9 + (j % 3) * 2, off: 5, phase: j * 7 });
+  }
+  x.restore();
+  // The deck tray: wooden planks in satin stitch, a stitched border.
+  const G = grid();
+  // The West Wind's side of the deck.
+  label(x, tall ? 'Tuppence’s deck' : 'Tuppence’s deck · the Wind blows from the west →', DK.x + DK.w / 2, DK.y + 13, { size: 13, color: C.navy, italic: true });
+  satin(x, () => x.roundRect(G.ox - 10, G.oy - 10, G.gw + 20, G.gh + 20, 10), C.orange, { angle: 0, gap: 3.2, outline: C.maroon, ow: 2 });
+  for (let r = 1; r < G.r * 2; r++) running(x, [[G.ox - 8, G.oy + r * G.cell / 2], [G.ox + G.gw + 8, G.oy + r * G.cell / 2]], 'rgba(127,6,34,0.45)', { w: 1, on: 5, off: 3 });
+  // Little wind swirls down the west edge, one per row.
+  for (let r = 0; r < G.r; r++) { const y = G.oy + (r + 0.5) * G.cell; running(x, [[G.ox - 26, y - 3], [G.ox - 18, y - 6], [G.ox - 13, y]], C.sky, { w: 1.5, on: 2.5, off: 1.5 }); running(x, [[G.ox - 28, y + 4], [G.ox - 15, y + 4]], C.sky, { w: 1.5, on: 2.5, off: 1.5 }); }
+  for (const i of E.cups(S)) { const [cx, cy] = cellXY(G, i); drawCup(x, cx, cy, G.cell); }
+  return c;
+}
+let deckSig = '';
+function staticLayer() {
+  const sig = `${W}|${H}|${k}|${E.size(S).join('x')}`;
+  if (!bgLayer || sig !== deckSig) { bgLayer = background(); deckSig = sig; }
+  return bgLayer;
+}
+
+let clock = 0, gustAnim = 0, gustRows = [], spin = 0, ding = 0, divingT = 0, dustingT = 0, windPuff = 0;
+let anims = [], floats = [], drag = null, sel = null, cursor = null, hover = null, rubbing = null;
+let finale = null;
+function sceneState() {
+  const pan = Math.min(E.panel(S), E.SAIL.length);
+  return {
+    pinwheel: !!S.one.pinwheel, hat: !!S.one.hat, cozy: !!S.one.cozy, bell: !!S.one.bell, spyglass: !!S.one.spyglass,
+    name: !!S.one.name, autograph: !!S.one.autograph, lantern: !!S.one.lantern, cake: !!S.one.cake, vane: !!S.one.vane,
+    goggles: S.lv.dive > 0, duster: S.lv.duster > 0, polish: S.lv.polish > 0, feed: S.lv.feed > 0, pair: S.lv.pair > 0,
+    pride: S.rl.pride, wage: S.rl.wage, seed: S.rl.seed, sock: S.rl.start > 0,
+    ribbons: S.fairs, panels: pan, spin, ding, gusty: gustAnim > 0, diving: divingT, dusting: dustingT,
+    sail: S.ended || (finale && finale.t > 3), sailFill: S.ended ? 1 : finale ? Math.min(1, Math.max(0, (finale.t - 5) / 2)) : 0,
+    engine: true, first: S.ended || (finale && finale.t > 16), vaneDir: S.ended || (finale && finale.t > 4.5) ? -1 : 1,
+  };
+}
+function render() {
+  g.drawImage(staticLayer(), 0, 0, W, H);
+  // ----- the scene -----
+  g.save(); g.beginPath(); g.rect(0, 0, W, SC.h); g.clip(); g.translate(SC.x, SC.y); g.scale(SC.s, SC.s);
+  const end = S.ended, ft = finale ? finale.t : 0;
+  // Regina, far off by the Fair (and, at the end, towed home behind Tuppence).
+  const tx = end ? 560 : finale ? 300 + Math.max(0, Math.min(1, (ft - 7) / 8)) * 260 : 300;
+  if (end || (finale && ft > 15)) {
+    g.save(); g.translate(tx - 190, 172); g.scale(0.62, 0.62); drawRegina(g, clock, 1); g.restore();
+    running(g, [[tx - 100, 166], [tx - 160, 168]], C.orange, { w: 1.6, on: 3, off: 2 });
+  } else { g.save(); g.translate(640, 170); g.scale(0.7, 0.7); drawRegina(g, clock, finale ? Math.min(1, Math.max(0, (ft - 5) / 3)) : 0); g.restore(); }
+  // The West Wind, top left; its gusts are running stitches racing east.
+  const mood = end || (finale && ft > 4) ? 1 : -1;
+  g.save(); g.translate(78, 66); drawWind(g, clock, windPuff, mood); g.restore();
+  if (gustAnim > 0 || (finale && ft > 5 && ft < 15)) {
+    const p = finale ? (ft * 0.6) % 1 : 1 - gustAnim;
+    for (let i = 0; i < 4; i++) { const y = 60 + i * 22, x0 = 120 + p * 420; running(g, [[x0, y], [x0 + 70, y + 4], [x0 + 120, y]], 'rgba(104,174,212,0.85)', { w: 2, on: 7, off: 4 }); }
+  }
+  if (finale && ft > 3 && ft < 5.5) { label(g, '…oh!', 130, 28, { size: 16, color: C.rose, font: 'head' }); }
+  // Tuppence.
+  const o = sceneState();
+  g.save(); g.translate(tx, 174 + Math.sin(clock * 1.7) * 1.2); g.scale(1.25, 1.25); drawTuppence(g, clock, o); g.restore();
+  // Splashes in the lake.
+  for (const a of anims) if (a.kind === 'splash') { const p = a.t / a.d; g.strokeStyle = `rgba(104,174,212,${1 - p})`; g.lineWidth = 2; g.setLineDash([3, 2]); g.beginPath(); g.ellipse(a.x, a.y, 8 + p * 30, 3 + p * 8, 0, 0, 7); g.stroke(); g.setLineDash([]); }
+  g.restore();
+  // Highlight the lake while dragging a pearl: drop it there to put it back.
+  if (drag && drag.moved) {
+    g.save(); g.strokeStyle = C.rose; g.lineWidth = 2; g.setLineDash([6, 4]); g.strokeRect(4, SC.h * 0.74, W - 8, SC.h * 0.25); g.restore();
+    label(g, 'drop in the lake to put it back', W / 2, SC.h * 0.86, { size: tall ? 12 : 14, color: C.rose, italic: true, bold: true });
+  }
+  // ----- the deck -----
+  drawDeck();
+  // ----- the hoop -----
+  drawHoop();
+  // The pearl in hand.
+  if (drag && drag.moved && S.deck[drag.from]) { const G = grid(); const p = S.deck[drag.from]; pearlAt(g, p.t, drag.x, drag.y, pearlR(p.t, G.cell) * 1.1, { gritty: p.d }); }
+  for (const f of floats) { const p = f.t / (f.d || 1.2); g.save(); g.globalAlpha = 1 - p * p; label(g, f.text, f.x, f.y - p * 26, { size: f.size || 15, color: f.color || C.rose, bold: true }); g.restore(); }
+  if (finale) drawFinaleText();
+}
+function drawDeck() {
+  const G = grid();
+  const big = S.ended || (finale && finale.great);
+  // Grit flying on the gust: running stitches along each row, to the first pearl they meet.
+  for (const a of anims) if (a.kind === 'gust') {
+    const p = a.t / a.d;
+    for (const row of a.rows) {
+      const y = G.oy + (row.r + 0.5) * G.cell, x1 = G.ox + (row.stop + (row.stop >= G.c ? 0 : 0.5)) * G.cell;
+      const x0 = G.ox - 24, xe = x0 + (x1 - x0) * Math.min(1, p * 1.6);
+      running(g, [[x0, y - 4], [xe, y - 6]], `rgba(255,132,38,${1 - p})`, { w: 2, on: 4, off: 3 });
+      running(g, [[x0, y + 4], [xe, y + 3]], `rgba(127,6,34,${0.7 * (1 - p)})`, { w: 1.5, on: 2, off: 3 });
+    }
+  }
+  if (big) {
+    const cx = G.ox + G.gw / 2, cy = G.oy + G.gh / 2, r = Math.min(G.gw, G.gh) * 0.42 * (finale ? Math.min(1, finale.grow) : 1);
+    pearlAt(g, E.TOP, cx, cy, r);
+    if (S.ended) label(g, 'The Great Pearl of Lake Linden', cx, G.oy + G.gh + 8, { size: 13, color: C.maroon, italic: true, bold: true });
+  }
+  for (const i of E.cups(S)) {
+    const p = S.deck[i];
+    const [cx, cy] = cellXY(G, i);
+    if (cursor === i && document.activeElement === cv) { g.save(); g.strokeStyle = C.gold; g.lineWidth = 3; g.setLineDash([5, 3]); g.strokeRect(cx - G.cell / 2 + 3, cy - G.cell / 2 + 3, G.cell - 6, G.cell - 6); g.restore(); }
+    if (!p || big) continue;
+    if (drag && drag.moved && drag.from === i) { pearlAt(g, p.t, cx, cy, pearlR(p.t, G.cell), { alpha: 0.25 }); continue; }
+    const pop = anims.find(a => a.kind === 'pop' && a.i === i);
+    const sc = pop ? 1 + 0.35 * Math.sin(Math.min(1, pop.t / pop.d) * Math.PI) : 1;
+    // Twins of the pearl in hand glow, so you can find them.
+    const hand = drag && drag.moved ? S.deck[drag.from] : sel != null ? S.deck[sel] : null;
+    if (hand && hand.t === p.t && i !== (drag ? drag.from : sel) && p.t < E.TOP) { g.save(); g.fillStyle = 'rgba(255,209,0,0.35)'; g.beginPath(); g.arc(cx, cy, G.cell * 0.46, 0, 7); g.fill(); g.restore(); }
+    pearlAt(g, p.t, cx, cy, pearlR(p.t, G.cell), { gritty: p.d, scale: sc });
+    if (sel === i) { g.save(); g.strokeStyle = C.rose; g.lineWidth = 2.5; g.setLineDash([5, 3]); g.lineDashOffset = -clock * 12; g.beginPath(); g.arc(cx, cy, G.cell * 0.46, 0, 7); g.stroke(); g.restore(); }
+  }
+  for (const a of anims) if (a.kind === 'sparkle') { const [cx, cy] = cellXY(G, a.i), p = a.t / a.d; for (let j = 0; j < 5; j++) { const an = j * 1.26 + p; cross(g, cx + Math.cos(an) * G.cell * (0.25 + p * 0.3), cy + Math.sin(an) * G.cell * (0.25 + p * 0.3), 2.5 * (1 - p), C.gold, 1.4); } }
+  // What's under the pointer (or the selection): its name and what it earns.
+  const show = drag && drag.moved ? drag.from : sel ?? hover;
+  const p = show != null ? S.deck[show] : null;
+  if (p && !big) label(g, `${E.tierName(p.t)} · ${p.d ? 'gritty: earns nothing' : pence(E.pearlRate(S, p.t)) + '/s'}${p.t >= E.TOP ? ' · as big as they come' : ''}`, DK.x + DK.w / 2, DK.y + DK.h - 9, { size: 13, color: p.d ? C.maroon : C.navy, bold: true });
+  else if (!big) {
+    const full = !E.empties(S).length;
+    label(g, full ? 'The deck is full: put twins to bed, or a pearl back in the lake.' : 'Drag a pearl onto its twin · tap grit to dust it', DK.x + DK.w / 2, DK.y + DK.h - 9, { size: 13, color: full ? C.rose : C.navy, italic: true });
+  }
+}
+function drawHoop() {
+  const h = hoopGeo();
+  if (!E.hoop(S) && !S.ended) {
+    // Before the first Fair: a stitched sampler with the rules of the lake.
+    const x0 = HP.x + 14, y0 = HP.y + 8, w = HP.w - 28, hh = HP.h - 16;
+    g.save(); g.strokeStyle = C.rose; g.lineWidth = 2; g.setLineDash([6, 3]); g.strokeRect(x0, y0, w, hh); g.restore();
+    for (let i = 0; i < w; i += 12) { cross(g, x0 + 6 + i, y0 + 10, 3, i % 24 ? C.pink : C.sky, 1.4); cross(g, x0 + 6 + i, y0 + hh - 10, 3, i % 24 ? C.pink : C.sky, 1.4); }
+    label(g, 'The Rules of Lake Linden', x0 + w / 2, y0 + 36, { size: tall ? 17 : 19, color: C.rose, font: 'head' });
+    const lines = [
+      ['Two pearls alike, dusted together,', 'wake up as one pearl a size finer.'],
+      ['The lake folk pay a penny a look,', 'but never for grit.'],
+      ['The West Wind blows from the west,', 'and cannot abide an engine.'],
+      [`The Fair takes nothing smaller`, `than a ${E.TIERS[E.fairNeed(S) - 1]} pearl.`],
+    ];
+    const step = (hh - 80) / lines.length;
+    lines.forEach((l, i) => { const y = y0 + 70 + i * step; knot(g, x0 + 22, y + 2, 3, [C.gold, C.sky, C.lime, C.rose][i]); label(g, l[0], x0 + 36, y - 6, { size: tall ? 14 : 15, color: C.navy, align: 'left', italic: true }); label(g, l[1], x0 + 36, y + 13, { size: tall ? 14 : 15, color: C.navy, align: 'left', italic: true }); });
+    return;
+  }
+  // The hoop: two wooden rings with a brass screw at the top.
+  const pan = Math.min(E.panel(S), E.SAIL.length - 1);
+  const P = E.SAIL[pan];
+  g.save();
+  g.beginPath(); g.arc(h.cx, h.cy, h.r, 0, 7); g.clip(); linen(g, W, H, '#fffdf6'); g.restore();
+  // The needlework so far: the panel's own border motif.
+  for (let i = 0; i < 40; i++) {
+    const a = i / 40 * Math.PI * 2, rr = h.r - 12;
+    const px = h.cx + Math.cos(a) * rr, py = h.cy + Math.sin(a) * rr;
+    if (pan === 0) knot(g, px, py, 2.4, i % 2 ? C.pink : C.sky);
+    else if (pan === 1) cross(g, px, py, 3, i % 2 ? C.rose : C.gold, 1.5);
+    else if (pan === 2) satin(g, () => g.arc(px, py, 3.5, 0, 7), [C.lime, C.green][i % 2], { gap: 1.4 });
+    else if (pan === 3) running(g, [[px, py], [h.cx + Math.cos(a + 0.08) * (rr - 6), h.cy + Math.sin(a + 0.08) * (rr - 6)]], C.navy, { w: 2, on: 3, off: 1 });
+    else { cross(g, px, py, 2.6, [C.rose, C.gold, C.sky][i % 3], 1.5); }
+  }
+  running(g, [[h.cx - h.r * 0.7, h.cy + h.r * 0.02], [h.cx + h.r * 0.7, h.cy + h.r * 0.02]], 'rgba(255,128,164,0.5)', { w: 1.4, on: 4, off: 4 });
+  running(g, [[h.cx, h.cy - h.r * 0.7], [h.cx, h.cy + h.r * 0.7]], 'rgba(255,128,164,0.5)', { w: 1.4, on: 4, off: 4 });
+  const done = S.ended || E.sailDone(S);
+  E.SPOTS.forEach((sp, kk) => {
+    if (sp.panel !== pan) return;
+    const q = spotGeo(sp, sp.j);
+    if (S.sewn[kk] || done) {
+      pearlAt(g, sp.t, q.x, q.y, q.r);
+      for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; running(g, [[q.x + Math.cos(a) * q.r, q.y + Math.sin(a) * q.r], [q.x + Math.cos(a) * (q.r + 6), q.y + Math.sin(a) * (q.r + 6)]], C.rose, { w: 1.2, on: 2, off: 1 }); }
+    } else {
+      const want = (drag && drag.moved && S.deck[drag.from]?.t === sp.t) || (sel != null && S.deck[sel]?.t === sp.t);
+      const have = E.pearls(S).some(i => S.deck[i].t === sp.t);
+      g.save(); g.strokeStyle = want ? C.rose : have ? C.plum : 'rgba(35,73,117,0.55)'; g.lineWidth = want ? 3 : 2; g.setLineDash([4, 3]); g.lineDashOffset = want ? -clock * 14 : 0;
+      g.beginPath(); g.arc(q.x, q.y, q.r, 0, 7); g.stroke(); g.restore();
+      if (want) { g.save(); g.fillStyle = 'rgba(255,209,0,0.3)'; g.beginPath(); g.arc(q.x, q.y, q.r, 0, 7); g.fill(); g.restore(); }
+      pearlAt(g, sp.t, q.x, q.y, q.r * 0.45, { alpha: 0.35 });
+      label(g, E.TIERS[sp.t - 1], q.x, q.y + q.r + 9, { size: 12, color: have ? C.plum : C.navy, bold: have, italic: !have });
+    }
+  });
+  for (const a of anims) if (a.kind === 'sewn') { const sp = E.SPOTS[a.k]; if (sp.panel !== pan) continue; const q = spotGeo(sp, sp.j), p = a.t / a.d; g.save(); g.strokeStyle = `rgba(255,38,116,${1 - p})`; g.lineWidth = 2; g.beginPath(); g.arc(q.x, q.y, q.r + p * 20, 0, 7); g.stroke(); g.restore(); }
+  // The rings.
+  g.save(); g.strokeStyle = C.orange; g.lineWidth = 9; g.beginPath(); g.arc(h.cx, h.cy, h.r + 3, 0, 7); g.stroke();
+  g.strokeStyle = C.maroon; g.lineWidth = 1.5; g.setLineDash([5, 3]); g.beginPath(); g.arc(h.cx, h.cy, h.r + 3, 0, 7); g.stroke(); g.restore();
+  satin(g, () => g.rect(h.cx - 7, h.cy - h.r - 16, 14, 10), C.gold, { angle: 0, gap: 1.6, outline: C.maroon });
+  const title = S.ended ? 'The Sail' : `Pim’s ${P.name}`;
+  label(g, title, h.cx, HP.y + 16, { size: tall ? 17 : 19, color: C.rose, font: 'head' });
+  const sewnN = E.SPOTS.filter((_, kk) => S.sewn[kk]).length;
+  label(g, S.ended ? 'every pearl sewn' : `${pan + 1} of ${E.SAIL.length} · sewn pearls: every pearl shines ×${E.sailMult(S).toFixed(2)}`, h.cx, HP.y + HP.h - 10, { size: 13, color: C.navy, italic: true });
+  void sewnN;
+}
+function drawFinaleText() {
+  const lines = [[0, 'Pim sews the last pearl, and unpicks the washing line…'], [3, '…and runs it all up the flagpole. It is a sail.'], [5, 'The West Wind has never seen anything so lovely.'], [8, 'It blows the grit off every pearl, and rolls them all into one.'], [12, 'And it fills Tuppence’s sail, all the way to the Fair.'], [16, 'Regina’s sails hang still. Tuppence putters back to tow Regina in.']];
+  let cur = lines[0][1];
+  for (const [t, l] of lines) if (finale.t >= t) cur = l;
+  g.save(); g.fillStyle = 'rgba(250,253,255,0.88)'; g.fillRect(0, SC.h - 30, W, 28); g.restore();
+  label(g, cur, W / 2, SC.h - 16, { size: tall ? 12 : 16, color: C.rose, italic: true, bold: true });
+}
+
+// ---------- Playing ----------
+function toLogical(e) { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) / k, y: (e.clientY - r.top) / k }; }
+function cellAt(p) {
+  const G = grid();
+  const c = Math.floor((p.x - G.ox) / G.cell), r = Math.floor((p.y - G.oy) / G.cell);
+  if (c < 0 || r < 0 || c >= G.c || r >= G.r) return null;
+  return r * E.MAXC + c;
+}
+function spotAt(p) {
+  if (!E.hoop(S)) return null;
+  for (const s of E.openSpots(S)) { const q = spotGeo(s, s.j); if (Math.hypot(p.x - q.x, p.y - q.y) < q.r + 12) return s.k; }
+  return null;
+}
+const inLake = p => p.y < SC.h && p.y > SC.h * 0.6;
+const playing = () => !S.ended && !finale && $('over').hidden;
+
+cv.addEventListener('pointerdown', e => {
+  if (!playing()) return;
+  cv.setPointerCapture(e.pointerId);
+  const p = toLogical(e), i = cellAt(p);
+  if (i != null && S.deck[i]) { drag = { from: i, x: p.x, y: p.y, sx: p.x, sy: p.y, moved: false, id: e.pointerId }; }
+  else if (i != null && sel != null) { act(sel, { cell: i }); }
+  else if (spotAt(p) != null && sel != null) { act(sel, { spot: spotAt(p) }); }
+  else if (inLake(p) && sel != null) { act(sel, { lake: true }); }
+  else { rubbing = { id: e.pointerId }; sel = null; }
+  e.preventDefault();
+});
+cv.addEventListener('pointermove', e => {
+  const p = toLogical(e);
+  if (drag && e.pointerId === drag.id) {
+    drag.x = p.x; drag.y = p.y;
+    if (!drag.moved && Math.hypot(p.x - drag.sx, p.y - drag.sy) > 8) { drag.moved = true; sel = null; sfx.pick(); }
+    return;
+  }
+  const i = cellAt(p);
+  hover = i != null && S.deck[i] ? i : null;
+  cv.style.cursor = hover != null ? 'grab' : 'default';
+  // Rubbing across gritty pearls dusts them.
+  if (rubbing && e.pointerId === rubbing.id && i != null && S.deck[i]?.d) doDust(i);
+});
+function endPointer(e) {
+  if (drag && e.pointerId === drag.id) {
+    const d = drag; drag = null;
+    if (!d.moved) tap(d.from);
+    else { const p = { x: d.x, y: d.y }, i = cellAt(p), sp = spotAt(p); if (i != null) act(d.from, { cell: i }); else if (sp != null) act(d.from, { spot: sp }); else if (inLake(p)) act(d.from, { lake: true }); }
+  }
+  if (rubbing && e.pointerId === rubbing.id) rubbing = null;
+}
+cv.addEventListener('pointerup', endPointer);
+cv.addEventListener('pointercancel', e => { if (drag && e.pointerId === drag.id) drag = null; rubbing = null; });
+cv.addEventListener('pointerleave', () => { hover = null; });
+
+function tap(i) {
+  const p = S.deck[i];
+  if (!p) return;
+  if (p.d) { doDust(i); return; }
+  if (sel === i) { sel = null; return; }
+  if (sel != null && S.deck[sel]) { act(sel, { cell: i }); return; }
+  sel = i; sfx.pick();
+}
+function doDust(i) {
+  if (!E.dust(S, i)) return;
+  sfx.dust(); anims.push({ kind: 'sparkle', i, t: 0, d: 0.5 });
+  if (S.dusted === 1) say('THE NARRATOR', 'And with one flick of a sleeve, the grit was gone, and the pearl shone, and the lake folk paid their penny again.');
+}
+// Put a pearl somewhere: onto its twin (merge), another cup (move or swap), the hoop (sew), the lake.
+function act(from, to) {
+  const p = S.deck[from];
+  sel = null;
+  if (!p) return;
+  const G = grid();
+  if (to.cell != null && to.cell !== from) {
+    const q = S.deck[to.cell];
+    if (q && q.t === p.t && p.t < E.TOP) {
+      E.merge(S, from, to.cell);
+      anims.push({ kind: 'pop', i: to.cell, t: 0, d: 0.35 });
+      sfx.merge(p.t + 1);
+      const [cx, cy] = cellXY(G, to.cell);
+      if (p.t + 1 > (S.firstSaid || 0)) firstOf(p.t + 1, cx, cy);
+      else if (S.merges === 1) say('THE NARRATOR', 'And so the two pearls were put to bed in one shell, and in the morning (which on Lake Linden comes very quickly) there was one pearl, a size finer.');
+    } else if (E.move(S, from, to.cell)) sfx.pick();
+    save();
+  } else if (to.spot != null) {
+    const sp = E.SPOTS[to.spot];
+    if (sp.t !== p.t) { sfx.deny(); floatAt(spotGeo(sp, sp.j), `needs a ${E.TIERS[sp.t - 1]}`); return; }
+    const pan = E.panel(S);
+    if (E.sew(S, from, to.spot)) {
+      sfx.sew(); anims.push({ kind: 'sewn', k: to.spot, t: 0, d: 0.8 });
+      const q = spotGeo(sp, sp.j); floats.push({ text: 'sewn!', x: q.x, y: q.y - q.r, t: 0 });
+      if (S.sewnN === 1) say('PIM', '“There. A pearl, sewn on, for keeps. It won’t shine for the lake folk any more, but it’ll shine on everything else, every season, forever.”');
+      if (S.finale) startFinale();
+      else if (E.panel(S) > pan) panelDone(pan);
+      save();
+    }
+  } else if (to.lake) {
+    const v = E.toss(S, from);
+    const [cx] = cellXY(G, from);
+    anims.push({ kind: 'splash', x: tall ? cx / SC.s : cx, y: 196, t: 0, d: 0.9 });
+    floats.push({ text: `+${pence(v)}`, x: cx, y: SC.h * 0.8, t: 0, color: C.navy });
+    sfx.plop();
+    if (S.tossed === 1) say('THE NARRATOR', 'Back it went into Lake Linden, plop, and the lake folk paid to watch it splash. Somewhere below, a mussel said nothing, as mussels do.');
+    save();
+  }
+}
+const floatAt = (q, text) => floats.push({ text, x: q.x, y: q.y, t: 0, size: 13 });
+const FIRSTS = {
+  2: 'The first Rice pearl. The lake folk lean over the side to see.',
+  3: 'A Pea pearl. A princess somewhere sits up in bed, uncomfortable, and doesn’t know why.',
+  4: 'A Button pearl. Pim tries it on a cardigan. It is too good for a cardigan.',
+  5: 'A Thimble pearl, round and stern, like a grandmother.',
+  6: 'A Cherry pearl. Pim does not eat it. Pim thinks about it.',
+  7: 'A Plum pearl. Regina’s crew, far off, stop polishing to stare.',
+  8: 'A Goose Egg pearl! The Fair will take a pearl like this. The Fair has standards.',
+  9: 'An Apple pearl. Somewhere a stepmother looks at it very hard.',
+  10: 'A Cabbage pearl. Nobody has ever said “cabbage” so admiringly.',
+  11: 'A Pumpkin pearl. At midnight it stays a pearl. Pim checked.',
+  12: 'A Cartwheel pearl. It would roll right off the deck if it were not so polite.',
+  13: 'A Millstone pearl. Tuppence sits noticeably lower in the water.',
+  14: 'A Haystack pearl. Nobody can find a needle in it, which Pim finds inconvenient.',
+  15: 'A Cottage pearl. A family of swans has asked to rent it.',
+  16: 'A Moon pearl. Up in the sky, the real Moon looks down and feels, for the first time, a little plain.',
+};
+function firstOf(t, cx, cy) {
+  S.firstSaid = Math.max(S.firstSaid || 0, t);
+  floats.push({ text: `first ${E.TIERS[t - 1]}!`, x: cx, y: cy - 20, t: 0, color: C.plum, size: 16 });
+  sfx.unlock();
+  if (FIRSTS[t]) say('THE NARRATOR', FIRSTS[t]);
+}
+function panelDone(pan) {
+  sfx.panel();
+  const lines = [
+    ['PIM', '“The handkerchief’s done! I’ll hang it on the line. Now, a napkin. It’s the same, but bigger. Like us, next year.”'],
+    ['PIM', '“A napkin, finished. On the line it goes. Next, a tablecloth: you can’t have a napkin without a table.”'],
+    ['PIM', '“The tablecloth! On the line. Now, a bedsheet. Don’t ask why. A bedsheet. For the Fair.”'],
+    ['PIM', '“Bedsheet: done. One more. It’s… something very large. I’ll explain when it’s finished. I won’t, actually.”'],
+  ];
+  if (lines[pan]) say(...lines[pan]);
+  bgLayer = null;
+}
+
+// Keyboard: arrows move round the cups, Enter picks up and puts down, S sews, Delete puts back.
+cv.addEventListener('keydown', e => {
+  if (!playing()) return;
+  const G = grid();
+  if (cursor == null || !E.cupOn(S, cursor)) cursor = 0;
+  let c = cursor % E.MAXC, r = Math.floor(cursor / E.MAXC);
+  if (e.key === 'ArrowLeft') c = Math.max(0, c - 1); else if (e.key === 'ArrowRight') c = Math.min(G.c - 1, c + 1);
+  else if (e.key === 'ArrowUp') r = Math.max(0, r - 1); else if (e.key === 'ArrowDown') r = Math.min(G.r - 1, r + 1);
+  else if (e.key === 'Enter' || e.key === ' ') {
+    if (sel != null && sel !== cursor) act(sel, { cell: cursor }); else tap(cursor);
+    e.preventDefault(); return;
+  } else if ((e.key === 's' || e.key === 'S') && E.hoop(S)) {
+    const i = sel ?? cursor, p = S.deck[i];
+    const sp = p && E.openSpots(S).find(s => s.t === p.t);
+    if (sp) act(i, { spot: sp.k }); else sfx.deny();
+    return;
+  } else if (e.key === 'Delete' || e.key === 'Backspace') { const i = sel ?? cursor; if (S.deck[i]) act(i, { lake: true }); e.preventDefault(); return; }
+  else return;
+  cursor = r * E.MAXC + c; e.preventDefault();
+});
+
+// ---------- The Fair ----------
+function fairInfo() {
+  const need = E.fairNeed(S);
+  return {
+    id: 'fair', name: 'The Pearl Fair',
+    desc: `Take your best pearl across the lake to be judged. Regina always shows one exactly a size bigger. Nobody knows how. (The Wind knows how.) The Fair takes nothing smaller than a ${E.TIERS[need - 1]} pearl${S.lastFair ? ', because that’s what you brought last year' : ''}.`,
+    fx: E.fairOpen(S) ? `You’d show a ${E.tierName(S.best)}; Regina, a ${E.tierName(E.reginaShows(S))}. Second place: +${E.ribbonsFor(S.best)} ribbons (one size bigger would be +${E.ribbonsFor(S.best + 1)}).` : `Your best this season: ${S.best ? E.tierName(S.best) : 'nothing yet'}. Bring a ${E.TIERS[need - 1]} pearl.`,
+    joke: 'A new season starts after: the deck, your pennies and Pim’s penny upgrades go. Ribbons, every pearl sewn and everything bought once all stay.',
+    foot: E.fairOpen(S) ? 'Starts a new season' : `Needs a ${E.TIERS[need - 1]} pearl`,
+  };
+}
+function pearlImg(t) { const c = Sprites.canvas(92, 92), x = c.getContext('2d'); x.drawImage(PEARL[t - 1], 0, 0, 92, 92); return c.toDataURL(); }
+function showFair() {
+  if (!E.fairOpen(S)) { sfx.deny(); return; }
+  const mine = S.best, hers = E.reginaShows(S), got = E.ribbonsFor(S.best), first = S.fairs === 0;
+  const o = $('over'); o.innerHTML = '';
+  const p = document.createElement('div'); p.className = 'panel patch';
+  const quips = [
+    'The judges hold Tuppence’s pearl up to the light, and nod, and then a little puff of Wind blows a speck of grit onto it, and they put it down again.',
+    'Regina’s pearl is carried in on a velvet cushion by a breeze. Just a breeze. Nobody else’s pearl has a breeze.',
+    'The judges agree that it is a very fine pearl indeed, and that Regina’s is, somehow, a size finer. The West Wind whistles and looks at the clouds.',
+    'Pim stands on tiptoe to see. The Wind blows Pim’s hat off. It’s been that sort of Fair.',
+  ];
+  p.innerHTML = `<h3>The Pearl Fair</h3><p></p><div class="vs"><figure><img alt=""><figcaption><b>Tuppence</b><span></span></figcaption></figure><figure><img alt=""><figcaption><b>Regina</b><span></span></figcaption></figure></div><p><b>Second place.</b> Again. <span></span></p>`;
+  const ps = p.querySelectorAll('p'), imgs = p.querySelectorAll('img'), caps = p.querySelectorAll('figcaption span');
+  ps[0].textContent = quips[S.fairs % quips.length];
+  imgs[0].src = pearlImg(mine); imgs[1].src = pearlImg(hers);
+  caps[0].textContent = E.tierName(mine); caps[1].textContent = E.tierName(hers);
+  ps[1].querySelector('span').textContent = `+${got} Second-Place Ribbons.` + (first ? ' And Pim has an idea.' : '');
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'bigbtn'; b.textContent = 'Sail home for next season';
+  b.addEventListener('click', () => {
+    o.hidden = true;
+    E.fair(S); sel = null; drag = null; bgLayer = null;
+    S.tab = first ? 'r' : S.tab;
+    if (first) say('PIM', '“If Regina wins on pearls, we’ll win on needlework. I’m going to sew our best ones into a handkerchief. A very good handkerchief. Drag me a pearl onto its chalk outline, there in the hoop.”');
+    else say('THE NARRATOR', `And Tuppence puttered home with ${S.fairs} Second-Place Ribbons on the rail, and a new summer began.`);
+    save(); renderCalls(); renderShop(); hud(); refreshMusic();
+  });
+  p.append(b); o.append(p); o.hidden = false;
+  sfx.fair();
+  b.focus({ preventScroll: true });
+}
+
+// ---------- The finale: the game ends itself ----------
+function startFinale() {
+  S.finale = true; save();
+  finale = { t: 0, great: false, grow: 0, merged: 0 };
+  sel = null; drag = null;
+  say('THE NARRATOR', 'And then Pim sewed the very last pearl, and stood back, and said nothing at all, which was not like Pim.');
+  renderCalls(); renderShop(); hud(); refreshMusic();
+}
+function stepFinale(dt) {
+  finale.t += dt;
+  const t = finale.t;
+  if (t > 3 && !finale.said1) { finale.said1 = true; say('PIM', '“It was never a handkerchief. It was always a sail. Up it goes!”'); sfx.panel(); }
+  if (t > 5 && !finale.said2) { finale.said2 = true; say('THE WEST WIND', '“Oh. Oh my. Is that… a SAIL? With PEARLS on?” (The Wind, who cannot resist a sail, changes sides at once.)'); sfx.gust(); }
+  // The Wind blows the grit off and rolls the pearls together, two by two.
+  if (t > 6 && t < 11.5) {
+    finale.acc = (finale.acc || 0) + dt;
+    if (finale.acc > 0.18) {
+      finale.acc = 0;
+      for (const i of E.pearls(S)) S.deck[i].d = false;
+      const pr = E.smallestPair(S) || (E.pearls(S).length > 1 ? [E.pearls(S).sort((a, b) => S.deck[a].t - S.deck[b].t)[0], E.pearls(S).sort((a, b) => S.deck[b].t - S.deck[a].t)[0]] : null);
+      if (pr) { const a = S.deck[pr[0]], b = S.deck[pr[1]]; S.deck[pr[1]] = { t: Math.min(E.TOP, Math.max(a.t, b.t) + (a.t === b.t ? 1 : 0)), d: false }; S.deck[pr[0]] = null; anims.push({ kind: 'pop', i: pr[1], t: 0, d: 0.3 }); sfx.pimMerge(S.deck[pr[1]].t); }
+    }
+  }
+  if (t > 11.5 && !finale.great) { finale.great = true; sfx.merge(16); say('THE NARRATOR', 'And every pearl on the deck rolled together into one Great Pearl, and the Wind filled the sail, and away they went.'); }
+  if (finale.great) finale.grow = Math.min(1, finale.grow + dt * 1.2);
+  if (t > 16 && !finale.said3) { finale.said3 = true; say('REGINA', '“The wind… has gone. Where has the wind gone? Is that the little smelly one? Is it TOWING me?”'); sfx.fair(); }
+  if (t > 21) end(false);
+}
+function end(resumed) {
+  S.ended = true; S.finale = true;
+  for (const i of E.cups(S)) S.deck[i] = null;
+  save();
+  finale = null; $('over').hidden = true;
+  $('ending').hidden = false;
+  $('endText').textContent = 'And so it was that Tuppence, who was all engine, won the Pearl Fair under sail. The judges gave first place to the Great Pearl of Lake Linden, and a special rosette to the sail, which had every pearl Pim ever sewed on it, and a border of Second-Place Ribbons all the way round. Regina was towed in last of all, by a little red motor boat going put-put, and once Regina was tied up safe at the pier, Regina said, very quietly, that it smelled rather nice, actually. The West Wind stayed for the fireworks and blew them into shapes. And Pim was paid, at last, in thanks, which Pim said was better than pennies, though not by much.';
+  $('endMemo').textContent = `Seasons: ${S.fairs + 1}. Pearl Fairs: ${S.fairs} second places, then a first. Pearls sewn: ${E.SPOTS.length}. Twins put to bed: ${fmt(S.merges)}. Pearls dusted by hand: ${fmt(S.dusted)}. Pennies from the lake folk: ${E.long(S.pAll)}. The Wind: on our side.`;
+  if (!resumed) {
+    sfx.finale();
+    if (window.DailyGame) {
+      const h = Math.floor(S.t / 3600), m = Math.floor((S.t % 3600) / 60), s = String(Math.floor(S.t % 60)).padStart(2, '0');
+      DailyGame.finish({ lines: [`⏱ ${h ? h + 'h' + String(m).padStart(2, '0') + 'm' : m + 'm' + s + 's'}`, `🥈×${S.fairs} then 🥇`, `🧵 ${E.SPOTS.length} pearls sewn into a sail`, '🌬️ the Wind changed sides'] });
+    }
+    setTimeout(() => $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' }), 700);
+  } else say('THE NARRATOR', 'The End. (The Wind still comes by most afternoons, to look at the sail.)');
+  refreshMusic(); hud(); renderShop(); renderCalls();
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Log ----------
+let logT = 0;
+function say(who, text) {
+  const el = $('log');
+  el.innerHTML = '<b></b><span></span>';
+  el.querySelector('b').textContent = who;
+  el.querySelector('span').textContent = text;
+  el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
+  logT = 0;
+}
+const AMBIENT = [
+  ['THE NARRATOR', 'Now, Lake Linden was a lake like any other, except that its mussels made pearls, and its Wind had opinions.'],
+  ['THE NARRATOR', 'Every year since anyone could remember, Regina had won the Pearl Fair, and every year Regina said engines were smelly.'],
+  ['PIM', '“I’m an intern. I’m paid in pennies and thanked in nothing. I’m learning so much.”'],
+  ['TUPPENCE', 'Put-put. Put-put. (Tuppence cannot talk. Tuppence is a boat. But you could tell what it meant.)'],
+  ['THE NARRATOR', 'The lake folk rowed by and peered in, and for every pearl that shone, a penny went in the tin.'],
+  ['PIM', '“Twins go to bed together. That’s the rule. I don’t make the rules. The lake makes the rules.”'],
+  ['THE WEST WIND', '(The Wind said nothing. The Wind blew a little grit at the engine, out of spite.)'],
+  ['REGINA', '(far off, across the water) “Do keep the noise down, little boat. Some of us are sailing.”'],
+];
+const LATE = {
+  pinwheel: ['THE NARRATOR', 'The Wind went by, and spun the pinwheel, and then pretended it hadn’t.'],
+  spyglass: ['PIM', '“Regina’s… sailing. Still sailing. Oh! No. Still sailing.”'],
+  cozy: ['THE NARRATOR', 'With its tea cozy on, the engine purred instead of puttered, and the Wind was very slightly less cross.'],
+  cake: ['REGINA', '“Thank you for the cake, little boat. It was second-best.”'],
+  vane: ['THE NARRATOR', 'The weathervane pointed at Regina, as it always did, as if it wished it lived on Regina’s roof instead.'],
+  lantern: ['PIM', '“The lantern is for the night crossings.” There were no night crossings. Pim lit it anyway.'],
+};
+const HOOP_LINES = [
+  ['PIM', '“It’s a handkerchief. Obviously. A very good one. For the Fair. Hand me that pearl.”'],
+  ['THE NARRATOR', 'Pim hung the needlework on the washing line, and the Wind went by, and gave it a little tug, as if it couldn’t help itself.'],
+  ['PIM', '“Bigger is better. That’s needlework. That’s also pearls. That’s also, apparently, Regina.”'],
+];
+let lastAmbientMerges = S.merges;
+function ambient(dt) {
+  logT += dt;
+  if (logT < 28 || S.ended || finale || !$('over').hidden) return;
+  logT = 0;
+  if (S.lv.pair && rnd() < 0.3) {
+    const n = S.merges - lastAmbientMerges; lastAmbientMerges = S.merges;
+    if (n > 2) return say('PIM', `“That’s ${fmt(n)} pairs of twins put to bed since I last said anything. You’re welcome.”`);
+  }
+  const late = Object.keys(LATE).filter(id => S.one[id]);
+  if (late.length && rnd() < 0.3) return say(...LATE[late[Math.floor(rnd() * late.length)]]);
+  if (E.hoop(S) && rnd() < 0.3) return say(...HOOP_LINES[Math.floor(rnd() * HOOP_LINES.length)]);
+  say(...AMBIENT[Math.floor(rnd() * AMBIENT.length)]);
+}
+
+// ---------- HUD ----------
+const SEASONS = ['the first summer', 'the second summer', 'the third summer', 'the fourth summer', 'the fifth summer', 'the sixth summer', 'the seventh summer', 'the eighth summer'];
+function hud() {
+  $('cash').textContent = `${E.long(S.pennies)}d`;
+  $('rib').hidden = S.fairs < 1;
+  $('rib').textContent = `🎀 ${fmt(S.ribbons)} ribbons`;
+  $('where').textContent = S.ended ? 'happily ever after' : finale ? 'the last summer' : (SEASONS[S.fairs] || `summer number ${S.fairs + 1}`);
+  const sewn = E.SPOTS.filter((_, kk) => S.sewn[kk]).length;
+  if (!E.hoop(S) && !S.ended) {
+    $('meterFill').style.width = `${Math.min(1, S.best / E.FAIR_MIN) * 100}%`;
+    $('meterL').textContent = `Best pearl: ${S.best ? E.TIERS[S.best - 1] : 'none yet'} · the Fair takes a ${E.TIERS[E.FAIR_MIN - 1]}`;
+    $('meterR').textContent = 'Regina: first, every year';
+  } else {
+    $('meterFill').style.width = `${(S.ended ? 1 : sewn / E.SPOTS.length) * 100}%`;
+    $('meterL').textContent = S.ended ? 'The sail: finished · first place' : `Pim’s needlework: ${sewn} of ${E.SPOTS.length} pearls sewn`;
+    $('meterR').textContent = S.ended ? 'Regina: towed' : `Regina: first, ${S.fairs + 7} years running`;
+  }
+  const parts = [];
+  if (!S.ended && !finale) {
+    parts.push(`lake folk pay <b>${pence(E.income(S))}/s</b>`);
+    const loss = E.grittyLoss(S);
+    if (loss > 0) parts.push(`<span class="warn">grit costs <b>${pence(loss)}/s</b></span>`);
+    parts.push(`a pearl every <b>${E.diveTime(S).toFixed(1)} s</b>`);
+    if (S.lv.duster) parts.push(`Pim dusts every <b>${E.dustTime(S).toFixed(1)} s</b>`);
+    if (S.lv.pair) parts.push(`matches every <b>${E.pairTime(S).toFixed(1)} s</b>`);
+    parts.push(`gust in <b>${Math.max(0, E.gustTime(S) - S.gustT).toFixed(0)} s</b>`);
+  } else parts.push(S.ended ? 'The Wind: <b>on our side</b>' : 'The Wind: <b>changing its mind</b>');
+  $('sub').innerHTML = parts.join(' · ');
+}
+// Notches on the meter: where each piece of needlework ends.
+function notches() {
+  for (const t of $('meter').querySelectorAll('.tick')) t.remove();
+  if (!E.hoop(S) && !S.ended) return;
+  let n = 0;
+  for (let i = 0; i < E.SAIL.length - 1; i++) { n += E.SAIL[i].spots.length; const t = document.createElement('b'); t.className = 'tick'; t.style.left = `${n / E.SPOTS.length * 100}%`; $('meter').insertBefore(t, $('meter').lastElementChild); }
+}
+
+// ---------- Calls: the Fair, at the top of the column ----------
+let callSig = '';
+function renderCalls() {
+  const el = $('calls');
+  const show = !S.ended && !finale && (S.fairs > 0 || S.bestAll >= E.FAIR_MIN - 2);
+  const open = show && E.fairOpen(S);
+  const sig = `${show}|${open}|${S.best}|${S.fairs}`;
+  if (sig === callSig) return;
+  callSig = sig;
+  el.innerHTML = '';
+  if (!show) return;
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'call' + (open ? ' ready' : ''); b.id = 'fairBtn';
+  b.setAttribute('aria-disabled', String(!open));
+  b.innerHTML = `<b>🎀 The Pearl Fair</b><span></span>`;
+  b.querySelector('span').textContent = open ? `Show your ${E.TIERS[S.best - 1]} pearl: +${E.ribbonsFor(S.best)} ribbons` : `Bring a ${E.TIERS[E.fairNeed(S) - 1]} pearl (best: ${S.best ? E.TIERS[S.best - 1] : 'none'})`;
+  wireTip(b, fairInfo, showFair);
+  el.append(b);
+}
+
+// ---------- Shop ----------
+const shop = $('shop');
+const newUntil = {};
+let shopSig = '';
+const clone = () => JSON.parse(JSON.stringify(S));
+const priceTxt = it => it.cur === 'r' ? `🎀 ${fmt(it.price)}` : `${fmt(it.price)}d`;
+function renderTabs(all) {
+  const el = $('tabs');
+  el.hidden = S.fairs < 1 || S.ended || !!finale;
+  if (el.hidden) return;
+  if (!el.children.length) for (const [cur, nm] of [['p', 'Pennies'], ['r', 'Ribbons']]) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'tab'; b.dataset.cur = cur; b.setAttribute('role', 'tab');
+    b.innerHTML = `<span></span>`; b.dataset.name = nm;
+    b.addEventListener('click', () => { S.tab = cur; save(); shopSig = ''; renderShop(); });
+    el.append(b);
+  }
+  const now = performance.now();
+  for (const b of el.children) {
+    const cur = b.dataset.cur, items = all.filter(i => i.cur === cur);
+    const n = items.filter(i => E.canBuy(S, i.id)).length;
+    b.setAttribute('aria-selected', String(S.tab === cur));
+    b.querySelector('span').textContent = `${b.dataset.name}${n ? ' · ' + n : ''}`;
+    const fresh = S.tab !== cur && items.some(i => (newUntil[i.id] || 0) > now);
+    let dot = b.querySelector('.dot');
+    if (fresh && !dot) { dot = document.createElement('i'); dot.className = 'dot'; b.append(dot); }
+    if (!fresh && dot) dot.remove();
+  }
+}
+function renderShop() {
+  if (S.ended || finale) { shop.innerHTML = ''; shopSig = ''; $('shopH').hidden = true; $('tabs').hidden = true; renderShelf(); return; }
+  const fresh = E.reveal(S);
+  for (const id of fresh) { if (S.t > 3) sfx.unlock(); newUntil[id] = performance.now() + 9000; }
+  const all = E.items(S);
+  if (S.fairs < 1) S.tab = 'p';
+  renderTabs(all);
+  const list = all.filter(i => i.cur === S.tab);
+  const sig = S.tab + '|' + list.map(i => i.id + ':' + i.price + ':' + (i.level ?? '')).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    for (const it of list) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (it.odd ? ' odd' : '');
+      b.dataset.id = it.id;
+      b.innerHTML = '<b></b><em></em>';
+      b.querySelector('b').textContent = it.name;
+      b.querySelector('em').textContent = priceTxt(it) + (it.kind === 'level' ? ` · ${it.level}` : '');
+      b.setAttribute('aria-describedby', 'tip');
+      b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, upTip(it.id)); });
+      b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+      b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, upTip(it.id)); });
+      b.addEventListener('blur', hideTip);
+      b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+      b.addEventListener('click', () => {
+        if (b.dataset.touch && tipFor !== it.id) { showTip(b, upTip(it.id)); return; }
+        if (b.getAttribute('aria-disabled') !== 'true') doBuy(it.id); else sfx.deny();
+      });
+      shop.append(b);
+    }
+  }
+  const now = performance.now();
+  let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = E.canBuy(S, b.dataset.id);
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  n = all.filter(i => E.canBuy(S, i.id)).length;
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  $('shopH').hidden = !all.length;
+  renderShelf();
+}
+// What an upgrade changes, now → after.
+function effect(id) {
+  const T = clone();
+  E.buy(Object.assign(T, { pennies: 1e300, ribbons: 1e300 }), id);
+  const s1 = n => n.toFixed(1);
+  switch (id) {
+    case 'dive': return `A new pearl every ${s1(E.diveTime(S))} s → ${s1(E.diveTime(T))} s`;
+    case 'polish': return `Shine ×${E.polishMult(S).toFixed(2)} → ×${E.polishMult(T).toFixed(2)} · ${pence(E.income(S))}/s → ${pence(E.income(T))}/s`;
+    case 'duster': return S.lv.duster ? `Pim dusts every ${s1(E.dustTime(S))} s → ${s1(E.dustTime(T))} s` : `Pim dusts the best gritty pearl every ${s1(E.dustTime(T))} s`;
+    case 'feed': return `New pearls a size bigger: ${Math.round(E.feedChance(S) * 100)}% → ${Math.round(E.feedChance(T) * 100)}%`;
+    case 'pair': return S.lv.pair ? `Pim matches twins every ${s1(E.pairTime(S))} s → ${s1(E.pairTime(T))} s` : `Pim puts the smallest twins to bed every ${s1(E.pairTime(T))} s`;
+    case 'deck': { const a = E.size(S), b = E.size(T); return `Mussel cups: ${a[0] * a[1]} → ${b[0] * b[1]} (${a.join('×')} → ${b.join('×')})`; }
+    case 'pride': return `Shine ×${E.prideMult(S).toFixed(2)} → ×${E.prideMult(T).toFixed(2)}`;
+    case 'wage': return `Pim’s pace ×${E.wage(S).toFixed(2)} → ×${E.wage(T).toFixed(2)} · a pearl every ${s1(E.diveTime(S))} s → ${s1(E.diveTime(T))} s`;
+    case 'seed': return `New pearls come up as: ${E.TIERS[E.seedTier(S) - 1]} → ${E.TIERS[E.seedTier(T) - 1]}`;
+    case 'start': { const f = Q => Q.rl.start ? E.TIERS[Math.min(E.TOP - 1, E.seedTier(Q) + 2 * Q.rl.start) - 1] + ' pearl' : 'nothing'; return `Each season starts with: ${f(S)} → ${f(T)}`; }
+    case 'cozy': return `A gust every ${E.gustTime(S).toFixed(0)} s → ${E.gustTime(T).toFixed(0)} s`;
+    case 'bell': return 'Ding.';
+    default: return E.ONE_BY_ID[id]?.odd ? 'Does nothing. Probably.' : '';
+  }
+}
+let tipFor = null;
+function upTip(id) {
+  const o = E.ONE_BY_ID[id];
+  if (o) return { id, name: o.name, desc: o.desc, fx: effect(id), foot: `${fmt(o.cost)}d · once, and it stays through every Fair` };
+  const V = E.LEVELS[id] || E.RIBBONS[id], lv = E.LEVELS[id] ? S.lv[id] : S.rl[id];
+  const cost = E.levelCost(S, id);
+  return { id, name: V.name, desc: V.desc, fx: effect(id), foot: `${V.cur === 'r' ? '🎀 ' + fmt(cost) + ' ribbons · kept forever' : fmt(cost) + 'd · until the next Fair'} · level ${lv} of ${V.max}` };
+}
+function showTip(b, it) {
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><span class="fx"></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('.fx').textContent = it.fx || '';
+  tip.querySelector('.fx').hidden = !it.fx;
+  tip.querySelector('i').textContent = it.joke || '';
+  tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || '';
+  tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  const inSide = !!b.closest('#side');
+  if (inSide && r.left > t.width + 24 && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 14}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - t.width - 8, r.left))}px`;
+    tip.style.top = `${r.bottom + 8 + t.height < innerHeight ? r.bottom + 8 : Math.max(8, r.top - t.height - 8)}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+let tipMoved = 0;
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .call, .bought')) hideTip(); });
+const explained = new Set();
+function wireTip(b, info, act) {
+  b.setAttribute('aria-describedby', 'tip');
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, info()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, info()); });
+  b.addEventListener('blur', hideTip);
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  b.addEventListener('click', () => {
+    if (b.dataset.touch && !explained.has(b.id)) { explained.add(b.id); showTip(b, info()); return; }
+    hideTip(); act();
+  });
+}
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!S.boughtOpen === shelfEl.open) return;
+  S.boughtOpen = shelfEl.open; save();
+});
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(i => i.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (it.odd ? ' odd' : '');
+    b.textContent = it.name; b.dataset.id = it.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, { id: 'bought:' + it.id, name: it.name, desc: it.desc, joke: it.joke, foot: it.odd ? 'Bought · does very little · drawn on Tuppence' : 'Bought · drawn on Tuppence', inline: true }); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + it.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+const BUY_LINES = {
+  dive: lv => ['PIM', lv === 1 ? '“Goggles! I can see the mussels. They can see me. We’re all a bit embarrassed.”' : `“Goggles, level ${lv}. I can see further. Mostly more mussels.”`],
+  polish: lv => ['THE NARRATOR', lv === 1 ? 'Pim rubbed a little beeswax on every pearl, and they shone like they’d been told a secret.' : `More beeswax (level ${lv}). The bees are asking questions.`],
+  duster: lv => ['PIM', lv === 1 ? '“A feather duster! I’ll get the grit while you get the twins.”' : `“A faster flick (level ${lv}). Wrist of steel. Intern of steel.”`],
+  feed: lv => ['THE NARRATOR', lv === 1 ? 'Pim stirred a pot of porridge and poured it overboard, and the mussels grew a little rounder, and so did their pearls.' : `More porridge (level ${lv}). The mussels have started leaving reviews.`],
+  pair: lv => ['PIM', lv === 1 ? '“I’ll put the little twins to bed myself. You do the big ones.”' : `“Matchmaking, level ${lv}. I have a gift. Two identical gifts, actually.”`],
+  deck: () => ['THE NARRATOR', `Another row of mussel cups was screwed to the deck: ${E.size(S)[0] * E.size(S)[1]} now. Tuppence sat a little lower in the water, and was fine about it.`],
+  pride: lv => ['TUPPENCE', `Put-put. (Second-Place Pride, level ${lv}. A brass plaque on the cabin. It says 2nd, very proudly.)`],
+  wage: lv => ['PIM', lv === 1 ? '“A raise! In ribbons! I’ll pin it to my jumper.”' : `“Another ribbon for my jumper (that’s ${lv}). I’m basically a general.”`],
+  seed: () => ['PIM', `“Deeper dives, a longer rope. New pearls come up as ${E.TIERS[E.seedTier(S) - 1]} pearls now. The old mussels down there are very slow, and very generous.”`],
+  start: () => ['PIM', '“I’ll keep a pearl in my sock between seasons. A clean sock. I’ve hung it on the line to prove it.”'],
+};
+function doBuy(id) {
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  delete newUntil[id];
+  hideTip();
+  sfx.buy();
+  const o = E.ONE_BY_ID[id];
+  if (o) { say(o.odd ? 'THE NARRATOR' : 'PIM', o.joke); floats.push({ text: o.odd ? 'ta-da!' : '✓', x: SC.s * 330, y: SC.s * 110, t: 0, size: 16 }); }
+  else { const lv = E.LEVELS[id] ? S.lv[id] : S.rl[id]; const line = BUY_LINES[id]?.(lv); if (line && (lv <= 2 || lv % 5 === 0 || E.RIBBONS[id])) say(...line); }
+  if (id === 'deck') bgLayer = null;
+  save(); renderShop(); hud(); renderCalls();
+}
+
+// ---------- Loop ----------
+let last = performance.now(), saveAcc = 0, uiAcc = 0, lastFrame = performance.now(), phaseWas = phaseKey(), coinAcc = 0;
+function step(dt) {
+  if (finale) { stepFinale(dt); }
+  else if (!S.ended) {
+    const ev = E.tick(S, dt);
+    const G = grid();
+    if (ev.dived.length) {
+      for (const i of ev.dived) anims.push({ kind: 'pop', i, t: 0, d: 0.3 });
+      sfx.dive(); divingT = 1; if (S.one.bell) { sfx.bell(); ding = 1; }
+    }
+    if (ev.gust) {
+      sfx.gust(); gustAnim = 1; windPuff = 1;
+      const [c, rows] = E.size(S);
+      const rs = [];
+      for (let r = 0; r < rows; r++) { const hit = ev.gust.hit.filter(i => Math.floor(i / E.MAXC) === r).map(i => i % E.MAXC); rs.push({ r, stop: hit.length ? Math.max(...hit) : c }); }
+      anims.push({ kind: 'gust', rows: rs, t: 0, d: 1.1 });
+      if (ev.gust.hit.length && (S.gusts === 1 || rnd() < 0.15)) say('THE WEST WIND', S.gusts === 1 ? '(Huff!) The West Wind blew across the deck from the west, and the first pearl in every row went gritty. Tap one to dust it. Rub across a few. Whatever sits upwind shields the ones behind it.' : ev.gust.depth > 1 ? '(HUFF!) A big one. Two pearls deep in every row.' : 'The West Wind huffed across the deck, and grit settled on the windward pearls.');
+    }
+    for (const i of ev.dusted) { anims.push({ kind: 'sparkle', i, t: 0, d: 0.5 }); dustingT = 1; }
+    if (ev.dusted.length) sfx.dust();
+    for (const i of ev.paired) { anims.push({ kind: 'pop', i, t: 0, d: 0.3 }); sfx.pimMerge(S.deck[i]?.t || 1); }
+    if (ev.paired.some(i => S.deck[i]?.t === S.bestAll && S.deck[i].t > (S.firstSaid || 0))) { const i = ev.paired.find(j => S.deck[j]?.t === S.bestAll); const [cx, cy] = cellXY(G, i); firstOf(S.bestAll, cx, cy); }
+    coinAcc += dt;
+    if (coinAcc > 6 && E.income(S) > 0.05) { coinAcc = 0; sfx.coin(); floats.push({ text: `+${pence(E.income(S) * 6)}`, x: DK.x + DK.w - 40, y: DK.y + 18, t: 0, size: 13, color: C.plum }); }
+  }
+  const ph = phaseKey();
+  if (ph !== phaseWas) { phaseWas = ph; refreshMusic(); notches(); }
+  saveAcc += dt; if (saveAcc > 5) { saveAcc = 0; if (!finale) save(); }
+  ambient(dt);
+  uiAcc += dt; if (uiAcc > 0.25) { uiAcc = 0; hud(); renderShop(); renderCalls(); }
+}
+function frame(now) {
+  const dt = Math.max(0, Math.min(0.1, (now - last) / 1000)); last = now; lastFrame = now;
+  step(dt);
+  clock += dt;
+  gustAnim = Math.max(0, gustAnim - dt * 0.9);
+  windPuff = finale && finale.t > 5 && finale.t < 15 ? 0.6 + 0.3 * Math.sin(clock * 3) : Math.max(0, windPuff - dt * 1.2);
+  spin += dt * (gustAnim > 0 || finale ? 18 : 1.5);
+  ding = Math.max(0, ding - dt * 1.5);
+  divingT = Math.max(0, divingT - dt * 2.5);
+  dustingT = Math.max(0, dustingT - dt * 2);
+  for (const a of anims) a.t += dt; anims = anims.filter(a => a.t < a.d);
+  for (const f of floats) f.t += dt; floats = floats.filter(f => f.t < (f.d || 1.2));
+  render();
+  requestAnimationFrame(frame);
+}
+// In a background tab, rAF stops: keep Pim working on a timer.
+setInterval(() => {
+  const now = performance.now();
+  if (now - lastFrame < 400) return;
+  const dt = Math.min(1, (now - last) / 1000); last = now;
+  step(dt);
+}, 250);
+addEventListener('pagehide', save);
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('resize', layout);
+
+// ---------- Start ----------
+{
+  const reg = (name, w, h, f) => { const c = Sprites.canvas(w, h), x = c.getContext('2d'); f(x); Sprites.register(name, c); };
+  const none = { panels: 0, ribbons: 0, spin: 0, ding: 0, pride: 0, wage: 0, seed: 0 };
+  const all = { pinwheel: 1, hat: 1, cozy: 1, bell: 1, spyglass: 1, name: 1, autograph: 1, lantern: 1, cake: 1, vane: 1, goggles: 1, duster: 0, polish: 1, feed: 1, pair: 1, pride: 3, wage: 3, seed: 4, sock: 1, ribbons: 5, panels: 4, spin: 0.4, ding: 0 };
+  reg('Tuppence', 260, 160, x => { x.translate(120, 130); drawTuppence(x, 0, none); });
+  reg('Tuppence, everything bought', 260, 160, x => { x.translate(120, 130); drawTuppence(x, 0, all); });
+  reg('Tuppence under sail (spoiler)', 260, 160, x => { x.translate(120, 130); drawTuppence(x, 0, { ...all, sail: 1, sailFill: 1, first: 1, vaneDir: -1 }); });
+  reg('Pim', 50, 60, x => { x.translate(24, 52); drawPim(x, 0, { hat: 1, goggles: 1, duster: 1, wage: 3 }); });
+  reg('Regina', 120, 150, x => { x.translate(56, 136); drawRegina(x, 0, 0); });
+  reg('the West Wind', 120, 90, x => { x.translate(56, 44); drawWind(x, 0, 0.4, -1); });
+  reg('the West Wind, smitten (spoiler)', 120, 90, x => { x.translate(56, 44); drawWind(x, 0, 0, 1); });
+  reg('mussel cup', 64, 64, x => { linen(x, 64, 64); drawCup(x, 32, 32, 60); });
+  reg('gritty Plum pearl', 64, 64, x => { linen(x, 64, 64); pearlAt(x, 7, 32, 32, 24, { gritty: true }); });
+}
+if (Sprites.sheetRequested()) Sprites.showSheet({ zoom: 2 });
+
+layout();
+notches();
+if (DEBUG) Object.assign(window.__game, { at: i => cellXY(grid(), i), spot: kk => { const s = E.SPOTS[kk]; const q = spotGeo(s, s.j); return [q.x, q.y]; }, lw: () => W, fair: showFair });
+// Time away: the Wind napped; Pim kept going, slowly.
+if (!S.ended && !S.finale && S.savedAt && S.t > 0) {
+  const away = (Date.now() - S.savedAt) / 1000;
+  const r = E.offline(S, away);
+  if (r) {
+    const h = Math.floor(r.secs / 3600), m = Math.floor((r.secs % 3600) / 60), span = h ? `${h} h ${m} min` : `${m} min`;
+    say('WHILE YOU WERE AWAY', `${span}. The West Wind took a nap. Pim dived up ${fmt(r.dived)} pearls${r.paired ? `, put ${fmt(r.paired)} pairs of twins to bed` : ''}, and the lake folk paid ${pence(r.pennies)} to look.${away > E.OFFLINE_CAP ? ' (Pim stops counting after eight hours. Pim is an intern, not a saint.)' : ''}`);
+  }
+}
+if (S.ended) end(true);
+else if (S.finale) { startFinale(); }
+else if (!S.t) say('THE NARRATOR', 'Once upon a time, on Lake Linden, there was a little motor boat called Tuppence, with an intern called Pim, and a grudge against a yacht called Regina. Drag a pearl onto its twin, and they become one.');
+else if (!$('log').textContent) say('THE NARRATOR', 'And the story went on where it had left off, as stories do.');
+save();
+hud(); renderShop(); renderCalls();
+document.fonts?.ready.then(() => { layout(); });
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
