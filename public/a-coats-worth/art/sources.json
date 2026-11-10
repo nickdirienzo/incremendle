@@ -1,0 +1,83 @@
+{
+  "game-icons--dove.svg": {
+    "icon": "game-icons:dove",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Lorc",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/lorc/dove.html"
+  },
+  "game-icons--horse-head.svg": {
+    "icon": "game-icons:horse-head",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Delapouite",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/delapouite/horse-head.html"
+  },
+  "game-icons--old-wagon.svg": {
+    "icon": "game-icons:old-wagon",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Delapouite",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/delapouite/old-wagon.html"
+  },
+  "game-icons--heron.svg": {
+    "icon": "game-icons:heron",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Caro Asercion",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/caro-asercion/heron.html"
+  },
+  "game-icons--frog.svg": {
+    "icon": "game-icons:frog",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Lorc",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/lorc/frog.html"
+  },
+  "game-icons--lantern-flame.svg": {
+    "icon": "game-icons:lantern-flame",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Lorc",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/lorc/lantern-flame.html"
+  },
+  "game-icons--bat.svg": {
+    "icon": "game-icons:bat",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Delapouite",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/delapouite/bat.html"
+  },
+  "game-icons--griffin-symbol.svg": {
+    "icon": "game-icons:griffin-symbol",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Delapouite",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/delapouite/griffin-symbol.html"
+  },
+  "game-icons--dragon-head.svg": {
+    "icon": "game-icons:dragon-head",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Faithtoken",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/faithtoken/dragon-head.html"
+  }
+}

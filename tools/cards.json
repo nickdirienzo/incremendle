@@ -1484,5 +1484,56 @@
   ],
   "tab": "p",
   "savedAt": 0
+ },
+ "a-coats-worth": {
+  "v": 1,
+  "t": 2400,
+  "town": 1,
+  "ledger": 3200,
+  "posted": [
+   1800,
+   1400,
+   0
+  ],
+  "coins": 140,
+  "earned": [
+   1600,
+   900,
+   0
+  ],
+  "astray": 1500,
+  "taps": 1500,
+  "lv": {
+   "pigeon": 40,
+   "postboy": 20,
+   "cart": 4,
+   "heron": 27,
+   "toad": 12,
+   "wisp": 3
+  },
+  "one": {
+   "cosy": true,
+   "spout1": true,
+   "read1": true,
+   "read2": true,
+   "spout2": true,
+   "hat": true,
+   "read3": true,
+   "tailor": true
+  },
+  "seen": {
+   "heron": true,
+   "toad": true,
+   "wisp": true,
+   "spout2": true,
+   "read3": true,
+   "read4": true,
+   "hat": true,
+   "tailor": true
+  },
+  "due": false,
+  "full": false,
+  "ended": false,
+  "savedAt": 0
  }
 }

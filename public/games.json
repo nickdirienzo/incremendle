@@ -680,5 +680,46 @@
     "tone": "fairy tale narrator",
     "context": "none",
     "palette": "bubblegum-16"
+  },
+  {
+    "n": 20,
+    "slug": "a-coats-worth",
+    "date": "2026-11-11",
+    "title": "A Coat's Worth",
+    "tagline": "An alembic in witness protection keeps a promise the only way a witness can: one button at a time, by post, across a map the Marshal drew wrong on purpose.",
+    "emoji": "⚗️🧥",
+    "scale": "thousands",
+    "minutes": "80–120",
+    "seed": 3301723394,
+    "subject": {
+      "text": "an alembic in witness protection",
+      "emoji": "⚗️",
+      "name": "alembic",
+      "subgroup": "science",
+      "trait": "{} in witness protection"
+    },
+    "verb": "mailing",
+    "object": "buttons",
+    "interaction": "tap",
+    "arc": {
+      "drive": "a promise",
+      "obstacle": "a bad map",
+      "turn": "it was the wrong goal all along",
+      "initial": "N"
+    },
+    "length": "short (1–3 hours)",
+    "structure": [
+      "distinct phases, each its own small economy"
+    ],
+    "twist": "milestones: every 25 owned doubles it",
+    "ending": "the number hits its cap and the world crunches",
+    "look": "tarot cards",
+    "music": {
+      "style": "dub",
+      "scale": "major"
+    },
+    "tone": "epic fantasy",
+    "context": "none",
+    "palette": "zughy-32"
   }
 ]

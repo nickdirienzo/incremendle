@@ -1,0 +1,1144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A Coat's Worth · Incremendle</title>
+<meta name="description" content="An alembic in witness protection keeps a promise the only way a witness can: one button at a time, by post, across a map the Marshal drew wrong on purpose. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="A Coat's Worth">
+<meta property="og:description" content="An alembic in witness protection keeps a promise the only way a witness can: one button at a time, by post, across a map the Marshal drew wrong on purpose.">
+<meta property="og:url" content="https://incremendle.com/a-coats-worth/">
+<meta property="og:image" content="https://incremendle.com/a-coats-worth/og.png?v=4920600e">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A Coat's Worth: An alembic in witness protection keeps a promise the only way a witness can: one button at a time, by post, across a map the Marshal drew wrong on purpose.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/cinzel-decorative/font.css">
+<link rel="stylesheet" href="/shared/fonts/im-fell-english/font.css">
+<link rel="stylesheet" href="/shared/fonts/cinzel/font.css">
+<style>
+  /* Tarot cards in Zughy 32: night-purple cloth, cream card faces, gold frames, woodcut ink. */
+  :root {
+    --night: #302c2e; --plum: #39314b; --wine: #472d3c; --violet: #564064; --cream: #f4cca1; --bone: #cfc6b8;
+    --gold: #f4b41b; --amber: #eea160; --rust: #7a444a; --red: #e6482e; --crimson: #a93b3b; --aqua: #8aebf1; --ice: #dff6f5;
+    --lav: #827094; --pine: #397b44;
+    --deco: 'Cinzel Decorative', Georgia, serif; --head: 'Cinzel', Georgia, serif; --body: 'IM Fell English', Georgia, serif;
+    color-scheme: dark;
+  }
+  html, body { background: var(--plum); color: var(--cream); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 18px/1.3 var(--body);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(10px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image: radial-gradient(#f4b41b14 1px, transparent 1.5px), radial-gradient(#8e478c22 1px, transparent 1.5px);
+    background-size: 23px 23px, 37px 37px; background-position: 0 0, 11px 17px;
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 0 0 6px; }
+  h1 { font: 700 32px/1.05 var(--deco); margin: 0; color: var(--gold); text-shadow: 2px 2px 0 var(--night); letter-spacing: .5px; }
+  header p { margin: 0; font-style: italic; color: var(--bone); }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } h1 { font-size: 25px; } }
+  main { min-width: 0; }
+
+  .hud { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 6px 12px; align-items: center; margin-bottom: 8px; }
+  .digits { display: flex; gap: 3px; align-items: center; }
+  .digits span { display: inline-block; width: 22px; text-align: center; font: 700 22px/30px var(--head); color: var(--night); background: var(--cream); border: 2px solid var(--night); outline: 1px solid var(--gold); border-radius: 3px; }
+  .digits small { font-size: 14px; color: var(--bone); margin-left: 5px; white-space: nowrap; }
+  .meter { position: relative; height: 14px; background: var(--night); border: 1px solid var(--gold); border-radius: 7px; overflow: hidden; }
+  .meter i { position: absolute; inset: 0 auto 0 0; width: 0; background: linear-gradient(90deg, var(--amber), var(--gold)); transition: width .4s; }
+  .meter .tick { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--cream); opacity: .8; }
+  .meter .seg { position: absolute; top: 0; bottom: 0; border-left: 1px dashed #f4cca180; border-right: 1px dashed #f4cca180; background: #f4cca11a; }
+  .purse { font: 700 24px/1 var(--head); color: var(--gold); white-space: nowrap; text-shadow: 2px 2px 0 var(--night); }
+  .purse small { font: italic 16px var(--body); color: var(--bone); text-shadow: none; }
+  .sub { grid-column: 1 / -1; display: flex; gap: 2px 14px; flex-wrap: wrap; align-items: center; font-size: 16px; color: var(--bone); min-height: 22px; }
+  .sub b { font-weight: 400; color: var(--cream); }
+  .sub .talk { color: var(--amber); }
+  #nettle { font: italic 16px var(--body); color: var(--cream); background: var(--wine); border: 1px solid var(--gold); border-radius: 3px; padding: 0 8px; cursor: help; }
+  #nettle:focus-visible { outline: 2px dashed var(--gold); outline-offset: 2px; }
+  .coin { display: inline-block; width: .7em; height: .7em; border-radius: 50%; margin: 0 .18em 0 0; vertical-align: -.02em; background: var(--amber); box-shadow: inset 0 0 0 2px #a05b53; }
+  .coin.c1 { background: var(--bone); box-shadow: inset 0 0 0 2px #7d7071; border-radius: 50% 50% 40% 40%; }
+  .coin.c2 { background: var(--gold); box-shadow: inset 0 0 0 2px #f47e1b; }
+
+  .stagewrap { position: relative; }
+  canvas#stage { display: block; width: 100%; touch-action: none; cursor: pointer; border-radius: 6px; background: var(--wine); box-shadow: 0 0 0 2px var(--night), 0 0 0 4px #f4b41b66, 6px 8px 0 4px #0003; -webkit-tap-highlight-color: transparent; user-select: none; }
+  canvas#stage:focus-visible { outline: 3px dashed var(--gold); outline-offset: 5px; }
+  .over { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 12px; background: #302c2ecc; border-radius: 6px; overflow: auto; }
+  .panel { max-width: 520px; width: 100%; text-align: center; color: var(--night); background: var(--cream); border: 3px solid var(--night); outline: 2px solid var(--gold); outline-offset: -9px; border-radius: 8px; padding: 18px 24px 20px; }
+  .panel .num { font: 700 16px var(--head); color: var(--rust); letter-spacing: 2px; }
+  .panel h3 { font: 700 26px/1.1 var(--head); margin: 2px 0 8px; color: var(--violet); }
+  .panel p { margin: 6px 0 10px; text-align: left; }
+  .bigbtn { font: 700 17px var(--head); color: var(--night); background: var(--gold); border: 2px solid var(--night); border-radius: 4px; box-shadow: 3px 3px 0 var(--night); padding: 6px 16px; cursor: pointer; margin: 4px; }
+  .bigbtn:focus-visible { outline: 3px dashed var(--violet); outline-offset: 2px; }
+
+  .log { position: relative; margin: 12px 2px 0; min-height: 2.6em; font-size: 18px; color: var(--cream); background: var(--wine); border: 1px solid #f4b41b66; border-radius: 4px; padding: 7px 12px; }
+  .log b { font: 700 12px var(--head); letter-spacing: 1px; color: var(--night); background: var(--gold); padding: 1px 6px; margin-right: 7px; border-radius: 2px; }
+  .log.fresh { animation: pop .35s ease-out; }
+  @keyframes pop { from { opacity: .4; transform: translateY(3px); } }
+
+  aside { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; scrollbar-width: thin; padding: 2px 6px 8px 2px; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  aside h2 { font: 700 21px/1 var(--head); margin: 2px 0 9px; color: var(--gold); text-shadow: 2px 2px 0 var(--night); }
+  #afford { font: italic 15px var(--body); text-shadow: none; color: var(--bone); }
+  #calls { display: grid; gap: 8px; margin-bottom: 10px; }
+  #calls:empty { display: none; }
+  .call { text-align: left; font: 16px/1.25 var(--body); color: var(--night); background: var(--gold); border: 2px solid var(--night); border-radius: 5px; box-shadow: 3px 3px 0 var(--night); padding: 7px 10px 8px; cursor: pointer; animation: nudge 1.6s ease-in-out infinite; }
+  .call b { display: block; font: 700 17px/1.1 var(--head); }
+  .call:focus-visible { outline: 3px dashed var(--cream); outline-offset: 2px; }
+  @keyframes nudge { 50% { transform: translateY(-2px); box-shadow: 3px 5px 0 var(--night); } }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  @media (max-width: 760px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  /* Each upgrade is a little card: cream face, ink border, a gold rule inside. */
+  .up {
+    position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 15px/1.15 var(--body); color: var(--rust);
+    background: var(--cream); border: 2px solid var(--night); border-radius: 5px; box-shadow: inset 0 0 0 2px var(--cream), inset 0 0 0 3px #f4b41b99; padding: 6px 9px 7px; cursor: pointer;
+  }
+  .up b { font-weight: 400; font-size: 17px; color: var(--night); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em .star { color: var(--crimson); }
+  .up.can { box-shadow: inset 0 0 0 2px var(--cream), inset 0 0 0 3px var(--gold), 3px 3px 0 var(--gold); }
+  .up.can em { color: var(--night); }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up[aria-disabled="true"]:not(.can) { opacity: .62; }
+  .up.odd { background: var(--ice); }
+  .up .tag { position: absolute; top: -9px; right: 6px; font: 700 11px var(--head); font-style: normal; color: var(--night); background: var(--gold); border: 1px solid var(--night); padding: 0 5px 1px; border-radius: 3px; transform: rotate(4deg); }
+  .up.new { animation: pulse 1.4s ease-in-out 4; }
+  @keyframes pulse { 50% { box-shadow: inset 0 0 0 2px var(--cream), inset 0 0 0 3px var(--gold), 0 0 0 5px #f4b41b88; } }
+  .up:focus-visible, .bought:focus-visible { outline: 3px dashed var(--gold); outline-offset: 2px; }
+  #tip {
+    position: fixed; z-index: 50; width: 272px; padding: 10px 14px 12px; pointer-events: none; font: 16px/1.32 var(--body); color: var(--night);
+    background: var(--cream); border: 2px solid var(--night); outline: 1px solid var(--gold); outline-offset: -6px; border-radius: 6px; box-shadow: 4px 5px 0 #302c2e99;
+  }
+  #tip b { display: block; font: 700 17px/1.15 var(--head); color: var(--violet); margin-bottom: 4px; }
+  #tip .fx { display: block; margin-top: 6px; padding: 3px 7px; background: #f4b41b40; border-radius: 3px; }
+  #tip i { display: block; margin-top: 6px; padding-top: 5px; border-top: 1px solid #a05b5366; }
+  #tip small { display: block; margin-top: 6px; font: 700 13px var(--head); color: var(--rust); }
+  #tip.inline { position: static; width: auto; margin-top: 10px; }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 700 16px/1 var(--head); color: var(--gold); cursor: pointer; list-style: none; padding: 3px 2px; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: "\25B8"; font-size: 13px; color: var(--cream); transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 3px dashed var(--gold); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 2px 2px; }
+  .bought { max-width: 100%; font: 14px/1.2 var(--body); color: var(--night); background: var(--bone); border: 1px solid var(--night); border-radius: 3px; padding: 2px 8px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { background: var(--ice); }
+  .bought:hover, .bought.on { background: var(--gold); }
+
+  #ending { margin: 22px auto 0; max-width: 640px; color: var(--night); background: var(--cream); border: 3px solid var(--night); outline: 2px solid var(--gold); outline-offset: -10px; border-radius: 10px; padding: 18px 30px 24px; text-align: center; }
+  #ending .num { font: 700 15px var(--head); color: var(--rust); letter-spacing: 2px; }
+  #ending h2 { font: 700 30px/1.1 var(--deco); margin: 2px 0 10px; color: var(--violet); }
+  #ending .letter { text-align: left; font-size: 18px; }
+  #ending .letter p { margin: 8px 0; }
+  #ending .sig { text-align: right; font-style: italic; }
+  #ending .ps { font-size: 16px; color: var(--rust); }
+  #shareBtn, #againBtn { font: 700 17px var(--head); color: var(--night); background: var(--gold); border: 2px solid var(--night); border-radius: 4px; box-shadow: 3px 3px 0 var(--night); padding: 6px 16px; margin: 12px 4px 0; cursor: pointer; }
+  #againBtn { background: var(--bone); }
+  #shareBtn:focus-visible, #againBtn:focus-visible { outline: 3px dashed var(--violet); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .call, .log.fresh { animation: none; } .meter i, #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/soundfonts": "/shared/lib/@strudel/soundfonts@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="20" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>A Coat’s Worth</h1>
+    <p id="where">a chronicle in buttons</p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="hud">
+        <div class="digits" id="digits" title="The Post’s great ledger: every button ever posted. It has four digits."><span>0</span><span>0</span><span>0</span><span>0</span><small>posted</small></div>
+        <div class="meter" id="meter" title="The ledger, on its way to 9,999. The bright stretch is how far this town can go before folk start to talk."><span class="seg" id="seg"></span><i id="fill"></i></div>
+        <div class="purse" id="purse" title="Postage due, paid by whoever opened the door"><span id="coins">0</span> <small id="coinName">pennies</small></div>
+        <div class="sub" id="sub"></div>
+      </div>
+      <div class="stagewrap">
+        <canvas id="stage" tabindex="0" aria-label="The tarot spread. In the middle, the Alembic’s card: tap it (or press space) to drip a button and post it to Nettle. On the right, the Marshal’s bad map, where the parcels go. On the left, the Post: your helpers."></canvas>
+        <div class="over" id="over" hidden></div>
+      </div>
+      <p class="log" id="log" aria-live="polite"></p>
+    </main>
+    <aside id="side">
+      <div id="calls"></div>
+      <h2>Wares <span id="afford"></span></h2>
+      <div id="shop"></div>
+      <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" hidden>
+    <div class="num">0 · THE LETTER</div>
+    <h2>A Coat’s Worth</h2>
+    <div class="letter" id="letter"></div>
+    <button id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import { grain } from '/shared/kit/fx.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const fmt = E.fmt;
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DEBUG = location.search.includes('debug');
+const C = {
+  night: '#302c2e', plum: '#39314b', wine: '#472d3c', maroon: '#5e3643', rust: '#7a444a', clay: '#a05b53', tan: '#bf7958',
+  amber: '#eea160', cream: '#f4cca1', lime: '#b6d53c', green: '#71aa34', pine: '#397b44', slate: '#3c5956', grey: '#5a5353',
+  grey2: '#7d7071', grey3: '#a0938e', bone: '#cfc6b8', ice: '#dff6f5', aqua: '#8aebf1', cyan: '#28ccdf', blue: '#3978a8',
+  navy: '#394778', dusk: '#39314b', violet: '#564064', purple: '#8e478c', pink: '#cd6093', blush: '#ffaeb6', gold: '#f4b41b',
+  orange: '#f47e1b', red: '#e6482e', crimson: '#a93b3b', lav: '#827094', steel: '#4f546b',
+};
+
+// ---------- State ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:20:save';
+let raw = null;
+try { raw = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+const S = E.load(raw);
+const save = () => { S.savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound: G major, like the band ----------
+// Trims measured with npm run mix (music near -24 dBFS RMS, effects peaking near -10; the coin, the
+// plop and the helpers' brush sit 2-5 dB under on purpose: with a busy Post they never stop).
+const A = createAudio({ sfxTrim: 3.2, musicTrim: 5 });
+const notes = scale('major', 67);
+let dripN = 0, lastDrip = 0, lastPlop = 0, lastCoin = 0, lastPost = 0;
+// (With ?debug the rate limits are off, so npm run mix hears every play.)
+// A little dub echo: the same sound twice more, quieter, an eighth apart (at the band's tempo).
+const echo = (f, n = 2, gap = 0.3, fall = 0.42) => { for (let i = 0; i <= n; i++) f(A.now + i * gap, Math.pow(fall, i)); };
+const sfx = {
+  // The drip: a water drop and a plucked note that climbs while you keep tapping, with an echo.
+  drip() {
+    const t = performance.now(); if (t - lastDrip > 1600 || DEBUG) dripN = 0; lastDrip = t;
+    const d = [0, 2, 4, 2, 4, 7, 4, 9][dripN++ % 8];
+    A.tone({ type: 'sine', freq: notes(d + 14), dur: 0.05, vol: 0.084, glide: 1.6 });
+    echo((at, k) => A.tone({ type: 'pluck', freq: notes(d + 7), dur: 0.1, vol: 0.14 * k, at, cutoff: 2600 }));
+  },
+  // Postage paid: a small coin.
+  coin() { const t = performance.now(); if (t - lastCoin < 140 && !DEBUG) return; lastCoin = t; A.tone({ type: 'bell', freq: notes(16), dur: 0.06, vol: 0.179 }); A.tone({ type: 'bell', freq: notes(18), dur: 0.08, vol: 0.141, at: A.now + 0.05 }); },
+  // A parcel in a ditch: a soft low plop.
+  plop() { const t = performance.now(); if (t - lastPlop < 300 && !DEBUG) return; lastPlop = t; A.tone({ type: 'triangle', freq: notes(0), dur: 0.1, vol: 0.12, glide: 0.6 }); },
+  // The helpers posting on their own: a soft brush and a note, now and then.
+  post() { const t = performance.now(); if (t - lastPost < 1500 && !DEBUG) return; lastPost = t; A.noiseHit('shaker', { vol: 0.056, dur: 0.1 }); A.tone({ type: 'pluck', freq: notes(4 + (Math.random() * 3 | 0)), dur: 0.08, vol: 0.067, cutoff: 2200 }); },
+  buy() { [0, 2, 4, 7].forEach((d, i) => A.tone({ type: 'pluck', freq: notes(d + 7), dur: 0.12, vol: 0.111, at: A.now + i * 0.06 })); },
+  unlock() { A.tone({ type: 'bell', freq: notes(11), dur: 0.3, vol: 0.108 }); A.tone({ type: 'bell', freq: notes(14), dur: 0.4, vol: 0.09, at: A.now + 0.12 }); },
+  deny() { A.tone({ type: 'triangle', freq: notes(-3), dur: 0.07, vol: 0.16 }); },
+  // Every 25th helper: the doubling, a little fanfare with an echo.
+  milestone() { echo((at, k) => [0, 4, 7, 11].forEach((d, i) => A.tone({ type: 'bell', freq: notes(d + 7), dur: 0.22, vol: 0.09 * k, at: at + i * 0.08 })), 1, 0.45, 0.4); },
+  // Folk start to talk: two low notes.
+  gossip() { A.tone({ type: 'triangle', freq: notes(-2), dur: 0.25, vol: 0.082 }); A.tone({ type: 'triangle', freq: notes(-3), dur: 0.35, vol: 0.076, at: A.now + 0.22 }); },
+  // The Marshal deals a card: a swish and a chord.
+  deal() {
+    A.noiseHit('whoosh', { vol: 0.16, dur: 0.3 });
+    [0, 4, 7, 9].forEach((d, i) => A.tone({ type: 'bell', freq: notes(d + 7), dur: 0.4, vol: 0.08, at: A.now + 0.2 + i * 0.1 }));
+  },
+  // The ledger runs out of digits and the world crunches.
+  crunch() {
+    for (let i = 0; i < 7; i++) A.noiseHit(i % 2 ? 'snare' : 'shaker', { vol: 0.08 - i * 0.012, dur: 0.12, at: A.now + i * 0.11 });
+    A.noiseHit('kick', { vol: 0.1, at: A.now + 0.85 });
+    A.tone({ type: 'triangle', freq: notes(-7), dur: 0.5, vol: 0.07, glide: 0.5, at: A.now + 0.85 });
+  },
+  flip() { A.noiseHit('whoosh', { vol: 0.2, dur: 0.25 }); A.tone({ type: 'bell', freq: notes(14), dur: 0.3, vol: 0.114, at: A.now + 0.18 }); },
+  // The letter: the home cadence, D to G, and a held chord.
+  finale() {
+    [4, 6, 8, 11].forEach((d, i) => A.tone({ type: 'pluck', freq: notes(d), dur: 0.3, vol: 0.098, at: A.now + i * 0.12 }));
+    [0, 2, 4, 7].forEach((d, i) => A.tone({ type: 'pluck', freq: notes(d), dur: 0.4, vol: 0.098, at: A.now + 0.6 + i * 0.12 }));
+    [0, 4, 7].forEach(d => A.tone({ type: 'pad', freq: notes(d - 7), dur: 2.4, vol: 0.017, attack: 0.5, release: 1.6, cutoff: 900, at: A.now + 1.1 }));
+    echo((at, k) => A.tone({ type: 'bell', freq: notes(14), dur: 1, vol: 0.07 * k, at: at + 1.4 }), 2, 0.4, 0.45);
+  },
+};
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'crunch', 'milestone', 'deal'], S: () => S, E };
+
+// ---------- Music: one dub tune, arranged per hideout ----------
+let music = null, soundtrack = null;
+const phaseKey = () => E.phase(S);
+function song() { return (soundtrack ??= createSoundtrack(music.strudel))(phaseKey()); }
+createMusic(A, { soundfonts: true, packs: ['vcsl'], song }).then(m => { music = m; music.update(); if (DEBUG) window.__game.music = m; }).catch(e => console.warn('music', e));
+const refreshMusic = () => { if (music) music.update(); };
+
+// ---------- The table ----------
+const W = 800, H = 520;
+const CARD = {
+  post: { x: 22, y: 34, w: 196, h: 318 },
+  hide: { x: 284, y: 12, w: 232, h: 378 },
+  map: { x: 582, y: 34, w: 196, h: 318 },
+};
+const PAST = [{ x: 30, y: 408 }, { x: 116, y: 408 }];         // small past cards, bottom left
+const FATE = { x: 700, y: 404, w: 72, h: 106 };               // the face-down card, bottom right
+let seed = 20;
+const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+const rr = (x, X, Y, w, h, r) => { x.beginPath(); x.roundRect(X, Y, w, h, r); };
+
+// A tarot card: ink border, cream face, a gold double rule, a numeral at the top, a title banner.
+// Draws `inner(x, w, h)` clipped to the picture window (translated to its corner).
+function card(x, X, Y, w, h, { num = '', title = '', inner = null, face = C.cream, rot = 0, small = false } = {}) {
+  x.save();
+  x.translate(X + w / 2, Y + h / 2); if (rot) x.rotate(rot); x.translate(-w / 2, -h / 2);
+  x.fillStyle = 'rgba(20,16,24,0.45)'; rr(x, 5, 7, w, h, small ? 5 : 9); x.fill();
+  x.fillStyle = C.night; rr(x, 0, 0, w, h, small ? 5 : 9); x.fill();
+  x.fillStyle = face; rr(x, 4, 4, w - 8, h - 8, small ? 3 : 6); x.fill();
+  const pad = small ? 7 : 12, top = small ? 14 : 30, bot = small ? 16 : 36;
+  const pw = w - pad * 2, ph = h - top - bot - pad;
+  if (inner) { x.save(); x.beginPath(); x.rect(pad, top, pw, ph); x.clip(); x.translate(pad, top); inner(x, pw, ph); x.restore(); }
+  x.strokeStyle = C.night; x.lineWidth = small ? 1.2 : 2; x.strokeRect(pad, top, pw, ph);
+  x.strokeStyle = C.gold; x.lineWidth = small ? 1 : 1.5; x.strokeRect(pad - 3, top - 3, pw + 6, ph + 6);
+  x.fillStyle = C.night; x.textAlign = 'center'; x.textBaseline = 'middle';
+  if (num) { x.font = `700 ${small ? 8 : 15}px 'Cinzel', Georgia, serif`; x.fillText(num, w / 2, top / 2 + 1); }
+  if (title) {
+    x.font = `700 ${small ? 7 : 14}px 'Cinzel', Georgia, serif`;
+    const ty = h - bot / 2 - (small ? 2 : 3);
+    x.fillText(title.toUpperCase(), w / 2, ty);
+  }
+  // Little corner stars.
+  if (!small) { x.fillStyle = C.gold; for (const [a, b] of [[12, 15], [w - 12, 15], [12, h - 18], [w - 12, h - 18]]) star(x, a, b, 4, 1.6); }
+  x.restore();
+}
+function star(x, cx, cy, r, ri, n = 5) {
+  x.beginPath();
+  for (let i = 0; i < n * 2; i++) { const a = -Math.PI / 2 + (i * Math.PI) / n, q = i % 2 ? ri : r; x.lineTo(cx + Math.cos(a) * q, cy + Math.sin(a) * q); }
+  x.closePath(); x.fill();
+}
+// Woodcut hatching over a region: thin diagonal lines.
+function hatch(x, X, Y, w, h, color = 'rgba(48,44,46,0.25)', gap = 5) {
+  x.save(); x.beginPath(); x.rect(X, Y, w, h); x.clip(); x.strokeStyle = color; x.lineWidth = 1;
+  x.beginPath(); for (let i = -h; i < w; i += gap) { x.moveTo(X + i, Y + h); x.lineTo(X + i + h, Y); } x.stroke(); x.restore();
+}
+function rays(x, cx, cy, r, n, color) {
+  x.save(); x.fillStyle = color;
+  for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2; x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx + Math.cos(a - 0.06) * r, cy + Math.sin(a - 0.06) * r); x.lineTo(cx + Math.cos(a + 0.06) * r, cy + Math.sin(a + 0.06) * r); x.closePath(); x.fill(); }
+  x.restore();
+}
+
+// ---------- The Alembic: glass pot, cap and beak, a false moustache, shifty eyes ----------
+// Origin: the middle of the brazier's foot. About 150 tall; the spout tip is at SPOUT.
+const SPOUT = { x: 78, y: -96 };
+function drawAlembic(x, t, o = {}) {
+  const gold = !!o.polish, spout = o.spout || 0;
+  const glass = gold ? C.gold : 'rgba(138,235,241,0.55)', rim = C.night;
+  x.save(); x.lineJoin = 'round'; x.lineCap = 'round';
+  // Brazier and flame.
+  x.fillStyle = C.night; x.beginPath(); x.moveTo(-30, 0); x.lineTo(-20, -22); x.lineTo(20, -22); x.lineTo(30, 0); x.lineTo(24, 0); x.lineTo(16, -14); x.lineTo(-16, -14); x.lineTo(-24, 0); x.closePath(); x.fill();
+  const fl = Math.sin(t * 9) * 2;
+  x.fillStyle = C.orange; x.beginPath(); x.moveTo(-12, -22); x.quadraticCurveTo(-6, -38 + fl, 0, -30); x.quadraticCurveTo(6, -40 - fl, 12, -22); x.closePath(); x.fill();
+  x.fillStyle = C.gold; x.beginPath(); x.moveTo(-6, -22); x.quadraticCurveTo(0, -33 + fl, 6, -22); x.closePath(); x.fill();
+  // Beak (the spout): from the cap down to the right.
+  const bw = [4, 6.5, 6.5, 7.5][spout];
+  x.strokeStyle = rim; x.lineWidth = bw + 3; x.beginPath(); x.moveTo(12, -128); x.quadraticCurveTo(52, -124, SPOUT.x, SPOUT.y); x.stroke();
+  x.strokeStyle = spout >= 3 ? C.gold : gold ? C.gold : C.aqua; x.lineWidth = bw; x.beginPath(); x.moveTo(12, -128); x.quadraticCurveTo(52, -124, SPOUT.x, SPOUT.y); x.stroke();
+  if (spout >= 2) {   // the copper coil around the beak
+    x.strokeStyle = C.tan; x.lineWidth = 2.2;
+    for (let i = 0; i < 6; i++) { const u = 0.25 + i * 0.1, px = 12 + (SPOUT.x - 12) * u, py = -128 + (SPOUT.y + 128) * u * u - 6 * Math.sin(u * Math.PI); x.beginPath(); x.ellipse(px, py + 2, 3, 7, 0.5, 0, Math.PI * 2); x.stroke(); }
+  }
+  // Pot (the cucurbit).
+  x.fillStyle = glass; x.strokeStyle = rim; x.lineWidth = 3;
+  x.beginPath(); x.arc(0, -62, 38, 0, Math.PI * 2); x.fill(); x.stroke();
+  // Liquid inside, bubbling.
+  if (!o.cosy) {
+    x.save(); x.beginPath(); x.arc(0, -62, 35, 0, Math.PI * 2); x.clip();
+    x.fillStyle = gold ? C.orange : C.blush; x.globalAlpha = 0.75; x.fillRect(-40, -56 + Math.sin(t * 2) * 1.5, 80, 40); x.globalAlpha = 1;
+    x.fillStyle = C.ice; for (let i = 0; i < 4; i++) { const by = -30 - ((t * 18 + i * 9) % 26); x.beginPath(); x.arc(-16 + i * 11, by, 2, 0, 7); x.fill(); }
+    x.restore();
+    x.fillStyle = 'rgba(223,246,245,0.8)'; x.beginPath(); x.ellipse(-18, -80, 6, 11, 0.6, 0, 7); x.fill();
+  }
+  // Neck and cap.
+  x.fillStyle = glass; x.beginPath(); x.rect(-9, -114, 18, 20); x.fill(); x.stroke();
+  x.beginPath(); x.ellipse(0, -124, 19, 14, 0, 0, Math.PI * 2); x.fill(); x.stroke();
+  x.fillStyle = 'rgba(223,246,245,0.8)'; x.beginPath(); x.ellipse(-7, -129, 4, 3, 0.4, 0, 7); x.fill();
+  // The tea cosy: knitted stripes over the pot, a hole for the face.
+  if (o.cosy) {
+    x.save(); x.beginPath(); x.arc(0, -62, 41, Math.PI * 1.04, Math.PI * 1.96 + Math.PI * 1.04 - Math.PI * 1.04); x.lineTo(41, -40); x.quadraticCurveTo(0, -12, -41, -40); x.closePath(); x.clip();
+    for (let i = 0; i < 10; i++) { x.fillStyle = i % 2 ? C.cream : C.crimson; x.fillRect(-45, -104 + i * 9, 90, 9); }
+    x.strokeStyle = 'rgba(48,44,46,0.25)'; x.lineWidth = 1; for (let i = -42; i < 42; i += 5) { x.beginPath(); x.moveTo(i, -104); x.lineTo(i, -20); x.stroke(); }
+    x.restore();
+    x.strokeStyle = rim; x.lineWidth = 3; x.beginPath(); x.arc(0, -62, 41, Math.PI * 0.82, Math.PI * 2.18); x.stroke();
+    x.fillStyle = C.crimson; x.beginPath(); x.arc(0, -104, 6, 0, 7); x.fill(); x.stroke();   // the pompom
+    x.fillStyle = gold ? C.gold : 'rgba(138,235,241,0.9)'; x.beginPath(); x.ellipse(0, -66, 25, 17, 0, 0, Math.PI * 2); x.fill(); x.stroke();   // face hole
+  }
+  // Face: shifty eyes, a large false moustache.
+  const look = Math.sin(t * 0.7) > 0.4 ? 3 : Math.sin(t * 0.7) < -0.4 ? -3 : 0;
+  for (const s of [-1, 1]) {
+    x.fillStyle = C.ice; x.strokeStyle = rim; x.lineWidth = 2; x.beginPath(); x.ellipse(s * 11, -70, 7, 6, 0, 0, 7); x.fill(); x.stroke();
+    x.fillStyle = C.night; x.beginPath(); x.arc(s * 11 + look, -69, 2.6, 0, 7); x.fill();
+    x.strokeStyle = rim; x.lineWidth = 2.2; x.beginPath(); x.moveTo(s * 5, -79); x.lineTo(s * 17, -80 + (s > 0 ? -2 : 2) * 0.5); x.stroke();   // brows
+  }
+  x.fillStyle = C.night; x.beginPath();
+  x.moveTo(0, -60); x.bezierCurveTo(-6, -64, -16, -63, -20, -56); x.bezierCurveTo(-24, -52, -28, -54, -27, -58); x.bezierCurveTo(-30, -50, -18, -48, -10, -54); x.bezierCurveTo(-5, -56, -2, -56, 0, -55);
+  x.bezierCurveTo(2, -56, 5, -56, 10, -54); x.bezierCurveTo(18, -48, 30, -50, 27, -58); x.bezierCurveTo(28, -54, 24, -52, 20, -56); x.bezierCurveTo(16, -63, 6, -64, 0, -60); x.fill();
+  // The pointy hat, on the cap.
+  if (o.hat) {
+    x.fillStyle = C.violet; x.strokeStyle = rim; x.lineWidth = 2.5;
+    x.beginPath(); x.ellipse(0, -134, 30, 7, 0, 0, 7); x.fill(); x.stroke();
+    x.beginPath(); x.moveTo(-18, -136); x.quadraticCurveTo(-6, -170, 14, -196); x.quadraticCurveTo(4, -168, 18, -136); x.closePath(); x.fill(); x.stroke();
+    x.fillStyle = C.gold; x.fillRect(-17, -144, 35, 6); star(x, 22, -186, 5, 2);
+  }
+  x.restore();
+}
+// A button: a disc with four holes. kind 0 tin, 1 horn, 2 gold.
+const BUTTON_COLORS = [[C.bone, C.grey2], [C.tan, C.rust], [C.gold, C.orange]];
+function drawButton(x, cx, cy, r, kind = 0) {
+  const [f, e] = BUTTON_COLORS[kind];
+  x.fillStyle = f; x.strokeStyle = e; x.lineWidth = Math.max(1, r / 4); x.beginPath(); x.arc(cx, cy, r, 0, 7); x.fill(); x.stroke();
+  x.fillStyle = e; const h = r * 0.32; for (const [a, b] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) { x.beginPath(); x.arc(cx + a * h, cy + b * h, Math.max(0.6, r * 0.14), 0, 7); x.fill(); }
+}
+function drawEnvelope(x, cx, cy, s = 1, rot = 0) {
+  x.save(); x.translate(cx, cy); x.rotate(rot); x.scale(s, s);
+  x.fillStyle = C.cream; x.strokeStyle = C.night; x.lineWidth = 1.3; x.fillRect(-8, -5.5, 16, 11); x.strokeRect(-8, -5.5, 16, 11);
+  x.beginPath(); x.moveTo(-8, -5.5); x.lineTo(0, 1); x.lineTo(8, -5.5); x.stroke();
+  x.fillStyle = C.crimson; x.beginPath(); x.arc(0, 1, 2.2, 0, 7); x.fill();
+  x.restore();
+}
+
+// ---------- Helper sprites, from game-icons silhouettes, recoloured and outlined ----------
+const ICONS = {
+  pigeon: ['game-icons--dove.svg', C.grey3], postboy: ['game-icons--horse-head.svg', C.tan], cart: ['game-icons--old-wagon.svg', C.rust],
+  heron: ['game-icons--heron.svg', C.bone], toad: ['game-icons--frog.svg', C.green], wisp: ['game-icons--lantern-flame.svg', C.cyan],
+  bat: ['game-icons--bat.svg', C.violet], griffin: ['game-icons--griffin-symbol.svg', C.amber], wyrm: ['game-icons--dragon-head.svg', C.red],
+};
+const SPR = {};
+async function loadSprites() {
+  await Promise.all(Object.entries(ICONS).map(async ([id, [file, color]]) => {
+    try {
+      const svg = Sprites.recolor(await Sprites.loadSvg(`./art/${file}`), color);
+      const c = await Sprites.svgToCanvas(svg, 40, 40);
+      SPR[id] = Sprites.register(E.BY_ID[id].name, Sprites.outline(c, C.night, 2));
+    } catch (e) { console.warn('sprite', id, e); }
+  }));
+}
+
+// ---------- The three hideouts, drawn inside their card ----------
+const has = id => S.ended || E.has(S, id);
+const spoutLv = () => ['spout1', 'spout2', 'spout3'].filter(has).length;
+const dressed = () => ({ cosy: has('cosy'), hat: has('hat'), polish: has('polish'), spout: spoutLv() });
+function hideoutScene(x, w, h, town, t, live) {
+  if (town === 0) {        // the Hobbling Arms: a warm bar-room, a window on the hills
+    x.fillStyle = C.amber; x.fillRect(0, 0, w, h);
+    rays(x, w / 2, h * 0.42, w, 18, 'rgba(244,180,27,0.35)');
+    x.fillStyle = C.cream; rr(x, w * 0.18, 18, w * 0.64, 70, 30); x.fill(); x.strokeStyle = C.night; x.lineWidth = 2; x.stroke();
+    x.save(); rr(x, w * 0.18, 18, w * 0.64, 70, 30); x.clip(); x.fillStyle = C.green; x.beginPath(); x.ellipse(w * 0.35, 92, 60, 30, 0, 0, 7); x.fill(); x.fillStyle = C.pine; x.beginPath(); x.ellipse(w * 0.7, 98, 60, 34, 0, 0, 7); x.fill(); x.restore();
+    x.beginPath(); x.moveTo(w / 2, 18); x.lineTo(w / 2, 88); x.moveTo(w * 0.18, 56); x.lineTo(w * 0.82, 56); x.stroke();
+    // Mugs on a shelf.
+    x.fillStyle = C.rust; x.fillRect(8, 112, w - 16, 5);
+    for (let i = 0; i < 5; i++) { x.fillStyle = i % 2 ? C.bone : C.tan; x.fillRect(16 + i * 38, 98, 14, 14); x.strokeStyle = C.night; x.lineWidth = 1.5; x.strokeRect(16 + i * 38, 98, 14, 14); }
+    // The bar.
+    x.fillStyle = C.clay; x.fillRect(0, h - 64, w, 64); hatch(x, 0, h - 64, w, 64, 'rgba(48,44,46,0.22)', 6);
+    x.fillStyle = C.rust; x.fillRect(0, h - 68, w, 6);
+  } else if (town === 1) { // Murkmere: a fen at night, a row of stills in pointy hats
+    x.fillStyle = C.slate; x.fillRect(0, 0, w, h);
+    x.fillStyle = C.ice; x.beginPath(); x.arc(w * 0.72, 46, 24, 0, 7); x.fill(); x.fillStyle = C.slate; x.beginPath(); x.arc(w * 0.66, 40, 22, 0, 7); x.fill();
+    x.fillStyle = C.cream; for (let i = 0; i < 9; i++) star(x, (i * 47) % w + 8, 12 + (i * 29) % 60, 2.5, 1);
+    for (let i = 0; i < 4; i++) {   // the other stills
+      const sx = 22 + i * 56, sy = h - 66;
+      x.fillStyle = C.navy; x.beginPath(); x.arc(sx, sy - 16, 15, 0, 7); x.fill(); x.fillRect(sx - 4, sy - 40, 8, 14);
+      x.beginPath(); x.moveTo(sx - 10, sy - 40); x.lineTo(sx + 2, sy - 66); x.lineTo(sx + 10, sy - 40); x.closePath(); x.fill();
+    }
+    x.fillStyle = C.pine; x.fillRect(0, h - 50, w, 50); hatch(x, 0, h - 50, w, 50, 'rgba(48,44,46,0.3)', 5);
+    x.strokeStyle = C.lime; x.lineWidth = 2; for (let i = 0; i < 14; i++) { const rx = 6 + i * 15; x.beginPath(); x.moveTo(rx, h - 40); x.quadraticCurveTo(rx + 3, h - 62, rx + (i % 2 ? 6 : -2), h - 74 + (i % 3) * 6); x.stroke(); }
+  } else {                 // the hoard on Mount Smoulder: a cave, gold, one dragon's eye
+    x.fillStyle = C.navy; x.fillRect(0, 0, w, h);
+    x.fillStyle = C.dusk; x.beginPath(); x.moveTo(0, 0); x.lineTo(0, 120); x.quadraticCurveTo(w / 2, -20, w, 120); x.lineTo(w, 0); x.closePath(); x.fill();
+    // The dragon's eye in the dark, blinking now and then.
+    const blink = Math.sin(t * 0.5) > 0.96;
+    x.fillStyle = C.gold; x.beginPath(); x.ellipse(w * 0.8, 52, 16, blink ? 1 : 9, 0, 0, 7); x.fill(); x.fillStyle = C.night; if (!blink) { x.beginPath(); x.ellipse(w * 0.8, 52, 3, 8, 0, 0, 7); x.fill(); }
+    // The hoard.
+    x.fillStyle = C.orange; x.beginPath(); x.moveTo(0, h); x.lineTo(0, h - 50); x.quadraticCurveTo(w * 0.3, h - 92, w * 0.55, h - 70); x.quadraticCurveTo(w * 0.8, h - 50, w, h - 76); x.lineTo(w, h); x.closePath(); x.fill();
+    x.fillStyle = C.gold; for (let i = 0; i < 30; i++) { const cx = (i * 37) % w, cy = h - 10 - ((i * 13) % 50); x.beginPath(); x.ellipse(cx, cy, 6, 3, 0, 0, 7); x.fill(); }
+    x.fillStyle = C.crimson; for (let i = 0; i < 4; i++) { x.beginPath(); x.arc(20 + i * 52, h - 24 - (i % 2) * 12, 3.5, 0, 7); x.fill(); }
+  }
+  // The Alembic, dressed in everything it has bought so far.
+  const base = town === 0 ? h - 66 : town === 1 ? h - 40 : h - 58;
+  const ax = w / 2 - 22;
+  x.save(); x.translate(ax, base); x.scale(live ? 1 : 1, live ? 1 : 1);
+  drawAlembic(x, t, dressed());
+  // A drip forming at the spout.
+  if (live && !S.full) { const g = Math.min(1, (clock - lastTapT) * 3); x.fillStyle = C.aqua; x.strokeStyle = C.night; x.lineWidth = 1.2; x.beginPath(); x.ellipse(SPOUT.x + 2, SPOUT.y + 6 + g * 2, 2.5 + g * 1.5, 3 + g * 2, 0, 0, 7); x.fill(); x.stroke(); }
+  x.restore();
+  // Props that belong to the town's card.
+  if (town === 1 && has('tailor')) drawTailor(x, w - 40, h - 44, t);
+  if (town === 2 && has('heap')) { for (let i = 0; i < 26; i++) drawButton(x, w - 60 + (i % 7) * 7 - (i > 13 ? -5 : 0), h - 22 - Math.floor(i / 7) * 6, 4, i % 3); }
+}
+// The frog tailor: a green frog with a tape measure round its neck, holding up a coat.
+function drawTailor(x, cx, cy, t) {
+  x.save(); x.translate(cx, cy);
+  x.fillStyle = C.green; x.strokeStyle = C.night; x.lineWidth = 1.8;
+  x.beginPath(); x.ellipse(0, -14, 15, 13, 0, 0, 7); x.fill(); x.stroke();
+  for (const s of [-1, 1]) { x.beginPath(); x.arc(s * 8, -27, 5, 0, 7); x.fill(); x.stroke(); x.fillStyle = C.night; x.beginPath(); x.arc(s * 8, -27, 2, 0, 7); x.fill(); x.fillStyle = C.green; }
+  x.strokeStyle = C.night; x.beginPath(); x.arc(0, -18, 6, 0.2, Math.PI - 0.2); x.stroke();
+  x.strokeStyle = C.gold; x.lineWidth = 2.5; x.beginPath(); x.moveTo(-10, -8); x.quadraticCurveTo(0, -2, 10, -8); x.lineTo(12, 6); x.stroke();
+  x.fillStyle = C.night; for (let i = 0; i < 4; i++) x.fillRect(-8 + i * 5, -5.5, 1, 2);
+  x.restore();
+}
+
+// ---------- The Marshal's map, one region per hideout ----------
+// Places in map-card picture coordinates (172 x 252): doors where parcels can land, and ditches.
+const MAPS = [
+  { doors: [[40, 58], [128, 74], [60, 150], [140, 186], [32, 216]], ditches: [[96, 40], [100, 118], [92, 206], [150, 128]] },
+  { doors: [[34, 70], [70, 150], [36, 212], [110, 96]], ditches: [[86, 60], [120, 160], [70, 200], [140, 214], [48, 112]] },
+  { doors: [[30, 196], [80, 140], [120, 210], [58, 74]], ditches: [[110, 120], [146, 160], [30, 128], [96, 64]] },
+];
+function mapScene(x, w, h, town, t, live = true) {
+  x.fillStyle = C.cream; x.fillRect(0, 0, w, h);
+  // Old paper: stains and a hatched border.
+  x.fillStyle = 'rgba(191,121,88,0.18)'; for (let i = 0; i < 6; i++) { x.beginPath(); x.arc((i * 61) % w, (i * 97) % h, 18 + (i % 3) * 8, 0, 7); x.fill(); }
+  x.strokeStyle = C.night; x.lineWidth = 1.5; x.font = "italic 11px 'IM Fell English', Georgia, serif"; x.textAlign = 'center'; x.textBaseline = 'middle';
+  const M = MAPS[town], read = id => live ? has(id) : true;
+  const ink = (txt, px, py, color = C.night, size = 11, rot = 0) => { x.save(); x.translate(px, py); x.rotate(rot); x.fillStyle = color; x.font = `italic ${size}px 'IM Fell English', Georgia, serif`; x.fillText(txt, 0, 0); x.restore(); };
+  const redInk = C.crimson;
+  if (town === 0) {
+    // The river (labelled "Road") and the road (labelled "Probably a River").
+    x.strokeStyle = C.blue; x.lineWidth = 6; x.beginPath(); x.moveTo(-5, 100); x.bezierCurveTo(50, 80, 90, 140, w + 5, 120); x.stroke();
+    x.strokeStyle = C.clay; x.lineWidth = 2.5; x.setLineDash([5, 4]); x.beginPath(); x.moveTo(20, h); x.bezierCurveTo(40, 170, 120, 200, 130, 30); x.stroke(); x.setLineDash([]);
+    ink('Road', 52, 82, C.night, 12, -0.2); ink('Probably a River', 112, 158, C.night, 10, -1.2);
+    if (read('read2')) { x.strokeStyle = redInk; x.lineWidth = 1.5; x.beginPath(); x.moveTo(38, 82); x.lineTo(66, 80); x.stroke(); ink('river!', 54, 96, redInk, 11, -0.2); x.beginPath(); x.moveTo(108, 190); x.lineTo(118, 126); x.stroke(); ink('road', 132, 146, redInk, 11, -1.2); }
+    // Hills, a pond, houses.
+    x.strokeStyle = C.pine; x.lineWidth = 1.5; for (const [a, b] of [[20, 30], [150, 40], [30, 180]]) { x.beginPath(); x.arc(a, b, 12, Math.PI, 0); x.stroke(); }
+    // The compass rose, labelled with the days of the week.
+    const ang = read('read1') ? 0 : 1.1;
+    x.save(); x.translate(140, 222); x.rotate(ang);
+    x.fillStyle = C.night; x.beginPath(); x.moveTo(0, -18); x.lineTo(4, 0); x.lineTo(0, 18); x.lineTo(-4, 0); x.closePath(); x.fill();
+    x.fillStyle = C.gold; x.beginPath(); x.moveTo(0, -18); x.lineTo(4, 0); x.lineTo(-4, 0); x.closePath(); x.fill();
+    x.restore();
+    ink('TUE', 140 + Math.sin(ang) * 26, 222 - Math.cos(ang) * 26, C.night, 9); ink('FRI', 140 - Math.sin(ang) * 26, 222 + Math.cos(ang) * 26, C.night, 9);
+    if (read('read1')) { x.strokeStyle = redInk; x.beginPath(); x.arc(140, 196, 9, 0, 7); x.stroke(); ink('= N', 160, 190, redInk, 10); }
+    ink('Little Nobbling?', 60, 236, C.rust, 10);
+  } else if (town === 1) {
+    // The mere and its reeds.
+    x.fillStyle = 'rgba(57,120,168,0.5)'; x.beginPath(); x.ellipse(70, 130, 50, 34, 0.3, 0, 7); x.fill();
+    x.strokeStyle = C.pine; x.lineWidth = 1.2; for (let i = 0; i < 16; i++) { const a = (i * 53) % w, b = (i * 71) % h; x.beginPath(); x.moveTo(a, b); x.lineTo(a - 2, b - 7); x.moveTo(a + 3, b); x.lineTo(a + 4, b - 6); x.stroke(); }
+    ink('Murk', 70, 130, C.navy, 13);
+    // Here be dragons, across the east.
+    x.save(); x.fillStyle = 'rgba(169,59,59,0.8)'; x.translate(150, 120); x.rotate(-1.57); x.font = "700 12px 'Cinzel', Georgia, serif"; x.fillText('HERE BE DRAGONS', 0, 0); x.restore();
+    x.fillStyle = C.crimson; x.beginPath(); x.moveTo(140, 30); x.quadraticCurveTo(160, 20, 165, 40); x.quadraticCurveTo(150, 36, 146, 50); x.closePath(); x.fill();
+    if (read('read4')) { x.strokeStyle = C.night; x.lineWidth = 2.5; x.beginPath(); x.moveTo(140, 50); x.lineTo(160, 200); x.moveTo(160, 50); x.lineTo(140, 200); x.stroke(); ink('nonsense', 128, 214, C.night, 10, -0.2); }
+    // Ink runs from the damp, until it's wrung out.
+    if (!read('read3')) { x.fillStyle = 'rgba(48,44,46,0.55)'; for (let i = 0; i < 7; i++) { const a = 14 + i * 21; x.fillRect(a, 20 + (i % 3) * 30, 3, 40 + (i % 4) * 20); x.beginPath(); x.arc(a + 1.5, 62 + (i % 3) * 30 + (i % 4) * 20, 3, 0, 7); x.fill(); } }
+    else { ink('(wrung)', 40, 22, C.crimson, 10); }
+  } else {
+    // Mountains.
+    x.fillStyle = C.grey3; x.strokeStyle = C.night; x.lineWidth = 1.5;
+    for (const [a, b, s] of [[40, 70, 26], [100, 50, 34], [146, 90, 24], [70, 170, 22]]) { x.beginPath(); x.moveTo(a - s, b + s * 0.8); x.lineTo(a, b - s * 0.6); x.lineTo(a + s, b + s * 0.8); x.closePath(); x.fill(); x.stroke(); x.fillStyle = C.ice; x.beginPath(); x.moveTo(a - s * 0.3, b - s * 0.15); x.lineTo(a, b - s * 0.6); x.lineTo(a + s * 0.3, b - s * 0.15); x.closePath(); x.fill(); x.fillStyle = C.grey3; }
+    ink('Mt. Smoulder (allegedly)', 86, 236, C.night, 10);
+    if (read('read5')) {   // claw-drawn roads, still smoking
+      x.strokeStyle = C.orange; x.lineWidth = 2.5; x.beginPath(); x.moveTo(10, 220); x.lineTo(60, 160); x.lineTo(120, 200); x.moveTo(60, 160); x.lineTo(90, 100); x.lineTo(150, 60); x.stroke();
+      x.fillStyle = 'rgba(160,147,142,0.6)'; for (let i = 0; i < 4; i++) { const p = (t * 0.6 + i * 0.25) % 1; x.beginPath(); x.arc(60 + i * 20, 150 - p * 30, 3 + p * 4, 0, 7); x.fill(); }
+    }
+    if (read('read6')) {   // lemon-juice names, brought out by dragonfire
+      ink('Fernhollow', 40, 120, C.rust, 11, -0.1); ink('Upper Wick', 120, 140, C.rust, 11, 0.1); ink('Nethermoor →', 110, 22, C.rust, 11, 0);
+    }
+  }
+  // Doors (little houses) and ditches.
+  for (const [a, b] of M.doors) { x.fillStyle = C.tan; x.strokeStyle = C.night; x.lineWidth = 1.2; x.fillRect(a - 6, b - 4, 12, 9); x.strokeRect(a - 6, b - 4, 12, 9); x.fillStyle = C.rust; x.beginPath(); x.moveTo(a - 8, b - 4); x.lineTo(a, b - 11); x.lineTo(a + 8, b - 4); x.closePath(); x.fill(); x.fillStyle = C.night; x.fillRect(a - 1.5, b, 3, 5); }
+  for (const [a, b] of M.ditches) { x.strokeStyle = C.night; x.lineWidth = 1; x.fillStyle = 'rgba(90,83,83,0.35)'; x.beginPath(); x.ellipse(a, b, 9, 3.5, 0, 0, 7); x.fill(); x.stroke(); }
+  // Drowned buttons pile up in the ditches as parcels go astray.
+  const lost = Math.min(30, Math.floor((S.ended ? 9999 : S.astray) / 60));
+  for (let i = 0; i < lost; i++) { const [a, b] = M.ditches[i % M.ditches.length]; drawButton(x, a - 6 + ((i * 5) % 12), b - 1 + ((i * 3) % 3) - 1, 2, town); }
+}
+
+// ---------- The Post: one row per helper, with a star for every 25 ----------
+function postScene(x, w, h, town) {
+  x.fillStyle = town === 0 ? C.bone : town === 1 ? C.ice : C.amber; x.fillRect(0, 0, w, h);
+  rays(x, w / 2, 0, h * 1.2, 14, 'rgba(255,255,255,0.25)');
+  const hs = E.ITEMS.filter(i => i.town === town && i.kind === 'helper');
+  hs.forEach((it, r) => {
+    const y = 14 + r * (h / 3), n = E.lv(S, it.id);
+    x.fillStyle = C.night; x.font = "700 11px 'Cinzel', Georgia, serif"; x.textAlign = 'left'; x.textBaseline = 'top';
+    x.fillText(it.name.toUpperCase(), 6, y);
+    x.textAlign = 'right'; x.font = "italic 13px 'IM Fell English', Georgia, serif"; x.fillText(n ? `× ${n}` : '—', w - 6, y - 1);
+    // One figure per helper, up to 12 in two rows; bigger helpers bigger.
+    const spr = SPR[it.id], size = 20 + r * 3, shown = Math.min(n, 12);
+    for (let i = 0; i < shown; i++) {
+      const col = i % 6, row = Math.floor(i / 6);
+      const fx = 6 + col * ((w - 12 - size) / 5), fy = y + 16 + row * (size * 0.72) + (col % 2) * 3;
+      if (spr) x.drawImage(spr, fx, fy, size, size);
+    }
+    if (!n) { x.fillStyle = 'rgba(48,44,46,0.25)'; x.font = "italic 12px 'IM Fell English', Georgia, serif"; x.textAlign = 'center'; x.fillText('(none yet)', w / 2, y + 30); }
+    // Milestone stars.
+    const st = Math.floor(n / E.MILESTONE);
+    x.fillStyle = C.crimson; for (let i = 0; i < Math.min(st, 6); i++) star(x, w - 10 - i * 12, y + 22, 5, 2.2);
+  });
+}
+
+// ---------- Canvas plumbing ----------
+const cv = $('stage'), cx = cv.getContext('2d');
+let k = 1, dpr = 1;
+function layout() {
+  dpr = Math.min(2, devicePixelRatio || 1);
+  const cw = cv.parentElement.clientWidth || W;
+  k = cw / W;
+  cv.width = Math.round(W * k * dpr); cv.height = Math.round(H * k * dpr);
+  cv.style.height = `${H * k}px`;
+}
+const grainCv = Sprites.canvas(W, H); grain(grainCv.getContext('2d'), W, H, { amount: 0.06 });
+
+let clock = 0, lastTapT = -9, flash = 0;
+let flying = [], floats = [], crunch = null;   // crunch: { t, stage: 'crunch' | 'ball' | 'fate' | 'flipping' | 'open' }
+// Where a parcel is going, in canvas coordinates.
+const mapPic = () => ({ x: CARD.map.x + 12, y: CARD.map.y + 30 });
+const spoutAt = () => ({ x: CARD.hide.x + 12 + (CARD.hide.w - 24) / 2 - 22 + SPOUT.x + 2, y: CARD.hide.y + 30 + (S.town === 0 ? 312 - 66 : S.town === 1 ? 312 - 40 : 312 - 58) + SPOUT.y + 8 });
+function launch(found, fromPost = false) {
+  const M = MAPS[S.town], list = found ? M.doors : M.ditches, [a, b] = list[(rnd() * list.length) | 0], p = mapPic();
+  const from = fromPost ? { x: CARD.post.x + CARD.post.w - 20, y: CARD.post.y + 80 + rnd() * 160 } : spoutAt();
+  flying.push({ x0: from.x, y0: from.y, x1: p.x + a, y1: p.y + b, t: 0, found, kind: S.town, over: fromPost });
+}
+
+function render() {
+  const x = cx;
+  x.setTransform(k * dpr, 0, 0, k * dpr, 0, 0);
+  // The cloth.
+  x.fillStyle = C.wine; x.fillRect(0, 0, W, H);
+  x.strokeStyle = 'rgba(244,180,27,0.3)'; x.lineWidth = 1; rr(x, 8, 8, W - 16, H - 16, 10); x.stroke();
+  x.fillStyle = 'rgba(244,180,27,0.12)'; for (let i = 0; i < 40; i++) star(x, (i * 137) % W, (i * 89) % H, 3, 1.2);
+  if (S.ended || (crunch && crunch.stage !== 'crunch')) { renderEnd(x); return; }
+  const cr = crunch ? Math.min(1, crunch.t / 1.6) : 0;
+  const squash = (c, f) => { if (!cr) return f(); x.save(); const mx = c.x + c.w / 2, my = c.y + c.h / 2, e = cr * cr; x.translate(mx + (400 - mx) * e, my + (230 - my) * e); x.rotate(e * (mx < 400 ? 2 : -2)); x.scale(1 - e * 0.85, 1 - e * 0.85); x.translate(-mx, -my); f(); x.restore(); };
+  // Past hideouts, small and face up.
+  for (let i = 0; i < S.town; i++) squash({ x: PAST[i].x, y: PAST[i].y, w: 72, h: 106 }, () => card(x, PAST[i].x, PAST[i].y, 72, 106, { num: E.TOWNS[i].num, title: E.TOWNS[i].card.replace('The ', ''), small: true, rot: -0.06 + i * 0.05, inner: (q, w, h) => { q.save(); q.scale(w / 208, h / 312); hideoutScene(q, 208, 312, i, clock, false); q.restore(); } }));
+  // The face-down card: did they reach her?
+  squash(FATE, () => drawFate(x, FATE.x, FATE.y, FATE.w, FATE.h));
+  const T = E.town(S);
+  squash(CARD.post, () => card(x, CARD.post.x, CARD.post.y, CARD.post.w, CARD.post.h, { num: T.num, title: 'The Post', inner: (q, w, h) => postScene(q, w, h, S.town), rot: -0.02 }));
+  squash(CARD.map, () => card(x, CARD.map.x, CARD.map.y, CARD.map.w, CARD.map.h, { num: T.num, title: 'The Map', inner: (q, w, h) => mapScene(q, w, h, S.town, clock), rot: 0.02 }));
+  const bounce = flash > 0 && !reduced ? 1 + flash * 0.015 : 1;
+  squash(CARD.hide, () => {
+    x.save(); const hc = CARD.hide; x.translate(hc.x + hc.w / 2, hc.y + hc.h / 2); x.scale(bounce, bounce); x.translate(-hc.x - hc.w / 2, -hc.y - hc.h / 2);
+    card(x, hc.x, hc.y, hc.w, hc.h, { num: T.num, title: T.card, inner: (q, w, h) => hideoutScene(q, w, h, S.town, clock, true) });
+    x.restore();
+  });
+  // Parcels in flight.
+  for (const f of flying) {
+    const e = f.t, px = f.x0 + (f.x1 - f.x0) * e, py = f.y0 + (f.y1 - f.y0) * e - Math.sin(e * Math.PI) * 50;
+    if (e < 0.85) drawEnvelope(x, px, py, 0.9, (e - 0.5) * 0.6);
+    else drawButton(x, px, py, 3.5, f.kind);
+  }
+  for (const f of floats) { x.globalAlpha = Math.max(0, 1 - f.t / 1.2); x.fillStyle = f.color || C.gold; x.font = `700 ${f.size || 14}px 'Cinzel', Georgia, serif`; x.textAlign = 'center'; x.fillText(f.text, f.x, f.y - f.t * 22); x.globalAlpha = 1; }
+  // A hint until the first few taps.
+  if (S.taps < 3 && !S.due) {
+    const pulse = reduced ? 1 : 0.75 + Math.sin(clock * 4) * 0.25;
+    x.globalAlpha = pulse; x.fillStyle = C.gold; x.font = "700 15px 'Cinzel', Georgia, serif"; x.textAlign = 'center';
+    x.fillText('Tap the card to drip & post', 400, 410); x.globalAlpha = 1;
+  }
+  if (crunch) { x.fillStyle = `rgba(48,44,46,${cr * 0.5})`; x.fillRect(0, 0, W, H); }
+  x.drawImage(grainCv, 0, 0);
+}
+function drawFate(x, X, Y, w, h, rot = 0.05) {
+  x.save(); x.translate(X + w / 2, Y + h / 2); x.rotate(rot); x.translate(-w / 2, -h / 2);
+  x.fillStyle = 'rgba(20,16,24,0.45)'; rr(x, 4, 5, w, h, 5); x.fill();
+  x.fillStyle = C.night; rr(x, 0, 0, w, h, 5); x.fill();
+  x.fillStyle = C.violet; rr(x, 4, 4, w - 8, h - 8, 4); x.fill();
+  x.strokeStyle = C.gold; x.lineWidth = 1; rr(x, 8, 8, w - 16, h - 16, 3); x.stroke();
+  x.save(); x.beginPath(); x.rect(8, 8, w - 16, h - 16); x.clip(); x.strokeStyle = 'rgba(244,180,27,0.25)'; for (let i = -h; i < w; i += 8) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i + h, h); x.moveTo(i + h, 0); x.lineTo(i, h); x.stroke(); } x.restore();
+  x.fillStyle = C.gold; x.font = `700 ${Math.round(w * 0.45)}px 'Cinzel', Georgia, serif`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('?', w / 2, h / 2 + 2);
+  x.fillStyle = C.cream; x.font = `700 ${Math.round(w * 0.1)}px 'Cinzel', Georgia, serif`; x.fillText('NETTLE', w / 2, h - 16);
+  x.restore();
+}
+// Nettle's card, face up: Nettle in her coat with its six buttons, the town behind her all in buttons.
+function letterScene(x, w, h, t) {
+  x.fillStyle = C.ice; x.fillRect(0, 0, w, h);
+  rays(x, w / 2, h * 0.38, w * 1.2, 20, 'rgba(244,180,27,0.35)');
+  // Nethermoor behind: rooftops, washing lines of buttoned coats.
+  x.fillStyle = C.bone; for (let i = 0; i < 5; i++) { x.fillRect(i * 46 - 4, h * 0.55 - (i % 2) * 14, 40, 60); x.fillStyle = C.rust; x.beginPath(); x.moveTo(i * 46 - 8, h * 0.55 - (i % 2) * 14); x.lineTo(i * 46 + 16, h * 0.45 - (i % 2) * 14); x.lineTo(i * 46 + 40, h * 0.55 - (i % 2) * 14); x.closePath(); x.fill(); x.fillStyle = C.bone; }
+  x.strokeStyle = C.night; x.lineWidth = 1; x.beginPath(); x.moveTo(0, h * 0.3); x.quadraticCurveTo(w / 2, h * 0.36, w, h * 0.3); x.stroke();
+  for (let i = 0; i < 6; i++) { const px = 14 + i * (w - 28) / 5, py = h * 0.31 + Math.sin((i / 5) * Math.PI) * 9; x.fillStyle = [C.crimson, C.blue, C.pine, C.purple, C.amber, C.navy][i]; x.fillRect(px - 7, py, 14, 18); for (let j = 0; j < 3; j++) drawButton(x, px, py + 4 + j * 5, 1.6, j % 3); }
+  x.fillStyle = C.pine; x.fillRect(0, h - 40, w, 40); hatch(x, 0, h - 40, w, 40, 'rgba(48,44,46,0.3)', 5);
+  // Nettle: a girl in a long blue coat with exactly six buttons, waving.
+  x.save(); x.translate(w * 0.5, h - 40); x.lineJoin = 'round';
+  x.fillStyle = C.navy; x.strokeStyle = C.night; x.lineWidth = 2.5;
+  x.beginPath(); x.moveTo(-26, 0); x.lineTo(-18, -98); x.lineTo(18, -98); x.lineTo(26, 0); x.closePath(); x.fill(); x.stroke();
+  x.strokeStyle = C.night; x.lineWidth = 1.5; x.beginPath(); x.moveTo(0, -96); x.lineTo(0, 0); x.stroke();
+  for (let i = 0; i < 6; i++) drawButton(x, 5, -88 + i * 15, 3.6, i % 3);
+  const wave = Math.sin(t * 3) * 0.3;
+  x.save(); x.translate(16, -92); x.rotate(-2.3 + wave); x.fillStyle = C.navy; x.strokeStyle = C.night; x.lineWidth = 2.5; x.beginPath(); x.rect(-5, 0, 10, 36); x.fill(); x.stroke(); x.fillStyle = C.blush; x.beginPath(); x.arc(0, 40, 6, 0, 7); x.fill(); x.stroke(); x.restore();
+  x.fillStyle = C.navy; x.beginPath(); x.rect(-25, -92, 9, 40); x.fill(); x.stroke();
+  x.fillStyle = C.blush; x.beginPath(); x.arc(0, -114, 17, 0, 7); x.fill(); x.stroke();
+  x.fillStyle = C.rust; x.beginPath(); x.arc(0, -120, 18, Math.PI * 1.05, Math.PI * 1.95); x.lineTo(16, -108); x.lineTo(21, -96); x.lineTo(12, -110); x.closePath(); x.fill();
+  x.fillStyle = C.night; x.beginPath(); x.arc(-6, -114, 1.8, 0, 7); x.arc(6, -114, 1.8, 0, 7); x.fill();
+  x.strokeStyle = C.night; x.lineWidth = 1.6; x.beginPath(); x.arc(0, -109, 5, 0.3, Math.PI - 0.3); x.stroke();
+  x.restore();
+}
+function renderEnd(x) {
+  const st = S.ended ? 'open' : crunch.stage, t = crunch ? crunch.t : 9;
+  if (st === 'ball') {   // a crumpled ball of cards on the cloth
+    const e = Math.min(1, t / 0.6), bx = 400, by = 230 + Math.abs(Math.sin(t * 6)) * 20 * Math.max(0, 1 - t / 1.2);
+    x.save(); x.translate(bx, by); x.rotate(t * 2);
+    x.fillStyle = C.cream; x.strokeStyle = C.night; x.lineWidth = 2;
+    x.beginPath(); for (let i = 0; i < 14; i++) { const a = (i / 14) * Math.PI * 2, r = (36 + ((i * 7) % 5) * 4) * (0.6 + e * 0.4); x.lineTo(Math.cos(a) * r, Math.sin(a) * r); } x.closePath(); x.fill(); x.stroke();
+    x.strokeStyle = C.gold; x.lineWidth = 1.2; for (let i = 0; i < 6; i++) { x.beginPath(); x.moveTo(-20 + i * 7, -18); x.lineTo(-10 + i * 5, 14); x.stroke(); }
+    x.restore();
+    x.fillStyle = C.cream; x.font = "700 16px 'Cinzel', Georgia, serif"; x.textAlign = 'center'; x.fillText('9,999. The ledger is full.', 400, 420);
+  } else if (st === 'fate' || st === 'flipping') {
+    const p = st === 'flipping' ? Math.min(1, t / 0.5) : 0, sx = Math.abs(Math.cos(p * Math.PI));
+    x.save(); x.translate(400, 230); x.scale(sx || 0.02, 1);
+    if (p < 0.5) drawFate(x, -110, -160, 220, 320, 0); else card(x, -110, -160, 220, 320, { num: '0', title: 'The Letter', inner: (q, w, h) => letterScene(q, w, h, clock) });
+    x.restore();
+    if (st === 'fate') { x.globalAlpha = reduced ? 1 : 0.75 + Math.sin(clock * 4) * 0.25; x.fillStyle = C.gold; x.font = "700 16px 'Cinzel', Georgia, serif"; x.textAlign = 'center'; x.fillText('One card is left. Tap to turn it over.', 400, 420); x.globalAlpha = 1; }
+  } else {
+    // The finished spread: the three hideouts, fully dressed, fanned behind Nettle's card.
+    for (let i = 0; i < 3; i++) card(x, 110 + i * 200 - (i === 1 ? 0 : 0), 50 + (i === 1 ? -26 : 0), 180, 270, { num: E.TOWNS[i].num, title: E.TOWNS[i].card, rot: (i - 1) * 0.12, inner: (q, w, h) => { q.save(); q.scale(w / 208, h / 312); hideoutScene(q, 208, 312, i, clock, false); q.restore(); } });
+    card(x, 300, 110, 200, 300, { num: '0', title: 'The Letter', inner: (q, w, h) => letterScene(q, w, h, clock) });
+    x.fillStyle = C.cream; x.font = "700 15px 'Cinzel', Georgia, serif"; x.textAlign = 'center'; x.fillText('9,999 posted · it takes six', 400, 450);
+  }
+  x.drawImage(grainCv, 0, 0);
+}
+
+// ---------- Playing ----------
+function doTap() {
+  if (S.ended) return;
+  if (crunch) { if (crunch.stage === 'fate') { crunch.stage = 'flipping'; crunch.t = 0; sfx.flip(); } return; }
+  if (S.due) { sfx.deny(); say('THE MARSHAL', '“Not another drip. Half the town is watching this teapot. Take the card, witness.”'.replace('teapot', E.town(S).card.replace('The ', '').toLowerCase())); return; }
+  const r = E.tap(S);
+  if (!r.n) return;
+  lastTapT = clock; flash = 1; sfx.drip();
+  const found = rnd() < E.acc(S);
+  launch(found);
+  afterPost();
+}
+function afterPost() {
+  checkGossip();
+  if (S.full && !crunch) startCrunch();
+}
+cv.addEventListener('pointerdown', e => { e.preventDefault(); cv.focus({ preventScroll: true }); doTap(); });
+cv.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); if (!e.repeat) doTap(); } });
+
+// Gossip lines as the town fills up, and the Marshal when it's full.
+const GOSSIP = [
+  ['“That’s a lot of buttons, for a teapot,” says somebody at the Hobbling Arms.', '“Funny teapot,” says the landlady, to nobody, and then to everybody.'],
+  ['A witch remarks that Still No. 77 never seems to brew anything but buttons.', 'The coven holds a meeting. The agenda has one item, and it is round, with four holes.'],
+  ['', ''],
+];
+function checkGossip() {
+  if (S.town > 1) return;
+  const f = E.gossip(S) / E.quota(S);
+  S.gw = S.gw || [0, 0];
+  if (f >= 0.75 && S.gw[0] < S.town * 10 + 1) { S.gw[0] = S.town * 10 + 1; sfx.gossip(); say('THE CHRONICLE', GOSSIP[S.town][0]); }
+  if (f >= 0.92 && S.gw[1] < S.town * 10 + 1) { S.gw[1] = S.town * 10 + 1; sfx.gossip(); say('THE CHRONICLE', GOSSIP[S.town][1]); }
+  if (S.due && !checkGossip.said) { checkGossip.said = true; sfx.gossip(); say('THE MARSHAL', '“Pack up, witness. They’re talking. I have a new card for you.”'); renderCalls(); }
+}
+
+// The Marshal deals the next card.
+const NEXT = [
+  null,
+  { name: 'Still No. 77', text: 'Murkmere fen, where the witches keep a hundred stills in a hundred pointy hats. One more is no one at all. Folk here pay their postage in wishbones.', marshal: '“Your new name is Still No. 77. Brew something, now and then. Mostly buttons, I expect.”' },
+  { name: 'The Goblet', text: 'Mount Smoulder, which nobody’s map shows (it said “Here Be Dragons” until you crossed it out). Hidden in a dragon’s hoard as a golden goblet. She pays in crowns, and she counts her goblets every night.', marshal: '“Nobody looks for a witness where the map says there be dragons. There be one. Be a goblet.”' },
+];
+function showDeal() {
+  const n = S.town + 1, T = E.TOWNS[n], o = $('over');
+  o.innerHTML = '';
+  const p = document.createElement('div'); p.className = 'panel';
+  p.innerHTML = `<div class="num"></div><h3></h3><p></p><p class="small"></p>`;
+  p.querySelector('.num').textContent = `${T.num} · THE MARSHAL DEALS`;
+  p.querySelector('h3').textContent = T.card;
+  p.querySelectorAll('p')[0].textContent = NEXT[n].text;
+  p.querySelectorAll('p')[1].textContent = `The ledger comes with you: ${fmt(S.ledger)} posted. The ${E.town(S).coin} and the helpers stay in ${E.town(S).name}: a forwarding address would lead straight to you.`;
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'bigbtn'; b.textContent = 'Take the card';
+  b.addEventListener('click', () => { o.hidden = true; relocate(); });
+  p.append(b); o.append(p); o.hidden = false; b.focus();
+}
+function relocate() {
+  const n = S.town + 1;
+  if (!E.relocate(S)) return;
+  checkGossip.said = false;
+  sfx.deal(); save();
+  say('THE MARSHAL', NEXT[n].marshal);
+  setTimeout(() => say('THE CHRONICLE', `And so the Alembic came to ${E.town(S).name}, as ${E.town(S).cover}, and dripped again. How many had reached her? It could not know. It dripped another, to be sure.`), 4200);
+  hud(); renderShop(); renderCalls(); refreshMusic();
+}
+
+// ---------- The crunch ----------
+function startCrunch() {
+  crunch = { t: 0, stage: 'crunch' };
+  hideTip(true);
+  sfx.crunch(); save();
+  say('THE CHRONICLE', 'And the ledger came to 9,999, and had no fifth digit, and could count no further. And the world, which was only cards, crunched up like paper.');
+  renderShop(); renderCalls(); hud(); refreshMusic();
+}
+function end(resumed) {
+  S.ended = true; save();
+  $('letter').innerHTML = letterHTML();
+  $('ending').hidden = false;
+  renderShop(); renderCalls(); hud(); refreshMusic();
+  if (!resumed) {
+    sfx.finale();
+    say('NETTLE', '“It takes six.”');
+    if (window.DailyGame) {
+      const m = Math.round(S.t / 60), time = m >= 60 ? `${Math.floor(m / 60)}h${String(m % 60).padStart(2, '0')}m` : `${m}m`;
+      DailyGame.finish({ lines: [`⚗️ ${fmt(E.CAP)} buttons posted`, `🧥 6 needed`, `🦆 ${fmt(S.astray)} in ditches`, `⏱ ${time}`] });
+    }
+    setTimeout(() => $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }), 600);
+  }
+}
+function letterHTML() {
+  const astray = S.astray ? fmt(S.astray) : 'thousands';
+  return `<p>Dear Alembic,</p>
+<p>The Post says I’m to have no more buttons, because their ledger has run out of digits. I am writing to say that’s quite all right.</p>
+<p>It was a small coat. It takes six.</p>
+<p>The first six came in the first week, by a pigeon who wouldn’t leave. I sewed them on that night. I never knew where you were (the postmarks made no sense at all), so I couldn’t write back, but I knew one thing every time a parcel came: you were still dripping. You were safe.</p>
+<p>That was the promise, you see. Not the coat. I only wanted to know you were all right, and every button said so. So I kept every one. Everyone in Nethermoor has buttons now. They call me the Button Witch.</p>
+<p>The trial is long over. The Marshal says you may come home whenever you like. Come and see the coats.</p>
+<p class="sig">Your Nettle</p>
+<p class="ps">P.S. About ${astray} of them went the wrong way, I hear. The ducks of Little Hobbling have very smart nests.</p>`;
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- The log ----------
+let logT = 0;
+function say(who, text) {
+  const el = $('log');
+  el.innerHTML = '<b></b><span></span>';
+  el.querySelector('b').textContent = who; el.querySelector('span').textContent = text;
+  el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
+  logT = 0;
+}
+const AMBIENT = [
+  ['A pigeon returns with a penny and the look of someone who has seen things.', 'The regulars of the Hobbling Arms ask the teapot for tea. It pours them a button. They tip anyway.', 'Somewhere in Little Hobbling, a parcel lands in a ditch. The ditch is delighted.', 'How many reached Nettle? The Alembic cannot know. It drips another, to be sure.', 'The parish cart goes past. It is Tuesday, the driver says. It is Thursday.'],
+  ['A witch asks the Alembic its name. “Still No. 77,” it says, as rehearsed.', 'Fog rolls over the mere. Parcels go in. Some come out.', 'The herons have formed a guild. Their first demand is fish. Their second is also fish.', 'How many reached her? The fen keeps its secrets. The Alembic drips another.', 'A will-o’-the-wisp bobs past with a parcel, leading it astray in exactly the right direction.'],
+  ['The dragon counts her hoard. One goblet more than yesterday? No. She counts again.', 'A griffin salutes. Nobody asked it to. It is that kind of griffin.', 'Cousin Wyrm burns a wrong address off a parcel and writes a better one in soot.', 'Bats leave at dusk with a button each. They come back at dawn with a crown each, and opinions.', 'How many reached her? Even the dragon doesn’t know. The Alembic drips another, to be sure.'],
+];
+let ambI = 0;
+function ambient(dt) {
+  logT += dt;
+  if (S.ended || crunch || logT < 26) return;
+  const L = AMBIENT[S.town];
+  say('THE CHRONICLE', L[ambI++ % L.length]);
+}
+
+// ---------- HUD ----------
+const perMin = r => { const m = r * 60; return m >= 100 ? fmt(m) : m >= 10 ? m.toFixed(0) : m.toFixed(1); };
+const pct = a => `${Math.round(a * 100)}%`;
+const coinTxt = (n, T = E.town(S)) => `${fmt(n)} ${Math.floor(n) === 1 ? T.one : T.coin}`;
+function hud() {
+  const T = E.town(S);
+  const d = E.ledgerDigits(S);
+  $('digits').querySelectorAll('span').forEach((s, i) => { s.textContent = d[i]; });
+  $('fill').style.width = `${(S.ledger / E.CAP) * 100}%`;
+  const lo = S.town === 0 ? 0 : E.TOWNS.slice(0, S.town).reduce((a, t) => a + t.gossip, 0);
+  const hi = S.town < 2 ? lo + T.gossip : E.CAP;
+  $('seg').style.left = `${(lo / E.CAP) * 100}%`; $('seg').style.width = `${((hi - lo) / E.CAP) * 100}%`;
+  $('coins').textContent = fmt(S.coins); $('coinName').textContent = Math.floor(S.coins) === 1 ? T.one : T.coin;
+  $('where').textContent = S.ended ? 'a chronicle in buttons · the end' : `${T.name} · hidden as ${T.cover}`;
+  const sub = $('sub');
+  $('purse').hidden = !!(S.ended || crunch);
+  if (S.ended || crunch) { hud.built = false; sub.innerHTML = `<span>The ledger is full: <b>9,999</b> posted${S.astray ? `, <b>${fmt(S.astray)}</b> of them in ditches` : ''}. It has no fifth digit.</span>`; return; }
+  if (!hud.built) {
+    hud.built = true;
+    sub.innerHTML = '<span>Helpers <b id="sRate"></b>/min</span><span><b id="sAcc"></b> find a door</span><span>Drip pays <b id="sW"></b></span><span><b id="sAst"></b> in ditches</span><span class="talk" id="sTalk"></span><button id="nettle" type="button">Reached Nettle: ?</button>';
+    wireTip($('nettle'), () => ({ id: 'nettle', name: 'Reached Nettle: ?', desc: 'The Alembic cannot know. The map is bad, and nobody can write back to a witness. Every parcel is addressed to her; some find her, some find somebody else’s door, some find a ditch.', fx: 'So it drips another, to be sure.' }), () => {});
+  }
+  $('sRate').textContent = perMin(E.autoRate(S));
+  $('sAcc').textContent = pct(E.acc(S));
+  $('sW').textContent = E.weight(S);
+  $('sAst').textContent = fmt(S.astray);
+  $('sTalk').textContent = S.town < 2 ? `${T.name}: ${fmt(E.gossip(S))} of ${fmt(T.gossip)} before folk talk` : `The ledger: ${fmt(E.CAP - S.ledger)} to go`;
+}
+
+// ---------- Calls: the Marshal, at the top of the column ----------
+let callSig = '';
+function renderCalls() {
+  const el = $('calls');
+  const due = S.due && !S.ended && !crunch;
+  const sig = `${due}|${S.town}`;
+  if (sig === callSig) return;
+  callSig = sig; el.innerHTML = '';
+  if (due) {
+    const T = E.TOWNS[S.town + 1];
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'call'; b.id = 'marshalBtn';
+    b.innerHTML = '<b>🂠 The Marshal Deals a Card</b><span></span>';
+    b.querySelector('span').textContent = `${E.town(S).name} is talking. Move on, as ${T.card.toLowerCase()}.`;
+    wireTip(b, () => ({ id: 'marshal', name: 'The Marshal Deals a Card', desc: `${E.town(S).name} has seen far too many buttons. The Marshal will move you to ${T.name}, hidden as ${E.TOWNS[S.town + 1].cover}.`, fx: `Comes with you: the ledger (${fmt(S.ledger)} posted) and your spout. Stays behind: the ${E.town(S).coin} and the helpers, who don’t know whose buttons they were.`, foot: 'A new card, a new coin, new helpers' }), showDeal);
+    el.append(b);
+  }
+}
+
+// ---------- Shop ----------
+const shop = $('shop');
+const newUntil = {};
+let shopSig = '';
+const clone = () => JSON.parse(JSON.stringify(S));
+function renderShop() {
+  const closed = S.ended || crunch || S.due;
+  const fresh = closed ? [] : E.reveal(S);
+  for (const id of fresh) { if (S.t > 3) sfx.unlock(); newUntil[id] = performance.now() + 9000; }
+  const all = closed ? [] : E.items(S);
+  const sig = all.map(i => `${i.id}:${E.cost(S, i.id)}:${E.lv(S, i.id)}`).join('|') + S.town;
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    for (const it of all) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (it.kind === 'odd' ? ' odd' : '');
+      b.dataset.id = it.id; b.dataset.cost = E.cost(S, it.id);
+      b.innerHTML = '<b></b><em></em>';
+      b.querySelector('b').textContent = it.name;
+      const em = b.querySelector('em');
+      em.innerHTML = `<i class="coin c${S.town}"></i>`;
+      em.append(fmt(E.cost(S, it.id)));
+      if (it.kind === 'helper') { const n = E.lv(S, it.id); em.append(` · ${n}`); const st = Math.floor(n / E.MILESTONE); if (st) { const s = document.createElement('span'); s.className = 'star'; s.textContent = ' ' + '★'.repeat(Math.min(st, 4)); em.append(s); } }
+      b.setAttribute('aria-describedby', 'tip');
+      b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, upTip(it.id)); });
+      b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+      b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, upTip(it.id)); });
+      b.addEventListener('blur', hideTip);
+      b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+      // On touch the first tap shows what it does; the second buys.
+      b.addEventListener('click', () => {
+        if (b.dataset.touch && tipFor !== it.id) { showTip(b, upTip(it.id)); return; }
+        if (b.getAttribute('aria-disabled') !== 'true') doBuy(it.id); else sfx.deny();
+      });
+      shop.append(b);
+    }
+  }
+  const now = performance.now();
+  let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = S.coins >= Number(b.dataset.cost);
+    if (can) n++;
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  document.querySelector('aside h2').hidden = !all.length;
+  renderShelf();
+}
+// What an upgrade changes, now → after.
+function effect(id) {
+  const it = E.BY_ID[id], T = clone();
+  if (it.kind === 'helper') T.lv[id] = E.lv(S, id) + 1; else T.one[id] = true;
+  if (it.kind === 'odd') return 'Does nothing. (Except be seen.)';
+  if (it.kind === 'tap') return `Each button you drip pays: ${E.weight(S)} → ${E.weight(T)} ${E.town(S).coin} (if it finds a door)`;
+  if (it.kind === 'read') return `Parcels that find a door: ${pct(E.acc(S))} → ${pct(E.acc(T))} · helpers earn ${perMin(E.income(S))} → ${perMin(E.income(T))} ${E.town(S).coin}/min`;
+  const n = E.lv(S, id), next = (Math.floor(n / E.MILESTONE) + 1) * E.MILESTONE;
+  const dbl = n + 1 === next ? ' · the 25th doubles them all!' : ` · ×2 at ${next} (${next - n} to go)`;
+  return `${it.name}s post ${perMin(E.helperRate(S, id))} → ${perMin(E.helperRate(T, id))} a minute · all helpers ${perMin(E.autoRate(S))} → ${perMin(E.autoRate(T))}/min${dbl}`;
+}
+let tipFor = null;
+function upTip(id) {
+  const it = E.BY_ID[id];
+  return { id, name: it.name, desc: it.desc, fx: effect(id), foot: coinTxt(E.cost(S, id)) + (it.kind === 'helper' ? ` · you have ${E.lv(S, id)}` : '') };
+}
+function showTip(b, it) {
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><span class="fx"></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('.fx').textContent = it.fx || '';
+  tip.querySelector('.fx').hidden = !it.fx;
+  tip.querySelector('i').textContent = it.joke || '';
+  tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || '';
+  tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  const inSide = !!b.closest('#side');
+  if (inSide && r.left > t.width + 24 && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 12}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - t.width - 8, r.left))}px`;
+    tip.style.top = `${r.bottom + 8 + t.height < innerHeight ? r.bottom + 8 : Math.max(8, r.top - t.height - 8)}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+let tipMoved = 0;
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .call, .bought, #nettle')) hideTip(); });
+
+// Buttons whose effect isn't obvious explain themselves (on touch, the first tap of the session).
+const explained = new Set();
+function wireTip(b, info, act) {
+  b.setAttribute('aria-describedby', 'tip');
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, info()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, info()); });
+  b.addEventListener('blur', hideTip);
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  b.addEventListener('click', () => {
+    if (b.dataset.touch && !explained.has(b.id)) { explained.add(b.id); showTip(b, info()); return; }
+    if (b.id === 'nettle') { showTip(b, info()); return; }
+    hideTip(); act();
+  });
+}
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!S.boughtOpen === shelfEl.open) return;
+  S.boughtOpen = shelfEl.open; save();
+});
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(i => i.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (it.kind === 'odd' ? ' odd' : '');
+    b.textContent = it.name; b.dataset.id = it.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, { id: 'bought:' + it.id, name: it.name, desc: it.desc, joke: it.joke, foot: `Bought in ${E.TOWNS[it.town].name}` + (it.kind === 'odd' ? ' · does nothing, beautifully' : ''), inline: true }); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + it.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+function doBuy(id) {
+  const it = E.BY_ID[id], before = E.lv(S, id);
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  delete newUntil[id];
+  hideTip();
+  if (it.kind === 'helper') {
+    const n = before + 1;
+    if (n % E.MILESTONE === 0) { sfx.milestone(); say('THE CHRONICLE', `And lo, the ${n}th ${it.name.toLowerCase()} joined, and the ${it.name.toLowerCase()}s, being now a proper company, posted twice as fast.`); floats.push({ text: '×2!', x: CARD.post.x + CARD.post.w / 2, y: CARD.post.y + 150, t: 0, size: 26, color: C.crimson }); }
+    else { sfx.buy(); if (n === 1 || n % 5 === 0) say('THE CHRONICLE', HELPER_LINES[id](n)); floats.push({ text: '+1', x: CARD.post.x + CARD.post.w / 2, y: CARD.post.y + 150, t: 0 }); }
+  } else {
+    sfx.buy();
+    say(it.kind === 'odd' ? 'THE CHRONICLE' : 'THE ALEMBIC', it.joke);
+    const spot = it.kind === 'read' ? [CARD.map.x + 98, CARD.map.y + 140] : [CARD.hide.x + 116, CARD.hide.y + 160];
+    floats.push({ text: it.kind === 'odd' ? 'behold!' : '✓', x: spot[0], y: spot[1], t: 0, size: 18 });
+  }
+  save(); renderShop(); hud();
+}
+const HELPER_LINES = {
+  pigeon: n => n === 1 ? 'A pigeon of low renown takes up the post. It will carry one button at a time, and mostly the right way.' : `${n} pigeons now, cooing in the rafters of the Hobbling Arms.`,
+  postboy: n => n === 1 ? 'A postboy on a fat pony. He asks whose buttons these are. “A teapot’s,” says the teapot.' : `${n} postboys. The ponies have formed opinions about each other.`,
+  cart: n => n === 1 ? 'The parish cart, which went round on Tuesdays, now goes round every day, calling each one Tuesday.' : `${n} parish carts. Every day in Little Hobbling is Tuesday now.`,
+  heron: n => n === 1 ? 'A grey heron stalks out of the reeds with a button in its beak and an air of great importance.' : `${n} herons, standing on one leg each, with a button each.`,
+  toad: n => n === 1 ? 'A ferry-toad the size of a rowing boat takes on passengers. The passengers are parcels.' : `${n} ferry-toads. The mere is getting crowded and slightly damp.`,
+  wisp: n => n === 1 ? 'A will-o’-the-wisp, newly employed, leads its first parcel astray, in exactly the right direction.' : `${n} wisps bob over the fen, lanterns lit, parcels under arm.`,
+  bat: n => n === 1 ? 'A bat takes a button in its teeth and leaves at dusk. It seems pleased to be asked.' : `${n} bats. The cave squeaks with industry.`,
+  griffin: n => n === 1 ? 'A griffin reports for duty in a cap with a badge. It salutes. It will not stop saluting.' : `${n} griffins, all saluting each other.`,
+  wyrm: n => n === 1 ? 'Cousin Wyrm, who has never hoarded anything, shoulders a mailbag. “At last,” says Cousin Wyrm, “a calling.”' : `${n} cousins now. The family is taking this very seriously.`,
+};
+
+// ---------- Loop ----------
+let last = performance.now(), saveAcc = 0, uiAcc = 0, lastFrame = performance.now(), phaseWas = phaseKey(), autoAcc = 0, paidAcc = 0, coinAcc = 0;
+function step(dt) {
+  if (!S.ended && !crunch) {
+    const r = E.tick(S, dt);
+    if (r.n) {
+      autoAcc += r.n; paidAcc += r.paid;
+      // One parcel on the table for each whole button the helpers post (a few a second at most).
+      let shown = 0;
+      while (autoAcc >= 1 && shown < 3) { autoAcc -= 1; shown++; if (flying.length < 40) launch(rnd() < E.acc(S), true); }
+      if (autoAcc > 3) autoAcc = 0;
+      sfx.post();
+      afterPost();
+    }
+    coinAcc += dt;
+    if (coinAcc > 5 && paidAcc >= 1) { coinAcc = 0; sfx.coin(); floats.push({ text: `+${fmt(paidAcc)}`, x: CARD.map.x + CARD.map.w / 2, y: CARD.map.y + CARD.map.h + 20, t: 0, size: 14 }); paidAcc = 0; }
+  }
+  const ph = phaseKey();
+  if (ph !== phaseWas) { phaseWas = ph; refreshMusic(); }
+  saveAcc += dt; if (saveAcc > 5) { saveAcc = 0; if (!crunch || S.ended) save(); }
+  ambient(dt);
+  uiAcc += dt; if (uiAcc > 0.2) { uiAcc = 0; hud(); renderShop(); renderCalls(); }
+}
+function frame(now) {
+  const dt = Math.max(0, Math.min(0.1, (now - last) / 1000)); last = now; lastFrame = now;
+  step(dt);
+  clock += dt;
+  flash = Math.max(0, flash - dt * 5);
+  for (const f of flying) f.t += dt * 1.3;
+  for (const f of flying) if (f.t >= 1) {
+    if (f.found) { if (!f.over) sfx.coin(); floats.push({ text: f.over ? '' : `+${E.weight(S)}`, x: f.x1, y: f.y1 - 8, t: 0, size: 13 }); }
+    else { if (!f.over) sfx.plop(); floats.push({ text: f.over ? '' : 'plop', x: f.x1, y: f.y1 - 6, t: 0, size: 11, color: C.grey3 }); }
+  }
+  flying = flying.filter(f => f.t < 1);
+  for (const f of floats) f.t += dt; floats = floats.filter(f => f.t < 1.2 && f.text !== '');
+  if (crunch) {
+    crunch.t += dt;
+    if (crunch.stage === 'crunch' && crunch.t >= 1.7) { crunch.stage = 'ball'; crunch.t = 0; }
+    else if (crunch.stage === 'ball' && crunch.t >= 1.6) { crunch.stage = 'fate'; crunch.t = 0; sfx.flip(); say('THE CHRONICLE', 'And out of the crumpled world rolled the one card that had lain face down all along.'); }
+    else if (crunch.stage === 'flipping' && crunch.t >= 0.6) { crunch.stage = 'open'; crunch.t = 0; end(false); }
+  }
+  render();
+  requestAnimationFrame(frame);
+}
+// In a background tab, rAF stops: keep the helpers going on a timer.
+setInterval(() => {
+  const now = performance.now();
+  if (now - lastFrame < 400) return;
+  const dt = Math.min(1, (now - last) / 1000); last = now;
+  step(dt);
+}, 250);
+addEventListener('pagehide', save);
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('resize', layout);
+
+// ---------- Start ----------
+{
+  const reg = (name, w, h, f) => { const c = Sprites.canvas(w, h), q = c.getContext('2d'); f(q); Sprites.register(name, c); };
+  reg('the Alembic', 120, 210, q => { q.translate(40, 205); drawAlembic(q, 0, {}); });
+  reg('the Alembic, fully disguised', 120, 210, q => { q.translate(40, 205); drawAlembic(q, 0, { cosy: true, hat: true, polish: true, spout: 3 }); });
+  reg('the Alembic, cosy + coil', 120, 210, q => { q.translate(40, 205); drawAlembic(q, 0, { cosy: true, spout: 2 }); });
+  reg('buttons: tin, horn, gold', 60, 20, q => { [0, 1, 2].forEach(i => drawButton(q, 10 + i * 20, 10, 7, i)); });
+  reg('parcel', 24, 16, q => drawEnvelope(q, 12, 8, 1));
+  reg('the frog tailor', 40, 50, q => drawTailor(q, 20, 48, 0));
+  reg('the face-down card', 80, 112, q => drawFate(q, 4, 2, 72, 106, 0));
+  reg('Nettle (spoiler)', 120, 180, q => letterScene(q, 120, 180, 0));
+}
+layout();
+loadSprites().then(() => { if (Sprites.sheetRequested()) Sprites.showSheet({ zoom: 2 }); });
+// Time away: the helpers kept posting, slowly.
+if (!S.ended && !S.full && S.savedAt && S.t > 0) {
+  const away = (Date.now() - S.savedAt) / 1000;
+  const r = E.offline(S, away);
+  if (r) {
+    const h = Math.floor(r.secs / 3600), m = Math.floor((r.secs % 3600) / 60), span = h ? `${h} h ${m} min` : `${m} min`;
+    say('WHILE YOU WERE AWAY', r.n >= 1
+      ? `${span}. The helpers kept posting, slowly, with nobody watching: ${fmt(r.n)} buttons went out, and ${coinTxt(r.paid)} came back in postage.`
+      : `${span}. Nothing went out: the helpers won’t post without the Alembic (and there aren’t any yet, or the town is already talking).`);
+  }
+}
+if (S.full && !S.ended) { crunch = { t: 0, stage: 'fate' }; say('THE CHRONICLE', 'The ledger is full, and the world has crunched. One card is left, face down.'); }
+if (S.ended) { end(true); say('NETTLE', '“It was a small coat. It takes six.”'); }
+else if (S.due) say('THE MARSHAL', '“Welcome back, witness. They’re still talking. Take the card.”');
+else if (!S.t) say('THE CHRONICLE', 'Hear now the chronicle of the Alembic, who testified, and was hidden, and made a promise: a coat’s worth of buttons for Nettle. A witness may not write. But a teapot may post buttons. Tap the card.');
+else if (!$('log').textContent) say('THE CHRONICLE', 'And the Alembic returned to its dripping, for the promise was not yet kept. (Or was it? It could not know.)');
+checkGossip.said = S.due;
+save();
+hud(); renderShop(); renderCalls();
+document.fonts?.ready.then(layout);
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
