@@ -1,0 +1,98 @@
+{
+  "intro": "Every day the dice roll a premise and a dozen constraints, and the game has to honor all of them. Tonight's roll was seed 2181727529. It was a dark and rainy roll. Here's how a pile of random words turned into one night at the Dead Letter Office.",
+  "rolls": [
+    {
+      "roll": "Subject",
+      "value": "a relentlessly cheerful envelope",
+      "became": "The envelope is a dead letter itself: addressed to nobody anyone can find, due in Johnny's mouth at dawn with everything else. It finds this all wonderful. It waves at the shredder. It says hello to gas bills from 1958. The narrator (the office terminal, DLO-7) is a hardboiled noir type and finds the envelope exhausting."
+    },
+    {
+      "roll": "Verb",
+      "value": "feeding",
+      "became": "Each pigeonhole has a paper frog sitting in it with its mouth open. Feed a paper frog a letter and you get more frog: paper does that, if you feed it right. So every letter you sort is literally fed to a frog."
+    },
+    {
+      "roll": "Object",
+      "value": "origami frogs",
+      "became": "Regulation 9, on the wall: a letter, folded into a frog, is a frog. Frogs aren't mail, so frogs aren't on Johnny's list. Every frog folded is a letter saved. Later, Fold Smaller makes the frogs smaller and more numerous, until they're the size of a comma."
+    },
+    {
+      "roll": "Interaction",
+      "value": "sort into bins",
+      "became": "Letters ride a conveyor toward Johnny's teeth, and you tap the pigeonhole each one belongs in. Paper remembers what it was, so the love-letter frog only eats love letters: put a bill in there and it spits it back on the belt."
+    },
+    {
+      "roll": "Scale",
+      "value": "absurd",
+      "became": "The chute widens all night: single letters through the back door, then sacks off the night train, canisters from the pneumatic main, truckloads, boxcars, decades of mail from the basement, and finally the letters nobody ever wrote, which come ten billion to a maybe. The count ends somewhere in the septillions of frogs."
+    },
+    {
+      "roll": "Drive",
+      "value": "legacy",
+      "became": "The envelope has one night. It wants to leave something behind that Johnny can't get, and every small frog fits in Johnny's mouth. So: one frog folded from all of them. The Great Frog."
+    },
+    {
+      "roll": "Obstacle",
+      "value": "a rival",
+      "became": "Johnny Confetti, the office shredder, gets everything nobody sorts. He doesn't hurry and he doesn't miss. His pile of confetti grows in the corner all night, and the switchboard tells you exactly how many letters a second he's eating."
+    },
+    {
+      "roll": "Initial",
+      "value": "J",
+      "became": "Johnny. Johnny Confetti. It's on his nameplate."
+    },
+    {
+      "roll": "Turn",
+      "value": "a huge pointless spectacle",
+      "became": "The Great Frog is too big for Johnny's mouth, too big for the sorting floor and, it turns out, too big for the building. It goes out through the skylight in one leap and lands in the town square, where it does nothing at all, magnificently. Johnny throws the whole night's confetti after it: a ticker-tape parade for a paper frog, for no reason.",
+      "spoiler": true
+    },
+    {
+      "roll": "Length",
+      "value": "mini (10–60 minutes)",
+      "became": "One night shift, 11 P.M. to dawn. The clock on the meter runs on frogs, not minutes: about half an hour of play."
+    },
+    {
+      "roll": "Structure",
+      "value": "the core action goes obsolete; you manage automation",
+      "became": "A fifth of the way in, the back door opens and the mail outgrows two paper corners. You fold origami cranes from office memos, and they do the sorting. Your hand-sorting still works; it just stops mattering. Your job becomes the switchboard: which pigeonhole each crane works, six to a ledge, and whether to fold more cranes, faster cranes or smaller frogs."
+    },
+    {
+      "roll": "Twist",
+      "value": "timed rushes",
+      "became": "The wire chatters, and six seconds later a rush hits one pigeonhole for thirty: the 2 A.M. love letters, Quarter Day's final demands, a liner docking with a hold full of airmail, the Maybe Hour. Rush mail comes four times as fast and three times as thick (twelve pages, both sides), so you move your cranes over or Johnny eats well. The Supervisor's Clipboard adds MATCH, which moves them all at once."
+    },
+    {
+      "roll": "Ending",
+      "value": "build one final thing",
+      "became": "The Great Frog, folded in seven creases at the top of the column: the base fold, the squash, the petal, the legs, the inside reverse, the eyes, and the last crease, the one that makes it spring.",
+      "spoiler": true
+    },
+    {
+      "roll": "Look",
+      "value": "terminal / ASCII",
+      "became": "The whole sorting floor is an 88-by-28 grid of characters on DLO-7's screen, glowing a little, with scanlines. The frogs are ( >__< ), the cranes are >^, Johnny's teeth are VVVVVVVVVVVV. The two kinds of mail the terminal font hasn't got a character for (♥ and ✈) are drawn in pixels."
+    },
+    {
+      "roll": "Palette",
+      "value": "Dreamscape8",
+      "became": "Eight colors and nothing else: a plum screen, cream phosphor, gold for frogs and money, sage for the cranes' good paper, rust for Johnny. Each kind of mail keeps its color all the way into its frog, because paper remembers."
+    },
+    {
+      "roll": "Music",
+      "value": "surf rock, in the blues scale",
+      "became": "Dead Letter Twang: noir surf in E blues, the key of every surf record cut in a garage. A lone reverb guitar at the desk, the full band once the cranes are working, double-time drums and tremolo picking during a rush. Every sorting blip and chime is on the same E blues scale. And there's a radio on the shelf you can buy, tuned to the all-night surf station."
+    },
+    {
+      "roll": "Tone",
+      "value": "noir",
+      "became": "Rain on the skylight like it had somewhere better to be. Mail trucks that back up with their lights off. A shredder who says 'Thanks, kid.' The joke is that the narrator is in a noir and the envelope is not."
+    },
+    {
+      "roll": "Context",
+      "value": "none",
+      "became": "No calendar nod today: just a rainy night that could be any night."
+    }
+  ],
+  "outro": "The silly purchases do nothing at all. The party hat, the kazoo, the coffee for Johnny, the skylight nobody has opened since 1931: they just sit there in the scene, being seen. Mostly."
+}

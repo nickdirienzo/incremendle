@@ -1,0 +1,1148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Big Fold · Incremendle</title>
+<meta name="description" content="One night at the Dead Letter Office: a relentlessly cheerful envelope folds every unclaimed letter into origami frogs before Johnny Confetti, the shredder, gets them at dawn. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Big Fold">
+<meta property="og:description" content="One night at the Dead Letter Office: a relentlessly cheerful envelope folds every unclaimed letter into origami frogs before Johnny Confetti, the shredder, gets them at dawn.">
+<meta property="og:url" content="https://incremendle.com/the-big-fold/">
+<meta property="og:image" content="https://incremendle.com/the-big-fold/og.png?v=36829d9f">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Big Fold: One night at the Dead Letter Office: a relentlessly cheerful envelope folds every unclaimed letter into origami frogs before Johnny Confetti, the shredder, gets them at dawn.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/vt323/font.css">
+<link rel="stylesheet" href="/shared/fonts/share-tech-mono/font.css">
+<style>
+  /* A night-shift terminal in Dreamscape8: plum screen, cream phosphor, gold and sage on the readouts. */
+  :root {
+    --cream: #c9cca1; --gold: #caa05a; --rust: #ae6a47; --wine: #8b4049; --plum: #543344; --slate: #515262; --teal: #63787d; --sage: #8ea091;
+    --vt: 'VT323', ui-monospace, monospace; --mono: 'Share Tech Mono', ui-monospace, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--slate); color: var(--cream); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 15px/1.4 var(--mono);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(10px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image: repeating-linear-gradient(0deg, #54334422 0 1px, transparent 1px 3px);
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 0 0 6px; }
+  h1 { font: 400 40px/1 var(--vt); margin: 0; color: var(--gold); letter-spacing: 1px; text-shadow: 0 0 8px #caa05a66, 2px 2px 0 var(--plum); }
+  header p { margin: 0; font: 20px/1 var(--vt); color: var(--sage); }
+  header p::after { content: '_'; animation: blink 1.1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } h1 { font-size: 32px; } }
+  main { min-width: 0; }
+
+  .hud { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 16px; align-items: center; margin-bottom: 6px; }
+  .frogs { font: 34px/1 var(--vt); color: var(--gold); text-shadow: 0 0 6px #caa05a55; white-space: nowrap; }
+  .frogs small { font-size: 22px; color: var(--cream); }
+  .rate { font: 20px/1 var(--vt); color: var(--sage); white-space: nowrap; }
+  .night { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; font: 20px/1 var(--vt); color: var(--cream); }
+  .bar { position: relative; height: 12px; border: 1px solid var(--sage); background: var(--plum); }
+  .bar i { position: absolute; inset: 1px auto 1px 1px; width: 0; background: repeating-linear-gradient(90deg, var(--gold) 0 6px, transparent 6px 8px); transition: width .4s; }
+  .bar b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--sage); }
+  .night .dawn { color: var(--gold); }
+  .sub { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 2px 16px; font: 19px/1.1 var(--vt); color: var(--sage); min-height: 21px; }
+  .sub b { font-weight: 400; color: var(--cream); }
+  .sub .johnny b { color: var(--rust); }
+
+  .stagewrap { position: relative; }
+  canvas#stage { display: block; width: 100%; touch-action: none; cursor: pointer; background: var(--plum); border: 2px solid var(--teal); border-radius: 10px; box-shadow: 0 0 0 6px #3d2533, 0 0 0 8px var(--teal), 0 10px 0 6px #0004; -webkit-tap-highlight-color: transparent; user-select: none; }
+  canvas#stage:focus-visible { outline: 2px dashed var(--gold); outline-offset: 10px; }
+
+  /* The switchboard: one cell per pigeonhole, cranes moved with − and +. */
+  #board { margin-top: 14px; border: 1px solid var(--sage); background: var(--plum); padding: 6px 8px 8px; }
+  #board .top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font: 19px/1.1 var(--vt); color: var(--sage); margin-bottom: 6px; }
+  #board .top b { font-weight: 400; color: var(--cream); }
+  #board .top .lost b { color: var(--rust); }
+  #board .top span:first-child { margin-right: auto; }
+  .bins { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  @media (max-width: 520px) { .bins { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .bin { border: 1px dashed var(--slate); padding: 3px 5px 4px; font: 18px/1.05 var(--vt); min-width: 0; }
+  .bin .name { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bin .ctl { display: flex; align-items: center; gap: 6px; margin: 3px 0 2px; }
+  .bin .ctl b { font-weight: 400; min-width: 1.6em; text-align: center; font-size: 22px; color: var(--cream); }
+  .bin small { display: block; font-size: 15px; color: var(--sage); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bin small.short { color: var(--rust); }
+  .bin.closed { opacity: .45; }
+  .bin.rush { border: 1px solid var(--gold); background: #caa05a1f; animation: rushpulse .9s steps(2) infinite; }
+  @keyframes rushpulse { 50% { border-color: var(--wine); } }
+  .nb { font: 20px/1 var(--vt); width: 32px; height: 30px; padding: 0; color: var(--plum); background: var(--sage); border: 0; cursor: pointer; }
+  .nb:hover { background: var(--cream); }
+  .nb[aria-disabled="true"] { opacity: .35; cursor: default; }
+  .nb:focus-visible, #match:focus-visible { outline: 2px dashed var(--gold); outline-offset: 2px; }
+  #match { font: 19px/1 var(--vt); color: var(--plum); background: var(--gold); border: 0; padding: 5px 10px; cursor: pointer; letter-spacing: 1px; }
+  #match:hover { background: var(--cream); }
+
+  .log { position: relative; margin: 10px 0 0; min-height: 2.9em; font: 15px/1.4 var(--mono); color: var(--cream); border-left: 3px solid var(--sage); padding: 4px 10px; background: #54334499; }
+  .log b { font: 400 18px/1 var(--vt); color: var(--plum); background: var(--sage); padding: 0 5px; margin-right: 8px; letter-spacing: 1px; }
+  .log b.j { background: var(--rust); }
+  .log b.e { background: var(--gold); }
+  .log b.w { background: var(--cream); }
+  .log.fresh span { animation: type .5s steps(12); }
+  @keyframes type { from { opacity: .2; } }
+
+  aside { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; scrollbar-width: thin; padding: 2px 4px 8px 2px; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  #calls { display: grid; gap: 8px; margin-bottom: 10px; }
+  #calls:empty { display: none; }
+  .call { position: relative; text-align: left; font: 16px/1.2 var(--mono); color: var(--plum); background: var(--gold); border: 0; box-shadow: 4px 4px 0 var(--plum); padding: 7px 10px 8px; cursor: pointer; }
+  .call b { display: block; font: 400 24px/1 var(--vt); letter-spacing: 1px; }
+  .call .pips { font: 20px/1 var(--vt); letter-spacing: 2px; }
+  .call[aria-disabled="true"] { background: var(--sage); cursor: default; }
+  .call.can { animation: nudge 1.4s ease-in-out infinite; }
+  .call:focus-visible { outline: 2px dashed var(--cream); outline-offset: 3px; }
+  @keyframes nudge { 50% { transform: translateY(-2px); box-shadow: 4px 6px 0 var(--plum); } }
+  aside h2 { font: 400 26px/1 var(--vt); margin: 2px 0 8px; color: var(--gold); letter-spacing: 1px; }
+  #afford { font-size: 20px; color: var(--sage); }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  @media (max-width: 760px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up {
+    position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 18px/1.05 var(--vt); color: var(--sage);
+    background: var(--plum); border: 1px solid var(--slate); padding: 5px 8px 6px; cursor: pointer;
+  }
+  .up b { font-weight: 400; font-size: 20px; color: var(--cream); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { border-color: var(--gold); box-shadow: inset 0 0 0 1px #caa05a66; }
+  .up.can em { color: var(--gold); }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up[aria-disabled="true"]:not(.can) b { color: var(--sage); }
+  .up.odd { border-style: dashed; }
+  .up.odd b::before { content: '* '; color: var(--rust); }
+  .up .tag { position: absolute; top: -8px; right: 5px; font: 15px/1 var(--vt); font-style: normal; color: var(--plum); background: var(--gold); padding: 1px 4px; }
+  .up.new { animation: newblink 1s steps(2) 6; }
+  @keyframes newblink { 50% { background: #caa05a33; } }
+  .up:focus-visible, .bought:focus-visible { outline: 2px dashed var(--gold); outline-offset: 2px; }
+  #tip {
+    position: fixed; z-index: 50; width: 280px; padding: 9px 12px 10px; pointer-events: none; font: 14px/1.4 var(--mono); color: var(--cream);
+    background: var(--plum); border: 1px solid var(--gold); box-shadow: 0 0 0 3px var(--plum), 0 0 0 4px var(--sage), 6px 8px 0 4px #0005;
+  }
+  #tip b { display: block; font: 400 22px/1 var(--vt); color: var(--gold); margin-bottom: 4px; letter-spacing: .5px; }
+  #tip .fx { display: block; margin-top: 6px; padding: 3px 6px; color: var(--plum); background: var(--sage); }
+  #tip i { display: block; margin-top: 6px; padding-top: 5px; border-top: 1px dashed var(--sage); font-style: normal; color: var(--sage); }
+  #tip small { display: block; margin-top: 6px; font: 19px/1 var(--vt); color: var(--gold); }
+  #tip.inline { position: static; width: auto; margin-top: 10px; }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 400 22px/1 var(--vt); color: var(--gold); cursor: pointer; list-style: none; padding: 3px 2px; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: '>'; color: var(--sage); transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 2px dashed var(--gold); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 2px 2px; }
+  .bought { max-width: 100%; font: 17px/1.1 var(--vt); color: var(--cream); background: var(--plum); border: 1px solid var(--sage); padding: 2px 7px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { border-style: dashed; }
+  .bought.odd::before { content: '* '; color: var(--rust); }
+  .bought:hover, .bought.on { color: var(--plum); background: var(--gold); }
+
+  #ending { margin: 22px auto 0; max-width: 680px; color: var(--cream); background: var(--plum); border: 1px solid var(--gold); box-shadow: 0 0 0 4px var(--plum), 0 0 0 5px var(--sage); padding: 18px 28px 22px; }
+  #ending .num { font: 22px/1 var(--vt); color: var(--sage); letter-spacing: 2px; }
+  #ending h2 { font: 400 40px/1 var(--vt); margin: 4px 0 10px; color: var(--gold); text-shadow: 0 0 8px #caa05a55; }
+  #ending p { margin: 9px 0; }
+  #ending .sig { color: var(--sage); }
+  #shareBtn, #againBtn { font: 400 22px/1 var(--vt); letter-spacing: 1px; color: var(--plum); background: var(--gold); border: 0; box-shadow: 4px 4px 0 #0004; padding: 7px 16px; margin: 12px 6px 0 0; cursor: pointer; }
+  #againBtn { background: var(--sage); }
+  #shareBtn:focus-visible, #againBtn:focus-visible { outline: 2px dashed var(--cream); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .call.can, .log.fresh span, .bin.rush, header p::after { animation: none; } .bar i, #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/soundfonts": "/shared/lib/@strudel/soundfonts@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="21" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>The Big Fold</h1>
+    <p id="where">dead letter office · night shift</p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="hud">
+        <div class="frogs" title="Frogs folded and not yet spent. Regulation 9: a letter folded into a frog is legally a frog."><span id="frogs">0</span> <small id="frogWord">frogs</small></div>
+        <div class="night" title="The night, on its way to dawn. At dawn Johnny gets the room."><span id="clock">11:00 PM</span><span class="bar"><i id="nightFill"></i></span><span class="dawn">DAWN</span></div>
+        <div class="sub" id="sub"></div>
+      </div>
+      <div class="stagewrap">
+        <canvas id="stage" tabindex="0" aria-label="The sorting floor. A letter rides the belt toward Johnny Confetti, the shredder. Tap the pigeonhole it belongs in, or press 1 to 4: love letters, bills, airmail, letters to nobody."></canvas>
+      </div>
+      <div id="board" hidden>
+        <div class="top"><span>CRANES <b id="nCranes">0</b><span id="idleTxt"></span></span><span class="lost">JOHNNY EATS <b id="lostTxt">0</b>/s</span><button id="match" type="button" hidden>MATCH</button></div>
+        <div class="bins" id="bins"></div>
+      </div>
+      <p class="log" id="log" aria-live="polite"></p>
+    </main>
+    <aside id="side">
+      <div id="calls"></div>
+      <h2>Requisitions <span id="afford"></span></h2>
+      <div id="shop"></div>
+      <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" hidden>
+    <div class="num">6:00 A.M. · THE SQUARE</div>
+    <h2>The Big Fold</h2>
+    <div id="story"></div>
+    <button id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import { scanlines, vignette, grain } from '/shared/kit/fx.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const fmt = E.fmt;
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DEBUG = location.search.includes('debug');
+const C = { cream: '#c9cca1', gold: '#caa05a', rust: '#ae6a47', wine: '#8b4049', plum: '#543344', slate: '#515262', teal: '#63787d', sage: '#8ea091' };
+// Paper remembers what it was: each kind of mail (and the frog folded from it) keeps its color.
+const TCOL = [C.rust, C.gold, C.sage, C.cream];
+
+// ---------- State ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:21:save';
+let raw = null;
+try { raw = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+const S = E.load(raw);
+const save = () => { S.savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound: E blues, the key of every surf record ever cut in a garage ----------
+// Trims measured with npm run mix: music near -24 dBFS RMS, effects peaking near -10 (the crane chime,
+// the paper flap and Johnny's shred sit a dB or so under: they repeat all night).
+const A = createAudio({ sfxTrim: 3.3, musicTrim: 5.6 });
+const notes = scale('blues', 64);   // E G A Bb B D
+let sortN = 0, lastSort = 0, lastChime = 0, lastShred = 0, lastCrane = 0;
+// A little spring reverb: the same note twice more, quieter, a sixteenth apart.
+const spring = (f, n = 2, gap = 0.09, fall = 0.35) => { for (let i = 0; i <= n; i++) f(A.now + i * gap, Math.pow(fall, i)); };
+const sfx = {
+  // A letter into the right pigeonhole: a twangy pluck that climbs the blues scale while you keep sorting.
+  sort() {
+    const t = performance.now(); if (t - lastSort > 2500 || DEBUG) sortN = 0; lastSort = t;
+    const d = [0, 2, 3, 4, 5, 6, 7, 5][sortN++ % 8];
+    A.noiseHit('shaker', { vol: 0.04, dur: 0.04 });
+    spring((at, k) => A.tone({ type: 'pluck', freq: notes(d + 6), dur: 0.09, vol: 0.2 * k, at, cutoff: 3000 }));
+  },
+  // Wrong pigeonhole: the frog spits it out.
+  spit() { A.tone({ type: 'triangle', freq: notes(3), dur: 0.08, vol: 0.15, glide: 0.5 }); A.tone({ type: 'triangle', freq: notes(1), dur: 0.08, vol: 0.105, at: A.now + 0.08, glide: 0.6 }); },
+  // Johnny eats a letter: a soft paper rasp and a low note.
+  shred() { const t = performance.now(); if (t - lastShred < 220 && !DEBUG) return; lastShred = t; A.noiseHit('snare', { vol: 0.07, dur: 0.16 }); A.tone({ type: 'triangle', freq: notes(-6), dur: 0.12, vol: 0.13, glide: 0.8 }); },
+  // The cranes folding frogs on their own: a quiet two-note chime, now and then.
+  chime() { const t = performance.now(); if (t - lastChime < 2600 && !DEBUG) return; lastChime = t; const d = [7, 9, 10, 12][Math.random() * 4 | 0]; A.tone({ type: 'bell', freq: notes(d), dur: 0.08, vol: 0.0938 }); A.tone({ type: 'bell', freq: notes(d + 2), dur: 0.1, vol: 0.075, at: A.now + 0.09 }); },
+  // A crane hops to another pigeonhole: a paper flap.
+  flap() { const t = performance.now(); if (t - lastCrane < 90 && !DEBUG) return; lastCrane = t; A.noiseHit('whoosh', { vol: 0.112, dur: 0.12 }); A.tone({ type: 'pluck', freq: notes(9), dur: 0.05, vol: 0.126 }); },
+  buy() { [0, 2, 3, 4, 6].forEach((d, i) => A.tone({ type: 'pluck', freq: notes(d + 5), dur: 0.1, vol: 0.105, at: A.now + i * 0.055, cutoff: 3200 })); },
+  unlock() { A.tone({ type: 'bell', freq: notes(11), dur: 0.25, vol: 0.12 }); A.tone({ type: 'bell', freq: notes(13), dur: 0.35, vol: 0.1, at: A.now + 0.12 }); },
+  deny() { A.tone({ type: 'triangle', freq: notes(-1), dur: 0.07, vol: 0.149 }); },
+  // The wire: a rush is coming. Telegraph pips.
+  wire() { [0, 0.1, 0.2, 0.42, 0.52].forEach(at => A.tone({ type: 'pulse', freq: notes(12), dur: 0.05, vol: 0.27, at: A.now + at, cutoff: 2400 })); },
+  // The rush hits: the surf drop, a pick sliding down the low string.
+  rush() {
+    A.tone({ type: 'sawtooth', freq: notes(7), dur: 0.55, vol: 0.0301, glide: 0.25, cutoff: 1500 });
+    A.noiseHit('whoosh', { vol: 0.0516, dur: 0.5 });
+    A.noiseHit('kick', { vol: 0.0516, at: A.now + 0.55 });
+    spring((at, k) => A.tone({ type: 'pluck', freq: notes(0), dur: 0.2, vol: 0.0774 * k, at: at + 0.55 }), 2, 0.12);
+  },
+  // A crease in the Great Frog: a big paper fold and a chord.
+  crease() {
+    A.noiseHit('whoosh', { vol: 0.104, dur: 0.4 }); A.noiseHit('kick', { vol: 0.078, at: A.now + 0.35 });
+    [0, 2, 4, 6].forEach((d, i) => A.tone({ type: 'pluck', freq: notes(d + 6), dur: 0.2, vol: 0.078, at: A.now + 0.38 + i * 0.07, cutoff: 3000 }));
+  },
+  // The finale: the leap, the landing, a kazoo (one note, then the same note) and the confetti.
+  finale() {
+    A.tone({ type: 'sawtooth', freq: notes(0), dur: 0.7, vol: 0.0378, glide: 3, cutoff: 1800 });
+    A.noiseHit('kick', { vol: 0.101, at: A.now + 1.2 });
+    A.noiseHit('snare', { vol: 0.0504, at: A.now + 1.25 });
+    [0, 0.32].forEach(o => A.tone({ type: 'square', freq: notes(6), dur: 0.26, vol: 0.0315, at: A.now + 1.7 + o, cutoff: 1400, detune: 8 }));
+    [0, 3, 4, 6, 7].forEach((d, i) => A.tone({ type: 'pluck', freq: notes(d + 6), dur: 0.22, vol: 0.0756, at: A.now + 2.5 + i * 0.1, cutoff: 3000 }));
+    [0, 4, 7].forEach(d => A.tone({ type: 'pad', freq: notes(d), dur: 2.2, vol: 0.0126, attack: 0.4, release: 1.5, cutoff: 1100, at: A.now + 3 }));
+    for (let i = 0; i < 10; i++) A.noiseHit('shaker', { vol: 0.0189, dur: 0.06, at: A.now + 2.6 + i * 0.09 });
+  },
+};
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'rush', 'crease'], S: () => S, E };
+
+// ---------- Music: one surf tune, arranged per part of the night ----------
+let music = null, soundtrack = null;
+const phaseKey = () => E.phase(S);
+function song() { return (soundtrack ??= createSoundtrack(music.strudel))(phaseKey()); }
+createMusic(A, { soundfonts: true, packs: ['vcsl'], song }).then(m => { music = m; music.update(); if (DEBUG) window.__game.music = m; }).catch(e => console.warn('music', e));
+const refreshMusic = () => { if (music) music.update(); };
+
+// ---------- The terminal: an 88 × 28 grid of characters ----------
+const COLS = 88, ROWS = 28, W = 800, H = 476, CW = W / COLS, CH = H / ROWS;
+const gch = new Array(COLS * ROWS), gco = new Array(COLS * ROWS);
+let clip = null;
+function clear() { gch.fill(' '); gco.fill(C.cream); }
+function put(x, y, s, col = C.cream, { opaque = false } = {}) {
+  x = Math.round(x); y = Math.round(y);
+  if (y < 0 || y >= ROWS) return;
+  for (let i = 0; i < s.length; i++) {
+    const cx = x + i; if (cx < 0 || cx >= COLS) continue;
+    if (clip && (cx < clip[0] || cx > clip[2] || y < clip[1] || y > clip[3])) continue;
+    const c = s[i]; if (c === ' ' && !opaque) continue;
+    gch[y * COLS + cx] = c; gco[y * COLS + cx] = col;
+  }
+}
+const stamp = (x, y, lines, col, o) => lines.forEach((l, i) => put(x, y + i, l, typeof col === 'function' ? col(i) : col, o));
+// Pixel icons for the two kinds of mail the terminal font hasn't got a character for.
+const ICONS = {
+  '♥': ['.##.##.', '#######', '#######', '.#####.', '..###..', '...#...'],
+  '✈': ['...#...', '...##..', '#######', '...##..', '...#...', '..###..'],
+};
+
+let seed = 21;
+const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+
+// Pigeonholes: x of the left edge; rows 12 (crane perch) to 20.
+const HOLE = [21, 34, 47, 60], HW = 12;
+const BELT_Y = 22, RIDE_Y = 21, BELT_X0 = 18, BELT_X1 = 74;
+const SHORT = ['LOVE', 'BILLS', 'AIRMAIL', 'NOBODY'];
+
+// ---------- Scene pieces ----------
+const FROG = ['  @..@  ', ' (----) ', '( >__< )', ' ^^  ^^ '];
+const FROG_EAT = ['  @..@  ', ' (\\__/) ', '( >  < )', ' ^^  ^^ '];
+function drawHole(i, t) {
+  const x = HOLE[i], open = i < E.types(S);
+  const rushing = S.rush && S.rush.type === i && !S.ended;
+  const frame = rushing && S.rush.on ? (Math.floor(t * 4) % 2 ? C.gold : C.wine) : rushing ? C.gold : open ? C.sage : C.slate;
+  put(x, 13, '+----------+', frame); for (let r = 14; r <= 19; r++) { put(x, r, '|', frame); put(x + 11, r, '|', frame); }
+  put(x, 20, '+----------+', frame);
+  if (!open) { put(x + 2, 15, 'SEALED', C.slate); put(x + 2, 17, 'XXXXXXXX', C.slate); return; }
+  put(x + 2, 14, E.TYPES[i].glyph, TCOL[i]); put(x + 4, 14, SHORT[i], hintHole === i && Math.floor(t * 3) % 2 ? C.gold : C.cream);
+  const eating = (eatT[i] || 0) > t;
+  stamp(x + 2, 15, eating ? FROG_EAT : FROG, TCOL[i]);
+  // Fold Smaller: tiny frogs piling up at the frog's feet, more with every level.
+  const L = Math.min(10, S.fold);
+  if (L) put(x + 1, 19, 'o.o,o.o,o.'.slice(0, L), C.sage);
+  // Cranes on the ledge, two characters each.
+  const n = S.nb[i], gold = S.one.wings;
+  for (let k = 0; k < n; k++) {
+    const bob = S.one.radio && !reduced ? (Math.floor(t * 2.2 + k) % 2) : 0;
+    const hop = (hopT[i * 8 + k] || 0) > t ? 1 : 0;
+    put(x + k * 2, 12 - Math.max(bob, hop), gold ? '»^' : '>^', gold ? C.gold : C.cream);
+  }
+}
+function drawEnvelope(t) {
+  const x = 3, y = 14;
+  const blink = Math.floor(t * 0.6) % 7 === 4 && (t * 0.6) % 1 < 0.15;
+  const eyes = blink ? '-   -' : '^   ^';
+  stamp(x, y, [' ___________ ', '|\\         /|', '| \\       / |', '|  \\     /  |', "|   '-o-'   |", '|___________|'], C.cream);
+  put(x + 4, y + 1, eyes, C.cream);
+  put(x + 5, y + 2, sortFace > t ? '\\o/' : '\\_/', C.cream);
+  put(x + 6, y + 4, 'o', C.gold);
+  if (S.one.visor) put(x, y, '\\===========/', C.sage);
+  if (S.one.hat) { put(x + 6, y - 3, '*', C.gold); put(x + 5, y - 2, '/\\', C.rust); put(x + 4, y - 1, '/\\/\\', C.wine); }
+  if (S.one.kazoo) put(x - 1, y - 1, '=<]', C.gold);
+  if (S.one.lick) { put(x + 1, y + 4, '~', C.teal); const d = (t * 0.8) % 1; put(x, y + 5 + (d > 0.5 ? 1 : 0), d > 0.5 ? '.' : "'", C.teal); }
+}
+function drawWindow(t) {
+  const x0 = 1, y0 = 2, x1 = 15, y1 = 8;
+  put(x0, y0, '+-------------+', C.teal); put(x0, y1, '+-------------+', C.teal);
+  for (let y = y0 + 1; y < y1; y++) { put(x0, y, '|', C.teal); put(x1, y, '|', C.teal); }
+  clip = [x0 + 1, y0 + 1, x1 - 1, y1 - 1];
+  // Rain.
+  for (let k = 0; k < 9; k++) { const rx = x0 + 1 + ((k * 5 + Math.floor(t * 9)) % 13), ry = y0 + 1 + ((k * 3 + Math.floor(t * 7 + k)) % 5); put(rx, ry, '/', C.slate); }
+  // The skyline.
+  put(x0 + 1, 6, '_n_  |^|  _', C.slate); put(x0 + 1, 7, '|#|__|#|_|#|', C.slate);
+  // Through the window, whatever brings the mail.
+  if (S.one.land) { const off = Math.floor(t * 4) % 40; put(x0 + 1 - off, 5, '[====][====][====][====][====][====][====]', C.wine); }
+  if (S.one.train) { const p = (t * 14) % 60; if (p < 36) put(x1 - Math.floor(p), 6, '<o[__][__][__]', C.rust); }
+  if (S.one.town) { const p = (t * 6 + 20) % 34; if (p < 22) put(x0 + Math.floor(p) - 5, 7, '[==]o', C.gold); }
+  clip = null;
+  put(x0 + 7, y0 + 1, '|', C.teal); put(x0 + 7, y0 + 2, '|', C.teal); put(x0 + 7, y0 + 3, '+', C.teal);
+}
+function drawChute(t) {
+  for (let y = 2; y <= 20; y++) { put(17, y, '|', C.slate); put(19, y, '|', C.slate); }
+  put(17, 21, '\\', C.slate);
+  if (S.one.tube) { put(0, 1, 'o================o', C.gold); put(18, 1, 'V', C.gold); for (let k = 0; k < 3; k++) put(2 + ((Math.floor(t * 12) + k * 6) % 15), 1, '#', C.cream); }
+  else put(16, 1, '[S]', C.slate);
+}
+function drawDoor(t) {
+  if (!S.one.door) { for (let y = 11; y <= 21; y++) put(0, y, '#', C.slate); put(0, 10, '_', C.slate); return; }
+  for (let y = 11; y <= 21; y++) { put(0, y, '|', C.teal); put(1, y, (y + Math.floor(t * 3)) % 4 === 0 ? '/' : ' ', C.gold); }
+  put(0, 10, '_', C.teal); put(1, 21, '_', C.gold);
+}
+function drawJohnny(t) {
+  const x = 74, y = 10, chew = chewT > t ? Math.floor(t * 14) % 2 : 0;
+  stamp(x, y, [' ____________ ', '|            |', '|            |', '|------------|', '|            |', '|     /\\     |', '|    ----    |', '|============|', '|  ::::::::  |', '|  ::::::::  |'], C.rust);
+  put(x + 4, y + 1, 'JOHNNY', C.cream); put(x + 3, y + 2, 'CONFETTI', C.gold); put(x + 3, y + 8, '::::::::', C.wine); put(x + 3, y + 9, '::::::::', C.wine);
+  put(x + 3, y + 4, '-o-', C.cream); put(x + 8, y + 4, '-o-', C.cream);
+  put(x, 20, chew ? '|vVvVvVvVvVvV|' : '|VVVVVVVVVVVV|', C.cream);
+  put(x, 21, '>', C.rust); put(x + 13, 21, '|', C.rust);
+  put(x, 22, chew ? '|^v^v^v^v^v^v|' : '|^^^^^^^^^^^^|', C.cream);
+  put(x, 23, '|____________|', C.rust);
+  if (S.one.coffee) { put(x + 9, 9, 'c[_]', C.cream); if (!reduced) put(x + 10 + (Math.floor(t * 2) % 2), 8, '~', C.slate); }
+  // The confetti pile, growing with every letter Johnny gets.
+  const h = Math.min(4, Math.floor(Math.log10(1 + S.shred) / 4) + (S.shred > 0 ? 1 : 0));
+  const bits = ".,'`*:;", cols = [C.cream, C.gold, C.rust, C.sage, C.wine];
+  for (let r = 0; r < h; r++) {
+    const w = 14 + r * 0; const y2 = 27 - r, start = 74 - r * 3 + (r ? 2 : 0);
+    for (let k = 0; k < w - r * 2; k++) { const s = (k * 7 + r * 13) % 7; put(start + k + r, y2, bits[s], cols[(k + r) % 5]); }
+  }
+}
+function drawLamp(t) {
+  if (!S.one.lamp) return;
+  for (let y = 1; y <= 8; y++) put(27, y, '|', C.slate);
+  put(26, 9, '/=\\', C.sage); put(25, 10, '/___\\', C.sage);
+}
+function drawShelf(t) {
+  if (S.one.radio) {
+    stamp(75, 3, ['.--------.', '|o      o|', "'--------'"], C.teal);
+    put(78, 4, reduced ? '~~~~' : ['~~~~', '-~-~', '~-~-'][Math.floor(t * 4) % 3], C.gold);
+    put(74, 6, '============', C.slate);
+  }
+  if (S.one.clip) { stamp(10, 9, [' _n_ ', '|v--|', '|v--|', "'---'"], C.cream); put(11, 10, 'v', C.gold); }
+}
+// On the wall until the Great Frog needs the room: the regulation, and the clock.
+function drawWall(t) {
+  if (S.great || E.greatOpen(S)) return;
+  stamp(40, 3, ['+-------------+', '| REGULATION 9|', '|  A LETTER,  |', '|  FOLDED     |', '|  INTO A     |', '|  FROG, IS   |', '|  A FROG.    |', '+-------------+'], i => i === 0 || i === 7 ? C.slate : C.sage);
+  put(42, 4, 'REGULATION 9', C.cream);
+  const m = E.clock(S), hand = '|/-\\|/-\\'[Math.floor(((m / 60) % 12) / 1.5) % 8];
+  stamp(60, 3, [" .---. ", "|  .  |", " '---' "], C.teal); put(63, 4, hand, C.gold);
+}
+function drawSkylight(t) {
+  put(38, 1, '[__|__|__|__|__|__|__]', C.teal);
+  for (let k = 0; k < 4; k++) put(39 + ((k * 6 + Math.floor(t * 5)) % 20), 1, "'", C.slate);
+  if (S.one.skylight) { const g = Math.floor(t * 1.5) % 3; put(37, 1, g ? '*' : '+', C.gold); put(60, 1, g ? '+' : '*', C.gold); put(61, 2, "'=[]", C.sage); }
+}
+function drawFloor(t) {
+  // The belt.
+  const off = Math.floor(t * 8) % 3;
+  let belt = ''; for (let i = BELT_X0; i < BELT_X1; i++) belt += (i + off) % 3 === 0 ? 'o' : '=';
+  put(BELT_X0, BELT_Y, belt, C.slate);
+  put(0, 27, '_'.repeat(70), C.slate);
+  if (S.one.ever) {
+    put(24, 25, '__/\\_/\\___/\\__/\\_/\\____', C.teal);
+    const years = ['1931', '1846', '1902', '1777', '1958', '1912'];
+    for (let k = 0; k < 3; k++) { const p = (t * 0.25 + k / 3) % 1; put(26 + k * 7, 25 - Math.floor(p * 2.5), years[(Math.floor(t * 0.25 + k / 3) + k) % 6], p > 0.75 ? C.slate : C.teal); }
+  }
+  if (S.one.never && !reduced) {
+    const words = ['"Dear--"', '"I meant to"', '"Sorry I"', '"P.S."', '"You were"'];
+    for (let k = 0; k < 3; k++) { const p = (t * 0.06 + k * 0.33) % 1; put(Math.floor(22 + p * 46), 3 + k * 3, words[(k + Math.floor(t * 0.06 + k * 0.33)) % 5], C.slate); }
+  }
+}
+// The Great Frog: one art, revealed a crease at a time (the digit mask says which crease draws each row).
+const GREAT = [
+  ['         __                 __', 6],
+  ['        /oo\\               /oo\\', 6],
+  ['       /____\\_____________/____\\', 3],
+  ['      /\\     \\           /     /\\', 2],
+  ['     /  \\     \\_________/     /  \\', 2],
+  ['    <----\\-----/         \\-----/---->', 1],
+  ['     \\    \\   /           \\   /    /', 2],
+  ['      \\____\\_/_____________\\_/____/', 1],
+  ['       /  /                   \\  \\', 4],
+  ['      /__/                     \\__\\', 5],
+];
+function drawGreat(t, x = 31, y = 2, stage = S.great, jump = 0) {
+  if (!stage) {
+    if (E.greatOpen(S)) { put(x + 8, y + 6, '. . . . . . . . . . . .', C.slate); put(x + 12, y + 7, 'RESERVED: GREAT FROG', C.slate); }
+    return;
+  }
+  const done = stage >= E.GREAT;
+  GREAT.forEach(([row, s], i) => { if (s <= stage) put(x, y + i + jump, row, done ? C.gold : s === stage && Math.floor(t * 3) % 2 ? C.cream : C.sage); });
+  if (stage >= 6) { put(x + 9, y + 1 + jump, 'oo', C.cream); put(x + 28, y + 1 + jump, 'oo', C.cream); }
+  if (done && !reduced) { const k = Math.floor(t * 6) % 12; put(x + 3 + k * 3, y + 4 + jump, '*', C.cream); }
+}
+
+// ---------- Letters on the belt ----------
+let hand = null;                // the letter you sort yourself
+let mail = [];                  // the crane-sorted stream, a few glyphs for show
+let floats = [], hopT = {}, eatT = {}, chewT = 0, sortFace = 0, hintHole = -1, handWait = 0.6, mailAcc = 0;
+function spawnHand() {
+  const n = E.types(S);
+  const type = S.rush && S.rush.on ? S.rush.type : Math.floor(rnd() * n);
+  hand = { type, y: 2, x: BELT_X0, fall: true, t: 0 };
+}
+const holeCenter = i => HOLE[i] + 5.5;
+function tapHole(i) {
+  if (S.ended || finale) return;
+  if (i >= E.types(S)) { sfx.deny(); return; }
+  if (!hand || hand.fly) return;
+  if (hand.type === i) {
+    const n = E.handSort(S, i);
+    hand.fly = { to: i, t: 0, from: hand.x };
+    eatT[i] = clock + 0.4; sortFace = clock + 0.5;
+    sfx.sort();
+    floats.push({ text: `+${fmt(n)}`, x: holeCenter(i) * CW, y: 12.5 * CH, t: 0, color: TCOL[i] });
+    if (S.hand === 1) say('NARRATOR', 'The frog swallowed it, and a moment later there was one more frog on the ledge. Paper does that, if you feed it right. Keep sorting.');
+    if (S.hand === 5 && !S.one.door) say('ENVELOPE', '“Isn’t this FUN? Every one we fold is one Johnny doesn’t get!”');
+    save(); hud(); renderShop();
+  } else {
+    hand.spat = clock + 0.35; eatT[i] = clock + 0.2;
+    sfx.spit();
+    floats.push({ text: 'ptoo!', x: holeCenter(i) * CW, y: 13 * CH, t: 0, color: C.slate });
+    if (!tapHole.spat) { tapHole.spat = true; say('NARRATOR', `Paper remembers what it was. The ${E.TYPES[i].long} frog won’t eat ${E.TYPES[hand.type].long}. It spat it back on the belt.`); }
+  }
+}
+function stepHand(dt) {
+  if (S.ended || finale) { hand = null; return; }
+  if (!hand) { handWait -= dt; if (handWait <= 0) { spawnHand(); handWait = 0.15; } return; }
+  hand.t += dt;
+  if (hand.fly) {
+    hand.fly.t += dt * 4;
+    if (hand.fly.t >= 1) hand = null;
+    return;
+  }
+  if (hand.fall) { hand.y += dt * 70; if (hand.y >= RIDE_Y) { hand.y = RIDE_Y; hand.fall = false; } return; }
+  hand.x += dt * (BELT_X1 - BELT_X0) / E.HAND_BELT;
+  if (hand.x >= BELT_X1) {
+    E.shredHand(S); chewT = clock + 0.5; sfx.shred();
+    floats.push({ text: 'shred', x: 74 * CW, y: 19.5 * CH, t: 0, color: C.rust });
+    if (!stepHand.ate) { stepHand.ate = true; say('JOHNNY', '“Thanks, kid.” Johnny chewed. Nobody sorted that one, so Johnny got it. Tap the pigeonhole a letter belongs in before it gets to him.'); }
+    hand = null;
+  }
+}
+// The crane-sorted mail: glyphs for show, a few a second, sorted in the proportion the cranes manage.
+function stepMail(dt) {
+  if (S.ended || finale || !S.one.door) { mail = []; return; }
+  const f = lastFlow;
+  const vis = Math.min(5, 0.8 + E.chute(S).F);
+  mailAcc += dt * vis;
+  while (mailAcc >= 1 && mail.length < 26) {
+    mailAcc -= 1;
+    const tot = f.bins.reduce((a, b) => a + b.in, 0); if (!tot) break;
+    let r = rnd() * tot, type = 0; for (let i = 0; i < 4; i++) { r -= f.bins[i].in; if (r <= 0) { type = i; break; } }
+    const b = f.bins[type];
+    mail.push({ type, y: 2, x: BELT_X0, fall: true, sorted: rnd() < (b.in ? b.sorted / b.in : 0) });
+  }
+  for (const m of mail) {
+    if (m.fly != null) { m.fly += dt * 3; continue; }
+    if (m.fall) { m.y += dt * 30; if (m.y >= RIDE_Y) { m.y = RIDE_Y; m.fall = false; } continue; }
+    m.x += dt * 11;
+    if (m.sorted && m.x >= holeCenter(m.type)) {
+      m.fly = 0; eatT[m.type] = clock + 0.25;
+      const k = Math.floor(rnd() * Math.max(1, S.nb[m.type])); hopT[m.type * 8 + k] = clock + 0.3;
+    }
+    if (m.x >= BELT_X1) { m.gone = true; chewT = clock + 0.4; }
+  }
+  mail = mail.filter(m => !m.gone && !(m.fly != null && m.fly >= 1));
+}
+
+// ---------- Canvas plumbing ----------
+const cv = $('stage'), cx = cv.getContext('2d');
+let k = 1, dpr = 1;
+const txt = document.createElement('canvas'), tx = txt.getContext('2d');
+let fxLayer = null;
+function layout() {
+  dpr = Math.min(2, devicePixelRatio || 1);
+  const cw = cv.parentElement.clientWidth || W;
+  k = cw / W;
+  cv.width = Math.round(W * k * dpr); cv.height = Math.round(H * k * dpr);
+  cv.style.height = `${H * k}px`;
+  txt.width = cv.width; txt.height = cv.height;
+  fxLayer = Sprites.canvas(cv.width, cv.height);
+  const f = fxLayer.getContext('2d');
+  scanlines(f, cv.width, cv.height, { alpha: 0.16, gap: Math.max(2, Math.round(3 * k * dpr)), color: '#2a1a24' });
+  vignette(f, cv.width, cv.height, { strength: 0.5, color: '42,26,36' });
+}
+const grainCv = Sprites.canvas(W, H); grain(grainCv.getContext('2d'), W, H, { amount: 0.05 });
+function toCell(e) {
+  const r = cv.getBoundingClientRect();
+  return { x: (e.clientX - r.left) / r.width * COLS, y: (e.clientY - r.top) / r.height * ROWS };
+}
+cv.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  const p = toCell(e);
+  if (p.y >= 10.5 && p.y <= 24) for (let i = 0; i < 4; i++) if (p.x >= HOLE[i] - 0.5 && p.x <= HOLE[i] + HW + 0.5) { tapHole(i); return; }
+});
+cv.addEventListener('keydown', e => { const i = '1234'.indexOf(e.key); if (i >= 0) { e.preventDefault(); tapHole(i); } });
+document.addEventListener('keydown', e => {
+  if (e.target !== document.body) return;
+  const i = '1234'.indexOf(e.key); if (i >= 0) { e.preventDefault(); tapHole(i); }
+});
+
+let clock = 0;
+function compose(t) {
+  clear();
+  if (S.ended || (finale && finale.stage === 'square')) { drawSquare(t); return; }
+  // Title bar.
+  const bar = S.rush ? (S.rush.on ? ` !! RUSH: ${E.RUSHES[E.TYPES[S.rush.type].id][0]} !! ${Math.ceil(S.rush.t)}s ` : ` WIRE: ${E.RUSHES[E.TYPES[S.rush.type].id][0]} IN ${Math.ceil(S.rush.t)}s `) : ' DLO-7 :: DEAD LETTER OFFICE :: NIGHT SHIFT ';
+  put(0, 0, (bar + ' '.repeat(COLS)).slice(0, COLS - 11), C.plum, { opaque: true });
+  put(COLS - 11, 0, ` ${clockText()} `.padStart(11), C.plum, { opaque: true });
+  drawWindow(t); drawChute(t); drawWall(t); drawSkylight(t); drawShelf(t); drawLamp(t);
+  const lift = finale ? finale.lift : 0;
+  drawGreat(t, 31, 2, S.great, -lift);
+  drawFloor(t); drawDoor(t);
+  for (let i = 0; i < 4; i++) drawHole(i, t);
+  drawEnvelope(t); drawJohnny(t);
+  for (const m of mail) {
+    if (m.fly != null) put(holeCenter(m.type), RIDE_Y - m.fly * 6, E.TYPES[m.type].glyph, TCOL[m.type]);
+    else put(m.fall ? 18 : m.x, m.y, E.TYPES[m.type].glyph, TCOL[m.type]);
+  }
+  if (hand) {
+    let hx = hand.fall ? 17 : hand.x - 1, hy = hand.y;
+    if (hand.fly) { const u = hand.fly.t; hx = hand.fly.from - 1 + (holeCenter(hand.fly.to) - hand.fly.from) * u; hy = RIDE_Y - Math.sin(u * Math.PI) * 4 - u * 4; }
+    else if (hand.spat > clock) hy -= 1;
+    put(hx, hy, '[', C.cream); put(hx + 1, hy, E.TYPES[hand.type].glyph, TCOL[hand.type]); put(hx + 2, hy, ']', C.cream);
+    if (S.hand < 3 && !hand.fall && !hand.fly) put(hx - 1, hy + 2, '^ sort me', C.gold);
+  }
+}
+function clockText(m = E.clock(S)) {
+  const h24 = Math.floor(m / 60) % 24, mm = Math.floor(m % 60);
+  return `${h24 % 12 || 12}:${String(mm).padStart(2, '0')} ${h24 >= 12 ? 'PM' : 'AM'}`;
+}
+// The ending: dawn in the town square, the Great Frog sitting in it doing nothing, magnificently.
+let confetti = [];
+function drawSquare(t) {
+  put(0, 0, (' 6:00 AM :: THE TOWN SQUARE :: DAWN' + ' '.repeat(COLS)).slice(0, COLS), C.plum, { opaque: true });
+  // Sunrise and the skyline.
+  put(4, 3, '\\ | /', C.gold); put(3, 4, '-- O --', C.gold); put(4, 5, '/ | \\', C.gold);
+  put(0, 8, '   _n_     |^|      ___         _n_        |^|      ___       _n_      |^|     ___   ', C.slate);
+  put(0, 9, '___|#|_____|#|_____|# #|_______|#|________|#|_____|# #|_____|#|______|#|___|# #|__', C.slate);
+  // The Dead Letter Office, its roof open, Johnny on the loading dock with his coffee.
+  stamp(66, 10, ['  ____/  \\____  ', ' |  D.L.O.     |', ' |  []   []    |', ' |____[  ]_____|'], C.teal);
+  stamp(70, 14, ['.--------.', '|-o-  -o-|', '|vvvvvvvv|', "'--------'"], C.rust);
+  put(68, 14, 'c[_]', C.cream);
+  put(70, 18, 'JOHNNY', C.rust);
+  // The fountain the frog landed next to (and slightly on).
+  stamp(4, 19, ['   .-~~-.   ', "  (  ''  )  ", "   '-..-'   ", '   _|  |_   '], C.teal);
+  // The Great Frog.
+  drawGreat(t, 18, 12, E.GREAT, 0);
+  // The envelope on top, in a party hat, with the kazoo.
+  const ex = 32, ey = 10;
+  put(ex + 4, ey - 2, '*', C.gold); put(ex + 3, ey - 1, '/\\', C.rust);
+  stamp(ex, ey, ['.-------.', '|\\^   ^/|', "| '\\_/' |", "'-------'"], C.cream);
+  put(ex - 3, ey + 2, '=<]', C.gold);
+  put(ex - 4, ey - 2, 'bzzzz', C.sage);
+  // Cranes on the frog's back.
+  for (let i = 0; i < 8; i++) put(14 + i * 6 + (i > 3 ? 16 : 0), 23, '»^', C.gold);
+  put(0, 27, '_'.repeat(COLS), C.slate);
+  // Ticker tape.
+  for (const c of confetti) put(c.x, c.y, c.ch, c.col);
+}
+function render() {
+  const s = k * dpr;
+  cx.setTransform(1, 0, 0, 1, 0, 0);
+  cx.fillStyle = C.plum; cx.fillRect(0, 0, cv.width, cv.height);
+  cx.setTransform(s, 0, 0, s, 0, 0);
+  // Light under the glyphs: the title bar, the lamp's cone, a rush flash.
+  if (!S.ended && !(finale && finale.stage === 'square')) {
+    cx.fillStyle = S.rush && S.rush.on ? C.gold : C.sage; cx.fillRect(0, 0, W, CH);
+    if (S.one.lamp) { cx.fillStyle = 'rgba(142,160,145,0.13)'; cx.beginPath(); cx.moveTo(25 * CW, 11 * CH); cx.lineTo(30 * CW, 11 * CH); cx.lineTo(36 * CW, 21 * CH); cx.lineTo(19 * CW, 21 * CH); cx.closePath(); cx.fill(); }
+    if (S.rush && S.rush.on) { const i = S.rush.type; cx.fillStyle = 'rgba(202,160,90,0.12)'; cx.fillRect(HOLE[i] * CW, 12 * CH, HW * CW, 9 * CH); }
+  } else { cx.fillStyle = C.sage; cx.fillRect(0, 0, W, CH); cx.fillStyle = 'rgba(202,160,90,0.10)'; cx.fillRect(0, CH, W, 9 * CH); }
+  // The glyphs, onto their own layer so they can glow.
+  tx.setTransform(1, 0, 0, 1, 0, 0); tx.clearRect(0, 0, txt.width, txt.height); tx.setTransform(s, 0, 0, s, 0, 0);
+  tx.font = `${Math.round(CH * 1.12)}px VT323, monospace`; tx.textAlign = 'center'; tx.textBaseline = 'middle';
+  let col = null;
+  for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
+    const i = y * COLS + x, ch = gch[i]; if (ch === ' ') continue;
+    if (gco[i] !== col) { col = gco[i]; tx.fillStyle = col; }
+    const ic = ICONS[ch];
+    if (ic) { const px = Math.min(CW / 7.5, CH / 7.5); const ox = x * CW + (CW - 7 * px) / 2, oy = y * CH + (CH - 6 * px) / 2; for (let r = 0; r < 6; r++) for (let c = 0; c < 7; c++) if (ic[r][c] === '#') tx.fillRect(ox + c * px, oy + r * px, px + 0.2, px + 0.2); }
+    else tx.fillText(ch, x * CW + CW / 2, y * CH + CH / 2 + 1);
+  }
+  tx.font = `${Math.round(CH * 1.15)}px VT323, monospace`;
+  for (const f of floats) { tx.globalAlpha = Math.max(0, 1 - f.t / 1.2); tx.fillStyle = f.color || C.gold; tx.fillText(f.text, f.x, f.y - f.t * 22); }
+  tx.globalAlpha = 1;
+  cx.setTransform(1, 0, 0, 1, 0, 0);
+  if (!reduced) { cx.globalAlpha = 0.55; cx.filter = `blur(${Math.max(2, 3 * k * dpr)}px)`; cx.drawImage(txt, 0, 0); cx.filter = 'none'; cx.globalAlpha = 1; }
+  cx.drawImage(txt, 0, 0);
+  cx.drawImage(fxLayer, 0, 0);
+  cx.globalAlpha = 0.5; cx.drawImage(grainCv, 0, 0, cv.width, cv.height); cx.globalAlpha = 1;
+}
+
+// ---------- The log ----------
+let logT = 0;
+const TAG = { NARRATOR: '', ENVELOPE: 'e', JOHNNY: 'j', WIRE: 'w', 'WHILE YOU WERE OUT': '' };
+function say(who, text) {
+  const el = $('log');
+  el.innerHTML = '<b></b><span></span>';
+  const b = el.querySelector('b'); b.textContent = who; if (TAG[who]) b.className = TAG[who];
+  el.querySelector('span').textContent = text;
+  el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
+  logT = 0;
+}
+const AMBIENT = {
+  desk: [
+    ['NARRATOR', 'Rain on the skylight like it had somewhere better to be. The envelope hummed. I hate a hummer.'],
+    ['NARRATOR', 'Every letter in here went somewhere, and nobody opened the door. So they come to us. Then they go to Johnny.'],
+    ['JOHNNY', '“Dawn, kid. Then it’s you and me.” The envelope waved at him. Nobody waves at Johnny.'],
+    ['ENVELOPE', '“Oh, a gas bill from 1958! Hello!” The gas bill said nothing. They never do.'],
+  ],
+  floor: [
+    ['NARRATOR', 'The cranes worked the pigeonholes like they’d been doing it all their lives. They had. Their lives were twenty minutes long.'],
+    ['JOHNNY', '“You can’t save them all, kid.” “I can save LOTS!” said the envelope.'],
+    ['NARRATOR', 'Somewhere out there somebody was writing a letter that would never get where it was going. Good. More frogs.'],
+    ['ENVELOPE', '“Every frog we fold is one Johnny doesn’t get. Every frog!” It said that a lot. It was still true.'],
+  ],
+  frog: [
+    ['NARRATOR', 'The Great Frog took up half the floor and most of the night. Johnny looked it over. His eyes came up short.'],
+    ['ENVELOPE', '“What’s it for?” a crane asked. “It’s for being too big,” said the envelope. “That’s all it has to be.”'],
+    ['JOHNNY', '“That thing won’t fit, kid.” “I KNOW!” said the envelope. It had never been happier.'],
+  ],
+};
+let ambI = 0;
+function ambient(dt) {
+  logT += dt;
+  if (S.ended || finale || logT < 24) return;
+  const f = lastFlow;
+  if (S.cranes && f.lost > f.letters * 0.4 && ambI % 2 === 0) { ambI++; say('JOHNNY', `“Much obliged.” Johnny’s eating ${fmt(f.lost)} letters a second: the cranes can’t keep up. Fold more cranes, or move them where the mail is.`); return; }
+  const L = AMBIENT[S.greatOn ? 'frog' : S.cranes ? 'floor' : 'desk'];
+  const [w, line] = L[ambI++ % L.length];
+  say(w, line);
+}
+
+// ---------- HUD ----------
+const perSec = r => r >= 1000 ? fmt(r) : r >= 10 ? r.toFixed(0) : r.toFixed(1);
+let lastFlow = E.flow(S);
+function hud() {
+  $('frogs').textContent = fmt(S.frogs);
+  $('frogWord').textContent = Math.floor(S.frogs) === 1 ? 'frog' : 'frogs';
+  const m = E.clock(S);
+  $('clock').textContent = clockText(m);
+  $('nightFill').style.width = `calc(${((m - 23 * 60) / 420) * 100}% - 2px)`;
+  $('where').textContent = S.ended ? 'the town square · dawn' : `dead letter office · ${E.chute(S).name.toLowerCase()}`;
+  const f = lastFlow;
+  const sub = $('sub');
+  const bits = [];
+  if (S.cranes || S.one.door) bits.push(`<span>cranes fold <b>${perSec(f.frogs)}</b>/s</span>`);
+  bits.push(`<span>a letter folds <b>${fmt(E.handPer(S))}</b> frog${E.handPer(S) === 1 ? '' : 's'}</span>`);
+  if (S.one.door) bits.push(`<span>mail <b>${perSec(f.letters)}</b> letters/s</span>`);
+  bits.push(`<span class="johnny">Johnny’s confetti <b>${fmt(S.shred)}</b></span>`);
+  if (S.greatOn || E.greatOpen(S)) bits.push(`<span>Great Frog <b>${S.great}/${E.GREAT}</b> creases</span>`);
+  const html = bits.join('');
+  if (html !== hud.html) { hud.html = html; sub.innerHTML = html; }
+}
+
+// ---------- The switchboard ----------
+let boardBuilt = false;
+function buildBoard() {
+  boardBuilt = true;
+  const bins = $('bins'); bins.innerHTML = '';
+  for (let i = 0; i < 4; i++) {
+    const d = document.createElement('div'); d.className = 'bin'; d.id = `bin${i}`;
+    d.innerHTML = `<span class="name"></span><span class="ctl"><button class="nb" type="button" aria-label="Move a crane off ${SHORT[i]}">−</button><b>0</b><button class="nb" type="button" aria-label="Move a crane to ${SHORT[i]}">+</button></span><small></small>`;
+    d.querySelector('.name').innerHTML = `<span style="color:${TCOL[i]}">${E.TYPES[i].glyph}</span> ${SHORT[i]}`;
+    const [minus, plus] = d.querySelectorAll('.nb');
+    minus.addEventListener('click', () => { if (E.nudge(S, i, -1)) { sfx.flap(); hopT[i * 8] = clock + 0.3; after(); } else sfx.deny(); });
+    plus.addEventListener('click', () => { if (E.nudge(S, i, 1)) { sfx.flap(); hopT[i * 8 + S.nb[i] - 1] = clock + 0.3; after(); } else sfx.deny(); });
+    bins.append(d);
+  }
+  wireTip($('match'), () => ({ id: 'match', name: 'MATCH', desc: 'The supervisor’s clipboard: every crane goes where the mail is, rush mail first.', fx: `Cranes per pigeonhole: ${S.nb.slice(0, E.types(S)).join(' / ')} → ${(() => { const T = JSON.parse(JSON.stringify(S)); return E.match(T).slice(0, E.types(S)).join(' / '); })()}` }), () => { E.match(S); sfx.flap(); for (let i = 0; i < 4; i++) hopT[i * 8] = clock + 0.3; after(); });
+  const after = () => { lastFlow = E.flow(S); save(); renderBoard(true); hud(); };
+}
+let boardSig = '';
+function renderBoard(force) {
+  const show = S.cranes > 0 && !S.ended && !finale;
+  $('board').hidden = !show;
+  if (!show) return;
+  if (!boardBuilt) buildBoard();
+  const f = lastFlow, B = E.chute(S).B, n = E.types(S);
+  $('nCranes').textContent = S.cranes;
+  const idle = E.idle(S);
+  $('idleTxt').textContent = ` · each sorts ${perSec(E.speed(S) * B)} letters/s${idle ? ` · ${idle} idle` : ''}`;
+  $('lostTxt').textContent = perSec(f.lost);
+  $('match').hidden = !S.one.clip;
+  for (let i = 0; i < 4; i++) {
+    const d = $(`bin${i}`), b = f.bins[i];
+    d.classList.toggle('closed', i >= n);
+    d.classList.toggle('rush', !!(S.rush && S.rush.type === i));
+    d.querySelector('.ctl b').textContent = S.nb[i];
+    const [minus, plus] = d.querySelectorAll('.nb');
+    minus.setAttribute('aria-disabled', String(i >= n || S.nb[i] === 0));
+    plus.setAttribute('aria-disabled', String(i >= n || S.nb[i] >= E.PER_BIN || (idle === 0 && S.cranes === S.nb[i])));
+    const sm = d.querySelector('small');
+    if (i >= n) { sm.textContent = 'sealed'; sm.className = ''; continue; }
+    const short = b.lost > 1e-9;
+    sm.className = short ? 'short' : '';
+    sm.textContent = short ? `${perSec(b.in * B)} in · ${perSec(b.lost * B)} to J` : `${perSec(b.in * B)} in · all sorted`;
+  }
+}
+
+// ---------- Rushes ----------
+let rushFrogs = 0;
+function onRush(ev) {
+  if (!ev) return;
+  const T = E.TYPES[S.rush ? S.rush.type : S.lastRush], [name, why] = E.RUSHES[T.id];
+  if (ev === 'warn') { sfx.wire(); say('WIRE', `${name}. ${why} Six seconds. Move cranes to ${SHORT[T === E.TYPES[S.rush.type] ? S.rush.type : 0]}${S.one.clip ? ' (or MATCH)' : ''}.`); }
+  if (ev === 'start') { sfx.rush(); rushFrogs = 0; refreshMusic(); }
+  if (ev === 'end') { say('NARRATOR', `${name} blew over. ${rushFrogs >= 1 ? `${fmt(rushFrogs)} frogs folded out of it. ` : ''}Put the cranes back where the mail is.`); refreshMusic(); }
+  renderBoard(true);
+}
+
+// ---------- Calls: the Great Frog, at the top of the column ----------
+let callSig = '';
+function renderCalls() {
+  const el = $('calls');
+  const open = E.greatOpen(S) && !S.ended && !finale;
+  const nx = E.nextCrease(S);
+  const sig = `${open}|${S.great}`;
+  if (sig !== callSig) {
+    callSig = sig; el.innerHTML = '';
+    if (open && nx) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'call'; b.id = 'creaseBtn';
+      b.innerHTML = '<b>FOLD THE GREAT FROG</b><span class="pips"></span> <span class="what"></span>';
+      b.querySelector('.pips').textContent = '#'.repeat(S.great) + '.'.repeat(E.GREAT - S.great);
+      wireTip(b, () => { const c = E.nextCrease(S); return c ? { id: 'crease', name: `${c.name} (${S.great + 1} of ${E.GREAT})`, desc: 'Every small frog fits in Johnny’s mouth. One frog folded from all of them doesn’t. Seven creases and it’s done, and so is the night.', fx: S.great === E.GREAT - 1 ? 'The last crease. After this, dawn.' : 'Spends the frogs; they stay frogs, just one very big one.', foot: `${fmt(c.cost)} frogs` } : null; }, doCrease);
+      el.append(b);
+    }
+  }
+  const b = $('creaseBtn');
+  if (b && nx) {
+    const can = S.frogs >= nx.cost;
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    b.querySelector('.what').textContent = `${nx.name} · ${fmt(nx.cost)}`;
+  }
+}
+function doCrease() {
+  const c = E.nextCrease(S);
+  if (!E.feed(S)) { sfx.deny(); return; }
+  sfx.crease();
+  floats.push({ text: c.name, x: 50 * CW, y: 6 * CH, t: 0, color: C.gold });
+  say('NARRATOR', c.line);
+  lastFlow = E.flow(S);
+  save(); hud(); renderCalls(); renderShop(); refreshMusic();
+  if (E.greatDone(S)) startFinale();
+}
+
+// ---------- Shop ----------
+const shop = $('shop');
+const newUntil = {};
+let shopSig = '';
+const clone = () => JSON.parse(JSON.stringify(S));
+function renderShop() {
+  const closed = S.ended || !!finale;
+  const fresh = closed ? [] : E.reveal(S);
+  for (const id of fresh) { if (S.hand > 2 || S.t > 3) sfx.unlock(); newUntil[id] = performance.now() + 9000; }
+  const all = closed ? [] : E.items(S);
+  const sig = all.map(i => `${i.id}:${E.cost(S, i.id)}:${E.lv(S, i.id)}`).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    for (const it of all) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (it.kind === 'odd' ? ' odd' : '');
+      b.dataset.id = it.id; b.dataset.cost = E.cost(S, it.id);
+      b.innerHTML = '<b></b><em></em>';
+      b.querySelector('b').textContent = it.name;
+      const full = it.kind === 'crane' && S.cranes >= E.craneMax(S);
+      if (full) b.dataset.cost = Infinity;
+      b.querySelector('em').textContent = full ? `ledges full · ${S.cranes}` : `${fmt(E.cost(S, it.id))}${it.kind === 'crane' ? ` · ${S.cranes}` : it.kind === 'fold' ? ` · lv ${S.fold}` : ''}`;
+      b.setAttribute('aria-describedby', 'tip');
+      b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, upTip(it.id)); });
+      b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+      b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, upTip(it.id)); });
+      b.addEventListener('blur', hideTip);
+      b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+      b.addEventListener('click', () => {
+        if (b.dataset.touch && tipFor !== it.id) { showTip(b, upTip(it.id)); return; }
+        if (b.getAttribute('aria-disabled') !== 'true') doBuy(it.id); else sfx.deny();
+      });
+      shop.append(b);
+    }
+  }
+  const now = performance.now();
+  let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = S.frogs >= Number(b.dataset.cost);
+    if (can) n++;
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  document.querySelector('aside h2').hidden = !all.length;
+  renderShelf();
+}
+// What an upgrade changes, now → after.
+function effect(id) {
+  const it = E.BY_ID[id], T = clone();
+  if (it.kind === 'odd') return 'Does nothing. It just sits there, being seen.';
+  E.buy(Object.assign(T, { frogs: Infinity }), id);
+  const f0 = E.flow(S).frogs, f1 = E.flow(T).frogs;
+  const rate = S.cranes || it.kind === 'crane' ? ` · cranes fold ${perSec(f0)} → ${perSec(f1)} frogs/s` : '';
+  if (it.kind === 'hand') return `Each letter you sort folds ${fmt(E.handPer(S))} → ${fmt(E.handPer(T))} frogs`;
+  if (it.kind === 'fold') return `Frogs per letter: ${fmt(E.perLetter(S))} → ${fmt(E.perLetter(T))}${rate}`;
+  if (it.kind === 'crane') return `Cranes ${S.cranes} → ${T.cranes} (the new one goes to ${SHORT[T.nb.findIndex((v, i) => v !== S.nb[i])] || 'the floor'})${rate}`;
+  if (it.kind === 'speed') return `Each crane sorts ${perSec(E.speed(S) * E.chute(S).B)} → ${perSec(E.speed(T) * E.chute(T).B)} letters/s${rate}`;
+  if (it.kind === 'clip') return 'Adds MATCH to the switchboard: one tap and every crane goes where the mail is, rush mail first.';
+  if (it.kind === 'chute') {
+    const a = E.chute(S), b = E.chute(T);
+    const more = b.types > a.types ? ` · a ${['', '', 'second', 'third', 'fourth'][b.types]} pigeonhole opens (${SHORT[b.types - 1]})` : '';
+    const where = S.cranes ? rate : ' · nobody sorts it yet: fold a crane';
+    return `Mail in: ${perSec(a.F * a.B)} → ${perSec(b.F * b.B)} letters/s (${b.B === 1 ? 'one at a time' : `${b.units} of ${fmt(b.B)}`})${more}${where}`;
+  }
+  return '';
+}
+let tipFor = null;
+function upTip(id) {
+  const it = E.BY_ID[id];
+  const full = it.kind === 'crane' && S.cranes >= E.craneMax(S);
+  return { id, name: it.name, desc: it.desc, fx: full ? `Every ledge is full: six cranes to a pigeonhole.` : effect(id), foot: full ? '' : `${fmt(E.cost(S, id))} frogs${it.kind === 'crane' ? ` · you have ${S.cranes}` : it.kind === 'fold' ? ` · level ${S.fold}` : ''}` };
+}
+function showTip(b, it) {
+  if (!it) return;
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><span class="fx"></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('.fx').textContent = it.fx || '';
+  tip.querySelector('.fx').hidden = !it.fx;
+  tip.querySelector('i').textContent = it.joke || '';
+  tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || '';
+  tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  const inSide = !!b.closest('#side');
+  if (inSide && r.left > t.width + 24 && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 14}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - t.width - 8, r.left))}px`;
+    tip.style.top = `${r.bottom + 8 + t.height < innerHeight ? r.bottom + 8 : Math.max(8, r.top - t.height - 8)}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+let tipMoved = 0;
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .call, .bought, #match')) hideTip(); });
+
+// Buttons whose effect isn't obvious explain themselves (on touch, the first tap of the session).
+const explained = new Set();
+function wireTip(b, info, act) {
+  b.setAttribute('aria-describedby', 'tip');
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, info()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, info()); });
+  b.addEventListener('blur', hideTip);
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  b.addEventListener('click', () => {
+    if (b.dataset.touch && !explained.has(b.id)) { explained.add(b.id); showTip(b, info()); return; }
+    hideTip(); act();
+    if (b.matches(':hover') && !b.dataset.touch && b.isConnected) showTip(b, info());
+  });
+}
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!S.boughtOpen === shelfEl.open) return;
+  S.boughtOpen = shelfEl.open; save();
+});
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(i => i.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (it.kind === 'odd' ? ' odd' : '');
+    b.textContent = it.name; b.dataset.id = it.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, { id: 'bought:' + it.id, name: it.name, desc: it.desc, joke: it.joke, foot: it.kind === 'odd' ? 'does nothing, on purpose' : '', inline: true }); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + it.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+const FOLD_LINES = [
+  n => `Smaller folds. A letter makes ${fmt(n)} frogs now. You’d need a magnifying glass to see the small ones, and they’d need one to see you.`,
+  n => `${fmt(n)} frogs to a letter. They’re the size of a comma. They hop like one, too.`,
+  n => `${fmt(n)} frogs a letter. They fold them so small now the frogs fold themselves out of sheer embarrassment.`,
+];
+const CRANE_LINES = {
+  1: 'The first crane unfolds itself from a memo about paperclips and takes a ledge. It looks at the mail. It sorts the mail. It doesn’t need you. That’s fine. That’s progress.',
+  4: 'Four cranes. The envelope gives them names. It gives them all the same name: Pal.',
+  12: 'Twelve cranes on the ledges. Johnny counts them, and stops counting.',
+  24: 'Every ledge has its six. Twenty-four cranes, folded from twenty-four memos nobody will miss.',
+};
+function doBuy(id) {
+  const it = E.BY_ID[id];
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  delete newUntil[id];
+  hideTip();
+  sfx.buy();
+  if (it.kind === 'crane') { sfx.flap(); say('NARRATOR', CRANE_LINES[S.cranes] || `${S.cranes} cranes. The new one took the ledge where Johnny was eating best.`); }
+  else if (it.kind === 'fold') say('NARRATOR', FOLD_LINES[(S.fold - 1) % 3](E.perLetter(S)));
+  else say(it.kind === 'odd' || it.kind === 'chute' ? 'NARRATOR' : 'ENVELOPE', it.joke);
+  if (it.kind === 'chute' && E.chute(S).types > (E.CHUTES[S.chute - 1] || {}).types) for (let i = 0; i < 4; i++) eatT[i] = clock + 0.6;
+  floats.push({ text: it.kind === 'odd' ? 'behold.' : '+', x: 44 * CW, y: 11 * CH, t: 0, color: C.gold });
+  lastFlow = E.flow(S);
+  save(); renderShop(); hud(); renderBoard(true); renderCalls(); refreshMusic();
+}
+
+// ---------- The finale: the frog jumps ----------
+let finale = null;
+function startFinale() {
+  finale = { t: 0, stage: 'done', lift: 0 };
+  hideTip(true); renderShop(); renderBoard(); renderCalls();
+  sfx.finale();
+  say('NARRATOR', 'The last crease went in at five to six. The Great Frog was too big for Johnny’s mouth. It was too big for the floor. It was, it turned out, too big for the building.');
+}
+function stepFinale(dt) {
+  if (!finale) return;
+  finale.t += dt;
+  if (finale.stage === 'done' && finale.t > 2.2) { finale.stage = 'leap'; finale.t = 0; say('NARRATOR', 'Somebody had oiled the skylight. Just in case.'); }
+  if (finale.stage === 'leap') { finale.lift = Math.min(14, finale.t * finale.t * 9); if (finale.t > 1.4) { finale.stage = 'square'; finale.t = 0; } }
+  if (finale.stage === 'square' && finale.t > 3) { finale = null; end(false); }
+}
+function stepConfetti(dt) {
+  if (!(S.ended || (finale && finale.stage === 'square'))) return;
+  const bits = ".,'`*:;~", cols = [C.cream, C.gold, C.rust, C.sage, C.wine, C.teal];
+  if (confetti.length < (reduced ? 40 : 140)) for (let i = 0; i < 4; i++) confetti.push({ x: 71 + rnd() * 7, y: 14, vx: -4 - rnd() * 26, vy: -9 - rnd() * 7, ch: bits[Math.floor(rnd() * bits.length)], col: cols[Math.floor(rnd() * cols.length)] });
+  for (const c of confetti) { if (reduced) { c.x = rnd() * COLS; c.y = 2 + rnd() * 24; continue; } c.vy += dt * 9; c.vx *= 1 - dt * 0.6; c.x += c.vx * dt; c.y += c.vy * dt * 0.6; }
+  confetti = confetti.filter(c => c.y < 27 && c.x > -1);
+  if (reduced) confetti = confetti.slice(0, 40);
+}
+
+// ---------- The end ----------
+function end(resumed) {
+  S.ended = true; S.rush = null; save();
+  hideTip(true);
+  const sh = fmt(S.shred);
+  $('story').innerHTML = '';
+  const P = [
+    'At dawn the Great Frog was too big for Johnny’s mouth, too big for the sorting floor, and, it turned out, too big for the building. Somebody had oiled the skylight. Just in case.',
+    'It jumped once. Over the Office, over the tram wires, over the river, and came down in the middle of the town square, where it sat, and did nothing at all, magnificently.',
+    'Nobody knew what it was for. It wasn’t for anything. The envelope sat on top in a paper party hat and played the kazoo: one note, then the same note.',
+    `Johnny watched from the loading dock with his coffee. Then he opened his hopper and threw the whole night’s confetti into the wind, ${S.shred >= 1 ? `${sh} letters of it` : 'every scrap he had'}. The biggest ticker-tape parade this city ever saw, for a paper frog, for no reason.`,
+    'People still talk about it. They don’t know what it meant. That’s a legacy, kid.',
+  ];
+  for (const p of P) { const el = document.createElement('p'); el.textContent = p; $('story').append(el); }
+  const sig = document.createElement('p'); sig.className = 'sig'; sig.textContent = '— DLO-7, signing off'; $('story').append(sig);
+  $('ending').hidden = false;
+  renderShop(); renderBoard(); renderCalls(); hud(); refreshMusic();
+  if (!resumed) {
+    say('ENVELOPE', '“WHEEEE!”');
+    $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+    if (window.DailyGame) DailyGame.finish({ lines: [`⏱ ${Math.floor(S.t / 60)}m${String(Math.floor(S.t % 60)).padStart(2, '0')}s`, `🐸 1 Great Frog, ${fmt(S.total)} frogs in it`, `🎉 ${sh} letters of confetti`] });
+  }
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Loop ----------
+let last = performance.now(), saveAcc = 0, uiAcc = 0, lastFrame = performance.now(), phaseWas = phaseKey(), chimeAcc = 0, paidAcc = 0;
+function step(dt) {
+  if (!S.ended && !finale) {
+    const r = E.tick(S, dt);
+    if (S.rush && S.rush.on) rushFrogs += r.f.bins[S.rush.type].sorted * E.chute(S).B * E.perLetter(S) * E.RUSH_THICK * dt;
+    onRush(E.tickRush(S, dt));
+    lastFlow = E.flow(S);
+    if (r.frogs > 0) {
+      paidAcc += r.frogs; chimeAcc += dt;
+      if (chimeAcc > 3) { chimeAcc = 0; sfx.chime(); floats.push({ text: `+${fmt(paidAcc)}`, x: 46 * CW, y: 11.6 * CH, t: 0, color: C.sage }); paidAcc = 0; }
+    }
+    if (r.lost > 0 && rnd() < dt * 0.6) sfx.shred();
+  }
+  const ph = phaseKey();
+  if (ph !== phaseWas) { phaseWas = ph; refreshMusic(); }
+  saveAcc += dt; if (saveAcc > 5) { saveAcc = 0; if (!finale) save(); }
+  ambient(dt);
+  uiAcc += dt; if (uiAcc > 0.2) { uiAcc = 0; hud(); renderShop(); renderBoard(); renderCalls(); }
+}
+function frame(now) {
+  const dt = Math.max(0, Math.min(0.1, (now - last) / 1000)); last = now; lastFrame = now;
+  step(dt);
+  clock += dt;
+  stepHand(dt); stepMail(dt); stepFinale(dt); stepConfetti(dt);
+  hintHole = S.hand < 3 && hand && !hand.fly ? hand.type : -1;
+  for (const f of floats) f.t += dt; floats = floats.filter(f => f.t < 1.2);
+  compose(clock);
+  render();
+  requestAnimationFrame(frame);
+}
+// In a background tab rAF stops: keep the cranes sorting on a timer.
+setInterval(() => {
+  const now = performance.now();
+  if (now - lastFrame < 400) return;
+  const dt = Math.min(1, (now - last) / 1000); last = now;
+  step(dt);
+}, 250);
+addEventListener('pagehide', save);
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('resize', layout);
+
+// ---------- Start ----------
+{
+  // The sprite sheet: the scene's pieces, drawn through the same terminal grid.
+  const reg = (name, w, h, f) => {
+    const c = Sprites.canvas(Math.round(w * CW), Math.round(h * CH)), q = c.getContext('2d');
+    clear(); f();
+    q.fillStyle = C.plum; q.fillRect(0, 0, c.width, c.height);
+    q.font = `${Math.round(CH * 1.12)}px VT323, monospace`; q.textAlign = 'center'; q.textBaseline = 'middle';
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const ch = gch[y * COLS + x]; if (ch === ' ') continue; q.fillStyle = gco[y * COLS + x]; const ic = ICONS[ch]; if (ic) { const px = CW / 7.5; for (let r = 0; r < 6; r++) for (let cc = 0; cc < 7; cc++) if (ic[r][cc] === '#') q.fillRect(x * CW + cc * px, y * CH + 3 + r * px, px, px); } else q.fillText(ch, x * CW + CW / 2, y * CH + CH / 2 + 1); }
+    Sprites.register(name, c);
+  };
+  const keep = JSON.stringify(S);
+  const all = () => { for (const it of E.ITEMS) if (it.kind !== 'crane' && it.kind !== 'fold') S.one[it.id] = true; S.chute = E.CHUTES.length - 1; S.cranes = 24; S.nb = [6, 6, 6, 6]; S.fold = 10; };
+  document.fonts?.ready.then(() => {
+    if (!Sprites.sheetRequested()) return;
+    all();
+    reg('the envelope, plain', 16, 9, () => { const o = S.one; S.one = {}; drawEnvelope(0); S.one = o; shiftAll(-1, -11); });
+    reg('the envelope, hat + visor + kazoo + lick', 16, 9, () => { drawEnvelope(0); shiftAll(-1, -11); });
+    reg('pigeonholes with cranes', 52, 10, () => { for (let i = 0; i < 4; i++) drawHole(i, 0); shiftAll(-21, -11); });
+    reg('Johnny Confetti, with coffee and confetti', 16, 20, () => { S.shred = 1e15; drawJohnny(0); shiftAll(-72, -8); });
+    reg('the Great Frog, finished', 40, 10, () => { S.great = E.GREAT; drawGreat(0, 0, 0); });
+    reg('the Great Frog, crease 3', 40, 10, () => { S.great = 3; drawGreat(0, 0, 0); });
+    reg('window, train, trucks, boxcars', 16, 8, () => { drawWindow(1.3); shiftAll(-1, -1); });
+    reg('lamp, radio, clipboard', 16, 13, () => { drawLamp(0); drawShelf(0); shiftAll(-0, 0); });
+    reg('mail icons', 8, 1, () => { E.TYPES.forEach((T, i) => put(i * 2, 0, T.glyph, TCOL[i])); });
+    Object.assign(S, JSON.parse(keep));
+    Sprites.showSheet({ zoom: 1 });
+  });
+  // Move everything stamped so far by (dx, dy): sprites drawn in place, then cropped to the corner.
+  function shiftAll(dx, dy) {
+    const ch = gch.slice(), co = gco.slice(); clear();
+    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) { const c = ch[y * COLS + x]; if (c !== ' ') put(x + dx, y + dy, c, co[y * COLS + x]); }
+  }
+}
+layout();
+if (S.ended) { end(true); say('ENVELOPE', '“Did you SEE it jump?”'); }
+else if (!S.hand && !S.cranes) say('NARRATOR', 'The Dead Letter Office, 11 P.M. Everything nobody claims goes to Johnny the shredder at dawn. Unless it’s a frog: Regulation 9. A letter’s on the belt. Tap the pigeonhole it belongs in (or press 1–4).');
+else if (S.rush && S.rush.on) say('WIRE', `${E.RUSHES[E.TYPES[S.rush.type].id][0]}: still on. Cranes to ${SHORT[S.rush.type]}.`);
+else say('NARRATOR', 'Back on the night shift. The mail never stopped. Neither did Johnny.');
+if (!S.ended && E.greatDone(S)) startFinale();
+save();
+hud(); renderShop(); renderBoard(); renderCalls();
+document.fonts?.ready.then(layout);
+if (DEBUG) Object.assign(window.__game, { hand: () => hand, tapHole, finale: () => finale });
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

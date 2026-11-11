@@ -1535,5 +1535,61 @@
   "full": false,
   "ended": false,
   "savedAt": 0
+ },
+ "the-big-fold": {
+  "t": 690,
+  "frogs": 4200000000.0,
+  "total": 9100000000.0,
+  "shred": 34000000.0,
+  "hand": 260,
+  "chute": 4,
+  "cranes": 15,
+  "fold": 8,
+  "one": {
+   "lick": true,
+   "hat": true,
+   "door": true,
+   "train": true,
+   "tube": true,
+   "town": true,
+   "lamp": true,
+   "clip": true,
+   "coffee": true,
+   "radio": true,
+   "kazoo": true
+  },
+  "seen": [
+   "lick",
+   "hat",
+   "door",
+   "crane",
+   "fold",
+   "lamp",
+   "train",
+   "clip",
+   "coffee",
+   "tube",
+   "radio",
+   "kazoo",
+   "town",
+   "land",
+   "visor"
+  ],
+  "nb": [
+   6,
+   3,
+   3,
+   3
+  ],
+  "rush": {
+   "type": 0,
+   "on": true,
+   "t": 17
+  },
+  "rushNext": 60,
+  "lastRush": 0,
+  "great": 0,
+  "greatOn": false,
+  "savedAt": 0
  }
 }

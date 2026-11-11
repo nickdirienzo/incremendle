@@ -721,5 +721,46 @@
     "tone": "epic fantasy",
     "context": "none",
     "palette": "zughy-32"
+  },
+  {
+    "n": 21,
+    "slug": "the-big-fold",
+    "date": "2026-11-12",
+    "title": "The Big Fold",
+    "tagline": "One night at the Dead Letter Office: a relentlessly cheerful envelope folds every unclaimed letter into origami frogs before Johnny Confetti, the shredder, gets them at dawn.",
+    "emoji": "✉️🐸",
+    "scale": "absurd",
+    "minutes": "25–40",
+    "seed": 2181727529,
+    "subject": {
+      "text": "a relentlessly cheerful envelope",
+      "emoji": "✉️",
+      "name": "envelope",
+      "subgroup": "mail",
+      "trait": "relentlessly cheerful {}"
+    },
+    "verb": "feeding",
+    "object": "origami frogs",
+    "interaction": "sort into bins",
+    "arc": {
+      "drive": "legacy",
+      "obstacle": "a rival",
+      "turn": "a huge pointless spectacle",
+      "initial": "J"
+    },
+    "length": "mini (10–60 min)",
+    "structure": [
+      "the core action goes obsolete; you manage automation"
+    ],
+    "twist": "timed rushes",
+    "ending": "build one final thing",
+    "look": "terminal / ASCII",
+    "music": {
+      "style": "surf rock",
+      "scale": "blues"
+    },
+    "tone": "noir",
+    "context": "none",
+    "palette": "dreamscape8"
   }
 ]
