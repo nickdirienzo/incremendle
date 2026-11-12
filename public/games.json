@@ -88,7 +88,7 @@
     "tagline": "A mole on the night shift sorts a billion lemons by touch, because a ferret promised to show it the sun.",
     "emoji": "🍋🎰",
     "scale": "billions",
-    "minutes": "180–600",
+    "minutes": "200–300",
     "seed": 3267020948,
     "subject": "a mole who wants to see the sun",
     "verb": "sorting",
@@ -762,5 +762,48 @@
     "tone": "noir",
     "context": "none",
     "palette": "dreamscape8"
+  },
+  {
+    "n": 22,
+    "slug": "no-reruns",
+    "date": "2026-11-13",
+    "title": "No Reruns",
+    "tagline": "A bored videocassette has played the same planetarium sky every night for 35 years. To get out, it pours TV static into stars woven from its own tape until the Board has all 88 constellations on file.",
+    "emoji": "📼✨",
+    "scale": "billions",
+    "minutes": "200–300",
+    "seed": 2548416680,
+    "subject": {
+      "text": "a bored videocassette",
+      "emoji": "📼",
+      "name": "videocassette",
+      "subgroup": "light & video",
+      "trait": "bored {}"
+    },
+    "verb": "weaving",
+    "object": "stars",
+    "interaction": "pour and fill",
+    "arc": {
+      "drive": "escape",
+      "obstacle": "paperwork",
+      "turn": "everyone else joins in",
+      "initial": "F"
+    },
+    "length": "story (3–10 hours, over several sittings)",
+    "structure": [
+      "tech tree with exclusive choices",
+      "a production chain on a small belt grid you lay out",
+      "stacked currencies (A makes B, B makes C)"
+    ],
+    "twist": "slow things that ripen in real minutes",
+    "ending": "a send-off parade",
+    "look": "watercolor",
+    "music": {
+      "style": "synthwave",
+      "scale": "whole tone"
+    },
+    "tone": "pirate radio",
+    "context": "none",
+    "palette": "citrink"
   }
 ]

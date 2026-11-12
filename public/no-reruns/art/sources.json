@@ -1,0 +1,56 @@
+{
+  "fa6-solid--mitten.svg": {
+    "icon": "fa6-solid:mitten",
+    "set": "Font Awesome 6 Solid",
+    "setUrl": "https://github.com/FortAwesome/Font-Awesome",
+    "author": "Dave Gandy",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "source": "https://icon-sets.iconify.design/fa6-solid/mitten/"
+  },
+  "mdi--telephone.svg": {
+    "icon": "mdi:telephone",
+    "set": "Material Design Icons",
+    "setUrl": "https://github.com/Templarian/MaterialDesign",
+    "author": "Pictogrammers",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/mdi/telephone/"
+  },
+  "tabler--sunglasses-filled.svg": {
+    "icon": "tabler:sunglasses-filled",
+    "set": "Tabler Icons",
+    "setUrl": "https://github.com/tabler/tabler-icons",
+    "author": "Paweł Kuna",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/tabler/tabler-icons/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/tabler/sunglasses-filled/"
+  },
+  "material-symbols--icecream.svg": {
+    "icon": "material-symbols:icecream",
+    "set": "Material Symbols",
+    "setUrl": "https://github.com/google/material-design-icons",
+    "author": "Google",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/google/material-design-icons/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/material-symbols/icecream/"
+  },
+  "ph--disco-ball-fill.svg": {
+    "icon": "ph:disco-ball-fill",
+    "set": "Phosphor",
+    "setUrl": "https://github.com/phosphor-icons/core",
+    "author": "Phosphor Icons",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/phosphor-icons/core/blob/main/LICENSE",
+    "source": "https://icon-sets.iconify.design/ph/disco-ball-fill/"
+  },
+  "game-icons--funnel.svg": {
+    "icon": "game-icons:funnel",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Delapouite",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/delapouite/funnel.html"
+  }
+}
