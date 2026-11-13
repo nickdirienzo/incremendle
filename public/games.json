@@ -805,5 +805,46 @@
     "tone": "pirate radio",
     "context": "none",
     "palette": "citrink"
+  },
+  {
+    "n": 23,
+    "slug": "better-late",
+    "date": "2026-11-14",
+    "title": "Better Late",
+    "tagline": "The neon clock on the Sundown Motel sign is fifty-nine minutes late. Seconds, the second hand, dared it to be on time once, so it drags its feral teeth back out of the dark and has itself recut smaller and faster.",
+    "emoji": "⚙️🦷",
+    "scale": "tens",
+    "minutes": "75–120",
+    "seed": 2593376930,
+    "subject": {
+      "text": "a gear who is very, very late",
+      "emoji": "⚙️",
+      "name": "gear",
+      "subgroup": "tool",
+      "trait": "{} who is very, very late"
+    },
+    "verb": "taming",
+    "object": "teeth",
+    "interaction": "drag-and-drop",
+    "arc": {
+      "drive": "a dare",
+      "obstacle": "a misunderstanding",
+      "turn": "they lose and don't mind",
+      "initial": "S"
+    },
+    "length": "short (1–3 hours)",
+    "structure": [
+      "sacrifice part of your progress to multiply the rest"
+    ],
+    "twist": "chain reactions",
+    "ending": "an ending you have to be talked out of",
+    "look": "neon signs",
+    "music": {
+      "style": "marimba minimalism",
+      "scale": "minor pentatonic"
+    },
+    "tone": "mild horror",
+    "context": "none",
+    "palette": "chocomilk-8"
   }
 ]

@@ -1690,5 +1690,135 @@
   "calls": 0,
   "tabsOn": true,
   "seenFloorHint": true
+ },
+ "better-late": {
+  "cut": 2,
+  "rim": [
+   1,
+   1,
+   1,
+   1,
+   0,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   0,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   0,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1
+  ],
+  "drive": 41,
+  "glass": 57,
+  "lv": {
+   "light": 6,
+   "chatter": 3,
+   "moths": 6,
+   "retainer": 1
+  },
+  "one": {
+   "brush": true,
+   "mat": true,
+   "stripe": true,
+   "fairy": true
+  },
+  "seen": [
+   "drive",
+   "light",
+   "retainer",
+   "chatter",
+   "moths",
+   "brush",
+   "mat",
+   "stripe",
+   "fairy"
+  ],
+  "tamed": 1700,
+  "hand": 420,
+  "chains": 200,
+  "best": 14,
+  "late": 3080,
+  "t": 2350,
+  "dark": [
+   {
+    "x": 120,
+    "y": 530,
+    "k": "gear",
+    "id": 1
+   },
+   {
+    "x": 140,
+    "y": 548,
+    "k": "molar",
+    "id": 2
+   },
+   {
+    "x": 160,
+    "y": 528,
+    "k": "gear",
+    "id": 3
+   },
+   {
+    "x": 132,
+    "y": 562,
+    "k": "comb",
+    "id": 4
+   },
+   {
+    "x": 420,
+    "y": 540,
+    "k": "gear",
+    "id": 5
+   },
+   {
+    "x": 446,
+    "y": 556,
+    "k": "zip",
+    "id": 6
+   },
+   {
+    "x": 600,
+    "y": 520,
+    "k": "gear",
+    "id": 7
+   },
+   {
+    "x": 690,
+    "y": 560,
+    "k": "gear",
+    "id": 8
+   },
+   {
+    "x": 705,
+    "y": 540,
+    "k": "molar",
+    "id": 9
+   }
+  ],
+  "nid": 20,
+  "savedAt": 0
  }
 }

@@ -1,0 +1,1097 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Better Late · Incremendle</title>
+<meta name="description" content="The neon clock on the Sundown Motel sign is fifty-nine minutes late. Seconds, the second hand, dared it to be on time once. Its teeth are feral in the dark. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Better Late">
+<meta property="og:description" content="The neon clock on the Sundown Motel sign is fifty-nine minutes late. Seconds, the second hand, dared it to be on time once, so it drags its feral teeth back out of the dark and has itself recut smaller and faster.">
+<meta property="og:url" content="https://incremendle.com/better-late/">
+<meta property="og:image" content="https://incremendle.com/better-late/og.png?v=16a30377">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Better Late: The neon clock on the Sundown Motel sign is fifty-nine minutes late. Seconds, the second hand, dared it to be on time once, so it drags its feral teeth back out of the dark and has itself recut smaller and faster.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/neonderthaw/font.css">
+<link rel="stylesheet" href="/shared/fonts/tilt-neon/font.css">
+<style>
+  /* A motel sign at night in CHOCOMILK-8: mint and cream tubes, sage and amber glass, on chocolate brick. */
+  :root {
+    --mint: #d6f5e4; --cream: #f7ffc5; --sage: #b4c788; --olive: #8a8969; --amber: #8b6a44; --taupe: #62554c; --dusk: #463c3c; --night: #312629;
+    --neon: 'Tilt Neon', ui-rounded, system-ui, sans-serif; --script: 'Neonderthaw', cursive;
+    color-scheme: dark;
+  }
+  html, body { background: var(--night); color: var(--cream); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 15px/1.45 var(--neon);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(10px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image:
+      repeating-linear-gradient(0deg, #46373a33 0 2px, transparent 2px 26px),
+      repeating-linear-gradient(90deg, #46373a26 0 2px, transparent 2px 52px);
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 0 0 4px; }
+  h1 { font: 400 50px/1 var(--script); margin: 0; color: var(--mint); text-shadow: 0 0 4px var(--mint), 0 0 14px #d6f5e499, 0 0 30px #b4c78855; }
+  header p { margin: 0; font-size: 17px; color: var(--olive); letter-spacing: 1px; }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } h1 { font-size: 42px; } }
+  main { min-width: 0; }
+
+  .hud { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 2px 14px; align-items: center; margin-bottom: 6px; }
+  .late { font-size: 34px; line-height: 1; color: var(--cream); text-shadow: 0 0 3px var(--cream), 0 0 12px #f7ffc577; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .late small { font-size: 18px; color: var(--sage); text-shadow: none; letter-spacing: 2px; }
+  .meter { position: relative; height: 14px; border: 1px solid var(--olive); border-radius: 8px; background: #2a1f22; overflow: hidden; }
+  .meter i { position: absolute; inset: 2px auto 2px 2px; width: 0; border-radius: 6px; background: var(--sage); box-shadow: 0 0 8px var(--sage); transition: width .5s; }
+  .meter b { position: absolute; top: 0; bottom: 0; right: 0; width: calc(100% / 59); background: repeating-linear-gradient(45deg, #8b6a4488 0 3px, transparent 3px 6px); border-left: 1px dashed var(--amber); }
+  .glass { font-size: 22px; line-height: 1; color: var(--mint); white-space: nowrap; text-shadow: 0 0 8px #d6f5e466; font-variant-numeric: tabular-nums; }
+  .glass small { font-size: 15px; color: var(--olive); }
+  .sub { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0 14px; font-size: 14px; color: var(--olive); min-height: 20px; }
+  .sub b { font-weight: 400; color: var(--cream); }
+
+  .stagewrap { position: relative; }
+  canvas#stage { display: block; width: 100%; touch-action: none; cursor: grab; background: var(--night); border: 2px solid var(--dusk); border-radius: 12px; box-shadow: 0 0 0 5px #261d20, 0 0 0 6px var(--taupe), 0 12px 24px #0007; -webkit-tap-highlight-color: transparent; user-select: none; }
+  canvas#stage.dragging { cursor: grabbing; }
+  canvas#stage:focus-visible { outline: 2px dashed var(--mint); outline-offset: 8px; }
+
+  .log { position: relative; margin: 10px 0 0; min-height: 2.9em; font-size: 15px; line-height: 1.4; color: var(--cream); border-left: 3px solid var(--sage); padding: 4px 10px; background: #46373a99; border-radius: 0 8px 8px 0; }
+  .log b { font-weight: 400; font-size: 13px; letter-spacing: 2px; color: var(--night); background: var(--sage); padding: 1px 6px; margin-right: 8px; border-radius: 4px; }
+  .log b.s { background: var(--cream); }
+  .log b.t { background: var(--mint); }
+  .log b.m { background: var(--amber); color: var(--cream); }
+  .log.fresh span { animation: flick .45s steps(3); }
+  @keyframes flick { 0% { opacity: .15; } 50% { opacity: .8; } 70% { opacity: .4; } }
+
+  aside { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; scrollbar-width: thin; padding: 2px 4px 8px 2px; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  #calls { display: grid; gap: 8px; margin-bottom: 10px; }
+  #calls:empty { display: none; }
+  .call { position: relative; text-align: left; font: 15px/1.25 var(--neon); color: var(--night); background: var(--mint); border: 0; border-radius: 10px; box-shadow: 0 0 14px #d6f5e455, 3px 3px 0 #0006; padding: 7px 12px 8px; cursor: pointer; }
+  .call b { display: block; font-weight: 400; font-size: 22px; line-height: 1.05; letter-spacing: 1px; }
+  .call[aria-disabled="true"] { background: var(--olive); box-shadow: 3px 3px 0 #0006; cursor: default; }
+  .call.can { animation: buzz 1.6s ease-in-out infinite; }
+  .call.cut { background: var(--cream); }
+  .call:focus-visible { outline: 2px dashed var(--cream); outline-offset: 3px; }
+  @keyframes buzz { 0%, 100% { box-shadow: 0 0 14px #d6f5e455, 3px 3px 0 #0006; } 50% { box-shadow: 0 0 22px #d6f5e4aa, 3px 3px 0 #0006; } }
+  aside h2 { font-weight: 400; font-size: 25px; line-height: 1; margin: 2px 0 8px; color: var(--sage); text-shadow: 0 0 8px #b4c78866; }
+  #afford { font-size: 16px; color: var(--olive); text-shadow: none; }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  @media (max-width: 760px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up {
+    position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 14px/1.2 var(--neon); color: var(--olive);
+    background: #2a1f22; border: 1px solid var(--taupe); border-radius: 8px; padding: 5px 8px 6px; cursor: pointer;
+  }
+  .up b { font-weight: 400; font-size: 16px; color: var(--cream); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { border-color: var(--mint); box-shadow: 0 0 9px #d6f5e444, inset 0 0 6px #d6f5e422; }
+  .up.can em { color: var(--mint); }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up[aria-disabled="true"]:not(.can) b { color: var(--olive); }
+  .up.odd { border-style: dashed; }
+  .up.odd b::before, .bought.odd::before { content: '✦ '; color: var(--amber); }
+  .up .tag { position: absolute; top: -8px; right: 6px; font-size: 12px; font-style: normal; letter-spacing: 1px; color: var(--night); background: var(--cream); padding: 0 5px; border-radius: 4px; box-shadow: 0 0 8px var(--cream); }
+  .up.new { animation: newglow 1.1s ease-in-out 6; }
+  @keyframes newglow { 50% { background: #d6f5e422; } }
+  .up:focus-visible, .bought:focus-visible { outline: 2px dashed var(--mint); outline-offset: 2px; }
+  #tip {
+    position: fixed; z-index: 50; width: 280px; padding: 9px 12px 10px; pointer-events: none; font: 14px/1.4 var(--neon); color: var(--cream);
+    background: #2a1f22f2; border: 1px solid var(--mint); border-radius: 10px; box-shadow: 0 0 16px #d6f5e444, 6px 8px 0 #0006;
+  }
+  #tip b { display: block; font-weight: 400; font-size: 20px; line-height: 1.1; color: var(--mint); margin-bottom: 4px; text-shadow: 0 0 8px #d6f5e466; }
+  #tip .fx { display: block; margin-top: 6px; padding: 3px 7px; color: var(--night); background: var(--sage); border-radius: 5px; }
+  #tip i { display: block; margin-top: 6px; padding-top: 5px; border-top: 1px dashed var(--taupe); font-style: normal; color: var(--olive); }
+  #tip small { display: block; margin-top: 6px; font-size: 16px; color: var(--cream); }
+  #tip.inline { position: static; width: auto; margin-top: 10px; }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font-size: 19px; color: var(--sage); cursor: pointer; list-style: none; padding: 3px 2px; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: '›'; color: var(--olive); transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 2px dashed var(--mint); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 2px 2px; }
+  .bought { max-width: 100%; font: 14px/1.2 var(--neon); color: var(--cream); background: #2a1f22; border: 1px solid var(--taupe); border-radius: 6px; padding: 3px 8px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { border-style: dashed; }
+  .bought:hover, .bought.on { color: var(--night); background: var(--mint); }
+
+  #ending { margin: 22px auto 0; max-width: 680px; color: var(--cream); background: #2a1f22; border: 1px solid var(--mint); border-radius: 14px; box-shadow: 0 0 22px #d6f5e433; padding: 18px 28px 22px; }
+  #ending .num { font-size: 15px; color: var(--olive); letter-spacing: 3px; }
+  #ending h2 { font: 400 52px/1 var(--script); margin: 6px 0 10px; color: var(--mint); text-shadow: 0 0 4px var(--mint), 0 0 16px #d6f5e488; }
+  #ending p { margin: 9px 0; }
+  #ending .sig { color: var(--olive); }
+  #shareBtn, #againBtn { font: 400 19px/1 var(--neon); letter-spacing: 1px; color: var(--night); background: var(--mint); border: 0; border-radius: 10px; box-shadow: 0 0 12px #d6f5e455, 3px 3px 0 #0006; padding: 8px 16px; margin: 12px 6px 0 0; cursor: pointer; }
+  #againBtn { background: var(--sage); }
+  #shareBtn:focus-visible, #againBtn:focus-visible { outline: 2px dashed var(--cream); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .call.can, .log.fresh span { animation: none; } .meter i, #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="23" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Better Late</h1>
+    <p id="where">the Sundown Motel · up on the sign</p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="hud">
+        <div class="late" title="How late the clock on the sign is. Seconds dared it to be on time, once."><span id="late">59:00</span> <small>LATE</small></div>
+        <div class="meter" title="Fifty-nine minutes late, on the way to on time. The last minute is the slack: every gear with teeth has a little play between them. Nothing with teeth gets closer."><i id="meterFill"></i><b></b></div>
+        <div class="glass" title="Spare tamed teeth, in the glass by the sign. Parts for the clock are made of teeth."><span id="glass">0</span> <small>in the glass</small></div>
+        <div class="sub" id="sub"></div>
+      </div>
+      <div class="stagewrap">
+        <canvas id="stage" tabindex="0" aria-label="The inside of the Sundown Motel's neon clock. The gear's lost teeth are feral in the dark at the bottom. Drag a tooth up into a gap in the gear's rim to tame it; its huddle follows. Keyboard: press Enter to bring in the biggest huddle."></canvas>
+      </div>
+      <p class="log" id="log" aria-live="polite"></p>
+    </main>
+    <aside id="side">
+      <div id="calls"></div>
+      <h2>Parts <span id="afford"></span></h2>
+      <div id="shop"></div>
+      <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" hidden>
+    <div class="num">MIDNIGHT · THE SUNDOWN MOTEL</div>
+    <h2>Better Late</h2>
+    <div id="story"></div>
+    <button id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import { grain, vignette } from '/shared/kit/fx.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DEBUG = location.search.includes('debug');
+const C = { mint: '#d6f5e4', cream: '#f7ffc5', sage: '#b4c788', olive: '#8a8969', amber: '#8b6a44', taupe: '#62554c', dusk: '#463c3c', night: '#312629' };
+const TAU = Math.PI * 2;
+
+// ---------- State ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:23:save';
+let raw = null;
+try { raw = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+const S = E.load(raw);
+const save = () => { S.savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound: A minor pentatonic, struck like a marimba ----------
+// Trims measured with npm run mix: music near -24 dBFS RMS, effects peaking near -10.
+const A = createAudio({ sfxTrim: 2.63, musicTrim: 1 });
+const notes = scale('minor pentatonic', 57);   // A3 C4 D4 E4 G4, A4 ...
+let lastTick = 0, lastFall = 0, lastMoth = 0, lastChat = 0;
+// A wooden strike: a short pluck, a quieter octave-and-a-bit partial, and a tap of noise.
+const mallet = (d, { vol = 0.2, at = A.now, dur = 0.12 } = {}) => {
+  A.tone({ type: 'pluck', freq: notes(d), dur, vol, at, cutoff: 2600 });
+  A.tone({ type: 'sine', freq: notes(d) * 4, dur: 0.03, vol: vol * 0.12, at, release: 0.05 });
+};
+const sfx = {
+  // A tooth clicks into the rim; a chain climbs the scale one link at a time.
+  click(depth = 0) { const t = performance.now(); if (t - lastTick < 35 && !DEBUG) return; lastTick = t; mallet(Math.min(12, 5 + depth), { vol: 0.2 }); A.noiseHit('hat', { vol: 0.03, dur: 0.02 }); },
+  // Picking a tooth up: it chatters.
+  grab() { for (let i = 0; i < 3; i++) A.noiseHit('shaker', { vol: 0.06, dur: 0.02, at: A.now + i * 0.045 }); mallet(2, { vol: 0.096, dur: 0.06 }); },
+  // Dropped back into the dark.
+  drop() { mallet(0, { vol: 0.43, dur: 0.08 }); },
+  // A tooth shakes loose: a small rattle down the scale.
+  fall() { const t = performance.now(); if (t - lastFall < 400 && !DEBUG) return; lastFall = t; mallet(4, { vol: 0.135, dur: 0.06 }); mallet(2, { vol: 0.12, dur: 0.06, at: A.now + 0.07 }); mallet(-1, { vol: 0.12, dur: 0.1, at: A.now + 0.14 }); A.noiseHit('shaker', { vol: 0.06, dur: 0.05, at: A.now + 0.12 }); },
+  // A moth sets a tooth in: a soft chime, now and then.
+  moth() { const t = performance.now(); if (t - lastMoth < 1800 && !DEBUG) return; lastMoth = t; const d = [7, 8, 9, 10][Math.random() * 4 | 0]; A.tone({ type: 'bell', freq: notes(d), dur: 0.08, vol: 0.146 }); A.noiseHit('whoosh', { vol: 0.0729, dur: 0.12 }); },
+  // The dark chattering to itself.
+  chatter() { const t = performance.now(); if (t - lastChat < 2500 && !DEBUG) return; lastChat = t; for (let i = 0; i < 5; i++) A.noiseHit('shaker', { vol: 0.152, dur: 0.015, at: A.now + i * 0.06 + Math.random() * 0.01 }); },
+  // A long chain lands: a little run on top.
+  chain(n = 5) { [5, 7, 9, 10].forEach((d, i) => A.tone({ type: 'bell', freq: notes(d), dur: 0.08, vol: 0.133, at: A.now + i * 0.06 })); },
+  buy() { [0, 2, 3, 4, 5].forEach((d, i) => mallet(d + 3, { vol: 0.12, at: A.now + i * 0.05, dur: 0.1 })); },
+  unlock() { A.tone({ type: 'bell', freq: notes(10), dur: 0.25, vol: 0.144 }); A.tone({ type: 'bell', freq: notes(12), dur: 0.35, vol: 0.12, at: A.now + 0.12 }); },
+  deny() { A.tone({ type: 'triangle', freq: notes(-2), dur: 0.07, vol: 0.168 }); },
+  // The recut: a grinding wheel, a clatter of teeth, a low chord.
+  recut() {
+    A.tone({ type: 'sawtooth', freq: notes(5), dur: 0.7, vol: 0.0586, glide: 0.4, cutoff: 1400 });
+    A.noiseHit('whoosh', { vol: 0.117, dur: 0.6 });
+    for (let i = 0; i < 10; i++) A.noiseHit('shaker', { vol: 0.0976, dur: 0.03, at: A.now + 0.65 + i * 0.05 });
+    [-5, 0, 3].forEach(d => A.tone({ type: 'pad', freq: notes(d), dur: 1.4, vol: 0.0312, attack: 0.1, release: 1, cutoff: 900, at: A.now + 0.7 }));
+  },
+  // One minute late, and it stops: a low toll.
+  slack() { A.tone({ type: 'bell', freq: notes(-5), dur: 1.2, vol: 0.112 }); A.tone({ type: 'bell', freq: notes(0), dur: 1.4, vol: 0.064, at: A.now + 0.02 }); },
+  // Each time somebody talks the gear down.
+  talk() { A.tone({ type: 'sine', freq: notes(0), dur: 0.5, vol: 0.12, attack: 0.05 }); A.tone({ type: 'sine', freq: notes(3), dur: 0.6, vol: 0.08, attack: 0.1, at: A.now + 0.15 }); },
+  // Midnight: the cutter put down, everything turning, the sign rewired.
+  finale() {
+    [0, 3, 5, 7, 8, 10].forEach((d, i) => mallet(d, { vol: 0.12, at: A.now + i * 0.11, dur: 0.16 }));
+    [-5, 0, 2, 4].forEach(d => A.tone({ type: 'pad', freq: notes(d), dur: 2.6, vol: 0.016, attack: 0.5, release: 1.6, cutoff: 1100, at: A.now + 0.6 }));
+    A.tone({ type: 'bell', freq: notes(10), dur: 0.5, vol: 0.1, at: A.now + 1.2 });
+    A.tone({ type: 'bell', freq: notes(12), dur: 0.8, vol: 0.08, at: A.now + 1.45 });
+  },
+};
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'recut', 'slack'], S: () => S, E };
+
+// ---------- Music: one marimba piece, arranged for each size of gear ----------
+let music = null, soundtrack = null;
+function song() { return (soundtrack ??= createSoundtrack(music.strudel))(E.phaseKey(S)); }
+createMusic(A, { packs: ['vcsl'], song }).then(m => { music = m; music.update(); if (DEBUG) window.__game.music = m; }).catch(e => console.warn('music', e));
+const refreshMusic = () => { if (music) music.update(); };
+
+// ---------- Sprites: hand-drawn neon pieces, plus two restyled icons ----------
+const ART = {};
+async function loadArt() {
+  try {
+    const tooth = await Sprites.loadSvg('./art/mdi--tooth.svg');
+    // Restyled to the sign: a dark body with a cream neon outline, like the gear's own teeth.
+    ART.molar = Sprites.outline(await Sprites.svgToCanvas(Sprites.recolor(tooth, '#3a2d2f'), 60), C.cream, 3);
+    const brush = await Sprites.loadSvg('./art/mdi--toothbrush.svg');
+    ART.brush = Sprites.outline(await Sprites.svgToCanvas(Sprites.recolor(brush, '#2a1f22'), 60), C.mint, 3);
+  } catch (e) { console.warn('art', e); }
+}
+
+// ---------- Stage ----------
+const W = 800, H = 600, GX = 430, GY = 292;
+const cv = $('stage'), cx = cv.getContext('2d');
+const glow = document.createElement('canvas'), gx = glow.getContext('2d');
+let k = 1, dpr = 1, fxLayer = null;
+function layout() {
+  dpr = Math.min(2, devicePixelRatio || 1);
+  const cw = cv.parentElement.clientWidth || W;
+  k = cw / W;
+  cv.width = Math.round(W * k * dpr); cv.height = Math.round(H * k * dpr);
+  cv.style.height = `${H * k}px`;
+  glow.width = cv.width; glow.height = cv.height;
+  fxLayer = Sprites.canvas(cv.width, cv.height);
+  const f = fxLayer.getContext('2d');
+  vignette(f, cv.width, cv.height, { strength: 0.55, color: '24,17,19' });
+  grain(f, cv.width, cv.height, { amount: 0.05 });
+}
+const radius = (n = E.size(S)) => 46 + 2.25 * n;
+const driveR = (d = S.drive) => 12 + d * 0.42;
+let rot = 0, drot = 0;          // the gear's turn, and the drive's
+let shownR = radius(), shownDrive = S.drive;
+const DRIVE_ANG = Math.PI * 1.1;
+function drivePos() {
+  const r = shownR, rd = driveR(shownDrive);
+  return { x: GX + Math.cos(DRIVE_ANG) * (r + rd + 4), y: GY + Math.sin(DRIVE_ANG) * (r + rd + 4), r: rd };
+}
+function socketPos(i, n = E.size(S), r = shownR, out = 8) {
+  const a = rot + i * TAU / n - Math.PI / 2;
+  return { x: GX + Math.cos(a) * (r + out), y: GY + Math.sin(a) * (r + out), a };
+}
+const GLASS = { x: 724, y: 438 };
+
+// Neon: draw tubes on the glow layer (blurred and stacked under the sharp copy).
+function tube(g, path, color, w = 3) {
+  g.strokeStyle = color; g.lineWidth = w; g.lineCap = 'round'; g.lineJoin = 'round';
+  g.beginPath(); path(g); g.stroke();
+}
+let flick = 1;                  // the sign's flicker, now and then
+let flickT = 6;
+
+function drawSign(g, t) {
+  // SUNDOWN in script, MOTEL in block, VACANCY under it (until the end: SECONDS IS FASTER).
+  g.save();
+  g.font = '64px Neonderthaw, cursive'; g.textBaseline = 'alphabetic'; g.textAlign = 'left';
+  g.lineWidth = 2.2; g.strokeStyle = C.mint; g.fillStyle = 'rgba(214,245,228,0.08)';
+  g.globalAlpha = flick;
+  g.strokeText('Sundown', 28, 74); g.fillText('Sundown', 28, 74);
+  g.globalAlpha = 1;
+  g.font = '34px "Tilt Neon", sans-serif'; g.strokeStyle = C.cream; g.lineWidth = 1.6;
+  g.strokeText('MOTEL', 300, 72);
+  // An arrow tube, pointing at the office.
+  tube(g, q => { q.moveTo(424, 58); q.lineTo(462, 58); q.moveTo(452, 49); q.lineTo(462, 58); q.lineTo(452, 67); }, C.amber, 2.4);
+  g.font = '22px "Tilt Neon", sans-serif';
+  const vac = S.ended ? 'SECONDS IS FASTER' : 'VACANCY';
+  g.textAlign = 'right';
+  g.strokeStyle = S.ended ? C.mint : C.sage; g.lineWidth = 1.3;
+  g.globalAlpha = S.ended ? 1 : 0.75 + 0.25 * Math.sin(t * 0.7);
+  g.strokeText(vac, 780, 40);
+  g.globalAlpha = 1;
+  if (S.one.checkout) { g.font = '17px "Tilt Neon", sans-serif'; g.strokeStyle = C.amber; g.lineWidth = 1.2; g.strokeText('LATE CHECKOUT', 780, 66); }
+  g.restore();
+}
+
+function drawGear(g, t) {
+  const n = E.size(S), r = shownR;
+  // The rim and its spokes.
+  tube(g, q => q.arc(GX, GY, r, 0, TAU), C.sage, 3);
+  tube(g, q => q.arc(GX, GY, r - 16, 0, TAU), C.olive, 1.5);
+  tube(g, q => { for (let i = 0; i < 6; i++) { const a = rot + i * TAU / 6; q.moveTo(GX + Math.cos(a) * (r * 0.62), GY + Math.sin(a) * (r * 0.62)); q.lineTo(GX + Math.cos(a) * (r - 16), GY + Math.sin(a) * (r - 16)); } }, C.olive, 2);
+  // Retainer: a wire band per level.
+  for (let l = 0; l < E.lv(S, 'retainer'); l++) tube(g, q => q.arc(GX, GY, r + 4 + l * 4, 0, TAU), C.amber, 1.2);
+  // Sockets: a tooth, or a gap.
+  const tw = Math.min(14, (TAU * r / n) * 0.55), th = n >= 48 ? 13 : 15;
+  for (let i = 0; i < n; i++) {
+    const p = socketPos(i, n, r, 0);
+    g.save(); g.translate(p.x, p.y); g.rotate(p.a + Math.PI / 2);
+    const on = S.rim[i] && !pending.has(i);
+    if (on) {
+      g.fillStyle = '#3a2d2f'; g.strokeStyle = C.cream; g.lineWidth = 1.8;
+      g.beginPath(); g.moveTo(-tw / 2, 1); g.lineTo(-tw * 0.32, -th); g.lineTo(tw * 0.32, -th); g.lineTo(tw / 2, 1); g.fill(); g.stroke();
+    } else {
+      g.strokeStyle = C.taupe; g.lineWidth = 1; g.setLineDash([2, 3]);
+      g.beginPath(); g.moveTo(-tw / 2, 1); g.lineTo(-tw * 0.32, -th); g.lineTo(tw * 0.32, -th); g.lineTo(tw / 2, 1); g.stroke();
+      g.setLineDash([]);
+    }
+    g.restore();
+  }
+}
+
+// The clock face in the middle: sign time is the real time minus how late it is. Seconds is always right.
+function drawFace(g, t, { late = S.late, at = new Date() } = {}) {
+  const r = shownR * 0.55;
+  tube(g, q => q.arc(GX, GY, r, 0, TAU), C.mint, 2.4);
+  tube(g, q => { for (let i = 0; i < 12; i++) { const a = i * TAU / 12; const l = i % 3 ? 0.88 : 0.8; q.moveTo(GX + Math.cos(a) * r * l, GY + Math.sin(a) * r * l); q.lineTo(GX + Math.cos(a) * r * 0.96, GY + Math.sin(a) * r * 0.96); } }, C.mint, 1.6);
+  const real = at.getHours() * 3600 + at.getMinutes() * 60 + at.getSeconds() + at.getMilliseconds() / 1000;
+  const sign = ((real - late) % 43200 + 43200) % 43200;
+  const ha = sign / 43200 * TAU - Math.PI / 2, ma = (sign % 3600) / 3600 * TAU - Math.PI / 2;
+  tube(g, q => { q.moveTo(GX, GY); q.lineTo(GX + Math.cos(ha) * r * 0.5, GY + Math.sin(ha) * r * 0.5); }, C.cream, 3.4);
+  tube(g, q => { q.moveTo(GX, GY); q.lineTo(GX + Math.cos(ma) * r * 0.82, GY + Math.sin(ma) * r * 0.82); }, C.cream, 2.4);
+  // Seconds: a thin hand with a face on his counterweight.
+  const sa = (real % 60) / 60 * TAU - Math.PI / 2;
+  const tail = { x: GX - Math.cos(sa) * r * 0.24, y: GY - Math.sin(sa) * r * 0.24 };
+  tube(g, q => { q.moveTo(tail.x, tail.y); q.lineTo(GX + Math.cos(sa) * r * 0.92, GY + Math.sin(sa) * r * 0.92); }, C.amber, 1.6);
+  if (S.one.stripe) tube(g, q => { q.moveTo(GX + Math.cos(sa) * r * 0.2, GY + Math.sin(sa) * r * 0.2); q.lineTo(GX + Math.cos(sa) * r * 0.8, GY + Math.sin(sa) * r * 0.8); }, C.sage, 2.6);
+  const fr = Math.max(7, r * 0.12);
+  g.fillStyle = '#3a2d2f'; g.beginPath(); g.arc(tail.x, tail.y, fr, 0, TAU); g.fill();
+  tube(g, q => q.arc(tail.x, tail.y, fr, 0, TAU), C.amber, 1.6);
+  // His face stays upright. Smug when he's winning.
+  g.fillStyle = C.cream;
+  g.beginPath(); g.arc(tail.x - fr * 0.35, tail.y - fr * 0.15, 1.4, 0, TAU); g.arc(tail.x + fr * 0.35, tail.y - fr * 0.15, 1.4, 0, TAU); g.fill();
+  tube(g, q => q.arc(tail.x, tail.y + fr * 0.05, fr * 0.4, 0.15 * Math.PI, 0.85 * Math.PI), C.cream, 1.1);
+  g.fillStyle = C.mint; g.beginPath(); g.arc(GX, GY, 3, 0, TAU); g.fill();
+}
+
+function drawDrive(g, t) {
+  const p = drivePos(), n = Math.max(6, Math.round(shownDrive));
+  tube(g, q => q.arc(p.x, p.y, p.r, 0, TAU), C.amber, 2.4);
+  tube(g, q => { for (let i = 0; i < n; i++) { const a = drot + i * TAU / n; q.moveTo(p.x + Math.cos(a) * p.r, p.y + Math.sin(a) * p.r); q.lineTo(p.x + Math.cos(a) * (p.r + 6), p.y + Math.sin(a) * (p.r + 6)); } }, C.amber, n > 60 ? 1.4 : 2);
+  tube(g, q => { q.arc(p.x, p.y, Math.max(4, p.r * 0.3), 0, TAU); }, C.olive, 1.4);
+}
+
+// Feral teeth: small shapes with two glinting eyes. Some were never gear teeth.
+function drawFeral(g, d, t, x = d.x, y = d.y, scale = 1, eyes = true) {
+  const j = reduced ? 0 : Math.sin(t * 23 + d.id * 1.7) * 0.8;
+  g.save(); g.translate(x + j, y); g.scale(scale, scale);
+  g.strokeStyle = C.cream; g.fillStyle = '#3a2d2f'; g.lineWidth = 1.5;
+  if (d.k === 'molar' && ART.molar) { g.drawImage(ART.molar, -9, -10, 18, 18); }
+  else if (d.k === 'comb') { g.beginPath(); g.roundRect(-2.5, -11, 5, 20, 2); g.fill(); g.stroke(); }
+  else if (d.k === 'zip') { g.beginPath(); g.roundRect(-5, -4, 10, 8, 3); g.fill(); g.stroke(); g.beginPath(); g.moveTo(-5, 0); g.lineTo(5, 0); g.stroke(); }
+  else { g.beginPath(); g.moveTo(-7, 6); g.lineTo(-4.5, -7); g.lineTo(4.5, -7); g.lineTo(7, 6); g.closePath(); g.fill(); g.stroke(); }
+  if (eyes) {
+    const blink = (t * 0.7 + d.id * 0.37) % 4 < 0.12;
+    g.fillStyle = C.mint;
+    if (!blink) { g.beginPath(); g.arc(-2.4, 0, 1.3, 0, TAU); g.arc(2.4, 0, 1.3, 0, TAU); g.fill(); }
+  }
+  g.restore();
+}
+
+function drawMoth(g, x, y, t, i = 0, fairy = false) {
+  const flap = reduced ? 0.6 : 0.4 + 0.6 * Math.abs(Math.sin(t * 18 + i));
+  g.save(); g.translate(x, y);
+  g.fillStyle = 'rgba(247,255,197,0.22)'; g.strokeStyle = C.cream; g.lineWidth = 1;
+  for (const s of [-1, 1]) { g.beginPath(); g.ellipse(s * 5.5 * flap, -1, 6.5 * flap, 4.5, s * 0.5, 0, TAU); g.fill(); g.stroke(); }
+  g.fillStyle = C.sage; g.beginPath(); g.ellipse(0, 0, 1.8, 4.5, 0, 0, TAU); g.fill();
+  g.strokeStyle = C.sage; g.beginPath(); g.moveTo(-1, -4); g.lineTo(-3, -8); g.moveTo(1, -4); g.lineTo(3, -8); g.stroke();
+  if (fairy) {
+    // A tutu and a wand.
+    g.strokeStyle = C.mint; g.beginPath(); g.moveTo(-5, 2); g.lineTo(-3, 4); g.lineTo(-1, 2); g.lineTo(1, 4); g.lineTo(3, 2); g.lineTo(5, 4); g.stroke();
+    g.beginPath(); g.moveTo(3, -1); g.lineTo(9, -7); g.stroke(); g.fillStyle = C.cream; g.beginPath(); g.arc(9.5, -7.5, 1.7, 0, TAU); g.fill();
+  }
+  g.restore();
+}
+
+function drawChatterbox(g, x, y, t, i) {
+  const open = chatT > clock && !reduced ? Math.abs(Math.sin(t * 30 + i)) * 4 : 1;
+  // Wind-up chattering teeth: two gums, a row of teeth each, a key.
+  g.save(); g.translate(x, y);
+  g.fillStyle = '#3a2d2f'; g.strokeStyle = C.amber; g.lineWidth = 1.5;
+  g.beginPath(); g.roundRect(-13, -10 - open, 26, 9, 4); g.fill(); g.stroke();
+  g.beginPath(); g.roundRect(-13, 1, 26, 9, 4); g.fill(); g.stroke();
+  g.strokeStyle = C.cream; g.lineWidth = 1;
+  for (let k2 = -9; k2 <= 9; k2 += 4.5) { g.beginPath(); g.moveTo(k2, -2 - open); g.lineTo(k2, -5 - open); g.stroke(); g.beginPath(); g.moveTo(k2, 2); g.lineTo(k2, 5); g.stroke(); }
+  g.strokeStyle = C.olive; g.beginPath(); g.moveTo(13, 5); g.lineTo(18, 5); g.moveTo(18, 1); g.lineTo(18, 9); g.stroke();
+  g.fillStyle = C.mint; g.beginPath(); g.arc(-7, -13 - open, 1, 0, TAU); g.arc(-3, -13 - open, 1, 0, TAU); g.fill();
+  g.restore();
+}
+
+function drawGlass(g, t) {
+  const { x, y } = GLASS;
+  // A glass of water on the ledge, the spare teeth at the bottom.
+  g.fillStyle = 'rgba(214,245,228,0.07)';
+  g.beginPath(); g.moveTo(x - 22, y - 38); g.lineTo(x - 17, y + 22); g.lineTo(x + 17, y + 22); g.lineTo(x + 22, y - 38); g.fill();
+  tube(g, q => { q.moveTo(x - 22, y - 38); q.lineTo(x - 17, y + 22); q.lineTo(x + 17, y + 22); q.lineTo(x + 22, y - 38); }, C.mint, 1.6);
+  tube(g, q => { q.moveTo(x - 20, y - 22); q.lineTo(x + 20, y - 22); }, C.olive, 1);
+  const n = Math.min(40, Math.ceil(S.glass / 3));
+  g.fillStyle = C.cream;
+  for (let i = 0; i < n; i++) { const row = Math.floor(i / 6), col = i % 6; g.fillRect(x - 14 + col * 5 + (row % 2) * 2, y + 16 - row * 5, 3.4, 3.6); }
+  if (S.one.brush && ART.brush) { g.save(); g.translate(x + 8, y - 34); g.rotate(0.35); g.drawImage(ART.brush, -16, -26, 32, 32); g.restore(); }
+  // The ledge.
+  tube(g, q => { q.moveTo(640, y + 24); q.lineTo(790, y + 24); }, C.taupe, 2);
+}
+
+function drawDark(g, t) {
+  // Night-lights: a little bulb per level along the bottom.
+  const L = E.lv(S, 'light');
+  for (let i = 0; i < L; i++) {
+    const x = 70 + i * 60, y = 593;
+    const rg = g.createRadialGradient(x, y - 6, 2, x, y - 6, 40); rg.addColorStop(0, 'rgba(247,255,197,0.16)'); rg.addColorStop(1, 'rgba(247,255,197,0)');
+    g.fillStyle = rg; g.fillRect(x - 40, y - 46, 80, 46);
+    tube(g, q => { q.arc(x, y - 5, 4, 0, TAU); }, C.cream, 1.4);
+  }
+  if (S.one.mat) {
+    g.save(); g.translate(96, 572);
+    g.fillStyle = '#463c3c'; g.fillRect(-48, -12, 96, 22);
+    g.strokeStyle = C.amber; g.lineWidth = 1; g.strokeRect(-48, -12, 96, 22);
+    g.font = '12px "Tilt Neon", sans-serif'; g.textAlign = 'center'; g.fillStyle = C.cream; g.fillText('WELCOME BACK', 0, 4);
+    g.restore();
+  }
+  // Huddles: a faint ring and a count round each group of three or more.
+  for (const h of huddles) {
+    if (h.n < 3) continue;
+    g.strokeStyle = 'rgba(214,245,228,0.22)'; g.lineWidth = 1; g.setLineDash([3, 4]);
+    g.beginPath(); g.ellipse(h.x, h.y, h.rx + 12, h.ry + 10, 0, 0, TAU); g.stroke(); g.setLineDash([]);
+    g.font = '13px "Tilt Neon", sans-serif'; g.textAlign = 'center'; g.fillStyle = h.big ? C.mint : C.olive;
+    g.fillText(`×${h.n}`, h.x, Math.max(498, h.y - h.ry - 14));
+  }
+  for (const d of S.dark) {
+    if (hidden.has(d.id) || (drag && drag.id === d.id)) continue;
+    drawFeral(g, d, t, d.x, d.y, k < 0.7 ? 1.45 : 1);
+  }
+}
+
+// ---------- Flights: teeth on their way somewhere ----------
+let flights = [], pending = new Set(), hidden = new Set(), sparks = [], floats = [];
+function fly(f) { flights.push(Object.assign({ t: 0, delay: 0, dur: 0.45 }, f)); if (f.to >= 0) pending.add(f.to); if (f.hide != null) hidden.add(f.hide); }
+function posOf(f) {
+  if (f.toDark != null) { const d = S.dark.find(o => o.id === f.toDark); return d ? { x: d.x, y: d.y } : { x: f.from.x, y: 560 }; }
+  if (f.toDrive) { const p = drivePos(); return { x: p.x, y: p.y }; }
+  if (f.to >= 0) return socketPos(f.to, E.size(S), shownR, 6);
+  return { x: GLASS.x, y: GLASS.y + 4 };
+}
+function stepFlights(dt) {
+  for (const f of flights) {
+    if (f.delay > 0) { f.delay -= dt; continue; }
+    f.t += dt / f.dur;
+    if (f.t >= 1 && !f.done) {
+      f.done = true;
+      if (f.to >= 0) pending.delete(f.to);
+      if (f.hide != null) hidden.delete(f.hide);
+      if (f.kind === 'tame') { sfx.click(f.depth); const p = posOf(f); sparks.push({ x: p.x, y: p.y, t: 0 }); }
+      if (f.kind === 'moth') sfx.moth();
+    }
+  }
+  flights = flights.filter(f => !f.done);
+}
+function drawFlights(g, t) {
+  for (const f of flights) {
+    if (f.delay > 0) { if (f.kind === 'tame' && f.from) drawFeral(g, { id: f.id || 0, k: f.k }, t, f.from.x, f.from.y); continue; }
+    const p = posOf(f), u = Math.min(1, f.t), e = 1 - (1 - u) * (1 - u);
+    const lift = f.kind === 'fall' || f.kind === 'scatter' ? 0 : Math.sin(u * Math.PI) * 50;
+    const x = f.from.x + (p.x - f.from.x) * e, y = f.from.y + (p.y - f.from.y) * e - lift;
+    drawFeral(g, { id: f.id || 0, k: f.k || 'gear' }, t, x, y, 0.95, f.kind !== 'fall');
+    if (f.kind === 'moth') drawMoth(g, x, y - 10, t, f.id || 0);
+  }
+  for (const s of sparks) { g.strokeStyle = `rgba(247,255,197,${1 - s.t})`; g.lineWidth = 1.2; g.beginPath(); g.arc(s.x, s.y, 4 + s.t * 14, 0, TAU); g.stroke(); }
+}
+
+// ---------- Huddles ----------
+let huddles = [];
+function findHuddles() {
+  const R2 = E.reach(S) ** 2, n = S.dark.length, seen = new Array(n).fill(false);
+  huddles = [];
+  for (let i = 0; i < n; i++) {
+    if (seen[i]) continue;
+    const group = [i]; seen[i] = true;
+    for (let q = 0; q < group.length; q++) {
+      const a = S.dark[group[q]];
+      for (let j = 0; j < n; j++) if (!seen[j]) { const b = S.dark[j]; if ((a.x - b.x) ** 2 + (a.y - b.y) ** 2 <= R2) { seen[j] = true; group.push(j); } }
+    }
+    let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+    for (const i2 of group) { const d = S.dark[i2]; x0 = Math.min(x0, d.x); x1 = Math.max(x1, d.x); y0 = Math.min(y0, d.y); y1 = Math.max(y1, d.y); }
+    huddles.push({ n: group.length, x: (x0 + x1) / 2, y: (y0 + y1) / 2, rx: (x1 - x0) / 2, ry: (y1 - y0) / 2, members: group });
+  }
+  const top = Math.max(0, ...huddles.map(h => h.n));
+  for (const h of huddles) h.big = h.n === top && top >= 3;
+}
+
+// ---------- Input: drag a tooth up onto the gear ----------
+let drag = null;
+function toStage(e) { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * W, y: (e.clientY - r.top) / r.height * H }; }
+function pick(p) {
+  const pr = Math.max(26, 24 / k);   // at least ~24 CSS px, so a thumb can grab one on a phone
+  let best = -1, bd = pr * pr;
+  S.dark.forEach((d, i) => { if (hidden.has(d.id)) return; const dd = (d.x - p.x) ** 2 + (d.y - p.y) ** 2; if (dd < bd) { bd = dd; best = i; } });
+  return best;
+}
+cv.addEventListener('pointerdown', e => {
+  if (S.ended || S.slack || cutting) return;
+  e.preventDefault();
+  const p = toStage(e), i = pick(p);
+  if (i < 0) { if (p.y > 470) say('SIGN', S.dark.length ? 'Closer. They’re small, and they don’t like being looked at.' : 'Nothing down there right now. Something will be. Something always is.'); return; }
+  drag = { id: S.dark[i].id, k: S.dark[i].k, x: p.x, y: p.y, pid: e.pointerId };
+  cv.setPointerCapture?.(e.pointerId); cv.classList.add('dragging');
+  sfx.grab();
+});
+cv.addEventListener('pointermove', e => { if (drag && e.pointerId === drag.pid) { const p = toStage(e); drag.x = p.x; drag.y = p.y; } });
+const endDrag = e => {
+  if (!drag || (e && e.pointerId !== drag.pid)) return;
+  const d = drag; drag = null; cv.classList.remove('dragging');
+  const i = S.dark.findIndex(o => o.id === d.id);
+  const dist = Math.hypot(d.x - GX, d.y - GY);
+  if (i < 0) return;
+  if (dist <= shownR + 70 && d.y < 492) {
+    const a = Math.atan2(d.y - GY, d.x - GX) + Math.PI / 2 - rot;
+    const n = E.size(S), want = ((Math.round(a / TAU * n) % n) + n) % n;
+    tameIdx(i, want, { x: d.x, y: d.y });
+  } else { sfx.drop(); if (d.y < 470 && !endDrag.told) { endDrag.told = true; say('SIGN', 'It scuttles back into the dark. Bring it all the way up to the gear: drop it on the rim.'); } }
+};
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', e => { drag = null; cv.classList.remove('dragging'); });
+cv.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  e.preventDefault();
+  if (S.ended || S.slack || cutting || !S.dark.length) return;
+  findHuddles();
+  const h = huddles.slice().sort((a, b) => b.n - a.n)[0];
+  if (h) tameIdx(h.members[0], null, null);
+});
+
+const CHAIN_LINES = [
+  n => `The tooth told the others. ${n} came in after it. They mutter about it being an accident. It was. It always was.`,
+  n => `A huddle of ${n} followed it up, single file, chattering. One of them is a denture. Nobody mentions it.`,
+  n => `${n} at once. Word travels fast in the dark: the gear didn’t spit anyone out. Teeth just fall.`,
+  n => `A chain of ${n}. They come home the way they left: all at once, with a clatter.`,
+];
+let chainLine = 0;
+function tameIdx(i, want, dropAt) {
+  const before = E.rimCount(S);
+  const lateBefore = S.late;
+  const moves = E.tame(S, i, want);
+  if (!moves.length) return;
+  const first = moves[0];
+  // The one you dragged goes straight in from where you let go; the huddle follows from the dark.
+  moves.forEach((m, j) => fly({ kind: 'tame', from: j === 0 && dropAt ? dropAt : { x: m.from.x, y: m.from.y }, to: m.to, depth: m.depth, delay: j === 0 ? 0 : 0.18 + j * 0.09, dur: j === 0 ? 0.18 : 0.5, k: m.from.k, id: m.from.id }));
+  const n = moves.length - 1;
+  if (n > 0) {
+    chatT = clock + 1.2;
+    if (moves.burst > 0.5) floats.push({ text: `−${E.fmtLate(moves.burst)}`, x: GX, y: GY - shownR - 24, t: 0, color: C.mint });
+    if (n >= 5) setTimeout(() => sfx.chain(n), 200 + n * 90);
+    if (n >= 3 && (S.chains <= 2 || Math.random() < 0.18)) say('SIGN', CHAIN_LINES[chainLine++ % CHAIN_LINES.length](n));
+  }
+  if (S.hand === 1) say('SIGN', n ? `It bit you a little, then it went in. And ${n} more followed it up: a tamed tooth tells its huddle it was an accident. Drag from the biggest huddle.` : 'It bit you a little, then it went in. One gap fewer; the clock grips better and catches up faster.');
+  if (first.to === -1 && !tameIdx.glass) { tameIdx.glass = true; say('SIGN', 'The rim’s full, so the spare went in the glass by the sign, like you’re supposed to. Parts for the clock are made of teeth.'); }
+  if (moves.some(m => m.to === -2) && !tameIdx.over) { tameIdx.over = true; say('SIGN', 'The glass is full. The spare hopped back out into the dark, offended. Spend some.'); }
+  save(); hud(); renderShop(); renderCalls();
+}
+
+// ---------- The log ----------
+let logT = 0;
+const TAG = { SIGN: '', SECONDS: 's', TEETH: 't', MOTHS: 'm', 'WHILE YOU WERE OUT': '' };
+function say(who, text) {
+  const el = $('log');
+  el.innerHTML = '<b></b><span></span>';
+  const b = el.querySelector('b'); b.textContent = who; if (TAG[who]) b.className = TAG[who];
+  el.querySelector('span').textContent = text;
+  el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
+  logT = 0;
+}
+const AMBIENT = [
+  [['SIGN', 'The neon buzzes. Under the buzz, something in the dark is chattering. It’s your teeth. That’s the scary part.'],
+   ['SECONDS', '“Tick. Tick. Tick.” He doesn’t have to say it. He says it anyway.'],
+   ['SIGN', 'A guest checks out, squints up at the sign, and says “that clock’s late.” They always say it. Thirty years of it.'],
+   ['TEETH', 'From the dark, very small: “It spat us out.” It didn’t. Teeth fall. Nobody told them.']],
+  [['SIGN', 'Smaller and faster. The gear hums a note higher than it used to. The teeth in the dark hum it back.'],
+   ['SECONDS', '“Still late,” says Seconds, going past for the forty-thousandth time tonight. “Still dared.”'],
+   ['SIGN', 'Some of the teeth down there were never gear teeth. A denture. A comb’s. A zipper’s. A tooth’s a tooth.']],
+  [['SIGN', 'The moths work the dark like they’re paid. They aren’t. Something about the light.'],
+   ['SECONDS', '“You know what happens when you lose,” says Seconds. “The whole motel hears I’m faster.”'],
+   ['SIGN', 'The night clerk sets her watch by the sign. She always has. She’s always been a little late. She doesn’t mind.']],
+];
+let ambI = 0, mothCount = 0;
+function ambient(dt) {
+  logT += dt;
+  if (S.ended || S.slack || logT < 26) return;
+  if (mothCount >= 3 && ambI % 3 === 2) { ambI++; say('MOTHS', `The moths brought ${mothCount} teeth up out of the dark while you weren’t looking. They don’t want thanks. They want the light.`); mothCount = 0; return; }
+  const L = AMBIENT[Math.min(2, Math.floor(S.cut / 2) + (S.cut >= 3 ? 1 : 0))];
+  const [w, line] = L[ambI++ % L.length];
+  say(w, line);
+}
+
+// ---------- HUD ----------
+const perMin = r => { const v = r * 60; return v >= 100 ? v.toFixed(0) : v >= 10 ? v.toFixed(1) : v.toFixed(2); };
+function hud() {
+  $('late').textContent = E.fmtLate(S.late);
+  $('glass').textContent = S.glass;
+  $('meterFill').style.width = `calc(${Math.max(0, Math.min(1, (E.START_LATE - S.late) / (E.START_LATE - 0))) * 100}% - 4px)`;
+  $('where').textContent = S.ended ? 'the Sundown Motel · midnight' : S.slack ? 'the Sundown Motel · one minute to go' : `the Sundown Motel · a ${E.size(S)}-tooth gear`;
+  const bits = [];
+  bits.push(`<span>grip <b>${E.rimCount(S)}/${E.size(S)}</b></span>`);
+  bits.push(`<span>speed <b>${S.drive}:${E.size(S)}</b> (${E.speed(S).toFixed(2)})</span>`);
+  bits.push(`<span>catching up <b>${perMin(E.rate(S))}</b> s/min</span>`);
+  bits.push(`<span>teeth out <b>${(E.spawnRate(S) * 60).toFixed(0)}</b>/min</span>`);
+  if (E.lv(S, 'moths')) bits.push(`<span>moths carry <b>${(E.mothRate(S) * 60).toFixed(0)}</b>/min</span>`);
+  if (S.tamed > 30) bits.push(`<span>shaking loose <b>${(E.wearRate(S) * 60).toFixed(1)}</b>/min</span>`);
+  const html = bits.join('');
+  if (html !== hud.html) { hud.html = html; $('sub').innerHTML = html; }
+}
+
+// ---------- Calls: the recut, and at the very end the last cut ----------
+let callSig = '';
+const TALK = [
+  ['TEETH', '“We only just came home.” The twelve teeth hold on to the rim with everything they’ve got, which is mostly the rim.'],
+  ['MOTHS', 'The moths land on the cutter, all of them, and the Tooth Fairy sits on the handle. Who would they carry teeth for, after? They wait.'],
+  ['SECONDS', '“Hey. Hey. It was a dare, not a dentist.” Seconds stops going round, for the first time in thirty years, to say it. “Keep your teeth. Be late. I’ll still be here at the top of every minute.”'],
+];
+function renderCalls() {
+  const el = $('calls');
+  const open = !S.ended && (S.slack || E.recutOpen(S));
+  const sig = `${open}|${S.cut}|${S.slack}|${S.talk}`;
+  if (sig !== callSig) {
+    callSig = sig; el.innerHTML = '';
+    if (open && !S.slack) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'call'; b.id = 'recutBtn';
+      b.innerHTML = `<b>RECUT TO ${E.nextSize(S)} TEETH</b><span class="what"></span>`;
+      wireTip(b, recutTip, doRecut);
+      el.append(b);
+    }
+    if (open && S.slack) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'call cut can'; b.id = 'cutBtn';
+      b.innerHTML = S.talk >= 3 ? '<b>PUT THE CUTTER DOWN</b><span>keep the teeth · lose the dare</span>' : `<b>CUT THE LAST TWELVE</b><span>${['on time, instantly, forever', 'on time. forever. instantly.', 'just do it. on time.'][S.talk]}</span>`;
+      wireTip(b, cutTip, doCut);
+      el.append(b);
+    }
+  }
+  const b = $('recutBtn');
+  if (b) {
+    const can = E.canRecut(S);
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    b.querySelector('.what').textContent = `${E.recutCost(S)} teeth · speed ${E.speed(S).toFixed(2)} → ${E.speedAfterRecut(S).toFixed(2)}`;
+  }
+}
+function recutTip() {
+  const n = E.size(S), m = E.nextSize(S), knocked = E.rimCount(S);
+  return { id: 'recut', name: `Recut to ${m} teeth`, desc: `A gear with fewer teeth turns faster. The cutter knocks every tooth out of the rim: the drive wheel takes ${E.DRIVE_TAKE} (drive ${S.drive} → ${S.drive + E.DRIVE_TAKE}) and the other ${Math.max(0, knocked - E.DRIVE_TAKE)} scatter into the dark, sure they’ve been spat out again. Tame them back.`,
+    fx: `Speed at full grip ${S.drive}:${n} = ${E.speed(S).toFixed(2)} → ${S.drive + E.DRIVE_TAKE}:${m} = ${E.speedAfterRecut(S).toFixed(2)} · catching up at full grip ${perMin(E.BASE * E.speed(S))} → ${perMin(E.BASE * E.speedAfterRecut(S))} s/min${E.lv(S, 'retainer') ? ' · the retainer goes with the outer ring' : ''}`,
+    joke: 'The drive wheel gets bigger every time. The drive wheel has never once asked for this.', foot: `${E.recutCost(S)} teeth from the glass · you have ${S.glass}` };
+}
+function cutTip() {
+  if (S.talk >= 3) return { id: 'cut', name: 'Put the cutter down', desc: 'Keep all twelve teeth and their minute of slack. Midnight comes at 11:59 on the sign. Seconds wins the dare.', fx: 'Ends the game.' };
+  return { id: 'cut', name: 'Cut the last twelve', desc: 'Every gear with teeth has a little slack; this one’s comes to a minute. A gear with no teeth has none. It would be on time at once, and never turn anything again: a stopped clock, right twice a day.', fx: 'On time. Forever.', joke: 'Seconds dared it to be on time. He didn’t say how.' };
+}
+let cutting = false;
+function doRecut() {
+  if (!E.canRecut(S)) { sfx.deny(); return; }
+  const oldN = E.size(S), oldR = shownR, oldRim = S.rim.slice(), oldRot = rot;
+  const r = E.recut(S);
+  sfx.recut(); cutting = true;
+  // The cutter knocks every tooth out: four to the drive, the rest rain into the dark.
+  let toDrive = E.DRIVE_TAKE, id = r.firstId, j = 0;
+  oldRim.forEach((on, i) => {
+    if (!on) return;
+    const a = oldRot + i * TAU / oldN - Math.PI / 2;
+    const from = { x: GX + Math.cos(a) * (oldR + 6), y: GY + Math.sin(a) * (oldR + 6) };
+    if (toDrive > 0) { toDrive--; fly({ kind: 'drive', from, to: -9, toDrive: true, delay: 0.55 + j * 0.02, dur: 0.5 }); }
+    else { fly({ kind: 'scatter', from, to: -9, toDark: id, hide: id, delay: 0.55 + j * 0.015, dur: 0.6 + Math.random() * 0.3 }); id++; }
+    j++;
+  });
+  recutAnim = { t: 0, from: oldR, to: radius() };
+  setTimeout(() => { cutting = false; }, 900);
+  const lines = [
+    'Forty-eight teeth. The cutter goes round once and the rim rains teeth. Four go to the drive; the rest scatter into the dark, and you can hear them saying it: spat out. Again.',
+    'Thirty-six. The gear spins like it’s got somewhere to be. It has. The dark is full of teeth who think they’ve been thrown away twice.',
+    'Twenty-four. The hands move now. You can watch them move. The teeth in the dark watch them too.',
+    'Twelve teeth. The smallest a gear can be and still be a gear. It whirs. The teeth go round so fast they’re a blur, the ones that are back.',
+  ];
+  say('SIGN', lines[S.cut - 1]);
+  save(); hud(); renderShop(); renderCalls(); refreshMusic();
+}
+let cutAnim = null;
+function doCut() {
+  if (S.talk >= 3) { endGame(false); return; }
+  cutAnim = { t: 0, stage: S.talk };
+  S.talk++;
+  sfx.talk();
+  const [w, line] = TALK[S.talk - 1];
+  say(w, line);
+  save(); renderCalls(); refreshMusic();
+}
+
+// ---------- Shop ----------
+const shop = $('shop');
+const newUntil = {};
+let shopSig = '';
+const clone = () => JSON.parse(JSON.stringify(S));
+function renderShop() {
+  const closed = S.ended || S.slack;
+  const fresh = closed ? [] : E.reveal(S);
+  for (const id of fresh) { if (S.hand > 1) sfx.unlock(); newUntil[id] = performance.now() + 9000; }
+  const all = closed ? [] : E.items(S);
+  const sig = all.map(i => `${i.id}:${E.cost(S, i.id)}:${E.lv(S, i.id)}:${S.drive}`).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    for (const it of all) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (it.kind === 'odd' ? ' odd' : '');
+      b.dataset.id = it.id; b.dataset.cost = E.cost(S, it.id);
+      b.innerHTML = '<b></b><em></em>';
+      b.querySelector('b').textContent = it.kind === 'drive' ? 'Drive Tooth' : it.name;
+      b.querySelector('em').textContent = `${E.cost(S, it.id)} teeth${it.kind === 'drive' ? ` · ${S.drive}/${E.driveMax(S)}` : it.kind !== 'odd' ? ` · ${E.lv(S, it.id)}/${it.max}` : ''}`;
+      b.setAttribute('aria-describedby', 'tip');
+      b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, upTip(it.id)); });
+      b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+      b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, upTip(it.id)); });
+      b.addEventListener('blur', hideTip);
+      b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+      b.addEventListener('click', () => {
+        if (b.dataset.touch && tipFor !== it.id) { showTip(b, upTip(it.id)); return; }
+        if (b.getAttribute('aria-disabled') !== 'true') doBuy(it.id); else sfx.deny();
+      });
+      shop.append(b);
+    }
+  }
+  const now = performance.now();
+  let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = S.glass >= Number(b.dataset.cost);
+    if (can) n++;
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  document.querySelector('aside h2').hidden = !all.length;
+  renderShelf();
+}
+// What an upgrade changes, now → after.
+function effect(id) {
+  const it = E.BY_ID[id], T = clone();
+  if (it.kind === 'odd') return 'Does nothing. It just sits there, being seen.';
+  T.glass = 1e9; E.buy(T, id);
+  if (it.kind === 'drive') return `Speed ${S.drive}:${E.size(S)} = ${E.speed(S).toFixed(2)} → ${T.drive}:${E.size(T)} = ${E.speed(T).toFixed(2)} · catching up ${perMin(E.rate(S))} → ${perMin(E.rate(T))} s/min`;
+  if (id === 'light') return `Teeth coming out of the dark ${(E.spawnRate(S) * 60).toFixed(0)} → ${(E.spawnRate(T) * 60).toFixed(0)} a minute · the dark holds ${E.darkCap(S)} → ${E.darkCap(T)}`;
+  if (id === 'retainer') return `Teeth shaking loose ${(E.wearRate(S) * 60).toFixed(1)} → ${(E.wearRate(T) * 60).toFixed(1)} a minute (at this grip)`;
+  if (id === 'chatter') return `A tamed tooth’s huddle reaches ${E.reach(S)} → ${E.reach(T)} (the rings in the dark show who’s in one)`;
+  if (id === 'moths') return `Moths carry ${(E.mothRate(S) * 60).toFixed(0)} → ${(E.mothRate(T) * 60).toFixed(0)} teeth up a minute, on their own`;
+  return '';
+}
+let tipFor = null;
+function upTip(id) {
+  const it = E.BY_ID[id];
+  const lvTxt = it.kind === 'drive' ? ` · drive ${S.drive}, room for ${E.driveMax(S)}` : it.kind !== 'odd' ? ` · level ${E.lv(S, id)} of ${it.max}` : '';
+  return { id, name: it.name, desc: it.desc, fx: effect(id), foot: `${E.cost(S, id)} teeth${lvTxt}` };
+}
+function showTip(b, it) {
+  if (!it) return;
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><span class="fx"></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('.fx').textContent = it.fx || '';
+  tip.querySelector('.fx').hidden = !it.fx;
+  tip.querySelector('i').textContent = it.joke || '';
+  tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || '';
+  tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  const inSide = !!b.closest('#side');
+  if (inSide && r.left > t.width + 24 && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 14}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - t.width - 8, r.left))}px`;
+    tip.style.top = `${r.bottom + 8 + t.height < innerHeight ? r.bottom + 8 : Math.max(8, r.top - t.height - 8)}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+let tipMoved = 0;
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .call, .bought')) hideTip(); });
+
+// Buttons whose effect isn't obvious explain themselves (on touch, the first tap of the session).
+const explained = new Set();
+function wireTip(b, info, act) {
+  b.setAttribute('aria-describedby', 'tip');
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, info()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, info()); });
+  b.addEventListener('blur', hideTip);
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  b.addEventListener('click', () => {
+    if (b.dataset.touch && !explained.has(b.id)) { explained.add(b.id); showTip(b, info()); return; }
+    hideTip(); act();
+    if (b.matches(':hover') && !b.dataset.touch && b.isConnected) showTip(b, info());
+  });
+}
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!S.boughtOpen === shelfEl.open) return;
+  S.boughtOpen = shelfEl.open; save();
+});
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(i => i.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (it.kind === 'odd' ? ' odd' : '');
+    b.textContent = it.name; b.dataset.id = it.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, { id: 'bought:' + it.id, name: it.name, desc: it.desc, joke: it.joke, foot: 'does nothing, on purpose', inline: true }); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + it.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+const DRIVE_LINES = [
+  n => `The drive wheel has ${n} teeth now. It takes each one without a word and goes a little faster.`,
+  n => `${n} teeth on the drive. It turns, and the gear turns, and the hands creep. Seconds pretends not to notice.`,
+  n => `Drive, ${n}. It used to be the smallest wheel in the clock. It doesn’t talk about that.`,
+];
+const MOTH_LINES = {
+  1: 'The first moth comes down out of the neon, picks up a tooth, and carries it to the rim. It doesn’t know why. Something about the light.',
+  3: 'Three moths now. The teeth let them. They don’t trust the moths, exactly; they trust where the moths are going.',
+  6: 'Six moths working the dark. From the parking lot, the sign looks like it’s snowing upwards.',
+  10: 'Ten moths. The night clerk comes out to look, shrugs, and goes back in. She’s seen weirder signs. Not many.',
+};
+function doBuy(id) {
+  const it = E.BY_ID[id];
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  delete newUntil[id];
+  hideTip();
+  sfx.buy();
+  if (it.kind === 'drive') { if (S.drive % 5 === 0) say('SIGN', DRIVE_LINES[(S.drive / 5) % 3](S.drive)); floats.push({ text: '+1 drive', x: drivePos().x, y: drivePos().y - drivePos().r - 14, t: 0, color: C.amber }); }
+  else if (id === 'moths') say('MOTHS', MOTH_LINES[E.lv(S, 'moths')] || `${E.lv(S, 'moths')} moths. They circle the tubes and dive into the dark and come back up with teeth.`);
+  else if (it.kind === 'odd' || E.lv(S, id) === 1) say(it.kind === 'odd' ? 'SIGN' : 'SIGN', it.joke);
+  else if (id === 'light') say('SIGN', `Another night-light. ${E.lv(S, 'light')} little bulbs along the bottom of the sign box now, and the dark is shallower, and fuller.`);
+  else if (id === 'chatter') { chatT = clock + 2; say('SIGN', `${E.lv(S, 'chatter')} chatterboxes on the ledge, chattering in turns. The news carries further now.`); }
+  else if (id === 'retainer') say('SIGN', `Another wire round the rim. ${E.lv(S, 'retainer')} of them. The teeth stay put.`);
+  save(); renderShop(); hud(); renderCalls(); refreshMusic();
+}
+
+// ---------- The slack, and the end ----------
+function startSlack() {
+  S.slack = true; S.talk = S.talk || 0;
+  sfx.slack();
+  say('SIGN', 'One minute late, and it stops gaining. The slack: every gear with teeth has a little play between them, and this one’s comes to a minute. Nothing with teeth gets closer. A gear with no teeth would. It looks at the cutter.');
+  save(); hideTip(true); renderShop(); renderCalls(); hud(); refreshMusic();
+}
+function endGame(resumed) {
+  S.ended = true; S.slack = false; save();
+  hideTip(true);
+  const P = [
+    'The gear put the cutter down. All twelve teeth stayed in. The moths went back to the light, the Tooth Fairy to the glass.',
+    'Midnight came to the Sundown Motel at the usual time. The sign said 11:59. Seconds went over the top of the dial exactly on the dot, the way he always does, and the gear came in a minute behind him, the way it always will.',
+    'A dare’s a dare. The gear lost, so it told the whole motel: it rewired the VACANCY tube, letter by letter, to read SECONDS IS FASTER. It stayed that way all night. Seconds pretended not to look at it every sixty seconds.',
+    `The night clerk set her watch by the sign, a minute late, like always. Checkout is at eleven, by the sign. Late checkout, everybody says. ${S.tamed ? `${S.tamed} teeth came home tonight` : 'Every tooth came home tonight'}, and every one that’s on the rim is staying there.`,
+    'It’s a minute late. It doesn’t mind. Better late.',
+  ];
+  $('story').innerHTML = '';
+  for (const p of P) { const el = document.createElement('p'); el.textContent = p; $('story').append(el); }
+  const sig = document.createElement('p'); sig.className = 'sig'; sig.textContent = '— the Sundown Motel, open late'; $('story').append(sig);
+  $('ending').hidden = false;
+  renderShop(); renderCalls(); hud(); refreshMusic();
+  if (!resumed) {
+    sfx.finale();
+    say('SECONDS', '“Told you,” says Seconds, going over the top. “Same time tomorrow?” It’ll be a minute late. He knows.');
+    $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+    if (window.DailyGame) DailyGame.finish({ lines: [`⏱ ${Math.floor(S.t / 60)}m${String(Math.floor(S.t % 60)).padStart(2, '0')}s`, `⚙️ 1 minute late, on purpose`, `🦷 ${S.tamed} teeth home · best chain ×${S.best}`] });
+  }
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Drawing ----------
+let clock = 0, chatT = 0, recutAnim = null, huddleT = 0;
+const IDLE_MOTHS = 14;
+function compose(t) {
+  const g = gx;
+  const s = k * dpr;
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, glow.width, glow.height); g.setTransform(s, 0, 0, s, 0, 0);
+  drawSign(g, t);
+  drawDrive(g, t);
+  drawGear(g, t);
+  drawFace(g, t, S.ended ? { late: 60 } : {});
+  // The ledge on the left, chatterboxes on it.
+  tube(g, q => { q.moveTo(14, 470); q.lineTo(196, 470); }, C.taupe, 2);
+  for (let i = 0; i < E.lv(S, 'chatter'); i++) drawChatterbox(g, 34 + i * 36, 456, t, i);
+  drawGlass(g, t);
+  // The dark.
+  const grd = g.createLinearGradient(0, 486, 0, 600); grd.addColorStop(0, 'rgba(24,17,19,0)'); grd.addColorStop(0.3, 'rgba(24,17,19,0.85)'); grd.addColorStop(1, 'rgba(14,10,11,1)');
+  g.fillStyle = grd; g.fillRect(0, 486, W, 114);
+  drawDark(g, t);
+  // Moths round the neon.
+  const nm = Math.min(IDLE_MOTHS, E.lv(S, 'moths'));
+  const LAMPS = [[150, 50], [360, 52], [700, 34], [460, 58], [250, 70], [740, 60], [90, 80], [560, 40]];
+  for (let i = 0; i < nm; i++) {
+    const [lx, ly] = LAMPS[i % LAMPS.length], a = t * (0.7 + (i % 3) * 0.19) + i * 2.1;
+    drawMoth(g, lx + Math.cos(a) * (22 + (i % 4) * 6), ly + Math.sin(a * 1.3) * 16 + Math.floor(i / 8) * 14, t, i);
+  }
+  if (S.one.fairy) { const a = t * 0.8; drawMoth(g, GLASS.x - 30 + Math.cos(a) * 18, GLASS.y - 64 + Math.sin(a * 1.7) * 10, t, 99, true); }
+  drawFlights(g, t);
+  // The cutter, at the end, creeping closer each time you reach for it.
+  if (S.slack && !S.ended) {
+    const near = [70, 42, 22, 60][Math.min(3, S.talk)], a = -0.2 + Math.sin(t * 0.8) * 0.05;
+    const x = GX + Math.cos(a) * (shownR + near + 20), y = GY + Math.sin(a) * (shownR + near + 20);
+    tube(g, q => { q.arc(x, y, 18, 0, TAU); }, S.talk >= 3 ? C.olive : C.cream, 2);
+    tube(g, q => { for (let i = 0; i < 12; i++) { const b = i * TAU / 12 + (S.talk < 3 ? t * 6 : 0); q.moveTo(x + Math.cos(b) * 18, y + Math.sin(b) * 18); q.lineTo(x + Math.cos(b + 0.2) * 23, y + Math.sin(b + 0.2) * 23); } }, S.talk >= 3 ? C.olive : C.cream, 1.4);
+    tube(g, q => { q.moveTo(x + 18, y + 10); q.lineTo(x + 70, y + 40); }, C.taupe, 4);
+  }
+  // A tooth in hand.
+  if (drag) {
+    const near = Math.hypot(drag.x - GX, drag.y - GY) <= shownR + 70 && drag.y < 492;
+    if (near) tube(g, q => q.arc(GX, GY, shownR + 8, 0, TAU), 'rgba(214,245,228,0.35)', 6);
+    drawFeral(g, { id: drag.id, k: drag.k }, t, drag.x, drag.y - 4, 1.25);
+  }
+  g.font = '18px "Tilt Neon", sans-serif'; g.textAlign = 'center';
+  for (const f of floats) { g.globalAlpha = Math.max(0, 1 - f.t / 1.4); g.fillStyle = f.color || C.mint; g.fillText(f.text, f.x, f.y - f.t * 26); }
+  g.globalAlpha = 1;
+  // First-run hint: point at a huddle.
+  if (S.hand < 2 && !drag && huddles.length && !S.ended) {
+    const h = huddles.slice().sort((a, b) => b.n - a.n)[0];
+    g.fillStyle = C.mint; g.font = '15px "Tilt Neon", sans-serif';
+    const bob = reduced ? 0 : Math.sin(t * 3) * 3;
+    g.fillText('drag a tooth up to the gear', h.x, 486 + bob);
+  }
+}
+function render() {
+  cx.setTransform(1, 0, 0, 1, 0, 0);
+  cx.fillStyle = C.night; cx.fillRect(0, 0, cv.width, cv.height);
+  // Brick behind the tubes.
+  const s = k * dpr;
+  cx.setTransform(s, 0, 0, s, 0, 0);
+  cx.strokeStyle = 'rgba(70,60,60,0.45)'; cx.lineWidth = 1;
+  for (let y = 0; y < 486; y += 22) { cx.beginPath(); cx.moveTo(0, y); cx.lineTo(W, y); cx.stroke(); for (let x = (y / 22) % 2 ? 0 : 30; x < W; x += 60) { cx.beginPath(); cx.moveTo(x, y); cx.lineTo(x, y + 22); cx.stroke(); } }
+  cx.setTransform(1, 0, 0, 1, 0, 0);
+  if (!reduced) {
+    cx.globalAlpha = 0.9; cx.filter = `blur(${Math.max(3, 7 * k * dpr)}px)`; cx.drawImage(glow, 0, 0);
+    cx.globalAlpha = 0.5; cx.filter = `blur(${Math.max(1.5, 2.5 * k * dpr)}px)`; cx.drawImage(glow, 0, 0);
+    cx.filter = 'none'; cx.globalAlpha = 1;
+  }
+  cx.drawImage(glow, 0, 0);
+  cx.drawImage(fxLayer, 0, 0);
+}
+
+// ---------- Loop ----------
+let last = performance.now(), saveAcc = 0, uiAcc = 0, lastFrame = performance.now(), phaseWas = E.phaseKey(S);
+function step(dt) {
+  if (!S.ended && !S.slack) {
+    const ev = E.tick(S, dt);
+    for (const f of ev.fell) { const p = socketPos(f.i, E.size(S), shownR, 6); fly({ kind: 'fall', from: p, to: -9, toDark: f.id, hide: f.id, dur: 0.7 }); sfx.fall(); if (!step.fellTold) { step.fellTold = true; say('SIGN', 'A tooth shook loose and dropped back into the dark. They do that when a gear spins. It’s nobody’s fault. Try telling them that.'); } }
+    mothCount += ev.moth.length;
+    for (const m of ev.moth) fly({ kind: 'moth', from: { x: m.from.x, y: m.from.y }, to: m.to, k: m.from.k, id: m.from.id, dur: 1.1 });
+    if (E.finalReady(S)) startSlack();
+  }
+  const ph = E.phaseKey(S);
+  if (ph !== phaseWas) { phaseWas = ph; refreshMusic(); }
+  saveAcc += dt; if (saveAcc > 5) { saveAcc = 0; save(); }
+  ambient(dt);
+  uiAcc += dt; if (uiAcc > 0.25) { uiAcc = 0; hud(); renderShop(); renderCalls(); }
+}
+function frame(now) {
+  const dt = Math.max(0, Math.min(0.1, (now - last) / 1000)); last = now; lastFrame = now;
+  step(dt);
+  clock += dt;
+  // The gear turns with its speed; the drive turns the other way, faster.
+  const sp = S.ended ? 0.25 : S.slack ? 0.4 : E.speed(S);
+  const vis = (reduced ? 0.25 : 1) * (0.05 + Math.min(2.4, sp) * 0.18) * (0.3 + 0.7 * E.grip(S));
+  rot += dt * vis; drot -= dt * vis * shownR / Math.max(10, driveR());
+  if (recutAnim) { recutAnim.t += dt / 0.9; const u = Math.min(1, recutAnim.t); shownR = recutAnim.from + (recutAnim.to - recutAnim.from) * (1 - (1 - u) ** 3); if (u >= 1) recutAnim = null; }
+  else shownR = radius();
+  shownDrive += (S.drive - shownDrive) * Math.min(1, dt * 4);
+  flickT -= dt; if (flickT < 0) { flick = 0.35; if (flickT < -0.12) { flick = 1; flickT = 5 + Math.random() * 9; } }
+  huddleT -= dt; if (huddleT <= 0) { huddleT = 0.25; findHuddles(); if (huddles.some(h => h.n >= 4) && Math.random() < 0.08) sfx.chatter(); }
+  stepFlights(dt);
+  for (const s2 of sparks) s2.t += dt * 2.5; sparks = sparks.filter(s2 => s2.t < 1);
+  for (const f of floats) f.t += dt; floats = floats.filter(f => f.t < 1.4);
+  compose(clock);
+  render();
+  requestAnimationFrame(frame);
+}
+// In a background tab rAF stops: keep the clock catching up on a timer.
+setInterval(() => {
+  const now = performance.now();
+  if (now - lastFrame < 400) return;
+  const dt = Math.min(1, (now - last) / 1000); last = now;
+  step(dt);
+  flights = []; pending.clear(); hidden.clear();
+}, 250);
+addEventListener('pagehide', save);
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('resize', layout);
+
+// ---------- Start ----------
+layout();
+loadArt().then(() => {
+  // The sprite sheet: every piece of the scene, drawn on its own.
+  if (!Sprites.sheetRequested()) return;
+  const reg = (name, w, h, f) => { const c = Sprites.canvas(w * 2, h * 2), q = c.getContext('2d'); q.fillStyle = C.night; q.fillRect(0, 0, c.width, c.height); q.scale(2, 2); f(q); Sprites.register(name, c); };
+  reg('feral gear tooth', 30, 30, q => drawFeral(q, { id: 1, k: 'gear' }, 0, 15, 15));
+  reg('feral molar (a denture’s)', 30, 30, q => drawFeral(q, { id: 2, k: 'molar' }, 0, 15, 15));
+  reg('feral comb tooth', 30, 30, q => drawFeral(q, { id: 3, k: 'comb' }, 0, 15, 15));
+  reg('feral zipper tooth', 30, 30, q => drawFeral(q, { id: 4, k: 'zip' }, 0, 15, 15));
+  reg('moth', 30, 30, q => drawMoth(q, 15, 15, 0.1, 0));
+  reg('the Tooth Fairy', 34, 34, q => drawMoth(q, 15, 18, 0.1, 0, true));
+  reg('wind-up chatterbox', 46, 40, q => drawChatterbox(q, 22, 22, 0, 0));
+  reg('glass, teeth, toothbrush', 120, 110, q => { const o = { ...S.one }, gl = S.glass; S.one.brush = true; S.glass = 60; q.translate(-660, -360); drawGlass(q, 0); S.one = o; S.glass = gl; });
+  reg('welcome mat + night-lights', 200, 60, q => { const o = { ...S.one }, l = S.lv.light, dk = S.dark; S.one.mat = true; S.lv.light = 2; S.dark = []; huddles = []; q.translate(-20, -546); drawDark(q, 0); S.one = o; S.lv.light = l; S.dark = dk; });
+  reg('Seconds and the face', 220, 220, q => { const r0 = shownR; q.translate(-GX + 110, -GY + 110); shownR = 170; drawFace(q, 0); shownR = r0; });
+  Sprites.showSheet({ zoom: 1 });
+});
+// Away: moths keep working at a fifth of the rate for up to two hours.
+if (!S.ended && S.savedAt) {
+  const r = E.away(S, (Date.now() - S.savedAt) / 1000);
+  if (r && (r.carried || r.caught > 1)) say('WHILE YOU WERE OUT', `${Math.round(r.sec / 60)} minutes away. ${r.carried ? `The moths carried ${r.carried} teeth up out of the dark` : 'Nobody carried anything'}${r.caught > 1 ? `, and the clock caught up ${E.fmtLate(r.caught)}` : ''}. The dark refilled, the way it does.`);
+}
+if (S.ended) { endGame(true); say('SECONDS', '“Still a minute late,” says Seconds. He sounds pleased about it.'); }
+else if (S.slack) say('SIGN', S.talk >= 3 ? 'The cutter’s still there. Seconds is still waiting. Put it down.' : 'One minute late, and the cutter’s still there. A gear with no teeth would be on time.');
+else if (!S.hand && !S.cut) say('SECONDS', '“Fifty-nine minutes late. Again.” Seconds, the second hand, has never been late in his life. “I dare you: be on time, once. Lose, and you tell the whole motel I’m faster.” Your teeth are down in the dark, sulking. Drag one back up to a gap in the rim.');
+else if (!$('log').textContent) say('SIGN', 'Back up on the sign. The teeth in the dark have been chattering about you.');
+save();
+findHuddles(); hud(); renderShop(); renderCalls();
+document.fonts?.ready.then(layout);
+if (DEBUG) Object.assign(window.__game, { tameIdx, doRecut, startSlack, endGame, huddles: () => huddles });
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
