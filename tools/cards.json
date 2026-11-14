@@ -1820,5 +1820,88 @@
   ],
   "nid": 20,
   "savedAt": 0
+ },
+ "nest-egg": {
+  "t": 4800,
+  "seed": 340,
+  "seedEver": 6000,
+  "casts": 900,
+  "stock": {
+   "aa": 18,
+   "v9": 5,
+   "lan": 2,
+   "car": 0
+  },
+  "fed": 230,
+  "rf": [
+   50,
+   100,
+   40,
+   0
+  ],
+  "birds": 26,
+  "jobs": {
+   "brood": 14,
+   "pack": 6,
+   "carry": 5
+  },
+  "lv": {
+   "lining": 14,
+   "feeder": 10,
+   "bands": 6,
+   "route": 5,
+   "lullaby": 2
+  },
+  "rune": 2,
+  "one": {
+   "scarf": true,
+   "tags": true,
+   "luggage": true,
+   "postcard": true
+  },
+  "seen": [
+   "bird",
+   "lining",
+   "feeder",
+   "sowilo",
+   "lullaby",
+   "bands",
+   "route",
+   "thurisaz",
+   "scarf",
+   "tags",
+   "luggage",
+   "postcard",
+   "handles",
+   "dagaz"
+  ],
+  "dev": {
+   "remote": {
+    "c": 1,
+    "left": 40,
+    "q": 0
+   },
+   "smoke1": {
+    "c": 1,
+    "left": 20,
+    "q": 0
+   },
+   "lantern": {
+    "c": 1,
+    "left": 50,
+    "q": 0
+   },
+   "walkie": {
+    "c": 1,
+    "left": 30,
+    "q": 0
+   }
+  },
+  "told": [
+   "remote",
+   "clock"
+  ],
+  "chirpTold": 1,
+  "goneTold": 1
  }
 }

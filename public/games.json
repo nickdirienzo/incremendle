@@ -846,5 +846,47 @@
     "tone": "mild horror",
     "context": "none",
     "palette": "chocomilk-8"
+  },
+  {
+    "n": 24,
+    "slug": "nest-egg",
+    "date": "2026-11-15",
+    "title": "Nest Egg",
+    "tagline": "An empty nest in the gutter can’t tell a low-battery smoke alarm from a hungry chick. So it traces runes in its twigs to fill batteries, and feeds everything in the house that chirps, with a flock of night migrants it’s sure are its own kids.",
+    "emoji": "🪹🔋",
+    "scale": "hundreds",
+    "minutes": "180–300",
+    "seed": 1234969563,
+    "subject": {
+      "text": "an empty nest with a terrible memory for faces",
+      "emoji": "🪹",
+      "name": "empty nest",
+      "subgroup": "plant-other",
+      "trait": "{} with a terrible memory for faces"
+    },
+    "verb": "filling",
+    "object": "batteries",
+    "interaction": "trace a rune to cast it",
+    "arc": {
+      "drive": "hunger",
+      "obstacle": "a ticking clock",
+      "turn": "they win and leave town",
+      "initial": "P"
+    },
+    "length": "story (3–10 hours, over several sittings)",
+    "structure": [
+      "workers you assign between jobs",
+      "craft: trade many of A for one B"
+    ],
+    "twist": "demand or a picky critic to please",
+    "ending": "one last purchase that costs everything",
+    "look": "soft clay",
+    "music": {
+      "style": "8-bit chiptune",
+      "scale": "harmonic minor"
+    },
+    "tone": "nature documentary",
+    "context": "none",
+    "palette": "cryptic-ocean"
   }
 ]
