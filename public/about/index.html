@@ -61,62 +61,55 @@ code { font-size: .9em; }
   own. It's a hobby project by me, <a href="https://nickdirienzo.com/">Nick DiRienzo</a>, and an
   experiment in how far an agent can get making something genuinely fun, day after day.</p>
 
-  <p>There's no shared game engine. Each day is a single page that can be whatever it wants to be:
-  a clicker, a sorting game, a tiny city, a belfry of owls.</p>
+  <p>Every night at 1am, <a href="https://github.com/nickdirienzo/incremendle/blob/main/tools/nightly.sh">a script</a> on a Mac at home wakes up
+  Claude Code and gives it one command: <a href="https://github.com/nickdirienzo/incremendle/blob/main/.claude/commands/new-game.md"><code>/new-game</code></a>.
+  Nobody's watching. Here's what that command asks it to do.</p>
 
-  <h2><span>The roll</span></h2>
+  <h2><span>1. Roll the dice</span></h2>
   <p>Ask a language model to "come up with a game" and it lands on the same few ideas every time.
-  The first three games were all about something lonely. So the theme isn't chosen; it's rolled
-  with dice from <a href="https://github.com/nickdirienzo/incremendle/blob/main/tools/roll.py">fixed lists</a>:</p>
+  The first three games were all about something lonely. So the theme isn't chosen; it's rolled from
+  <a href="https://github.com/nickdirienzo/incremendle/blob/main/tools/roll.py">fixed lists</a>:</p>
   <ul>
     <li>a main character (an emoji with a trait, like "a nervous waffle"), a verb and an object</li>
     <li>a story arc: what the character wants, what's in the way, and how it lands</li>
     <li>the core action, the length, how progress is structured, a twist and the kind of ending</li>
     <li>an art style, a color palette, a music style and scale, and the voice of the jokes</li>
   </ul>
-  <p>Each part skips whatever the last two weeks of games used. The agent has to use the roll
-  as is, and its real job is finding the logic that makes a pile of unrelated words into one
-  premise. Every game's <b>What??</b> button (top bar) shows its roll and what the game made of it.</p>
+  <p>Each part skips whatever the last two weeks of games used, and no rerolls allowed.</p>
 
-  <h2><span>The build</span></h2>
-  <p>Every night at 1am a Mac at home runs Claude Code with one command, <a href="https://github.com/nickdirienzo/incremendle/blob/main/.claude/commands/new-game.md"><code>/new-game</code></a>, and
-  nobody watching. It rolls, pitches the game to a fresh copy of itself to ask what doesn't make
-  sense or isn't funny, then builds it. Along the way it:</p>
-  <ul>
-    <li>simulates a player clicking through the whole game, and tunes prices until it lasts as long
-    as the roll asked, with something new to buy every half minute or so</li>
-    <li>composes the music in <a href="https://strudel.cc">Strudel</a>, generated live in your browser
-    so it keeps changing instead of looping</li>
-    <li>opens the game in a real browser: checks the start, the ending, a phone-width screen, that
-    the upgrades fit without scrolling, and that nothing loads from another site</li>
-    <li>measures the sound mix so the music sits under the effects</li>
-  </ul>
-  <p>If every check passes, it ships. If not, the work goes to a branch and I get a notification.</p>
+  <h2><span>2. Make it make sense</span></h2>
+  <p>A pile of random words isn't a story. The real job is finding the reason they belong together:
+  a weird premise with sensible logic, where each rolled part causes the next. Then it pitches the
+  idea to a fresh copy of itself and asks what doesn't make sense or isn't funny, and revises once.
+  Every game's <b>What??</b> button (top bar) shows its roll and what the game made of it.</p>
 
-  <h2><span>The tuning</span></h2>
+  <h2><span>3. Build it</span></h2>
+  <p>Each game is a single page with no shared engine, so every day can be whatever it wants to be.
+  The build follows <a href="https://github.com/nickdirienzo/incremendle/blob/main/CLAUDE.md">the house rules</a>: one core action you get in five
+  seconds, upgrades you can see in the picture, sounds on the game's musical scale, a real ending,
+  and no more systems than the roll asked for. The music gets its own
+  <a href="https://github.com/nickdirienzo/incremendle/blob/main/.agents/skills/slopwave/SKILL.md">skill</a>: it's composed in
+  <a href="https://strudel.cc">Strudel</a> and generated live in your browser, so it keeps changing
+  instead of looping.</p>
+
+  <h2><span>4. Play it (sort of)</span></h2>
+  <p>A simulated player clicks through the whole game, and prices get tuned until it lasts as long
+  as the roll asked, with something new to buy every half minute or so. Then
+  <a href="https://github.com/nickdirienzo/incremendle/blob/main/tests/check.mjs">a real browser</a> opens it: the start, the ending, a phone-width
+  screen, upgrades that fit without scrolling, and nothing loading from another site. The sound mix
+  gets measured so the music sits under the effects.</p>
+
+  <h2><span>5. Ship it</span></h2>
+  <p>If every check passes, it goes live at midnight your time. If not, the work goes to a branch
+  and I get a notification.</p>
+
+  <h2><span>And the rules get better</span></h2>
   <p>The first games I played through and fixed by hand. Now it mostly does its thing, and when I do
-  play one and something's off, the fix isn't to that game: it becomes a rule for every game after it,
-  written into <a href="https://github.com/nickdirienzo/incremendle/blob/main/CLAUDE.md">the instructions the agent reads first</a>. One game shipped with call lights, a timer, bells going flat
-  and 37 upgrades; the feedback was "very very complicated", so now there's a complexity budget.
-  Another had joke upgrades that only wrote a log line; now every purchase has to show up in the
-  picture. The games get better because the rules do.</p>
-
-  <h2><span>Read the recipe</span></h2>
-  <p>Everything the agent is told is plain text in the repo. If you want to make your own, start here:</p>
-  <ul>
-    <li><a href="https://github.com/nickdirienzo/incremendle/blob/main/.claude/commands/new-game.md"><b>/new-game</b></a>: the whole job, step by step.
-    Roll, find the joke that ties it together, pitch, build, play-test, ship.</li>
-    <li><a href="https://github.com/nickdirienzo/incremendle/blob/main/CLAUDE.md"><b>CLAUDE.md</b></a>: the house rules. What every game needs (sounds,
-    an ending, upgrades you can see), and the scar tissue from every game that got something wrong.</li>
-    <li><a href="https://github.com/nickdirienzo/incremendle/blob/main/tools/roll.py"><b>roll.py</b></a>: the dice. A few hundred emoji, verbs, twists,
-    art styles and music styles, picked at random so the ideas aren't the model's favorites.</li>
-    <li><a href="https://github.com/nickdirienzo/incremendle/blob/main/.agents/skills/slopwave/SKILL.md"><b>slopwave</b></a>: the music skill. How to
-    write a score that grows with the game, and how to take listening notes on it.</li>
-    <li><a href="https://github.com/nickdirienzo/incremendle/blob/main/tests/check.mjs"><b>check.mjs</b></a>: the bouncer. Opens each game in a real
-    browser and refuses to ship one that breaks.</li>
-    <li><a href="https://github.com/nickdirienzo/incremendle/blob/main/tools/nightly.sh"><b>nightly.sh</b></a>: the alarm clock. Wakes Claude at 1am,
-    hands it the job, and pushes the result if it passes.</li>
-  </ul>
+  play one and something's off, the fix isn't to that game: it becomes a rule in
+  <a href="https://github.com/nickdirienzo/incremendle/blob/main/CLAUDE.md">the house rules</a> for every game after it. One game shipped with call
+  lights, a timer, bells going flat and 37 upgrades; the feedback was "very very complicated", so now
+  there's a complexity budget. Another had joke upgrades that only wrote a log line; now every
+  purchase has to show up in the picture.</p>
 
   <h2><span>The site</span></h2>
   <p>Static files on <a href="https://www.cloudflare.com/">Cloudflare</a>, no build step, no accounts.
