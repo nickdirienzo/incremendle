@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About · Incremendle</title>
+<meta name="description" content="How Incremendle works: a rolled theme, an agent that builds the game overnight, and a human who plays it.">
+<meta name="theme-color" content="#fbf7ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#23252b" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/gaegu/font.css">
+<link rel="stylesheet" href="/shared/fonts/patrick-hand/font.css">
+<style>
+[hidden] { display: none !important; }
+/* A page from the same sketchbook as the landing page, written out by hand (styles shared with /privacy/). */
+:root {
+  --paper: #fbf7ee; --dot: #e6dfcd; --ink: #2b2a33; --mute: #7a7466; --card: #ffffff;
+  --hand: "Gaegu", "Patrick Hand", "Comic Sans MS", cursive;
+  --text: "Patrick Hand", "Comic Sans MS", cursive;
+  --c1: #ff6b6b; --c3: #ffd43b; --c5: #4dabf7;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --paper: #23252b; --dot: #33363e; --ink: #f1ede4; --mute: #a39d8f; --card: #2d3038; --hl: 30%; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+html {
+  min-height: 100%; color: var(--ink);
+  background: var(--paper) radial-gradient(var(--dot) 1.4px, transparent 1.6px) 0 0 / 22px 22px;
+}
+body {
+  margin: 0; font-family: var(--text); font-size: 19px; line-height: 1.5;
+  padding: max(36px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 56px max(16px, env(safe-area-inset-left, 0px));
+}
+main {
+  max-width: 680px; margin: 0 auto; padding: 28px clamp(18px, 5vw, 44px) 32px;
+  background: var(--card); border: 2px solid var(--ink);
+  border-radius: 255px 12px 225px 12px / 12px 225px 12px 255px;
+  transform: rotate(-.4deg);
+}
+.back { display: inline-block; margin-bottom: 14px; color: var(--mute); }
+h1 { font-family: var(--hand); font-size: clamp(40px, 9vw, 58px); line-height: 1; margin: 0 0 6px; color: var(--c1); }
+h2 { font-family: var(--hand); font-size: 30px; line-height: 1.1; margin: 28px 0 6px; }
+h2 span { background: linear-gradient(transparent 58%, color-mix(in srgb, var(--c3) var(--hl, 70%), transparent) 58%); padding: 0 4px; }
+p, ul { margin: 0 0 10px; }
+ul { padding-left: 22px; }
+li { margin-bottom: 4px; }
+a { color: inherit; text-decoration-color: var(--c5); text-underline-offset: 3px; }
+code { font-size: .9em; }
+.date { color: var(--mute); margin-bottom: 18px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="/">← Incremendle</a>
+  <h1>About</h1>
+  <p class="date">Last updated November 14, 2026</p>
+
+  <p>Incremendle is one small incremental game a day. Every game is built by
+  <a href="https://claude.com/claude-code">Claude</a> from a randomly rolled theme, then played and
+  hand-tuned by me, <a href="https://nickdirienzo.com/">Nick DiRienzo</a>. It's a hobby project and an
+  experiment in how far an agent can get making something genuinely fun, day after day.</p>
+
+  <p>There's no shared game engine. Each day is a single page that can be whatever it wants to be:
+  a clicker, a sorting game, a tiny city, a belfry of owls.</p>
+
+  <h2><span>The roll</span></h2>
+  <p>Ask a language model to "come up with a game" and it lands on the same few ideas every time.
+  The first three games were all about something lonely. So the theme isn't chosen; it's rolled
+  with dice from fixed lists:</p>
+  <ul>
+    <li>a main character (an emoji with a trait, like "a nervous waffle"), a verb and an object</li>
+    <li>a story arc: what the character wants, what's in the way, and how it lands</li>
+    <li>the core action, the length, how progress is structured, a twist and the kind of ending</li>
+    <li>an art style, a color palette, a music style and scale, and the voice of the jokes</li>
+  </ul>
+  <p>Each part skips whatever the last two weeks of games used. The agent has to use the roll
+  as is, and its real job is finding the logic that makes a pile of unrelated words into one
+  premise. Every game's <b>What??</b> button (top bar) shows its roll and what the game made of it.</p>
+
+  <h2><span>The build</span></h2>
+  <p>Every night at 1am a Mac at home runs Claude Code with one command, <code>/new-game</code>, and
+  nobody watching. It rolls, pitches the game to a fresh copy of itself to ask what doesn't make
+  sense or isn't funny, then builds it. Along the way it:</p>
+  <ul>
+    <li>simulates a player clicking through the whole game, and tunes prices until it lasts as long
+    as the roll asked, with something new to buy every half minute or so</li>
+    <li>composes the music in <a href="https://strudel.cc">Strudel</a>, generated live in your browser
+    so it keeps changing instead of looping</li>
+    <li>opens the game in a real browser: checks the start, the ending, a phone-width screen, that
+    the upgrades fit without scrolling, and that nothing loads from another site</li>
+    <li>measures the sound mix so the music sits under the effects</li>
+  </ul>
+  <p>If every check passes, it ships. If not, the work goes to a branch and I get a notification.</p>
+
+  <h2><span>The tuning</span></h2>
+  <p>Then I play it. Whatever goes wrong becomes a rule for every game after it, written into the
+  instructions the agent reads first. One game shipped with call lights, a timer, bells going flat
+  and 37 upgrades; the feedback was "very very complicated", so now there's a complexity budget.
+  Another had joke upgrades that only wrote a log line; now every purchase has to show up in the
+  picture. The games get better because the rules do.</p>
+
+  <h2><span>The site</span></h2>
+  <p>Static files on <a href="https://www.cloudflare.com/">Cloudflare</a>, no build step, no accounts.
+  Your progress stays in your browser (<a href="/privacy/">privacy</a>). Art, sounds and fonts are
+  open-licensed and credited in each game's Credits panel; please support the human artists. The whole
+  thing, rules included, is <a href="https://github.com/nickdirienzo/incremendle">open source</a>
+  under AGPL-3.0.</p>
+
+  <p>Something to say? <a href="/contact/">Get in touch</a>.</p>
+</main>
+</body>
+</html>

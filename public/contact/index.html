@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contact · Incremendle</title>
+<meta name="description" content="How to reach the person behind Incremendle.">
+<meta name="theme-color" content="#fbf7ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#23252b" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/gaegu/font.css">
+<link rel="stylesheet" href="/shared/fonts/patrick-hand/font.css">
+<style>
+[hidden] { display: none !important; }
+/* A page from the same sketchbook as the landing page, written out by hand (styles shared with /privacy/). */
+:root {
+  --paper: #fbf7ee; --dot: #e6dfcd; --ink: #2b2a33; --mute: #7a7466; --card: #ffffff;
+  --hand: "Gaegu", "Patrick Hand", "Comic Sans MS", cursive;
+  --text: "Patrick Hand", "Comic Sans MS", cursive;
+  --c1: #ff6b6b; --c3: #ffd43b; --c5: #4dabf7;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --paper: #23252b; --dot: #33363e; --ink: #f1ede4; --mute: #a39d8f; --card: #2d3038; --hl: 30%; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+html {
+  min-height: 100%; color: var(--ink);
+  background: var(--paper) radial-gradient(var(--dot) 1.4px, transparent 1.6px) 0 0 / 22px 22px;
+}
+body {
+  margin: 0; font-family: var(--text); font-size: 19px; line-height: 1.5;
+  padding: max(36px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 56px max(16px, env(safe-area-inset-left, 0px));
+}
+main {
+  max-width: 680px; margin: 0 auto; padding: 28px clamp(18px, 5vw, 44px) 32px;
+  background: var(--card); border: 2px solid var(--ink);
+  border-radius: 255px 12px 225px 12px / 12px 225px 12px 255px;
+  transform: rotate(-.4deg);
+}
+.back { display: inline-block; margin-bottom: 14px; color: var(--mute); }
+h1 { font-family: var(--hand); font-size: clamp(40px, 9vw, 58px); line-height: 1; margin: 0 0 6px; color: var(--c1); }
+h2 { font-family: var(--hand); font-size: 30px; line-height: 1.1; margin: 28px 0 6px; }
+h2 span { background: linear-gradient(transparent 58%, color-mix(in srgb, var(--c3) var(--hl, 70%), transparent) 58%); padding: 0 4px; }
+p, ul { margin: 0 0 10px; }
+ul { padding-left: 22px; }
+li { margin-bottom: 4px; }
+a { color: inherit; text-decoration-color: var(--c5); text-underline-offset: 3px; }
+code { font-size: .9em; }
+.date { color: var(--mute); margin-bottom: 18px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="/">← Incremendle</a>
+  <h1>Contact</h1>
+
+  <p>Incremendle is made by <a href="https://nickdirienzo.com/">Nick DiRienzo</a> (and Claude).
+  I read everything.</p>
+
+  <h2><span>Ideas, bugs and questions</span></h2>
+  <p>Post in <a href="https://github.com/nickdirienzo/incremendle/discussions">the discussions on
+  GitHub</a>. It's where what players say feeds back into how the games get made. For a bug, name
+  the game and your device, and say what you expected to happen.</p>
+
+  <h2><span>Anything else</span></h2>
+  <p>Press, private questions, or just to say hi:
+  <a href="mailto:contact@incremendle.com">contact@incremendle.com</a>.</p>
+
+  <p>Curious how it works? See <a href="/about/">about</a>.</p>
+</main>
+</body>
+</html>
