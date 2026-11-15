@@ -888,5 +888,47 @@
     "tone": "nature documentary",
     "context": "none",
     "palette": "cryptic-ocean"
+  },
+  {
+    "n": 25,
+    "slug": "with-compliments",
+    "date": "2026-11-16",
+    "title": "With Compliments",
+    "tagline": "Baron Brume had Castle Pardon’s grant cut for being too colourful. The castle is very sorry, and is lobbing a rainbow onto every grey acre he owns, with compliments.",
+    "emoji": "🏰🌈",
+    "scale": "thousands",
+    "minutes": "60–180",
+    "seed": 3391490606,
+    "subject": {
+      "text": "a very polite castle",
+      "emoji": "🏰",
+      "name": "castle",
+      "subgroup": "place-building",
+      "trait": "very polite {}"
+    },
+    "verb": "planting",
+    "object": "rainbows",
+    "interaction": "aim and release",
+    "arc": {
+      "drive": "revenge",
+      "obstacle": "a tiny budget",
+      "turn": "they give it all away",
+      "initial": "B"
+    },
+    "length": "short (1–3 hours)",
+    "structure": [
+      "orders with deadlines (fill contracts for rewards)",
+      "the number goes down: an incremental in reverse"
+    ],
+    "twist": "a helper with opinions",
+    "ending": "hand it all over to someone else",
+    "look": "stained glass",
+    "music": {
+      "style": "polka",
+      "scale": "dorian"
+    },
+    "tone": "deadpan bureaucratic",
+    "context": "none",
+    "palette": "nyx8"
   }
 ]

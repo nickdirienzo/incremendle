@@ -1,0 +1,1443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>With Compliments · Incremendle</title>
+<meta name="description" content="Baron Brume had Castle Pardon’s grant cut for being too colourful. The castle is very sorry, and is planting a rainbow on every grey acre he owns. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="With Compliments">
+<meta property="og:description" content="Baron Brume had Castle Pardon’s grant cut for being too colourful. The castle is very sorry, and is lobbing a rainbow onto every grey acre he owns, with compliments.">
+<meta property="og:url" content="https://incremendle.com/with-compliments/">
+<meta property="og:image" content="https://incremendle.com/with-compliments/og.png?v=37ab65d5">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="With Compliments: Baron Brume had Castle Pardon’s grant cut for being too colourful. The castle is very sorry, and is lobbing a rainbow onto every grey acre he owns, with compliments.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/grenze-gotisch/font.css">
+<link rel="stylesheet" href="/shared/fonts/im-fell-english/font.css">
+<link rel="stylesheet" href="/shared/fonts/im-fell-english-sc/font.css">
+<style>
+  /* Stained glass in Nyx8: lead-black, two night blues, the Baron's slate grey, and the castle's warm
+     glass (cream, tan, rose, mauve, plum). */
+  :root {
+    --ink: #08141e; --navy: #0f2a3f; --slate: #20394f; --cream: #f6d6bd; --tan: #c3a38a; --rose: #997577; --mauve: #816271; --plum: #4e495f;
+    --goth: 'Grenze Gotisch', Georgia, serif; --fell: 'IM Fell English', Georgia, serif; --sc: 'IM Fell English SC', Georgia, serif;
+    color-scheme: dark;
+  }
+  html, body { background: var(--ink); color: var(--cream); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 16px/1.4 var(--fell);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(10px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image: radial-gradient(ellipse at 20% 0%, #0f2a3f 0%, transparent 60%), radial-gradient(ellipse at 90% 100%, #20394f66 0%, transparent 50%);
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 0 0 6px; }
+  h1 { font: 700 40px/1 var(--goth); margin: 0; color: var(--cream); letter-spacing: .5px; text-shadow: 0 0 14px #f6d6bd44, 2px 2px 0 var(--ink); }
+  header p { margin: 0; font: 17px/1 var(--sc); color: var(--tan); }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } h1 { font-size: 32px; } }
+  @media (max-width: 520px) { .hud { grid-template-columns: 1fr auto; } .meter { grid-column: 1 / -1; order: 3; } .sub { order: 4; } }
+  main { min-width: 0; }
+
+  .hud { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 4px 14px; align-items: center; margin-bottom: 14px; }
+  .grey { font: 700 30px/1 var(--goth); color: var(--cream); white-space: nowrap; }
+  .grey small { font: 17px/1 var(--sc); color: var(--tan); }
+  .meter { position: relative; height: 14px; background: var(--slate); border: 2px solid var(--ink); box-shadow: 0 0 0 1px var(--plum); overflow: hidden; }
+  .meter i { position: absolute; inset: 0 auto 0 0; width: 0; transition: width .4s;
+    background: repeating-linear-gradient(90deg, var(--cream) 0 14px, var(--tan) 14px 28px, var(--rose) 28px 42px, var(--mauve) 42px 56px); }
+  .meter i::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 13px, var(--ink) 13px 14px); }
+  .crowns { font: 700 26px/1 var(--goth); color: var(--tan); white-space: nowrap; }
+  .crowns small { font: 16px/1 var(--sc); }
+  .sub { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 2px 16px; font: 15px/1.15 var(--sc); color: var(--tan); min-height: 18px; }
+  .sub b { font-weight: 400; color: var(--cream); }
+
+  .stagewrap { position: relative; }
+  canvas#stage { display: block; width: 100%; touch-action: none; cursor: crosshair; background: var(--navy); border: 4px solid var(--ink); box-shadow: 0 0 0 2px var(--plum), 0 0 0 7px var(--ink), 0 12px 30px #0008; -webkit-tap-highlight-color: transparent; user-select: none; border-radius: 4px; }
+  canvas#stage:focus-visible { outline: 2px dashed var(--cream); outline-offset: 10px; }
+
+  /* The order book: one card per tenant's order, under the window. Not buttons: the plot is the target. */
+  #orders { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 7px; margin-top: 12px; }
+  #orders:empty { display: none; }
+  .order { position: relative; padding: 5px 8px 9px; background: var(--slate); border: 2px solid var(--ink); box-shadow: inset 0 0 0 1px var(--plum); font: 14px/1.2 var(--fell); color: var(--cream); min-width: 0; cursor: default; }
+  .order.mine { background: #997577; box-shadow: inset 0 0 0 1px var(--tan); }
+  .order b { display: block; font: 15px/1.1 var(--sc); color: var(--cream); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 64px; }
+  .order span { display: block; color: #f6d6bdcc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .order em { font-style: normal; font: 700 17px/1 var(--goth); color: var(--cream); }
+  .order .stamp { position: absolute; top: 5px; right: 5px; font: 12px/1 var(--sc); letter-spacing: .5px; padding: 2px 4px; border: 1.5px solid currentColor; transform: rotate(-6deg); color: var(--tan); }
+  .order.mine .stamp { color: var(--ink); }
+  .order .time { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--ink); }
+  .order .time i { position: absolute; inset: 0 auto 0 0; background: var(--cream); }
+  .order.late .time i { background: var(--tan); animation: late .5s steps(2) infinite; }
+  @keyframes late { 50% { opacity: .3; } }
+  .order.hot { box-shadow: inset 0 0 0 2px var(--cream); }
+
+  .log { position: relative; margin: 10px 0 0; min-height: 2.9em; font: 16px/1.4 var(--fell); color: var(--cream); border-left: 4px solid var(--tan); padding: 5px 10px; background: #0f2a3fcc; }
+  .log b { font: 14px/1 var(--sc); color: var(--ink); background: var(--tan); padding: 1px 6px 2px; margin-right: 8px; }
+  .log b.s { background: var(--mauve); color: var(--cream); }
+  .log b.b { background: var(--slate); color: var(--cream); }
+  .log b.o { background: var(--cream); }
+  .log.fresh span { animation: ink .6s ease-out; }
+  @keyframes ink { from { opacity: .15; } }
+
+  aside { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; scrollbar-width: thin; padding: 2px 4px 8px 2px; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  #calls { display: grid; gap: 8px; margin-bottom: 10px; }
+  #calls:empty { display: none; }
+  .call { position: relative; text-align: left; font: 15px/1.2 var(--fell); color: var(--ink); background: var(--tan); border: 3px solid var(--ink); box-shadow: 0 0 0 1px var(--cream), 4px 5px 0 1px #0007; padding: 7px 10px 8px; cursor: pointer; }
+  .call b { display: block; font: 700 22px/1 var(--goth); }
+  .call[aria-disabled="true"] { background: var(--slate); color: var(--tan); cursor: default; }
+  .call.can { background: var(--cream); animation: nudge 1.4s ease-in-out infinite; }
+  .call.final { background: var(--cream); }
+  .call:focus-visible { outline: 2px dashed var(--cream); outline-offset: 4px; }
+  @keyframes nudge { 50% { transform: translateY(-2px); } }
+  aside h2 { font: 700 26px/1 var(--goth); margin: 2px 0 8px; color: var(--cream); }
+  #afford { font: 16px/1 var(--sc); color: var(--tan); }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  @media (max-width: 760px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up {
+    position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 14px/1.15 var(--sc); color: var(--tan);
+    background: var(--slate); border: 2px solid var(--ink); box-shadow: inset 0 0 0 1px var(--plum); padding: 5px 8px 6px; cursor: pointer;
+  }
+  .up b { font: 15px/1.15 var(--fell); color: var(--cream); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { background: var(--mauve); box-shadow: inset 0 0 0 1px var(--cream); }
+  .up.can em { color: var(--cream); }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up[aria-disabled="true"]:not(.can) b { color: var(--tan); }
+  .up.odd { border-style: dashed; }
+  .up.odd b::before, .bought.odd::before { content: '❦ '; color: var(--tan); }
+  .up .tag { position: absolute; top: -9px; right: 5px; font: 12px/1 var(--sc); font-style: normal; color: var(--ink); background: var(--cream); padding: 2px 5px; border: 1px solid var(--ink); }
+  .up.new { animation: glint 1.1s ease-in-out 6; }
+  @keyframes glint { 50% { box-shadow: inset 0 0 0 2px var(--cream), 0 0 12px #f6d6bd88; } }
+  .up:focus-visible, .bought:focus-visible { outline: 2px dashed var(--cream); outline-offset: 2px; }
+  #tip {
+    position: fixed; z-index: 50; width: 280px; padding: 9px 12px 10px; pointer-events: none; font: 15px/1.35 var(--fell); color: var(--cream);
+    background: var(--navy); border: 3px solid var(--ink); box-shadow: 0 0 0 1px var(--tan), 0 0 0 5px var(--ink), 6px 8px 0 5px #0006;
+  }
+  #tip b { display: block; font: 700 22px/1 var(--goth); color: var(--cream); margin-bottom: 4px; }
+  #tip .fx { display: block; margin-top: 6px; padding: 3px 6px; color: var(--ink); background: var(--tan); font: 14px/1.3 var(--sc); }
+  #tip i { display: block; margin-top: 6px; padding-top: 5px; border-top: 1px solid var(--plum); color: var(--tan); }
+  #tip small { display: block; margin-top: 6px; font: 15px/1 var(--sc); color: var(--cream); }
+  #tip.inline { position: static; width: auto; margin-top: 10px; }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 700 21px/1 var(--goth); color: var(--cream); cursor: pointer; list-style: none; padding: 3px 2px; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: '›'; color: var(--tan); transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 2px dashed var(--cream); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 2px 2px; }
+  .bought { max-width: 100%; font: 14px/1.1 var(--sc); color: var(--cream); background: var(--slate); border: 2px solid var(--ink); box-shadow: inset 0 0 0 1px var(--plum); padding: 3px 7px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { border-style: dashed; }
+  .bought:hover, .bought.on { color: var(--ink); background: var(--tan); }
+
+  #ending { margin: 22px auto 0; max-width: 680px; color: var(--cream); background: var(--navy); border: 4px solid var(--ink); box-shadow: 0 0 0 1px var(--tan), 0 0 0 7px var(--ink); padding: 18px 28px 22px; }
+  #ending .num { font: 16px/1 var(--sc); color: var(--tan); letter-spacing: 1px; }
+  #ending h2 { font: 700 40px/1 var(--goth); margin: 6px 0 10px; color: var(--cream); }
+  #ending p { margin: 9px 0; }
+  #ending .sig { color: var(--tan); font-style: italic; }
+  #shareBtn, #againBtn { font: 700 22px/1 var(--goth); color: var(--ink); background: var(--cream); border: 3px solid var(--ink); box-shadow: 0 0 0 1px var(--tan), 4px 4px 0 1px #0006; padding: 7px 16px; margin: 12px 8px 0 0; cursor: pointer; }
+  #againBtn { background: var(--tan); }
+  #shareBtn:focus-visible, #againBtn:focus-visible { outline: 2px dashed var(--cream); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .call.can, .log.fresh span, .order.late .time i { animation: none; } .meter i, #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/soundfonts": "/shared/lib/@strudel/soundfonts@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="25" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>With Compliments</h1>
+    <p id="where">Castle Pardon · the Turnip Fields</p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="hud">
+        <div class="grey" title="Acres of Baron Brume’s estate still grey. The castle intends to bring this number down to nothing, politely."><span id="grey">100,000</span> <small>grey acres</small></div>
+        <div class="meter" title="The estate, in colour so far"><i id="meter"></i></div>
+        <div class="crowns" title="The castle’s budget, in crowns. The grant is three a month; the rest comes from orders."><span id="crowns">0</span> <small>crowns</small></div>
+        <div class="sub" id="sub"></div>
+      </div>
+      <div class="stagewrap">
+        <canvas id="stage" tabindex="0" aria-label="Castle Pardon and Baron Brume’s grey estate. Press, pull back and let go to lob a rainbow from the tower. Keyboard: arrows aim, space throws."></canvas>
+      </div>
+      <div id="orders" aria-live="polite"></div>
+      <p class="log" id="log" aria-live="polite"></p>
+    </main>
+    <aside id="side">
+      <div id="calls"></div>
+      <h2>Requisitions <span id="afford"></span></h2>
+      <div id="shop"></div>
+      <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" hidden>
+    <div class="num">FORM T-1 · TRANSFER OF TITLE · APPROVED</div>
+    <h2>With Compliments</h2>
+    <div id="story"></div>
+    <button id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import { grain } from '/shared/kit/fx.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const fmt = E.fmt;
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DEBUG = location.search.includes('debug');
+const C = { ink: '#08141e', navy: '#0f2a3f', slate: '#20394f', cream: '#f6d6bd', tan: '#c3a38a', rose: '#997577', mauve: '#816271', plum: '#4e495f' };
+const WARM = [C.cream, C.tan, C.rose, C.mauve];
+const BANDS = [C.cream, C.tan, C.rose, C.mauve];          // a rainbow, outside in, in the castle's glass
+
+// ---------- State ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:25:save';
+let raw = null;
+try { raw = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+const S = E.load(raw);
+const save = () => { S.savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound: D dorian, the polka's key ----------
+// Trims measured with npm run mix: music near -24 dBFS RMS, effects peaking near -10. LV evens out the
+// effects (Spout's throw and his stamp sit a dB or so under the rest: they repeat all game).
+const A = createAudio({ sfxTrim: 2.84, musicTrim: 4 });
+const LV = { launch: 1.26, land: 0.85, plop: 0.95, paid: 1.03, pin: 1.2, lapse: 1.4, stamp: 1.3, spout: 1.35, buy: 0.92, unlock: 1, deny: 1.12, reach: 0.35, letter: 1.1, finale: 0.58 };
+let gainNow = 1;
+const T = o => A.tone({ ...o, vol: o.vol * gainNow });
+const N = (kind, o = {}) => A.noiseHit(kind, { ...o, vol: (o.vol ?? 0.25) * gainNow });
+const notes = scale('dorian', 62);   // D E F G A B C
+let lastTick = 0, lastStamp = 0, lastSpout = 0;
+const sfx = {
+  // Letting go: the light leaves the tower, a little rising glide and a breath of air.
+  launch() { N('whoosh', { vol: 0.05, dur: 0.3 }); T({ type: 'triangle', freq: notes(4), dur: 0.22, vol: 0.12, glide: 1.5, cutoff: 2400 }); },
+  // A rainbow takes root: a glass chime, higher the further it went.
+  land(k = 0) { const d = 7 + Math.min(6, Math.round(k)); T({ type: 'bell', freq: notes(d), dur: 0.14, vol: 0.16 }); T({ type: 'bell', freq: notes(d + 2), dur: 0.18, vol: 0.1, at: A.now + 0.07 }); },
+  // Into the moat.
+  plop() { T({ type: 'sine', freq: notes(2), dur: 0.1, vol: 0.18, glide: 0.5 }); N('shaker', { vol: 0.04, dur: 0.08 }); },
+  // An order delivered: the fee, in a little oom-pah flourish.
+  paid() { [0, 2, 4, 7].forEach((d, i) => T({ type: 'pluck', freq: notes(d + 7), dur: 0.1, vol: 0.13, at: A.now + 0.06 + i * 0.06, cutoff: 3200 })); T({ type: 'bell', freq: notes(14), dur: 0.3, vol: 0.07, at: A.now + 0.32 }); },
+  // A new order pinned up: a woodblock tick.
+  pin() { const t = performance.now(); if (t - lastTick < 400 && !DEBUG) return; lastTick = t; T({ type: 'triangle', freq: notes(11), dur: 0.03, vol: 0.14 }); T({ type: 'triangle', freq: notes(9), dur: 0.03, vol: 0.1, at: A.now + 0.07 }); },
+  // An order withdrawn, with regret.
+  lapse() { T({ type: 'triangle', freq: notes(4), dur: 0.14, vol: 0.12 }); T({ type: 'triangle', freq: notes(2), dur: 0.2, vol: 0.1, at: A.now + 0.14 }); },
+  // Spout's rubber stamp: a soft thud and a click.
+  stamp() { const t = performance.now(); if (t - lastStamp < 300 && !DEBUG) return; lastStamp = t; N('kick', { vol: 0.08 }); N('hat', { vol: 0.05, at: A.now + 0.02 }); },
+  // Spout lobbing one of his own: a smaller, lower launch.
+  spout() { const t = performance.now(); if (t - lastSpout < 500 && !DEBUG) return; lastSpout = t; T({ type: 'triangle', freq: notes(0), dur: 0.16, vol: 0.1, glide: 1.5, cutoff: 1800 }); N('whoosh', { vol: 0.03, dur: 0.2 }); },
+  buy() { [0, 2, 4, 6, 7].forEach((d, i) => T({ type: 'pluck', freq: notes(d + 7), dur: 0.1, vol: 0.12, at: A.now + i * 0.055, cutoff: 3200 })); },
+  unlock() { T({ type: 'bell', freq: notes(11), dur: 0.25, vol: 0.12 }); T({ type: 'bell', freq: notes(13), dur: 0.35, vol: 0.1, at: A.now + 0.12 }); },
+  deny() { T({ type: 'triangle', freq: notes(-2), dur: 0.08, vol: 0.14 }); },
+  // The reach extends: a short brass-band cadence (G major, the dorian IV, home to D).
+  reach() {
+    [[3, 5, 7], [0, 2, 4, 7]].forEach((ch, k) => ch.forEach(d => T({ type: 'keys', freq: notes(d + 7), dur: 0.32, vol: 0.06, at: A.now + k * 0.36 })));
+    N('kick', { vol: 0.07, at: A.now }); N('kick', { vol: 0.07, at: A.now + 0.36 });
+    T({ type: 'bell', freq: notes(14), dur: 0.5, vol: 0.08, at: A.now + 0.72 });
+  },
+  // A region in full colour: a letter arrives. Three bells.
+  letter() { [7, 9, 11].forEach((d, i) => T({ type: 'bell', freq: notes(d), dur: 0.3, vol: 0.1, at: A.now + i * 0.18 })); },
+  // The finale: the stamp, the big rainbow, and a processional cadence ending on D major.
+  finale() {
+    N('kick', { vol: 0.1 }); N('snare', { vol: 0.04, at: A.now + 0.02 });
+    T({ type: 'triangle', freq: notes(0), dur: 1.4, vol: 0.08, glide: 2, cutoff: 2000, at: A.now + 0.5 });
+    N('whoosh', { vol: 0.05, dur: 1.2, at: A.now + 0.5 });
+    const t0 = A.now + 2;
+    [[3, 5, 7], [4, 6, 8], [0, 2, 4]].forEach((ch, k) => ch.forEach(d => T({ type: 'keys', freq: notes(d + 7), dur: 0.5, vol: 0.05, at: t0 + k * 0.55 })));
+    // The last chord: D major, F sharp borrowed for the occasion.
+    [62, 66, 69, 74].forEach(m => T({ type: 'pad', freq: 440 * Math.pow(2, (m - 69) / 12), dur: 2.2, vol: 0.02, attack: 0.3, release: 1.5, cutoff: 1400, at: t0 + 1.65 }));
+    [14, 16, 18, 21].forEach((d, i) => T({ type: 'bell', freq: notes(d), dur: 0.4, vol: 0.07, at: t0 + 1.7 + i * 0.12 }));
+  },
+};
+for (const [name, f] of Object.entries(sfx)) sfx[name] = (...a) => { gainNow = LV[name] ?? 1; try { f(...a); } finally { gainNow = 1; } };
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'reach'], S: () => S, E };
+
+// ---------- Music: one polka, arranged per stretch of the estate ----------
+let music = null, soundtrack = null;
+const phaseKey = () => E.phase(S);
+function song() { return (soundtrack ??= createSoundtrack(music.strudel))(phaseKey()); }
+createMusic(A, { soundfonts: true, packs: ['vcsl'], song }).then(m => { music = m; music.update(); if (DEBUG) window.__game.music = m; }).catch(e => console.warn('music', e));
+const refreshMusic = () => { if (music) music.update(); };
+
+// ---------- Geometry ----------
+const W = E.W, H = E.H, GROUND = E.GROUND;
+const MOAT = [158, 196];
+const TOWER = { x0: 90, x1: 124 };
+const towerTop = (r = S.reach) => r >= 1 ? 118 : 176;
+const launchPt = (r = S.reach) => ({ x: 107, y: towerTop(r) + 30 });
+const SPOUT = { x: 206, y: 213 };       // Spout's mouth, on the east battlement
+// The estate rises away from the castle, up to Brume Hall on its hill.
+const X0 = E.PLOTS[0].x0, X1 = E.PLOTS.at(-1).x1;
+function groundY(x) {
+  if (x < X0) return GROUND;
+  const u = Math.min(1, (x - X0) / (X1 - X0));
+  return GROUND - 80 * Math.pow(u, 1.25) - 3 * Math.sin(x * 0.05);
+}
+// Where a throw comes down (x), stepping the flight against the terrain.
+function landX(vx, vy, p) {
+  let x = p.x, y = p.y; const h = 1 / 120;
+  for (let i = 0; i < 2400; i++) { vy += E.GRAV * h; x += vx * h; y += vy * h; if (vy > 0 && y >= groundY(x)) return x; }
+  return x;
+}
+const rangeOf = (v, ang, p) => landX(v * Math.cos(ang), -v * Math.sin(ang), p);
+const vmaxCache = {};
+function vmax(r = S.reach) {
+  if (vmaxCache[r]) return vmaxCache[r];
+  const p = launchPt(r), target = r >= E.REGIONS.length - 1 ? E.PLOTS.at(-1).x1 - 1 : E.PLOTS.filter(q => q.r <= r).at(-1).x1 - 0.5;
+  let lo = 10, hi = 2000;
+  for (let i = 0; i < 30; i++) {
+    const v = (lo + hi) / 2;
+    let best = 0; for (let a = 0.3; a < 1.2; a += 0.025) best = Math.max(best, rangeOf(v, a, p));
+    if (best > target) hi = v; else lo = v;
+  }
+  return (vmaxCache[r] = lo);
+}
+// Spout always throws at 52°, with exactly the speed to land where he means to.
+function spoutV(x) {
+  let lo = 10, hi = 2000; const a = 0.9;
+  for (let i = 0; i < 40; i++) { const v = (lo + hi) / 2; if (rangeOf(v, a, SPOUT) > x) hi = v; else lo = v; }
+  return { vx: lo * Math.cos(a), vy: -lo * Math.sin(a) };
+}
+
+// ---------- Glass drawing ----------
+const cv = $('stage'), cx = cv.getContext('2d');
+let g = cx;                    // the context being drawn to (the sprite sheet swaps it)
+let leads = [];
+const P = () => new Path2D();
+function rectP(x, y, w, h) { const p = P(); p.rect(x, y, w, h); return p; }
+function polyP(pts) { const p = P(); pts.forEach(([x, y], i) => i ? p.lineTo(x, y) : p.moveTo(x, y)); p.closePath(); return p; }
+function circP(x, y, r) { const p = P(); p.arc(x, y, r, 0, Math.PI * 2); return p; }
+function ellP(x, y, rx, ry) { const p = P(); p.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); return p; }
+// A pointed (lancet) window.
+function lancetP(x, y, w, h) { const p = P(); const r = w; p.moveTo(x, y + h); p.lineTo(x, y + w * 0.9); p.arcTo(x, y, x + w / 2, y, r * 0.95); p.arcTo(x + w, y, x + w, y + w * 0.9, r * 0.95); p.lineTo(x + w, y + h); p.closePath(); return p; }
+function pane(p, fill, w = 2) { g.fillStyle = fill; g.fill(p); leads.push([p, w]); }
+function lead(p, w = 2) { leads.push([p, w]); }
+function flushLeads() {
+  g.strokeStyle = C.ink; g.lineJoin = 'round'; g.lineCap = 'round';
+  for (const [p, w] of leads) { g.lineWidth = w; g.stroke(p); }
+  leads = [];
+}
+function hexRgb(h) { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }
+function mix(a, b, f) { const A1 = hexRgb(a), B1 = hexRgb(b); return `rgb(${A1.map((v, i) => Math.round(v + (B1[i] - v) * f)).join(',')})`; }
+const hash = (a, b = 0, c = 0) => { let h = (a * 374761393 + b * 668265263 + c * 2147483647) | 0; h = (h ^ (h >>> 13)) * 1274126177; h ^= h >>> 16; return (h >>> 0) / 4294967296; };
+const greyOf = k => [C.slate, C.navy, '#1a3044', C.plum][Math.floor(hash(k, 7) * 4)];
+
+// The static window: sky in leaded quarries, the sun, the far hills. Drawn once per resize.
+let bg = null;
+function drawBackground(s) {
+  bg = Sprites.canvas(Math.round(W * s), Math.round(H * s));
+  const keep = g; g = bg.getContext('2d'); g.setTransform(s, 0, 0, s, 0, 0);
+  // Sky: a jittered grid of quads.
+  const cols = 16, rows = 9, cw = W / cols, ch = H / rows, pts = [];
+  for (let j = 0; j <= rows; j++) for (let i = 0; i <= cols; i++) {
+    const edge = i === 0 || i === cols || j === 0;
+    pts.push([i * cw + (edge ? 0 : (hash(i, j, 1) - 0.5) * cw * 0.6), j * ch + (edge || j === rows ? 0 : (hash(i, j, 2) - 0.5) * ch * 0.6)]);
+  }
+  for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+    const a = pts[j * (cols + 1) + i], b = pts[j * (cols + 1) + i + 1], c2 = pts[(j + 1) * (cols + 1) + i + 1], d = pts[(j + 1) * (cols + 1) + i];
+    const k = hash(i, j, 3);
+    // The sky is lighter near the sun (top left) and over the castle.
+    const near = Math.max(0, 1 - Math.hypot(i - 2, j - 1) / 9);
+    const col = k < 0.12 ? C.slate : mix(C.navy, '#2b4a63', near * 0.8 + k * 0.15);
+    pane(polyP([a, b, c2, d]), col, 1.6);
+  }
+  // The sun: a round pane with petals.
+  for (let i = 0; i < 12; i++) {
+    const a0 = i / 12 * Math.PI * 2, a1 = (i + 1) / 12 * Math.PI * 2;
+    pane(polyP([[60 + Math.cos(a0) * 30, 64 + Math.sin(a0) * 30], [60 + Math.cos((a0 + a1) / 2) * 44, 64 + Math.sin((a0 + a1) / 2) * 44], [60 + Math.cos(a1) * 30, 64 + Math.sin(a1) * 30]]), i % 2 ? C.tan : C.cream, 1.6);
+  }
+  pane(circP(60, 64, 30), C.cream, 2.4);
+  pane(circP(60, 64, 17), '#fbe6d4', 1.4);
+  // Far hills.
+  const hill = (y0, amp, f, ph, col) => { const pt = [[180, 404]]; for (let x = 180; x <= 800; x += 20) pt.push([x, y0 - amp * (0.5 + 0.5 * Math.sin(x * f + ph))]); pt.push([800, 404]); pane(polyP(pt), col, 2); };
+  hill(270, 46, 0.012, 1.1, '#162f45');
+  hill(300, 30, 0.02, 2.4, C.slate);
+  // Brume's chimney smoke stays grey on purpose.
+  flushLeads();
+  g.globalCompositeOperation = 'overlay'; g.globalAlpha = 0.5; g.drawImage(texture, 0, 0, W, H); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+  g = keep;
+}
+// Glass mottling, laid over every frame.
+const texture = Sprites.canvas(400, 230);
+{
+  const t = texture.getContext('2d');
+  grain(t, 400, 230, { amount: 0.18 });
+  const gr = t.createLinearGradient(0, 0, 400, 230);
+  gr.addColorStop(0, 'rgba(255,255,255,0.18)'); gr.addColorStop(0.45, 'rgba(255,255,255,0)'); gr.addColorStop(0.6, 'rgba(255,255,255,0.08)'); gr.addColorStop(1, 'rgba(0,0,0,0.2)');
+  t.fillStyle = gr; t.fillRect(0, 0, 400, 230);
+}
+
+// ---------- The estate ----------
+const plotTop = i => { const p = E.PLOTS[i]; return groundY((p.x0 + p.x1) / 2); };
+const colourOf = i => 1 - S.grey[i] / E.PLOTS[i].acres;
+function drawPlot(i, t) {
+  const p = E.PLOTS[i], f = colourOf(i), top = plotTop(i), x0 = p.x0, x1 = p.x1;
+  const body = polyP([[x0, groundY(x0 + 0.01)], [(x0 + x1) / 2, top], [x1, groundY(x1 - 0.01)], [x1, H], [x0, H]]);
+  g.save(); g.clip(body);
+  // Diamond quarries: each turns from the Baron's grey to the castle's glass as the plot colours in.
+  const s = 11;
+  for (let yy = top - s; yy < H + s; yy += s / 2) for (let xx = x0 - s; xx < x1 + s; xx += s) {
+    const row = Math.round((yy - top) / (s / 2)), cxp = xx + (row % 2 ? s / 2 : 0);
+    const k = hash(Math.round(cxp * 3), row, i);
+    const on = k < f;
+    const col = on ? WARM[Math.floor(hash(row, Math.round(cxp), i + 9) * 4)] : greyOf(Math.round(cxp * 7) + row * 31 + i);
+    const d = polyP([[cxp, yy - s / 2], [cxp + s / 2, yy], [cxp, yy + s / 2], [cxp - s / 2, yy]]);
+    g.fillStyle = col; g.fill(d);
+    g.strokeStyle = C.ink; g.lineWidth = 0.9; g.stroke(d);
+  }
+  g.restore();
+  lead(body, 2.6);
+  if (hot === i) { g.save(); g.clip(body); g.fillStyle = `rgba(246,214,189,${0.18 + 0.1 * Math.sin(t * 6)})`; g.fillRect(x0, top - 10, x1 - x0, H); g.restore(); }
+}
+// The props on each plot, grey until the plot is half in colour.
+function decor(i, t) {
+  const p = E.PLOTS[i], f = colourOf(i), top = plotTop(i), cxp = (p.x0 + p.x1) / 2, w = p.x1 - p.x0;
+  const c = (warm, grey = C.slate) => f >= 0.5 ? warm : mix(grey, warm, f * 0.6);
+  if (p.r === 0) {
+    // Turnips in a row: a bulb and two leaves each.
+    for (let k = 0; k < 3; k++) {
+      const x = p.x0 + 10 + k * 15, y = top - 1;
+      pane(polyP([[x, y], [x - 4, y - 9], [x - 1, y - 2]]), c(C.tan, C.plum), 1.2);
+      pane(polyP([[x, y], [x + 4, y - 10], [x + 1, y - 2]]), c(C.rose, C.plum), 1.2);
+      pane(circP(x, y + 3, 4), c(k % 2 ? C.cream : C.mauve, C.slate), 1.4);
+    }
+  } else if (p.name.includes('Orchard')) {
+    for (let k = 0; k < 2; k++) {
+      const x = p.x0 + w * (0.3 + k * 0.42), y = top;
+      pane(rectP(x - 2, y - 14, 4, 14), c(C.mauve, C.plum), 1.4);
+      pane(circP(x, y - 22, 11), c(k ? C.tan : C.rose, '#1a3044'), 2);
+      pane(circP(x - 4, y - 25, 2.4), c(C.cream, C.slate), 1);
+      pane(circP(x + 4, y - 19, 2.4), c(C.cream, C.slate), 1);
+    }
+  } else if (p.name === 'The Pig Paddock') {
+    // The sad pig, and the fence.
+    const pig = SPR.pig;
+    if (pig) g.drawImage(f >= 0.5 ? pig.warm : pig.grey, cxp - 12, top - 22, 24, 24);
+    for (let x = p.x0 + 3; x < p.x1 - 2; x += 8) pane(rectP(x, top - 10, 2.4, 10), c(C.tan, C.plum), 1);
+    pane(rectP(p.x0 + 2, top - 8, w - 4, 2), c(C.tan, C.plum), 1);
+  } else if (p.name === 'Brumewick Green') {
+    // The maypole nobody was allowed to use.
+    pane(rectP(cxp - 1.5, top - 34, 3, 34), c(C.cream, C.plum), 1.2);
+    for (let k = 0; k < 3; k++) pane(polyP([[cxp, top - 33], [cxp - 9 + k * 9, top - 4], [cxp - 7 + k * 9, top - 4]]), c(WARM[k + 1], C.slate), 0.8);
+  } else if (p.name === 'The Duck Pond') {
+    pane(ellP(cxp, top + 6, w * 0.42, 5), c('#5a7d96', C.navy), 1.6);
+    pane(ellP(cxp + 3, top + 2, 4, 2.5), c(C.cream, C.slate), 1);
+    pane(circP(cxp + 7, top - 1, 1.8), c(C.cream, C.slate), 0.8);
+  } else if (p.name === 'Mrs Dabb’s' || p.name === 'The Pound') {
+    // Cottages.
+    const x = cxp - 11, y = top - 18;
+    pane(rectP(x, y, 22, 18), c(p.name === 'The Pound' ? C.tan : C.cream, C.slate), 1.6);
+    pane(polyP([[x - 3, y], [cxp, y - 12], [x + 25, y]]), c(C.rose, C.plum), 1.6);
+    pane(rectP(cxp - 3, y + 8, 6, 10), c(C.mauve, C.navy), 1.2);
+    pane(rectP(x + 3, y + 4, 4, 4), c('#fbe6d4', C.navy), 1);
+    if (p.name === 'The Pound') for (let x2 = p.x0 + 2; x2 < p.x1; x2 += 6) pane(rectP(x2, top - 6, 1.6, 6), c(C.tan, C.plum), 0.8);
+  } else if (p.r === 3) {
+    // Moor: heather and a standing stone; the bog has reeds.
+    if (p.name === 'The Bog') for (let k = 0; k < 5; k++) { const x = p.x0 + 5 + k * 6; pane(polyP([[x, top], [x + 1, top - 14 - (k % 2) * 5], [x + 2, top]]), c(C.tan, C.plum), 0.8); }
+    else {
+      pane(polyP([[cxp - 5, top], [cxp - 4, top - 16], [cxp + 3, top - 18], [cxp + 5, top]]), c(C.plum, '#1a3044'), 1.4);
+      for (let k = 0; k < 3; k++) pane(ellP(p.x0 + 6 + k * 10, top - 2, 4, 3), c(k % 2 ? C.mauve : C.rose, C.plum), 1);
+    }
+  } else if (p.name === 'The Grounds') {
+    // Topiary hedges, clipped into the shape of complaints.
+    for (let k = 0; k < 3; k++) { const x = p.x0 + 7 + k * 13; pane(rectP(x - 1, top - 4, 2, 4), c(C.mauve, C.plum), 0.8); pane(circP(x, top - 9, 5), c(k === 1 ? C.tan : C.rose, '#1a3044'), 1.4); }
+  } else if (p.name === 'Brume Hall') drawHall(p, top, f);
+}
+function drawHall(p, top, f) {
+  const c = (warm, grey = C.slate) => f >= 0.5 ? warm : mix(grey, warm, f * 0.6);
+  const x = p.x0 + 4, w = p.x1 - p.x0 - 8, y = top - 46;
+  pane(rectP(x, y, w, 46), c(C.tan, '#1a3044'), 2);
+  pane(polyP([[x - 3, y], [x + w / 2, y - 16], [x + w + 3, y]]), c(C.mauve, C.navy), 2);
+  pane(rectP(x + w - 10, y - 22, 6, 14), c(C.rose, C.navy), 1.4);   // the chimney
+  for (let k = 0; k < 3; k++) pane(lancetP(x + 5 + k * 12, y + 8, 6, 12), c(C.cream, C.navy), 1.2);
+  const door = rectP(x + w / 2 - 5, y + 30, 10, 16);
+  pane(door, c(C.rose, C.navy), 1.6);
+  // Brume himself, in the doorway (not at the end: by then he's at the castle).
+  if (!S.ended && !(fin && fin.stage >= 2)) brume(x + w / 2, y + 45, f);
+  if (S.one.basket) basketAt(x + w / 2 + 11, top - 1);
+}
+function brume(x, y, f = 0, hold = false) {
+  const gry = f >= 0.5 ? C.plum : '#2c3b4c';
+  pane(polyP([[x - 3, y], [x - 3.5, y - 13], [x + 3.5, y - 13], [x + 3, y]]), gry, 1);     // coat
+  pane(circP(x, y - 16, 3), f >= 0.5 ? C.tan : '#6b6a7a', 1);                               // face
+  pane(rectP(x - 3, y - 26, 6, 8), C.ink, 0.8); pane(rectP(x - 5, y - 19, 10, 1.6), C.ink, 0.6); // the hat
+  if (hold) { pane(rectP(x + 3, y - 10, 5, 2), C.cream, 0.6); }
+}
+function basketAt(x, y) { const b = SPR.basket; if (b) g.drawImage(b.warm, x - 8, y - 15, 16, 16); }
+
+// Planted rainbows: little arches on each plot, more as it colours in.
+function arches(i) {
+  const p = E.PLOTS[i], f = colourOf(i), n = f > 0 ? Math.min(3, Math.ceil(f * 3)) : 0;
+  const top = plotTop(i), w = p.x1 - p.x0;
+  for (let k = 0; k < n; k++) {
+    const r = w * (0.2 + 0.08 * ((k + i) % 2)), cx0 = p.x0 + w * (0.25 + 0.25 * k), cy = top + 2;
+    arch(cx0, cy, r, Math.max(1.4, r / 6.5), 1);
+    if (S.one.double) arch(cx0, cy, r * 1.35, Math.max(1, r / 10), 0.4);
+  }
+}
+function arch(x, y, r, bw, alpha = 1, a0 = Math.PI, a1 = Math.PI * 2) {
+  g.globalAlpha = alpha;
+  BANDS.forEach((col, b) => {
+    const ro = r - b * bw, ri = ro - bw;
+    if (ri <= 0) return;
+    const p = P(); p.arc(x, y, ro, a0, a1); p.arc(x, y, ri, a1, a0, true); p.closePath();
+    pane(p, col, alpha < 1 ? 0.6 : 1);
+  });
+  if (alpha < 1) flushLeads();
+  g.globalAlpha = 1;
+}
+
+// ---------- The castle ----------
+const WINDOW_SLOTS = (() => {
+  const out = [];
+  for (let y = 262; y <= 376; y += 16) for (const x of [22, 34, 46, 58, 70]) out.push([x, y]);
+  for (let y = 262; y <= 336; y += 16) for (const x of [134, 146]) out.push([x, y]);
+  for (let y = 220; y <= 236; y += 16) for (const x of [10, 24]) out.push([x, y]);
+  for (let y = 268; y <= 380; y += 16) out.push([82, y]);
+  for (let y = 296; y <= 376; y += 16) for (const x of [96, 110]) out.push([x, y]);
+  // Shuffle-ish order so the walls fill evenly.
+  return out.map((s, i) => [s, hash(i, 5)]).sort((a, b) => a[1] - b[1]).map(a => a[0]);
+})();
+function drawCastle(t) {
+  const top = towerTop();
+  // The castle's own ground, in its own colours.
+  const lawn = polyP([[0, 404], [MOAT[0], 404], [MOAT[0], H], [0, H]]);
+  pane(lawn, C.mauve, 2.4);
+  g.save(); g.clip(lawn);
+  for (let x = -6, k = 0; x < MOAT[0]; x += 14, k++) for (let y = 404, j = 0; y < H; y += 11, j++) { g.fillStyle = WARM[(k + j * 3) % 4]; g.globalAlpha = 0.6; g.fillRect(x + (j % 2) * 7, y, 14, 11); g.globalAlpha = 1; g.strokeStyle = C.ink; g.lineWidth = 0.8; g.strokeRect(x + (j % 2) * 7, y, 14, 11); }
+  g.restore();
+  // West tower.
+  pane(rectP(2, 206, 34, 198), C.mauve, 2.4);
+  for (let k = 0; k < 3; k++) pane(rectP(2 + k * 12, 198, 8, 9), C.rose, 1.6);
+  // The keep: a mosaic of the castle's too-many colours.
+  const keep = rectP(14, 250, 144, 154);
+  pane(keep, C.rose, 2.6);
+  g.save(); g.clip(keep);
+  for (let y = 250, row = 0; y < 404; y += 12, row++) for (let x = 14 - (row % 2) * 9; x < 158; x += 18) {
+    g.fillStyle = WARM[Math.floor(hash(x, y, 2) * 4)]; g.globalAlpha = 0.55; g.fillRect(x, y, 18, 12); g.globalAlpha = 1;
+    g.strokeStyle = C.ink; g.lineWidth = 0.8; g.strokeRect(x, y, 18, 12);
+  }
+  g.restore();
+  for (let k = 0; k < 7; k++) pane(rectP(14 + k * 21, 240, 12, 11), k % 2 ? C.tan : C.rose, 1.8);
+  // The gate and the drawbridge over the moat.
+  pane(lancetP(126, 362, 26, 42), C.ink, 2);
+  pane(polyP([[150, 402], [MOAT[1] + 2, 400], [MOAT[1] + 2, 405], [150, 406]]), C.tan, 1.6);
+  // Windows bought so far, lit from inside.
+  const nW = S.lv.window;
+  for (let i = 0; i < WINDOW_SLOTS.length; i++) {
+    const [x, y] = WINDOW_SLOTS[i];
+    const lit = i < nW;
+    pane(lancetP(x, y, 6, 11), lit ? WARM[i % 4] : C.navy, 1.2);
+  }
+  // The east tower (taller once A Taller Tower is bought).
+  pane(rectP(TOWER.x0, top, TOWER.x1 - TOWER.x0, 404 - top), C.tan, 2.6);
+  g.save(); g.clip(rectP(TOWER.x0, top, TOWER.x1 - TOWER.x0, 404 - top));
+  for (let y = top, row = 0; y < 404; y += 12, row++) for (let x = TOWER.x0 - (row % 2) * 8; x < TOWER.x1; x += 16) {
+    g.fillStyle = WARM[Math.floor(hash(x, y, 4) * 4)]; g.globalAlpha = 0.5; g.fillRect(x, y, 16, 12); g.globalAlpha = 1;
+    g.strokeStyle = C.ink; g.lineWidth = 0.8; g.strokeRect(x, y, 16, 12);
+  }
+  g.restore();
+  for (let y = 296; y <= 376; y += 16) for (const x of [96, 110]) { const i = WINDOW_SLOTS.findIndex(s => s[0] === x && s[1] === y); pane(lancetP(x, y, 6, 11), i < nW ? WARM[i % 4] : C.navy, 1.2); }
+  // The conical roof and the flag.
+  pane(polyP([[TOWER.x0 - 5, top], [107, top - 34], [TOWER.x1 + 5, top]]), C.mauve, 2.4);
+  pane(rectP(106, top - 52, 2, 20), C.ink, 0.5);
+  if (S.one.flag) {
+    const wave = reduced ? 0 : Math.sin(t * 3) * 2;
+    pane(polyP([[108, top - 52], [134, top - 48 + wave], [108, top - 42]]), C.cream, 1.2);
+    g.fillStyle = C.ink; g.font = '6px "IM Fell English SC", serif'; g.textAlign = 'left'; g.fillText('SORRY', 110, top - 46 + wave * 0.4);
+  }
+  if (S.ended || (fin && fin.stage >= 3)) {
+    // Under new management: the Baron's grey pennant, with a single, very small rainbow on it.
+    pane(polyP([[106, top - 52], [80, top - 48], [106, top - 42]]), C.plum, 1.2);
+    arch(94, top - 45, 4, 1, 1);
+  }
+  // The launch window: plain lancet, then the rose window, then the prism hung in it.
+  const L = launchPt();
+  if (S.reach >= 2) {
+    pane(circP(L.x, L.y, 12), C.navy, 2);
+    for (let k = 0; k < 12; k++) { const a = k / 12 * Math.PI * 2; pane(ellP(L.x + Math.cos(a) * 7, L.y + Math.sin(a) * 7, 3.2, 3.2), WARM[k % 4], 0.9); }
+    pane(circP(L.x, L.y, 3.4), C.cream, 1);
+  } else {
+    pane(lancetP(L.x - 6, L.y - 10, 12, 20), C.cream, 2);
+  }
+  if (S.reach >= 1) for (const y of [top + 60, top + 84]) if (y < 240) pane(lancetP(101, y, 12, 16), C.rose, 1.6);
+  if (S.reach >= 4) {
+    // The Great East Window: the whole east face of the tower above the keep, in glass.
+    const gw = lancetP(96, top + 52, 22, 240 - top - 54);
+    pane(gw, C.cream, 2.2);
+    g.save(); g.clip(gw);
+    for (let y = top + 52, k = 0; y < 240; y += 9, k++) for (let x = 96; x < 118; x += 7.3) { g.fillStyle = WARM[(k + Math.round(x)) % 4]; g.fillRect(x + 0.5, y + 0.5, 6.3, 8); g.strokeStyle = C.ink; g.lineWidth = 0.8; g.strokeRect(x + 0.5, y + 0.5, 6.3, 8); }
+    g.restore();
+  }
+  if (S.one.prism) {
+    const sp = reduced ? 0.6 : 0.5 + 0.5 * Math.sin(t * 4);
+    pane(polyP([[L.x + 14, L.y - 4], [L.x + 18, L.y + 2], [L.x + 14, L.y + 9], [L.x + 10, L.y + 2]]), mix(C.cream, '#ffffff', sp * 0.5), 1);
+    lead(polyP([[L.x + 14, L.y - 12], [L.x + 14, L.y - 4]]), 0.8);
+  }
+  if (S.one.plumb) {
+    lead(polyP([[L.x + 7, L.y + 10], [L.x + 7, 232]]), 0.7);
+    pane(polyP([[L.x + 5, 232], [L.x + 9, 232], [L.x + 7, 239]]), C.tan, 1);
+  }
+  // A Trebuchet (Decorative), on the west battlements.
+  if (S.reach >= 3) {
+    pane(polyP([[22, 240], [36, 214], [50, 240]]), C.tan, 1.8);
+    const sw = reduced ? 0 : Math.sin(t * 0.8) * 0.06;
+    flushLeads(); g.save(); g.translate(36, 216); g.rotate(-0.5 + sw);
+    pane(rectP(-30, -2, 44, 4), C.rose, 1.4); pane(circP(12, 0, 4), C.mauve, 1.2);
+    flushLeads(); g.restore();
+    // A little heart where the boulder would go.
+    pane(polyP([[8, 205], [5, 201], [8, 199], [10, 201], [12, 199], [15, 201], [12, 205], [10, 207]]), C.cream, 1);
+  }
+  // The fee schedule, nailed beside the gate: one more line per level.
+  if (S.lv.fee) {
+    pane(rectP(9, 300, 20, 24), C.cream, 1.2);
+    for (let k = 0; k < S.lv.fee; k++) lead(polyP([[12, 304 + k * 2.4], [26, 304 + k * 2.4]]), 0.5);
+  }
+  // The moat.
+  const moat = polyP([[MOAT[0], 392], [MOAT[1], 392], [MOAT[1], H], [MOAT[0], H]]);
+  pane(moat, '#28506d', 2.4);
+  g.save(); g.clip(moat);
+  for (let k = 0; k < 6; k++) { const y = 398 + k * 10, o = reduced ? 0 : Math.sin(t * 1.2 + k) * 3; lead(polyP([[MOAT[0] - 5 + o, y], [MOAT[1] + 5 + o, y + 4]]), 0.8); }
+  g.restore();
+  // The doormat and the key under it.
+  if (S.one.mat) {
+    pane(rectP(156, 398, 24, 6), C.rose, 1.2);
+    g.fillStyle = C.cream; g.font = '4.6px "IM Fell English SC", serif'; g.textAlign = 'center'; g.fillText('WELCOME', 168, 402.8);
+  }
+  if (S.one.key) { const k = reduced ? 1 : 0.6 + 0.4 * Math.sin(t * 2.3); pane(circP(181, 403, 2), mix(C.tan, C.cream, k), 0.8); pane(rectP(182.5, 402.4, 5, 1.3), mix(C.tan, C.cream, k), 0.6); }
+  drawSpout(t);
+}
+// Spout: a squat gargoyle on the east battlement, mouth a waterspout. Drawn by hand, in glass.
+function drawSpout(t, x = 150, y = 241, scale = 1, opts = {}) {
+  flushLeads(); g.save(); g.translate(x, y); g.scale(scale * 2, scale * 2);
+  const stamping = (spoutStampT > clock && !opts.still);
+  pane(polyP([[-12, -4], [-21, -19], [-15, -16], [-12, -23], [-7, -16], [-5, -10]]), C.plum, 0.9);              // folded wing
+  pane(polyP([[-13, 0], [-14, -8], [-7, -14], [4, -14], [8, -6], [6, 0]]), C.mauve, 1);                        // haunch and body
+  pane(polyP([[3, 0], [4, -8], [9, -9], [10, 0]]), C.rose, 0.8);                                               // front leg
+  pane(polyP([[2, -11], [3, -21], [9, -25], [17, -22], [19, -15], [12, -10]]), C.rose, 1);                     // head
+  pane(polyP([[4, -20], [1, -30], [8, -23]]), C.mauve, 0.8); pane(polyP([[10, -24], [11, -32], [14, -23]]), C.mauve, 0.8); // ears
+  pane(polyP([[16, -18], [28, -17], [28, -12], [16, -13]]), C.tan, 0.9);                                       // the spout
+  pane(circP(12, -19, 2.3), C.cream, 0.6); pane(circP(12.7, -19, 0.9), C.ink, 0.3);                           // eye
+  lead(polyP(opts.happy ? [[9, -21.5], [15, -23]] : [[9, -23], [15, -21]]), 1.4);                              // brow: disapproving, always (almost)
+  if (S.one.monocle) { const m = circP(12, -19, 3.6); g.fillStyle = 'rgba(246,214,189,0.25)'; g.fill(m); lead(m, 0.7); lead(polyP([[14.5, -16.5], [15, -9]]), 0.4); }
+  // The rubber stamp in his paw, raised and brought down.
+  const lift = stamping ? 5 * Math.sin(Math.min(1, (spoutStampT - clock) * 3) * Math.PI) : 0;
+  pane(rectP(7.6, -13 - lift, 1.8, 4), C.ink, 0.3); pane(rectP(5.5, -9.4 - lift, 6, 1.8), C.rose, 0.5);
+  // Water dripping from the spout (the rain he supplies).
+  if (!reduced && !opts.still) { const d = (t * 1.4) % 1; g.fillStyle = '#7fa3bd'; g.beginPath(); g.arc(28, -12 + d * 14, 0.7, 0, Math.PI * 2); g.fill(); }
+  flushLeads(); g.restore();
+  if (S.one.spoutbow) { arch(x + 24, y - 60, 11, 2, 1); flushLeads(); }
+  if (opts.still) return;
+  // Hired: his bucket (the wage); and his in-trays, one per level.
+  // Hired: his wage, a bucket of rainwater a week, hung under the spout; his in-trays, one per level.
+  if (S.one.spout) { pane(polyP([[201, 228], [213, 228], [211, 239], [203, 239]]), C.tan, 1.2); lead(polyP([[201, 228], [207, 215], [213, 228]]), 0.7); }
+  for (let k = 0; k < S.lv.tray; k++) pane(rectP(125 + (k % 2), 248 - k * 2.4, 12, 2), k % 2 ? C.cream : C.tan, 0.7);
+}
+
+// ---------- Notice boards and the pot ----------
+function drawProps(t) {
+  // Notice boards, by the drawbridge.
+  for (let k = 0; k < S.lv.board; k++) {
+    const x = 200 + k * 13, y = plotTop(0) - 18;
+    pane(rectP(x + 4, y + 10, 2, 9), C.mauve, 0.8);
+    pane(rectP(x, y, 10, 10), C.tan, 1.2);
+    pane(rectP(x + 2, y + 2, 3, 3), C.cream, 0.5); pane(rectP(x + 6, y + 4, 3, 4), C.cream, 0.5);
+  }
+  // The pot of gold (empty), at the foot of the first rainbow on Turnip Field No. 3.
+  if (S.one.pot && SPR.pot) {
+    const p = E.PLOTS[2]; g.drawImage(SPR.pot.warm, p.x0 + 6, plotTop(2) - 16, 16, 16);
+  }
+}
+
+// ---------- Orders on the plots: pennants with a ring for the time left ----------
+function drawFlags(t) {
+  for (const o of S.orders) {
+    const p = E.PLOTS[o.plot], x = (p.x0 + p.x1) / 2, y = plotTop(o.plot) - 6;
+    const mine = !(S.one.spout && o.ok);
+    const late = o.due < 8;
+    const h = 30;
+    pane(rectP(x - 0.8, y - h, 1.6, h), C.ink, 0.4);
+    const blink = late && !reduced && Math.floor(t * 4) % 2;
+    pane(polyP([[x + 0.8, y - h], [x + 15, y - h + 5], [x + 0.8, y - h + 10]]), blink ? C.cream : mine ? C.cream : C.mauve, 1.2);
+    // The ring: time left.
+    const fr = Math.max(0, o.due / o.total);
+    g.strokeStyle = C.ink; g.lineWidth = 3.6; g.beginPath(); g.arc(x, y - h - 6, 4.5, 0, Math.PI * 2); g.stroke();
+    g.strokeStyle = late ? C.tan : C.cream; g.lineWidth = 2; g.beginPath(); g.arc(x, y - h - 6, 4.5, -Math.PI / 2, -Math.PI / 2 + fr * Math.PI * 2); g.stroke();
+    // Spout's verdict, stamped on the pennant.
+    g.fillStyle = C.ink; g.font = 'bold 7px Georgia, serif'; g.textAlign = 'center'; g.fillText(o.ok ? '✓' : '✗', x + 6, y - h + 7.5);
+    if (hot === o.plot) { g.strokeStyle = C.cream; g.lineWidth = 1; g.strokeRect(p.x0 + 1, y - h - 13, p.x1 - p.x0 - 2, h + 14); }
+  }
+}
+
+// ---------- Rainbows in flight ----------
+let flights = [], blooms = [], floats = [], splashes = [];
+function launch(vx, vy, from, who) {
+  flights.push({ x: from.x, y: from.y, vx, vy, who, trail: [[from.x, from.y]] });
+}
+function stepFlights(dt) {
+  for (const f of flights) {
+    if (f.done) { f.fade -= dt * 1.6; continue; }
+    const n = 4;
+    for (let k = 0; k < n; k++) {
+      const h = dt / n;
+      f.vy += E.GRAV * h; f.x += f.vx * h; f.y += f.vy * h;
+      if (f.vy > 0 && f.y >= groundY(f.x) - 1) { f.y = groundY(f.x) - 1; landed(f); break; }
+      if (f.x > W + 20 || f.y > H + 20) { f.done = true; f.fade = 0; break; }
+    }
+    f.trail.push([f.x, f.y]); if (f.trail.length > 60) f.trail.shift();
+  }
+  flights = flights.filter(f => !f.done || f.fade > 0);
+  for (const b of blooms) b.t += dt;
+  blooms = blooms.filter(b => b.t < 1);
+  for (const s of splashes) s.t += dt;
+  splashes = splashes.filter(s => s.t < 0.8);
+}
+function drawFlights() {
+  for (const f of flights) {
+    const tr = f.trail; if (tr.length < 2) continue;
+    const a = f.done ? Math.max(0, f.fade) : 1;
+    // Four bands side by side along the path, offset along its normal, over a lead outline.
+    const wdt = f.big ? 3.6 : f.who === 'spout' ? 1.7 : 2.6;
+    const nrm = tr.map((pt, i) => { const p0 = tr[Math.max(0, i - 1)], p1 = tr[Math.min(tr.length - 1, i + 1)]; const dx = p1[0] - p0[0], dy = p1[1] - p0[1], l = Math.hypot(dx, dy) || 1; return [-dy / l, dx / l]; });
+    const centre = P(); tr.forEach(([x, y], i) => i ? centre.lineTo(x, y) : centre.moveTo(x, y));
+    g.globalAlpha = a; g.lineCap = 'butt'; g.lineJoin = 'round';
+    g.strokeStyle = C.ink; g.lineWidth = wdt * 4 + 1.8; g.stroke(centre);
+    // Each band in its own came: a colour stroke a little narrower than its slot, so the lead shows between.
+    BANDS.forEach((col, b) => {
+      const o = (b - 1.5) * wdt, path = P();
+      tr.forEach(([x, y], i) => { const X = x + nrm[i][0] * o, Y = y + nrm[i][1] * o; i ? path.lineTo(X, Y) : path.moveTo(X, Y); });
+      g.strokeStyle = col; g.lineWidth = Math.max(0.8, wdt - 0.45); g.stroke(path);
+    });
+    g.globalAlpha = 1;
+    if (!f.done) { g.fillStyle = '#fff7ee'; g.beginPath(); g.arc(f.x, f.y, f.who === 'spout' ? 2 : 3, 0, Math.PI * 2); g.fill(); }
+  }
+  for (const b of blooms) {
+    const u = Math.min(1, b.t * 3), r = b.r * (0.4 + 0.6 * u);
+    arch(b.x, b.y, r, Math.max(1.2, r / 6), 1 - Math.max(0, b.t - 0.5) * 2);
+  }
+  for (const s of splashes) {
+    g.strokeStyle = '#9fc0d6'; g.globalAlpha = 1 - s.t / 0.8; g.lineWidth = 1.4;
+    g.beginPath(); g.ellipse(s.x, 400, 3 + s.t * 14, 1.5 + s.t * 4, 0, 0, Math.PI * 2); g.stroke(); g.globalAlpha = 1;
+  }
+}
+function landed(f) {
+  f.done = true; f.fade = 1;
+  if (S.ended || fin) return;
+  const x = f.x;
+  if (x < E.PLOTS[0].x0) {
+    splashes.push({ x, t: 0 }); sfx.plop();
+    if (f.who === 'you' && !landed.moat) { landed.moat = true; say('CASTLE', 'Into the moat. The moat is now very slightly more colourful. The moat is the castle’s own, so this counts for nothing. Pull back harder.'); }
+    E.land(S, -1, f.who); return;
+  }
+  let i = E.plotAt(Math.min(x, E.PLOTS.at(-1).x1 - 0.01));
+  if (f.who === 'spout' && f.plot != null) i = f.plot;
+  const before = colourOf(i), firstEver = !S.shown;
+  const r = E.land(S, i, f.who);
+  if (f.who === 'spout') S.spoutN++;
+  const p = E.PLOTS[i];
+  blooms.push({ x, y: plotTop(i) + 2, r: Math.max(8, Math.min(26, (p.x1 - p.x0) * 0.4)), t: 0 });
+  if (r.acres > 0 || r.extra > 0) floats.push({ text: `−${fmt(r.acres + r.extra)} grey`, x, y: plotTop(i) - 16, t: 0, color: C.cream, small: f.who === 'spout' });
+  if (f.who === 'you' || r.order) sfx.land(i * 0.5);
+  if (r.order) {
+    sfx.paid();
+    floats.push({ text: `+${fmt(r.pay)} crowns`, x, y: plotTop(i) - 30, t: 0, color: C.tan });
+    const oc = E.OCCASIONS[r.order.occ];
+    if (f.who === 'spout') { if (spoutLine++ % 4 === 0) say('SPOUT', `“Filed.” A rainbow ${oc.what}, ${p.name}. ${fmt(r.pay)} crowns, received.`); }
+    else say('CASTLE', `Delivered: one (1) rainbow ${oc.what}, ${p.name}. ${fmt(r.pay)} crowns${r.order.festive ? ', festive surcharge included' : ''}, received with thanks.`);
+  } else if (f.who === 'you' && r.acres === 0 && !firstEver) {
+    if (sayCool('allcolour', 20)) say('CASTLE', `${p.name} is already entirely in colour. The castle apologises to it, and suggests somewhere greyer.`);
+  }
+  if (firstEver && f.who === 'you') {
+    S.shown = true; S.orderT = 2.5;
+    say('CASTLE', `Rainbow planted, ${p.name}. Marginally less grey. The Baron has been notified, with compliments. Orders will follow: Estate Regulation 1 forbids paint, and a rainbow is not paint.`);
+  }
+  // A whole region turned: a letter from the Baron.
+  for (let rg = 0; rg < E.REGIONS.length; rg++) {
+    S.letterDone = S.letterDone || [];
+    if (!S.letterDone[rg] && E.regionGrey(S, rg) <= 0 && rg <= S.reach) { S.letterDone[rg] = true; sfx.letter(); say('BRUME', E.LETTERS[rg]); }
+  }
+  void before;
+  after();
+}
+let spoutLine = 0, spoutStampT = 0;
+const cool = {};
+const sayCool = (k, s) => { const t = performance.now(); if ((cool[k] || 0) > t) return false; cool[k] = t + s * 1000; return true; };
+
+// ---------- Aiming ----------
+let aim = null;            // { sx, sy, x, y } in world units while dragging
+let kAim = { ang: 0.8, pow: 0.55, on: false };
+const FULL = 140;          // world units of pull for full power
+function toWorld(e) { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * W, y: (e.clientY - r.top) / r.height * H }; }
+function aimVector() {
+  if (aim) {
+    const dx = aim.sx - aim.x, dy = aim.sy - aim.y, len = Math.hypot(dx, dy);
+    if (len < 6) return null;
+    const pow = Math.min(1, len / FULL), v = pow * vmax();
+    return { vx: dx / len * v, vy: dy / len * v, pow };
+  }
+  if (kAim.on) { const v = kAim.pow * vmax(); return { vx: Math.cos(kAim.ang) * v, vy: -Math.sin(kAim.ang) * v, pow: kAim.pow }; }
+  return null;
+}
+let lastThrow = 0;
+function fire() {
+  const a = aimVector();
+  if (!a || S.ended || fin) return;
+  if (a.vx <= 0) { sfx.deny(); return; }
+  const t = performance.now(); if (t - lastThrow < 220) return; lastThrow = t;
+  launch(a.vx, a.vy, launchPt(), 'you');
+  sfx.launch();
+}
+cv.addEventListener('pointerdown', e => {
+  if (S.ended || fin) return;
+  e.preventDefault();
+  const p = toWorld(e); aim = { sx: p.x, sy: p.y, x: p.x, y: p.y }; kAim.on = false;
+  cv.setPointerCapture(e.pointerId);
+});
+cv.addEventListener('pointermove', e => { if (!aim) { const p = toWorld(e); hoverPlot(p); return; } const p = toWorld(e); aim.x = p.x; aim.y = p.y; });
+cv.addEventListener('pointerup', e => { if (!aim) return; fire(); aim = null; });
+cv.addEventListener('pointercancel', () => { aim = null; });
+cv.addEventListener('pointerleave', () => { if (!aim) hot = hoverHot; });
+cv.addEventListener('keydown', e => {
+  if (S.ended || fin) return;
+  const k = e.key;
+  if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' ', 'Enter'].includes(k)) e.preventDefault(); else return;
+  kAim.on = true;
+  if (k === 'ArrowUp') kAim.ang = Math.min(1.45, kAim.ang + 0.03);
+  if (k === 'ArrowDown') kAim.ang = Math.max(0.05, kAim.ang - 0.03);
+  if (k === 'ArrowRight') kAim.pow = Math.min(1, kAim.pow + 0.015);
+  if (k === 'ArrowLeft') kAim.pow = Math.max(0.1, kAim.pow - 0.015);
+  if (k === ' ' || k === 'Enter') fire();
+});
+let hot = -1, hoverHot = -1;
+function hoverPlot(p) { if (p.y > groundY(p.x) - 40) { const i = E.plotAt(p.x); hot = i >= 0 && S.orders.some(o => o.plot === i) ? i : hoverHot; } else hot = hoverHot; }
+function drawAim(t) {
+  const a = aimVector();
+  const L = launchPt();
+  if (!a) {
+    // The first five seconds: how to throw.
+    if (!S.shown && !flights.length && !S.ended) {
+      const u = reduced ? 0.6 : (t * 0.6) % 1;
+      const hx = 250 - u * 50, hy = 250 + u * 40;
+      g.strokeStyle = C.cream; g.setLineDash([3, 4]); g.lineWidth = 1.5;
+      g.beginPath(); g.moveTo(250, 250); g.lineTo(hx, hy); g.stroke(); g.setLineDash([]);
+      g.fillStyle = C.cream; g.beginPath(); g.arc(hx, hy, 5, 0, Math.PI * 2); g.fill();
+      g.strokeStyle = C.ink; g.lineWidth = 1.5; g.stroke();
+      g.font = '15px "IM Fell English SC", Georgia, serif'; g.textAlign = 'left';
+      g.lineWidth = 4; g.strokeStyle = C.ink; g.strokeText('press, pull back, let go', 262, 236); g.fillStyle = C.cream; g.fillText('press, pull back, let go', 262, 236);
+      g.font = '12px "IM Fell English", Georgia, serif';
+      g.strokeText('the rainbow flies the other way', 262, 252); g.fillStyle = C.tan; g.fillText('the rainbow flies the other way', 262, 252);
+    }
+    return;
+  }
+  // The pull, drawn as a cord from where you pressed.
+  if (aim) { g.strokeStyle = 'rgba(246,214,189,0.5)'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(aim.sx, aim.sy); g.lineTo(aim.x, aim.y); g.stroke(); g.fillStyle = C.cream; g.beginPath(); g.arc(aim.sx, aim.sy, 2.5, 0, Math.PI * 2); g.fill(); }
+  // The preview: the start of the arc, or all of it with the Plumb Line.
+  let x = L.x, y = L.y, vx = a.vx, vy = a.vy;
+  const T = 4, dtp = 0.03;
+  let tt = 0, landAt = null;
+  const full = S.one.plumb;
+  while (tt < T) {
+    vy += E.GRAV * dtp; x += vx * dtp; y += vy * dtp; tt += dtp;
+    if (vy > 0 && y >= groundY(x)) { landAt = x; break; }
+  }
+  const total = tt;
+  x = L.x; y = L.y; vx = a.vx; vy = a.vy; tt = 0;
+  const show = full ? total : Math.min(total, 0.35 * total + 0.12);
+  let k = 0;
+  while (tt < show) {
+    vy += E.GRAV * dtp; x += vx * dtp; y += vy * dtp; tt += dtp;
+    if (k++ % 2 === 0) { g.fillStyle = BANDS[Math.floor(k / 2) % 4]; g.beginPath(); g.arc(x, y, 1.8, 0, Math.PI * 2); g.fill(); }
+  }
+  if (full && landAt != null) {
+    const gy = groundY(landAt);
+    g.strokeStyle = C.cream; g.lineWidth = 1.4; g.beginPath(); g.moveTo(landAt - 5, gy - 8); g.lineTo(landAt + 5, gy); g.moveTo(landAt + 5, gy - 8); g.lineTo(landAt - 5, gy); g.stroke();
+  }
+  // Power, beside the tower.
+  const pw = a.pow;
+  g.fillStyle = C.ink; g.fillRect(L.x - 26, L.y - 24, 6, 48);
+  g.fillStyle = pw >= 0.999 ? C.cream : C.tan; g.fillRect(L.x - 25, L.y + 23 - pw * 46, 4, pw * 46);
+}
+// The fog over what the light can't reach yet.
+function drawFog(t) {
+  const rx = E.reachX(S);
+  if (rx >= W - 12) return;
+  g.fillStyle = 'rgba(8,20,30,0.55)'; g.fillRect(rx, 0, W - rx, H);
+  g.strokeStyle = 'rgba(246,214,189,0.35)'; g.setLineDash([4, 5]); g.lineWidth = 1.2; g.beginPath(); g.moveTo(rx, 200); g.lineTo(rx, H); g.stroke(); g.setLineDash([]);
+  const R = E.nextReach(S);
+  if (R) {
+    const lx = Math.max(rx + 6, Math.min(W - 8, rx + 190));
+    g.font = '12px "IM Fell English SC", Georgia, serif'; g.textAlign = rx + 190 > W - 8 ? 'right' : 'left'; g.fillStyle = C.tan;
+    const ax = g.textAlign === 'right' ? W - 8 : rx + 8;
+    g.fillText('out of reach:', ax, 318);
+    g.fillStyle = C.cream; g.fillText(R.name, ax, 333); void lx;
+  }
+}
+// Region names under the ground.
+function drawLabels() {
+  g.font = '11px "IM Fell English SC", Georgia, serif'; g.textAlign = 'center';
+  for (let r = 0; r < E.REGIONS.length; r++) {
+    const ps = E.PLOTS.filter(p => p.r === r), x = (ps[0].x0 + ps.at(-1).x1) / 2;
+    const f = 1 - E.regionGrey(S, r) / E.regionAcres(r);
+    const txt = E.REGIONS[r].short.toUpperCase();
+    g.lineWidth = 3; g.strokeStyle = C.ink; g.strokeText(txt, x, 446); g.fillStyle = f >= 1 ? C.cream : C.tan; g.fillText(txt, x, 446);
+  }
+}
+
+// ---------- The frame ----------
+let k = 1, dpr = 1;
+function layout() {
+  dpr = Math.min(2, devicePixelRatio || 1);
+  const w = cv.parentElement.clientWidth || W;
+  k = w / W;
+  cv.width = Math.round(W * k * dpr); cv.height = Math.round(H * k * dpr);
+  cv.style.height = `${H * k}px`;
+  drawBackground(k * dpr);
+}
+let clock = 0;
+function render() {
+  const s = k * dpr;
+  g = cx;
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.drawImage(bg, 0, 0);
+  g.setTransform(s, 0, 0, s, 0, 0);
+  // The sky over the estate warms as the grey goes.
+  const warm = 1 - E.greyLeft(S) / E.TOTAL;
+  if (warm > 0) { g.globalCompositeOperation = 'soft-light'; g.fillStyle = `rgba(246,214,189,${(0.55 * warm).toFixed(3)})`; g.fillRect(0, 0, W, H); g.globalCompositeOperation = 'source-over'; }
+  // Brume Hall's chimney smoke (grey until the Hall turns).
+  for (let i = 0; i < E.PLOTS.length; i++) drawPlot(i, clock);
+  flushLeads();
+  for (let i = 0; i < E.PLOTS.length; i++) arches(i);
+  flushLeads();
+  for (let i = 0; i < E.PLOTS.length; i++) decor(i, clock);
+  drawProps(clock);
+  flushLeads();
+  drawCastle(clock);
+  flushLeads();
+  // Glass mottling over the lot, then the light that isn't glass.
+  g.globalCompositeOperation = 'overlay'; g.globalAlpha = 0.45; g.drawImage(texture, 0, 0, W, H); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+  drawFog(clock);
+  drawFlags(clock);
+  flushLeads();
+  drawFlights();
+  flushLeads();
+  if (fin) drawFinale(clock);
+  if (S.ended && !fin) drawEndScene(clock);
+  drawLabels();
+  drawAim(clock);
+  g.font = '14px "IM Fell English SC", Georgia, serif'; g.textAlign = 'center';
+  for (const f of floats) { g.globalAlpha = Math.max(0, 1 - f.t / 1.3); g.font = `${f.small ? 11 : 14}px "IM Fell English SC", Georgia, serif`; g.lineWidth = 3; g.strokeStyle = C.ink; g.strokeText(f.text, f.x, f.y - f.t * 18); g.fillStyle = f.color; g.fillText(f.text, f.x, f.y - f.t * 18); }
+  g.globalAlpha = 1;
+  // Light through the glass: a soft bloom where the sun and the windows are.
+  if (!reduced) {
+    g.globalCompositeOperation = 'lighter';
+    const gr = g.createRadialGradient(60, 64, 10, 60, 64, 200); gr.addColorStop(0, 'rgba(246,214,189,0.16)'); gr.addColorStop(1, 'rgba(246,214,189,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, 300, 300);
+    g.globalCompositeOperation = 'source-over';
+  }
+}
+
+// ---------- The log ----------
+const TAG = { CASTLE: '', SPOUT: 's', BRUME: 'b', ORDER: 'o', 'WHILE YOU WERE OUT': 'o' };
+function say(who, text) {
+  const el = $('log');
+  el.innerHTML = '<b></b><span></span>';
+  const b = el.querySelector('b'); b.textContent = who; if (TAG[who]) b.className = TAG[who];
+  el.querySelector('span').textContent = text;
+  el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
+  logT = 0;
+}
+let logT = 0, ambI = 0;
+const AMBIENT = {
+  fields: [
+    ['SPOUT', '“The turnips did not ask for this.” The turnips, it should be said, look delighted.'],
+    ['CASTLE', 'The castle would like it noted that it bears the Baron no ill will. It bears him rainbows.'],
+    ['SPOUT', '“Three crowns a month.” He says it every so often, to keep it fresh.'],
+  ],
+  village: [
+    ['CASTLE', 'Brumewick has started leaving its curtains open. The Baron has written to object to the curtains.'],
+    ['SPOUT', '“A rainbow for a goat. Next it’ll be a rainbow for a second goat.”'],
+    ['CASTLE', 'Minutes of the castle’s meeting with itself: revenge proceeding to schedule. Any other business: none.'],
+  ],
+  hall: [
+    ['SPOUT', '“The Baron was seen at his window. Looking.” A long pause. “Objecting, probably.”'],
+    ['CASTLE', 'The castle has drafted a letter of apology for the rainbows, to be sent once the rainbows are finished.'],
+    ['SPOUT', '“Once it’s all done, what then?” The castle has a form in mind. Spout doesn’t like the look of it.'],
+  ],
+};
+function ambient(dt) {
+  logT += dt;
+  if (S.ended || fin || logT < 28 || !S.shown) return;
+  const L = AMBIENT[S.reach >= 4 ? 'hall' : S.reach >= 2 ? 'village' : 'fields'];
+  const [w, line] = L[ambI++ % L.length];
+  say(w, line);
+}
+
+// ---------- HUD and the order book ----------
+function hud() {
+  const left = E.greyLeft(S);
+  $('grey').textContent = fmt(Math.ceil(left));
+  $('meter').style.width = `${(1 - left / E.TOTAL) * 100}%`;
+  $('crowns').textContent = fmt(Math.floor(S.crowns));
+  $('where').textContent = S.ended ? 'Castle Pardon · under new management' : `Castle Pardon · ${E.REGIONS[S.reach].name}`;
+  const bits = [`<span>a rainbow plants <b>${fmt(E.size(S))}</b> acre${E.size(S) === 1 ? '' : 's'}${S.one.double ? ` <b>+${fmt(E.size(S) * 0.5)}</b> beyond` : ''}</span>`];
+  if (S.shown) bits.push(`<span>orders open <b>${S.orders.length}</b> of <b>${E.slots(S)}</b> · fees ×<b>${+E.feeMult(S).toFixed(2)}</b></span>`);
+  if (S.one.spout) bits.push(`<span>Spout throws every <b>${E.spoutEvery(S).toFixed(1)}</b> s</span>`);
+  bits.push('<span>grant <b>3</b> crowns a month</span>');
+  const html = bits.join('');
+  if (html !== hud.html) { hud.html = html; $('sub').innerHTML = html; }
+}
+let orderSig = '';
+function renderOrders() {
+  const el = $('orders');
+  const list = S.ended || fin ? [] : S.orders.slice().sort((a, b) => a.due - b.due);
+  const sig = list.map(o => o.id).join('|') + S.one.spout;
+  if (sig !== orderSig) {
+    orderSig = sig;
+    el.innerHTML = '';
+    for (const o of list) {
+      const p = E.PLOTS[o.plot], oc = E.OCCASIONS[o.occ];
+      const mine = !(S.one.spout && o.ok);
+      const d = document.createElement('div'); d.className = 'order' + (mine ? ' mine' : ''); d.dataset.id = o.id;
+      d.title = `Spout: “${oc.why}”${o.ok ? (S.one.spout ? ' He’ll throw this one himself.' : ' (He’d throw it, if he were on the payroll.)') : ' This one’s yours.'}${o.festive ? ' Festive surcharge: double fee.' : ''}`;
+      d.innerHTML = '<span class="stamp"></span><b></b><span class="what"></span><em></em><span class="time"><i></i></span>';
+      d.querySelector('.stamp').textContent = o.ok ? 'APPROVED' : 'DECLINED';
+      d.querySelector('b').textContent = p.name;
+      d.querySelector('.what').textContent = `a rainbow ${oc.what}`;
+      d.querySelector('em').textContent = `${fmt(E.orderPay(S, o))} crowns`;
+      d.addEventListener('pointerenter', () => { hoverHot = hot = o.plot; d.classList.add('hot'); });
+      d.addEventListener('pointerleave', () => { hoverHot = hot = -1; d.classList.remove('hot'); });
+      el.append(d);
+    }
+  }
+  for (const d of el.children) {
+    const o = S.orders.find(o => o.id === +d.dataset.id); if (!o) continue;
+    d.querySelector('.time i').style.width = `${Math.max(0, o.due / o.total) * 100}%`;
+    d.classList.toggle('late', o.due < 8);
+  }
+}
+
+// ---------- Calls: the reach and the form, at the top of the column ----------
+let callSig = '';
+function renderCalls() {
+  const el = $('calls');
+  const R = E.nextReach(S);
+  const final = E.done(S) && !S.ended && !fin;
+  const sig = `${S.reach}|${final}|${S.ended || !!fin}|${S.shown}`;
+  if (sig !== callSig) {
+    callSig = sig; el.innerHTML = '';
+    if (final) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'call final can'; b.id = 'formBtn';
+      b.innerHTML = '<b>Sign Form T-1</b><span>Transfer of Title, to B. Brume</span>';
+      wireTip(b, () => ({ id: 'form', name: 'Form T-1: Transfer of Title', desc: 'Not one grey acre left. The castle has one last thing to give the Baron, and it is everything: the castle, its windows, its rainbows, Spout (conditions attached) and the key under the mat.', fx: 'Ends the game. Irrevocable, in triplicate.', foot: 'no fee' }), doFinale);
+      el.append(b);
+    } else if (R && S.shown && !S.ended && !fin) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'call'; b.id = 'reachBtn';
+      b.innerHTML = '<b></b><span class="what"></span>';
+      b.querySelector('b').textContent = R.reach;
+      wireTip(b, () => { const N = E.nextReach(S); if (!N) return null; const ps = E.PLOTS.filter(p => p.r === S.reach + 1); return { id: 'reach', name: N.reach, desc: N.desc, fx: `The light reaches ${N.name}: ${ps.length} more plots, ${fmt(E.regionAcres(S.reach + 1))} grey acres, orders paying ${fmt(Math.round(N.pay * E.feeMult(S)))} crowns (double if festive).`, joke: N.joke, foot: `${fmt(N.cost)} crowns` }; }, doReach);
+      el.append(b);
+    }
+  }
+  const b = $('reachBtn');
+  if (b && R) {
+    const can = S.crowns >= R.cost;
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    b.querySelector('.what').textContent = `reach ${R.name} · ${fmt(R.cost)} crowns`;
+  }
+}
+function doReach() {
+  const R = E.nextReach(S);
+  if (!E.extend(S)) { sfx.deny(); return; }
+  sfx.reach();
+  say('CASTLE', `${R.reach}. ${R.joke} The light now reaches ${R.name}.`);
+  floats.push({ text: R.reach, x: 300, y: 200, t: 0, color: C.cream });
+  after(); refreshMusic();
+}
+
+// ---------- Shop ----------
+const shop = $('shop');
+const newUntil = {};
+let shopSig = '';
+const clone = () => JSON.parse(JSON.stringify(S));
+function renderShop() {
+  const closed = S.ended || !!fin;
+  const fresh = closed ? [] : E.reveal(S);
+  for (const id of fresh) { if (S.thrown > 1) sfx.unlock(); newUntil[id] = performance.now() + 9000; }
+  const all = closed ? [] : E.items(S);
+  const sig = all.map(i => `${i.id}:${E.cost(S, i.id)}:${E.lv(S, i.id)}`).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    for (const it of all) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (it.kind === 'odd' ? ' odd' : '');
+      b.dataset.id = it.id; b.dataset.cost = E.cost(S, it.id);
+      b.innerHTML = '<b></b><em></em>';
+      b.querySelector('b').textContent = it.name;
+      b.querySelector('em').textContent = `${fmt(E.cost(S, it.id))} cr${it.max ? ` · ${S.lv[it.id]}/${it.max}` : ''}`;
+      b.setAttribute('aria-describedby', 'tip');
+      b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, upTip(it.id)); });
+      b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+      b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, upTip(it.id)); });
+      b.addEventListener('blur', hideTip);
+      b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+      b.addEventListener('click', () => {
+        if (b.dataset.touch && tipFor !== it.id) { showTip(b, upTip(it.id)); return; }
+        if (b.getAttribute('aria-disabled') !== 'true') doBuy(it.id); else sfx.deny();
+      });
+      shop.append(b);
+    }
+  }
+  const now = performance.now();
+  let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = S.crowns >= Number(b.dataset.cost);
+    if (can) n++;
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  document.querySelector('aside h2').hidden = !all.length;
+  renderShelf();
+}
+// What an upgrade changes, now → after.
+function effect(id) {
+  const it = E.BY_ID[id], T = clone();
+  if (it.kind === 'odd') return 'Does nothing. It sits in the scene, being sincere.';
+  T.crowns = Infinity; E.buy(T, id);
+  if (id === 'window' || id === 'prism') return `Acres per rainbow: ${fmt(E.size(S))} → ${fmt(E.size(T))}`;
+  if (id === 'double') return `Each rainbow also plants ${fmt(E.size(S) * 0.5)} acres on the plot beyond (${fmt(E.size(S))} → ${fmt(E.size(S) * 1.5)} acres a throw)`;
+  if (id === 'plumb') return 'Arc preview: the first third → all of it, with a mark where it lands';
+  if (id === 'board') return `Orders open at once: ${E.slots(S)} → ${E.slots(T)}`;
+  if (id === 'fee') { const pay = E.REGIONS[S.reach].pay; return `Fees ×${E.feeMult(S).toFixed(2)} → ×${E.feeMult(T).toFixed(2)} (an order in ${E.REGIONS[S.reach].short}: ${fmt(Math.round(pay * E.feeMult(S)))} → ${fmt(Math.round(pay * E.feeMult(T)))} crowns)`; }
+  if (id === 'spout') return `Spout throws every approved order himself (one throw every ${E.spoutEvery(T).toFixed(1)} s), and files rainbows on the furthest grey when there are none`;
+  if (id === 'tray') return `Spout throws every ${E.spoutEvery(S).toFixed(1)} s → ${E.spoutEvery(T).toFixed(1)} s`;
+  return '';
+}
+let tipFor = null;
+function upTip(id) {
+  const it = E.BY_ID[id];
+  return { id, name: it.name, desc: it.desc, fx: effect(id), joke: it.joke, foot: `${fmt(E.cost(S, id))} crowns${it.max ? ` · ${S.lv[id]} of ${it.max}` : ''}` };
+}
+function showTip(b, it) {
+  if (!it) return;
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><span class="fx"></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('.fx').textContent = it.fx || '';
+  tip.querySelector('.fx').hidden = !it.fx;
+  tip.querySelector('i').textContent = it.joke || '';
+  tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || '';
+  tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  const inSide = !!b.closest('#side');
+  if (inSide && r.left > t.width + 24 && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 14}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - t.width - 8, r.left))}px`;
+    tip.style.top = `${r.bottom + 8 + t.height < innerHeight ? r.bottom + 8 : Math.max(8, r.top - t.height - 8)}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+let tipMoved = 0;
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .call, .bought')) hideTip(); });
+const explained = new Set();
+function wireTip(b, info, act) {
+  b.setAttribute('aria-describedby', 'tip');
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, info()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, info()); });
+  b.addEventListener('blur', hideTip);
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  b.addEventListener('click', () => {
+    if (b.dataset.touch && !explained.has(b.id)) { explained.add(b.id); showTip(b, info()); return; }
+    hideTip(); act();
+    if (b.matches(':hover') && !b.dataset.touch && b.isConnected) showTip(b, info());
+  });
+}
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!S.boughtOpen === shelfEl.open) return;
+  S.boughtOpen = shelfEl.open; save();
+});
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(i => i.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (it.kind === 'odd' ? ' odd' : '');
+    b.textContent = it.name; b.dataset.id = it.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, { id: 'bought:' + it.id, name: it.name, desc: it.desc, joke: it.joke, foot: it.kind === 'odd' ? 'does nothing, sincerely' : '', inline: true }); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + it.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+const WINDOW_LINES = {
+  1: 'A New Window. The light comes through it in four colours, none of them grey. Spout: “Another one.”',
+  10: 'Ten windows. The castle is now mostly window, held together by lead and good intentions.',
+  25: 'Twenty-five windows. From the Baron’s estate, the castle looks like a lantern somebody has left on deliberately.',
+  50: 'Fifty windows. The castle has run out of wall it is fond of.',
+  72: 'Every window the castle has room for. It is, by any measure, an eyesore. It is the most beautiful eyesore in the county.',
+};
+function doBuy(id) {
+  const it = E.BY_ID[id];
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  delete newUntil[id];
+  hideTip();
+  sfx.buy();
+  if (id === 'window') say('CASTLE', WINDOW_LINES[S.lv.window] || `A New Window, number ${S.lv.window}. A rainbow now plants ${fmt(E.size(S))} acres.`);
+  else if (it.max) say(id === 'tray' ? 'SPOUT' : 'CASTLE', it.joke);
+  else say(it.joke.startsWith('Spout') ? 'CASTLE' : it.kind === 'spout' ? 'SPOUT' : 'CASTLE', it.joke);
+  if (id === 'spout') { spoutStampT = clock + 0.4; sfx.stamp(); }
+  floats.push({ text: it.kind === 'odd' ? 'with compliments' : '+', x: 140, y: 230, t: 0, color: C.cream });
+  after();
+}
+function after() { save(); hud(); renderShop(); renderCalls(); renderOrders(); }
+
+// ---------- Ticking ----------
+let paidQuiet = 0;
+function step(dt) {
+  if (S.ended || fin) return;
+  for (const ev of E.tick(S, dt, Math.random)) {
+    if (ev.type === 'order') {
+      sfx.pin();
+      const oc = E.OCCASIONS[ev.order.occ];
+      if (!sayCool('order', 9) || !S.thrown) continue;
+      if (!ev.order.ok) say('SPOUT', `${E.PLOTS[ev.order.plot].name} wants a rainbow ${oc.what}. Stamped DECLINED. “${oc.why}”${S.one.spout ? ' That one’s yours.' : ''}`);
+      else if (S.one.spout) say('SPOUT', `A rainbow ${oc.what}, ${E.PLOTS[ev.order.plot].name}. Stamped APPROVED. “${oc.why}” He’ll see to it.`);
+      else say('ORDER', `A rainbow ${oc.what}, ${E.PLOTS[ev.order.plot].name}. Spout has stamped it APPROVED (“${oc.why}”), and would throw it himself if anyone paid him.`);
+    }
+    if (ev.type === 'lapse') {
+      sfx.lapse();
+      const oc = E.OCCASIONS[ev.order.occ];
+      if (sayCool('lapse', 6)) say('CASTLE', `Withdrawn: ${E.PLOTS[ev.order.plot].name} no longer requires a rainbow ${oc.what}. The castle regrets this deeply, and on file.`);
+    }
+    if (ev.type === 'spout') {
+      const p = E.PLOTS[ev.plot];
+      const x = p.x0 + (p.x1 - p.x0) * (0.3 + Math.random() * 0.4);
+      const v = spoutV(x);
+      flights.push({ x: SPOUT.x, y: SPOUT.y, vx: v.vx, vy: v.vy, who: 'spout', plot: ev.plot, trail: [[SPOUT.x, SPOUT.y]] });
+      spoutStampT = clock + 0.3;
+      if (document.visibilityState === 'visible') sfx.spout();
+    }
+  }
+  // In a background tab nothing is drawn: Spout's rainbows land straight away.
+  if (document.hidden) for (const f of flights) if (!f.done && f.who === 'spout') { f.x = (E.PLOTS[f.plot].x0 + E.PLOTS[f.plot].x1) / 2; landed(f); }
+  saveAcc += dt; if (saveAcc > 5) { saveAcc = 0; save(); }
+  ambient(dt);
+  uiAcc += dt; if (uiAcc > 0.2) { uiAcc = 0; hud(); renderShop(); renderCalls(); renderOrders(); }
+  const ph = phaseKey(); if (ph !== phaseWas) { phaseWas = ph; refreshMusic(); }
+}
+let saveAcc = 0, uiAcc = 0, phaseWas = phaseKey();
+
+// ---------- The finale: Form T-1 ----------
+let fin = null;
+function doFinale() {
+  if (!E.done(S) || fin || S.ended) return;
+  fin = { t: 0, stage: 0 };
+  S.finale = true; save();
+  hideTip(true); renderShop(); renderCalls(); renderOrders(); refreshMusic();
+  sfx.finale();
+  spoutStampT = clock + 0.6;
+  say('SPOUT', 'Spout read Form T-1 twice, once with the monocle, and stamped it. APPROVED. It is the first festive thing he has ever approved. He would like that kept off the record.');
+}
+function stepFinale(dt) {
+  if (!fin) return;
+  fin.t += dt;
+  if (fin.stage === 0 && fin.t > 1.6) { fin.stage = 1; fin.t = 0; flights.push({ x: launchPt().x, y: launchPt().y, ...(() => { const v = spoutV(760); return { vx: v.vx * 1.02, vy: v.vy }; })(), who: 'you', trail: [], big: true }); }
+  if (fin.stage === 1 && fin.t > 2.4) { fin.stage = 2; fin.t = 0; say('CASTLE', 'The Baron walked over in the afternoon to object in person. He stood on the mat. He read it.'); }
+  if (fin.stage === 2 && fin.t > 5) { fin.stage = 3; fin.t = 0; say('CASTLE', 'He found the key. He let himself in.'); }
+  if (fin.stage === 3 && fin.t > 2.5) { fin = null; end(false); }
+}
+function drawFinale(t) {
+  // The form, held up in the sky.
+  const a = Math.min(1, (fin.stage > 0 ? 1 : fin.t * 2));
+  g.globalAlpha = a; formAt(330, 60, fin.stage >= 0 && (fin.stage > 0 || fin.t > 0.6)); g.globalAlpha = 1;
+  // Brume walks from the Hall to the drawbridge.
+  if (fin.stage >= 2) {
+    const u = fin.stage === 2 ? Math.min(1, fin.t / 4.5) : 1;
+    const x = 766 - (766 - 172) * u, bob = reduced ? 0 : Math.abs(Math.sin(u * 40)) * 1.5;
+    flushLeads(); g.save(); g.translate(x, Math.min(GROUND, groundY(x)) - bob); g.scale(2, 2); brume(0, 0, 1, fin.stage >= 3); flushLeads(); g.restore();
+  }
+}
+function formAt(x, y, stamped) {
+  pane(rectP(x, y, 140, 104), C.cream, 2.4);
+  g.fillStyle = C.ink; g.textAlign = 'left';
+  g.font = 'bold 13px "Grenze Gotisch", Georgia, serif'; g.fillText('Form T-1', x + 10, y + 18);
+  g.font = '9px "IM Fell English SC", Georgia, serif'; g.fillText('TRANSFER OF TITLE', x + 10, y + 30);
+  g.font = '8px "IM Fell English", Georgia, serif';
+  ['From: Castle Pardon', 'To: B. Brume, Esq.', 'One castle, 100,000 acres', 'of rainbow, one gargoyle'].forEach((l, i) => g.fillText(l, x + 10, y + 44 + i * 10));
+  flushLeads();
+  if (stamped) {
+    g.save(); g.translate(x + 100, y + 90); g.rotate(-0.12);
+    g.strokeStyle = C.rose; g.lineWidth = 2; g.strokeRect(-30, -9, 60, 18);
+    g.fillStyle = C.rose; g.font = 'bold 11px "IM Fell English SC", Georgia, serif'; g.textAlign = 'center'; g.fillText('APPROVED', 0, 4);
+    g.restore();
+  }
+}
+// The finished world: everything in colour, the form on the wall, the Baron at the drawbridge with the key.
+function drawEndScene(t) {
+  formAt(330, 60, true);
+  flushLeads(); g.save(); g.translate(176, GROUND); g.scale(2, 2); brume(0, 0, 1, true); flushLeads(); g.restore();
+  if (S.one.basket) basketAt(190, GROUND);
+  flushLeads();
+  drawSpout(t, 150, 241, 1, { happy: true, still: true });
+}
+
+// ---------- The end ----------
+function end(resumed) {
+  S.ended = true; S.finale = false; S.orders = []; save();
+  hideTip(true);
+  $('story').innerHTML = '';
+  const P1 = [
+    'Spout read Form T-1 twice, once with the monocle, and stamped it APPROVED. It was the first thing he had ever approved that wasn’t a funeral.',
+    `Castle Pardon hereby gives, with compliments, to Baron B. Brume: one castle; ${S.lv.window} windows; ${fmt(E.TOTAL)} acres of rainbow; one gargoyle (conditions attached); one WELCOME mat, and the key under it.`,
+    'The Baron walked over in the afternoon to object in person. He stood on the mat. He read it. He found the key, and let himself in.',
+    'He has three crowns a month to keep it all up. He will have to take orders. The tenants have a great many, most of them festive.',
+    'The castle considers the matter closed, and its revenge complete. It is very sorry about all of it.',
+  ];
+  for (const p of P1) { const el = document.createElement('p'); el.textContent = p; $('story').append(el); }
+  const sig = document.createElement('p'); sig.className = 'sig'; sig.textContent = '— Castle Pardon (formerly)'; $('story').append(sig);
+  $('ending').hidden = false;
+  renderShop(); renderCalls(); renderOrders(); hud(); refreshMusic();
+  if (!resumed) {
+    say('BRUME', '“Sir. I object.” A pause. “To nothing in particular.”');
+    $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+    if (window.DailyGame) DailyGame.finish({ lines: [`⏱ ${Math.floor(S.t / 60)}m${String(Math.floor(S.t % 60)).padStart(2, '0')}s`, `🌈 ${fmt(E.TOTAL)} grey acres, planted`, `📜 ${fmt(S.filled)} orders filled`, '🏰 handed over, with compliments'] });
+  }
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Loop ----------
+let last = performance.now(), lastFrame = performance.now();
+function frame(now) {
+  const dt = Math.max(0, Math.min(0.1, (now - last) / 1000)); last = now; lastFrame = now;
+  step(dt);
+  clock += dt;
+  stepFlights(dt); stepFinale(dt);
+  for (const f of floats) f.t += dt; floats = floats.filter(f => f.t < 1.3);
+  render();
+  requestAnimationFrame(frame);
+}
+// In a background tab rAF stops: keep Spout working on a timer.
+setInterval(() => {
+  const now = performance.now();
+  if (now - lastFrame < 400) return;
+  const dt = Math.min(1, (now - last) / 1000); last = now;
+  step(dt);
+}, 250);
+addEventListener('pagehide', save);
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('resize', layout);
+
+// ---------- Sprites: source shapes restyled as glass ----------
+const SPR = {};
+async function glassSprite(name, file, warm, grey) {
+  try {
+    const svg = await Sprites.loadSvg(`./art/${file}`);
+    const mk = async col => Sprites.outline(await Sprites.svgToCanvas(Sprites.recolor(svg, col), 64), C.ink, 3);
+    SPR[name] = { warm: await mk(warm), grey: await mk(grey) };
+    Sprites.register(`${name} (glass)`, SPR[name].warm);
+    Sprites.register(`${name} (grey)`, SPR[name].grey);
+  } catch (e) { console.warn('sprite', name, e); }
+}
+const spritesReady = Promise.all([
+  glassSprite('pig', 'game-icons--pig.svg', C.rose, C.slate),
+  glassSprite('basket', 'game-icons--basket.svg', C.tan, C.slate),
+  glassSprite('pot', 'game-icons--cauldron.svg', C.mauve, C.slate),
+]);
+// Hand-drawn pieces for the ?sprites sheet, through the same glass routines.
+function sheet() {
+  const reg = (name, w, h, f, s = 3) => {
+    const c = Sprites.canvas(w * s, h * s), q = c.getContext('2d');
+    q.fillStyle = C.navy; q.fillRect(0, 0, c.width, c.height);
+    const keep = g; g = q; q.setTransform(s, 0, 0, s, 0, 0); f(); flushLeads(); g = keep;
+    Sprites.register(name, c);
+  };
+  const keepS = JSON.stringify(S);
+  reg('Spout', 90, 72, () => drawSpout(0, 34, 68, 1, { still: true }));
+  reg('Spout, monocle, happy', 90, 60, () => { S.one.monocle = true; drawSpout(0, 34, 68, 1, { still: true, happy: true }); });
+  reg('Baron Brume', 20, 34, () => brume(10, 32, 1, true), 4);
+  reg('a planted rainbow, and a double', 70, 40, () => { arch(35, 38, 22, 3.4, 1); arch(35, 38, 30, 2, 0.4); });
+  reg('Brume Hall, grey and in colour', 110, 80, () => { const p = { x0: 2, x1: 52 }; drawHall(p, 76, 0); drawHall({ x0: 56, x1: 106 }, 76, 1); }, 3);
+  reg('Form T-1', 144, 108, () => formAt(2, 2, true), 2);
+  Object.assign(S, JSON.parse(keepS));
+  for (const [kk, v] of Object.entries(JSON.parse(keepS))) S[kk] = v;
+  // The castle with everything bought.
+  const all = () => { S.reach = 4; S.lv.window = 72; S.lv.fee = 8; S.lv.tray = 8; S.lv.board = 3; for (const it of E.ITEMS) if (!it.max) S.one[it.id] = true; };
+  reg('Castle Pardon, everything bought', 200, 300, () => { all(); g.translate(0, -150); drawCastle(1); flushLeads(); drawProps(1); }, 2);
+  Object.assign(S, JSON.parse(keepS));
+  S.one = JSON.parse(keepS).one; S.lv = JSON.parse(keepS).lv;
+}
+
+// ---------- Start ----------
+layout();
+if (DEBUG) Object.assign(window.__game, { fire, launch, landed, end, doFinale, flights: () => flights, vmax, launchPt });
+const away = S.savedAt ? (Date.now() - S.savedAt) / 1000 : 0;
+if (S.ended) { end(true); say('BRUME', '“Sir. I object.” A pause. “To nothing in particular.”'); }
+else if (S.finale) { S.finale = false; doFinale(); }
+else if (!S.thrown && !S.shown) say('CASTLE', 'Castle Pardon. Baron Brume’s complaint (ref. B/1: “too colourful; an eyesore”) has reduced its upkeep grant to three crowns a month. The castle has replied, politely, that it will plant a rainbow on every grey acre he owns. Press on the window, pull back, let go.');
+else {
+  const off = E.offline(S, away);
+  if (off) say('WHILE YOU WERE OUT', `${Math.round(off.secs / 60)} minutes. Spout kept at it: ${fmt(off.n)} rainbows, ${fmt(off.acres)} acres no longer grey, ${fmt(off.pay)} crowns in approved orders. “Filed,” he says. “All of it.”`);
+  else say('CASTLE', 'The castle resumes its revenge, with apologies for the interruption.');
+}
+save();
+hud(); renderShop(); renderCalls(); renderOrders();
+document.fonts?.ready.then(layout);
+spritesReady.then(() => { if (Sprites.sheetRequested()) { sheet(); Sprites.showSheet({ zoom: 1 }); } });
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

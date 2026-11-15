@@ -286,5 +286,26 @@
   "Idiophones/Struck%20Idiophones/Suspended%20Cymbal%201/susCymb1_roll_mp1_nloop.mp3",
   "Idiophones/Struck%20Idiophones/Suspended%20Cymbal%201/susCymb1_roll_mp1_rel.mp3",
   "Idiophones/Struck%20Idiophones/Suspended%20Cymbal%201/susCymb1_scrape_1.mp3"
+ ],
+ "woodblock": [
+  "Idiophones/Struck%20Idiophones/Woodblock/wood_click2_mp.mp3",
+  "Idiophones/Struck%20Idiophones/Woodblock/wood_click3_vl1.mp3",
+  "Idiophones/Struck%20Idiophones/Woodblock/wood_click3_vl2.mp3",
+  "Idiophones/Struck%20Idiophones/Woodblock/wood_click_f_rr1.mp3",
+  "Idiophones/Struck%20Idiophones/Woodblock/wood_click_f_rr2.mp3",
+  "Idiophones/Struck%20Idiophones/Woodblock/wood_click_ff.mp3",
+  "Idiophones/Struck%20Idiophones/Woodblock/wood_click_mp.mp3",
+  "Idiophones/Struck%20Idiophones/Woodblock/wood_click_pp_rr1.mp3",
+  "Idiophones/Struck%20Idiophones/Woodblock/wood_click_pp_rr2.mp3",
+  "Idiophones/Struck%20Idiophones/Woodblock/wood_click_pp_rr3.mp3"
+ ],
+ "tambourine": [
+  "Idiophones/Struck%20Idiophones/Tambourine%201/Tamb1_Hit_v1_rr1_Mid.mp3",
+  "Idiophones/Struck%20Idiophones/Tambourine%201/Tamb1_Hit_v2_rr1_Mid.mp3",
+  "Idiophones/Struck%20Idiophones/Tambourine%201/Tamb1_Roll_v1_rr1_Mid.mp3",
+  "Idiophones/Struck%20Idiophones/Tambourine%201/Tamb1_Roll_v2_rr1_Mid.mp3",
+  "Idiophones/Struck%20Idiophones/Tambourine%201/Tamb1_Roll_v3_rr1_Mid.mp3",
+  "Idiophones/Struck%20Idiophones/Tambourine%201/Tamb1_Shake_rr1_Mid.mp3",
+  "Idiophones/Struck%20Idiophones/Tambourine%201/Tamb1_Shake_rr2_Mid.mp3"
  ]
 }

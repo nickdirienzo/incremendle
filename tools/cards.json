@@ -1903,5 +1903,117 @@
   ],
   "chirpTold": 1,
   "goneTold": 1
+ },
+ "with-compliments": {
+  "v": 1,
+  "t": 2100,
+  "crowns": 2600,
+  "reach": 3,
+  "grey": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   120,
+   0,
+   300,
+   3100,
+   7400,
+   10700,
+   25000,
+   39000
+  ],
+  "lv": {
+   "window": 38,
+   "board": 3,
+   "fee": 5,
+   "tray": 4
+  },
+  "one": {
+   "plumb": true,
+   "flag": true,
+   "spout": true,
+   "mat": true,
+   "pot": true,
+   "monocle": true,
+   "prism": true,
+   "key": true
+  },
+  "orders": [
+   {
+    "id": 1,
+    "plot": 11,
+    "occ": 8,
+    "ok": false,
+    "festive": true,
+    "due": 30,
+    "total": 44
+   },
+   {
+    "id": 2,
+    "plot": 9,
+    "occ": 1,
+    "ok": true,
+    "festive": false,
+    "due": 14,
+    "total": 40
+   },
+   {
+    "id": 3,
+    "plot": 12,
+    "occ": 10,
+    "ok": false,
+    "festive": true,
+    "due": 7,
+    "total": 40
+   },
+   {
+    "id": 4,
+    "plot": 7,
+    "occ": 2,
+    "ok": true,
+    "festive": false,
+    "due": 25,
+    "total": 40
+   },
+   {
+    "id": 5,
+    "plot": 10,
+    "occ": 13,
+    "ok": false,
+    "festive": true,
+    "due": 38,
+    "total": 45
+   }
+  ],
+  "shown": true,
+  "thrown": 1500,
+  "filled": 520,
+  "spoutN": 600,
+  "earned": 30000,
+  "seen": {
+   "window": true,
+   "plumb": true,
+   "board": true,
+   "flag": true,
+   "spout": true,
+   "fee": true,
+   "mat": true,
+   "tray": true,
+   "pot": true,
+   "monocle": true,
+   "prism": true,
+   "key": true,
+   "double": true
+  },
+  "letterDone": [
+   true,
+   true,
+   true
+  ],
+  "savedAt": 0
  }
 }

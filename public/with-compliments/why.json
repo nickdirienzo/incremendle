@@ -1,0 +1,25 @@
+{
+  "intro": "Every day the dice roll a premise and a dozen constraints, and the game has to honour all of them. Tonight's roll was seed 3391490606: a very polite castle, planting rainbows, out of revenge. Here is how that became Form T-1.",
+  "rolls": [
+    { "roll": "Subject", "value": "a very polite castle", "became": "Castle Pardon, which apologises for everything, including its own revenge. It flies a flag that says SORRY. It does not say what for." },
+    { "roll": "Verb", "value": "planting", "became": "A rainbow lobbed from the tower comes down feet first and takes root, and the grey glass under it turns to colour. Planted rainbows stay, as little arches on every plot." },
+    { "roll": "Object", "value": "rainbows", "became": "Light plus rain. The castle's stained-glass windows split the light (every window you buy makes the rainbows wider) and Spout, the gargoyle waterspout, supplies the rain." },
+    { "roll": "Interaction", "value": "aim and release", "became": "Castles have always lobbed things at their neighbours. This one pulls back, aims and lets go, siege-engine style, except the ammunition is courtesy. The further the light reaches, the further you can throw." },
+    { "roll": "Scale", "value": "thousands", "became": "One hundred thousand grey acres, counted down by the handful: a rainbow plants 1 acre at first and about 25 by the end." },
+    { "roll": "Drive", "value": "revenge", "became": "Baron Brume complained that the castle was 'too colourful, an eyesore', and had its upkeep grant cut. The politest revenge there is: make his estate exactly as colourful as the castle." },
+    { "roll": "Obstacle", "value": "a tiny budget", "became": "Three crowns a month. Windows, taller towers and Spout's wage (one bucket of rainwater a week) all cost money, so the castle takes paid orders." },
+    { "roll": "Initial", "value": "B", "became": "Baron B. Brume (brume is an old word for mist), and Brume Hall on its grey hill at the far end of the estate." },
+    { "roll": "Length", "value": "short (1–3 hours)", "became": "About an hour and a half, over a sitting or two. Spout keeps throwing while you're away, at a reduced rate." },
+    { "roll": "Structure", "value": "orders with deadlines (fill contracts for rewards)", "became": "Brume's own tenants want colour too, but Estate Regulation 1 forbids paint, and a rainbow isn't paint. They pin orders to their plots, a rainbow over the sad pig by Thursday, with a fee and a deadline. Orders are the castle's only real income." },
+    { "roll": "Structure", "value": "the number goes down: an incremental in reverse", "became": "The big number is grey acres, and it only goes down: the Turnip Fields, the Orchard, Brumewick, the Moor, Brume Hall. Reaching each new stretch of the estate costs crowns (a taller tower, a rose window, a decorative trebuchet)." },
+    { "roll": "Twist", "value": "a helper with opinions", "became": "Spout stamps every order APPROVED or DECLINED. Once he's on the payroll he throws the approved ones himself, and the dutiful ones are what he approves of: funerals, retirements, drainage ditches. Weddings are vulgar. The festive ones he declines carry a surcharge, so they're yours to land by hand." },
+    { "roll": "Tone", "value": "deadpan bureaucratic", "became": "Everything is in triplicate: one (1) rainbow, received with thanks, withdrawn with regret and on file. Brume objects to each region in writing as it turns, a little less strongly every time." },
+    { "roll": "Look", "value": "stained glass", "became": "The whole scene is leaded glass: quarries of sky, a mosaic castle, and an estate of diamond panes that swap the Baron's slate for the castle's warm glass one acre at a time." },
+    { "roll": "Palette", "value": "Nyx8", "became": "Nyx8 has two night blues and a slate for the Baron, and cream, tan, rose, mauve and plum for the castle. A rainbow in this palette is a muted dusk rainbow, which suits a castle this sorry." },
+    { "roll": "Music", "value": "polka, dorian", "became": "A polite village-band polka in D dorian: tuba oom-pah, accordion on the off-beats, a clarinet that joins in Brumewick. It fills out as the light reaches further. Every chime and fanfare is on the same scale." },
+    { "roll": "Context", "value": "none", "became": "No calendar nod today. Just rainbows, in triplicate." },
+    { "roll": "Ending", "value": "hand it all over to someone else", "became": "When the last grey acre is gone, the castle signs Form T-1, Transfer of Title: itself, its windows, its rainbows and Spout (conditions attached), given to Baron Brume with compliments.", "spoiler": true },
+    { "roll": "Turn", "value": "they give it all away", "became": "The WELCOME mat, the spare key under it and the fruit basket on Brume's step were always for him. Now he has to keep a castle and 100,000 acres of rainbow on three crowns a month. Spout approves of that, the first festive thing he has ever approved.", "spoiler": true }
+  ],
+  "outro": "The castle considers the matter closed. It is very sorry about all of it."
+}
