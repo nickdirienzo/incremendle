@@ -1,0 +1,60 @@
+{
+  "libs": [
+    {
+      "name": "@strudel/web",
+      "version": "1.3.0",
+      "license": "AGPL-3.0-or-later",
+      "what": "pattern music: synths, samples, Tidal mini-notation",
+      "home": "https://strudel.cc",
+      "support": "https://opencollective.com/tidalcycles"
+    }
+  ],
+  "art": [
+    {
+      "set": "Phosphor",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/phosphor-icons/core/blob/main/LICENSE",
+      "home": "https://github.com/phosphor-icons/core",
+      "support": "https://github.com/sponsors/phosphor-icons",
+      "icons": [
+        {
+          "icon": "ph:megaphone-fill",
+          "author": "Phosphor Icons",
+          "source": "https://icon-sets.iconify.design/ph/megaphone-fill/"
+        },
+        {
+          "icon": "ph:newspaper-fill",
+          "author": "Phosphor Icons",
+          "source": "https://icon-sets.iconify.design/ph/newspaper-fill/"
+        },
+        {
+          "icon": "ph:radio-fill",
+          "author": "Phosphor Icons",
+          "source": "https://icon-sets.iconify.design/ph/radio-fill/"
+        },
+        {
+          "icon": "ph:coffee-fill",
+          "author": "Phosphor Icons",
+          "source": "https://icon-sets.iconify.design/ph/coffee-fill/"
+        }
+      ]
+    }
+  ],
+  "fonts": [
+    {
+      "name": "Sniglet",
+      "license": "OFL-1.1",
+      "home": "https://fonts.google.com/specimen/Sniglet"
+    },
+    {
+      "name": "Patrick Hand",
+      "license": "OFL-1.1",
+      "home": "https://fonts.google.com/specimen/Patrick+Hand"
+    }
+  ],
+  "palette": {
+    "name": "Eulbink",
+    "author": "Inkpendude ",
+    "home": "https://lospec.com/palette-list/eulbink"
+  }
+}

@@ -1,0 +1,1239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Who Left the Lights On? · Incremendle</title>
+<meta name="description" content="Mr Dobbin screwed his LIGHTS OUT AT 10 sign to the wastebasket by the taps. The bin is full of fireflies, and very sure of its aim. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Who Left the Lights On?">
+<meta property="og:description" content="Mr Dobbin screwed his LIGHTS OUT AT 10 sign to the wastebasket by the taps. The bin is full of fireflies and very sure of its aim, and soon every dark window in Dobbin’s Hollow is lit, and the whole world is talking.">
+<meta property="og:url" content="https://incremendle.com/who-left-the-lights-on/">
+<meta property="og:image" content="https://incremendle.com/who-left-the-lights-on/og.png?v=3f29322c">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Who Left the Lights On?: Mr Dobbin screwed his LIGHTS OUT AT 10 sign to the wastebasket by the taps. The bin is full of fireflies and very sure of its aim, and soon every dark window in Dobbin’s Hollow is lit, and the whole world is talking.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/sniglet/font.css">
+<link rel="stylesheet" href="/shared/fonts/patrick-hand/font.css">
+<style>
+  /* Felt and yarn after lights-out, in EULBINK: night felt in navies and blues, cyan glow, white stitches. */
+  :root {
+    --deep: #201533; --ink: #252446; --navy: #203562; --blue: #1e579c; --sky: #0098db; --cyan: #0ce6f2; --white: #ffffff;
+    --soft: #cfe9f7;
+    --felt: none;
+    --head: 'Sniglet', ui-rounded, system-ui, sans-serif;
+    --hand: 'Patrick Hand', 'Comic Sans MS', system-ui, sans-serif;
+    color-scheme: dark;
+  }
+  html, body { background: var(--deep); color: var(--soft); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 17px/1.35 var(--hand);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(10px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image: var(--felt), radial-gradient(ellipse at 20% -20%, #1e579c66 0, transparent 60%);
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 0 0 6px; }
+  h1 { font: 800 36px/1 var(--head); margin: 0; color: var(--white); letter-spacing: .3px; text-shadow: 0 0 14px #0ce6f288, 0 3px 0 var(--blue); }
+  header p { margin: 0; font-size: 18px; color: var(--sky); }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 18px; align-items: start; }
+  @media (max-width: 780px) { .game { grid-template-columns: 1fr; } h1 { font-size: 30px; } }
+  @media (max-width: 560px) { .hud { grid-template-columns: auto minmax(0, 1fr); } .meter { grid-column: 1 / -1; } }
+  main { min-width: 0; }
+
+  /* A felt patch with a stitched edge: the look of every panel and button. */
+  .patch { background-color: var(--navy); background-image: var(--felt); border-radius: 14px; box-shadow: 0 3px 0 #0b0716, 0 6px 14px #0008; position: relative; }
+  .patch::after { content: ''; position: absolute; inset: 4px; border: 1.5px dashed #ffffff40; border-radius: 10px; pointer-events: none; }
+
+  .hud { display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 4px 14px; align-items: center; margin-bottom: 8px; }
+  .big { font: 800 28px/1 var(--head); color: var(--white); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .big small { font: 400 16px var(--hand); color: var(--sky); }
+  .bin-n { font: 400 18px/1 var(--hand); color: var(--soft); white-space: nowrap; }
+  .bin-n b { font: 800 22px var(--head); color: var(--cyan); }
+  .meter { position: relative; height: 28px; border-radius: 14px; background: var(--deep); box-shadow: inset 0 2px 5px #000a, 0 1px 0 #ffffff1a; overflow: hidden; min-width: 0; }
+  .meter i { position: absolute; inset: 0 auto 0 0; width: 0; background: repeating-linear-gradient(115deg, var(--sky) 0 7px, var(--cyan) 7px 9px); box-shadow: 0 0 12px var(--cyan); transition: width .6s; border-radius: 14px; }
+  .meter span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 15.5px; color: var(--white); white-space: nowrap; overflow: hidden; text-shadow: 0 1px 2px var(--deep), 0 0 4px var(--deep); }
+  .sub { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0 16px; font-size: 15px; color: var(--sky); min-height: 20px; }
+  .sub b { font-weight: 400; color: var(--white); }
+  .sub .sync { color: var(--cyan); }
+
+  canvas#stage { display: block; width: 100%; touch-action: none; cursor: crosshair; background: var(--deep); border-radius: 18px; box-shadow: 0 0 0 4px var(--ink), 0 0 0 6px #1e579c88, 0 10px 26px #000a; }
+  canvas#stage:focus-visible { outline: 3px dashed var(--cyan); outline-offset: 6px; }
+
+  .log { margin: 12px 0 0; min-height: 3.2em; font-size: 18px; line-height: 1.35; color: var(--white); padding: 9px 14px 10px; }
+  .log b { font: 800 12px/1 var(--head); letter-spacing: 1.5px; color: var(--deep); background: var(--cyan); padding: 3px 8px; margin-right: 8px; border-radius: 8px; vertical-align: 2px; }
+  .log b.dob { background: var(--sky); color: var(--white); }
+  .log b.bin { background: var(--white); }
+  .log b.away { background: var(--blue); color: var(--white); }
+  .log.fresh span { animation: rise .45s ease-out; }
+  @keyframes rise { from { opacity: 0; } }
+
+  aside { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; scrollbar-width: thin; padding: 4px 6px 8px 4px; }
+  @media (max-width: 780px) { aside { position: static; max-height: none; overflow: visible; } }
+  #calls:empty { display: none; }
+  #calls { display: grid; gap: 8px; margin-bottom: 12px; }
+  .choice { width: 100%; text-align: left; font: 400 16px/1.25 var(--hand); color: var(--deep); background-color: var(--cyan); border: 0; padding: 10px 14px 12px; cursor: pointer; animation: breathe 2s ease-in-out infinite; }
+  .choice b { display: block; font: 800 22px/1.1 var(--head); }
+  .choice.alt { background-color: var(--white); }
+  .choice:focus-visible { outline: 3px dashed var(--white); outline-offset: 3px; }
+  @keyframes breathe { 50% { box-shadow: 0 3px 0 #0b0716, 0 0 26px var(--cyan); } }
+
+  .orders { padding: 8px 10px 10px; margin-bottom: 12px; }
+  .orders h3 { margin: 0 0 4px; font: 800 17px/1.1 var(--head); color: var(--white); display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .orders h3 small { font: 400 14px var(--hand); color: var(--sky); white-space: nowrap; }
+  .orders h3 span { cursor: help; border-radius: 6px; }
+  .orders h3 span:focus-visible { outline: 2px dashed var(--cyan); }
+  #ordList { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+  #ordList li { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; align-items: center; gap: 3px; font-size: 15px; position: relative; z-index: 1; }
+  #ordList .nm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--white); }
+  #ordList .nm em { font-style: normal; color: var(--sky); font-size: 13px; }
+  #ordList .nm.on em { color: var(--cyan); }
+  #ordList button { width: 26px; height: 24px; font: 400 17px/1 var(--hand); color: var(--white); background: var(--blue); border: 0; border-radius: 7px; cursor: pointer; padding: 0; }
+  #ordList button:hover { background: var(--sky); }
+  #ordList button[aria-disabled="true"] { opacity: .35; cursor: default; }
+  #ordList button:focus-visible, .pin:focus-visible { outline: 2px dashed var(--cyan); outline-offset: 1px; }
+  .pin { position: relative; z-index: 1; width: 100%; margin-top: 6px; font: 400 15px/1.2 var(--hand); color: var(--deep); background: var(--cyan); border: 0; border-radius: 9px; padding: 5px 8px; cursor: pointer; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pin[aria-disabled="true"] { background: var(--blue); color: var(--soft); cursor: default; }
+  .orders .empty { font-size: 14.5px; color: var(--sky); position: relative; z-index: 1; }
+
+  aside h2 { font: 800 20px/1 var(--head); margin: 2px 0 9px; color: var(--white); }
+  #afford { display: block; font: 400 15px/1.2 var(--hand); color: var(--sky); margin-top: 2px; }
+  #afford:empty { display: none; }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  @media (max-width: 780px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up {
+    position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 15px/1.15 var(--hand); color: var(--sky);
+    background-color: var(--ink); background-image: var(--felt); border: 0; border-radius: 11px; padding: 6px 9px 6px; cursor: pointer;
+    box-shadow: 0 2px 0 #0b0716, inset 0 0 0 1.5px #ffffff14;
+  }
+  .up b { font: 800 14.5px/1.15 var(--head); color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { background-color: var(--blue); box-shadow: 0 2px 0 #0b0716, inset 0 0 0 1.5px var(--cyan), 0 0 10px #0ce6f244; }
+  .up.can em { color: var(--cyan); }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up[aria-disabled="true"]:not(.can) b { color: var(--soft); opacity: .8; }
+  .up.odd b::before, .bought.odd::before { content: '✂ '; color: var(--cyan); }
+  .up .tag { position: absolute; top: -8px; right: 6px; font: 800 11px/1.3 var(--head); letter-spacing: 1px; font-style: normal; color: var(--deep); background: var(--white); padding: 0 6px; border-radius: 7px; box-shadow: 0 2px 0 #0007; }
+  .up.new { animation: newglow 1.1s ease-in-out 6; }
+  @keyframes newglow { 50% { background-color: var(--sky); } }
+  .up:focus-visible, .bought:focus-visible { outline: 2px dashed var(--cyan); outline-offset: 2px; }
+  #tip {
+    position: fixed; z-index: 50; width: 290px; padding: 11px 14px 12px; pointer-events: none; font: 16px/1.3 var(--hand); color: var(--soft);
+    background-color: var(--navy); background-image: var(--felt); border-radius: 16px; box-shadow: 0 10px 24px #000c, 0 0 0 3px var(--blue);
+  }
+  #tip::after { content: ''; position: absolute; inset: 5px; border: 1.5px dashed #ffffff3a; border-radius: 12px; pointer-events: none; }
+  #tip b { display: block; font: 800 19px/1.1 var(--head); color: var(--white); margin-bottom: 4px; }
+  #tip .fx { display: block; margin-top: 7px; padding: 4px 8px; color: var(--deep); background: var(--cyan); border-radius: 9px; }
+  #tip i { display: block; margin-top: 7px; padding-top: 6px; border-top: 2px dotted var(--blue); color: var(--white); }
+  #tip small { display: block; margin-top: 6px; font-size: 16px; color: var(--cyan); }
+  #tip.inline { position: relative; width: auto; margin-top: 10px; }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 800 17px var(--head); color: var(--white); cursor: pointer; list-style: none; padding: 3px 2px; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: '›'; color: var(--sky); transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 2px dashed var(--cyan); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 2px 2px; }
+  .bought { max-width: 100%; font: 15px/1.2 var(--hand); color: var(--white); background-color: var(--ink); background-image: var(--felt); border: 0; border-radius: 9px; padding: 3px 9px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: inset 0 0 0 1.5px #ffffff22; }
+  .bought:hover, .bought.on { color: var(--deep); background-color: var(--cyan); }
+
+  #ending { margin: 22px auto 0; max-width: 700px; color: var(--soft); padding: 20px 30px 24px; }
+  #ending .num { font: 800 13px var(--head); color: var(--sky); letter-spacing: 2.5px; position: relative; z-index: 1; }
+  #ending h2 { font: 800 38px/1.05 var(--head); margin: 6px 0 10px; color: var(--white); text-shadow: 0 0 14px #0ce6f266; position: relative; z-index: 1; }
+  #ending p { margin: 9px 0; font-size: 18.5px; position: relative; z-index: 1; }
+  #ending .sig { color: var(--sky); }
+  #shareBtn, #againBtn { position: relative; z-index: 1; font: 800 19px/1 var(--head); color: var(--deep); background: var(--cyan); border: 0; border-radius: 13px; box-shadow: 0 4px 0 #0b0716; padding: 11px 18px 12px; margin: 10px 8px 0 0; cursor: pointer; }
+  #againBtn { background: var(--sky); color: var(--white); }
+  #shareBtn:focus-visible, #againBtn:focus-visible { outline: 2px dashed var(--white); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .choice, .log.fresh span { animation: none; } .meter i, #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="26" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Who Left the Lights On?</h1>
+    <p id="where">Dobbin’s Hollow caravan park · after lights-out</p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="hud">
+        <div class="big" title="Gossip: what the campers say about the lights. The taps run on it."><span id="gossip">0</span> <small>gossip</small></div>
+        <div class="bin-n" title="Fireflies asleep in the bin, ready to go. They come back when Dobbin shoos them."><b id="ffN">3</b> <span id="ffT">of 3 in the bin</span></div>
+        <div class="meter" id="meter" title="Who’s heard about the lights at Dobbin’s Hollow. Everyone on Earth is eight billion people."><i id="meterFill"></i><span id="meterTxt"></span></div>
+        <div class="sub" id="sub"></div>
+      </div>
+      <canvas id="stage" tabindex="0" aria-label="Dobbin’s Hollow caravan park at night, a felt map. Drag from the wastebasket to a dark window to send a firefly along your thread; Dobbin will come to shout LIGHTS OUT at it. Keep your thread out of his torch beam. Keyboard: Enter sends a firefly to the best dark window."></canvas>
+      <p class="log patch" id="log" aria-live="polite"></p>
+    </main>
+    <aside id="side">
+      <div id="calls"></div>
+      <div class="orders patch" id="orders" hidden>
+        <h3><span id="ordHead" tabindex="0">Standing orders</span> <small id="ordN"></small></h3>
+        <ol id="ordList"></ol>
+        <button type="button" class="pin" id="pinBtn">Pin last path</button>
+      </div>
+      <h2>Swaps at the taps <span id="afford"></span></h2>
+      <div id="shop"></div>
+      <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" class="patch" hidden>
+    <div class="num" id="endNum">EIGHT BILLION PEOPLE HAVE HEARD</div>
+    <h2 id="endTitle">Lights out.</h2>
+    <div id="story"></div>
+    <button id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DEBUG = location.search.includes('debug');
+const C = { white: '#ffffff', cyan: '#0ce6f2', sky: '#0098db', blue: '#1e579c', navy: '#203562', ink: '#252446', deep: '#201533', soft: '#cfe9f7' };
+const TAU = Math.PI * 2;
+const hash = s => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
+
+// Numbers in words, the way the campers say them.
+function fmt(n) {
+  n = Math.floor(n);
+  if (n < 1e4) return n.toLocaleString('en-US');
+  const u = [[1e9, 'billion'], [1e6, 'million'], [1e3, 'thousand']];
+  for (const [v, w] of u) if (n >= v) { const x = n / v; return `${x >= 100 ? Math.floor(x) : x >= 10 ? x.toFixed(1) : x.toFixed(2)} ${w}`; }
+  return String(n);
+}
+const short = n => { n = Math.floor(n); if (n < 1e4) return n.toLocaleString('en-US'); const u = [[1e9, 'B'], [1e6, 'M'], [1e3, 'k']]; for (const [v, w] of u) if (n >= v) { const x = n / v; return `${x >= 100 ? Math.floor(x) : x >= 10 ? x.toFixed(1) : x.toFixed(2)}${w}`; } return String(n); };
+
+// ---------- State ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:26:save';
+let raw = null;
+try { raw = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+const S = E.load(raw);
+const save = () => { S.savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound: D in-sen (D E♭ G A C), plucked yarn and little bells ----------
+// Trims measured with npm run mix: music near -24 dBFS RMS, effects peaking near -10.
+const A = createAudio({ sfxTrim: 2.2, musicTrim: 1.15 });
+const notes = scale('in-sen', 62);   // D4 Eb4 G4 A4 C5, D5 ...
+const gate = {};
+const every = (k, ms) => { const t = performance.now(); if (!DEBUG && t - (gate[k] || 0) < ms) return false; gate[k] = t; return true; };
+// Per-effect levels, measured with npm run mix so every effect peaks near -10 dBFS (the little frequent ones a
+// few dB under). Each effect's notes are scaled by its level while it plays.
+const LEVEL = { thread: 6, launch: 1.5, lit: 2, sync: 1.2, shout: 2.6, gossip: 3, caught: 2.1, home: 4, find: 1.5, buy: 1.25, unlock: 2.3, deny: 1.8, zone: 2.5, finale: 2.4 };
+let lvl = 1;
+const T = o => A.tone({ ...o, vol: (o.vol ?? 0.3) * lvl });
+const N = (k, o = {}) => A.noiseHit(k, { ...o, vol: (o.vol ?? 0.25) * lvl });
+const pl = (d, o = {}) => T({ type: 'pluck', freq: notes(d), dur: 0.12, vol: 0.14, ...o });
+const sfx = {
+  // The thread pays out as you draw: a soft pluck every little way, climbing.
+  thread(i = 0) { if (!every('thread', 60)) return; pl(3 + (i % 8), { vol: 0.08, dur: 0.09 }); },
+  // The lid flicks: a felt thwop and a little rising pair.
+  launch() { N('hat', { vol: 0.05, dur: 0.03 }); T({ type: 'triangle', freq: notes(-3), dur: 0.05, vol: 0.12, glide: 1.6 }); pl(5, { vol: 0.1, at: A.now + 0.05 }); pl(7, { vol: 0.09, at: A.now + 0.11 }); },
+  // A window lights up.
+  lit() { if (!every('lit', 120)) return; T({ type: 'bell', freq: notes(10), dur: 0.14, vol: 0.09 }); T({ type: 'bell', freq: notes(12), dur: 0.2, vol: 0.06, at: A.now + 0.06 }); },
+  // A ring of fireflies blinking together: all three bells at once.
+  sync() { [10, 12, 14].forEach(d => T({ type: 'bell', freq: notes(d), dur: 0.3, vol: 0.07 })); },
+  // LIGHTS OUT! A comic little horn, down a step.
+  shout() { if (!every('shout', 260)) return; const o = { type: 'sawtooth', dur: 0.12, vol: 0.075, cutoff: 900, release: 0.08 }; T({ ...o, freq: notes(-2) }); T({ ...o, freq: notes(-4), dur: 0.2, at: A.now + 0.15 }); },
+  // Gossip coming in on its own: whispering, and a tiny pluck.
+  gossip() { if (!every('gossip', 2600)) return; for (let i = 0; i < 3; i++) N('shaker', { vol: 0.025, dur: 0.035, at: A.now + i * 0.07 }); pl(8 + Math.floor(Math.random() * 4), { vol: 0.05, at: A.now + 0.22, dur: 0.06 }); },
+  // Caught in the jam jar.
+  caught() { if (!every('caught', 300)) return; T({ type: 'bell', freq: notes(16), dur: 0.05, vol: 0.08 }); T({ type: 'triangle', freq: notes(0), dur: 0.08, vol: 0.1, at: A.now + 0.05 }); },
+  // A firefly home in the bin.
+  home() { if (!every('home', 400)) return; T({ type: 'sine', freq: notes(7), dur: 0.1, vol: 0.05, glide: 0.8, release: 0.1 }); },
+  // Something found in the dark.
+  find() { [5, 7, 9, 10, 12].forEach((d, i) => pl(d, { vol: 0.1, at: A.now + i * 0.07 })); T({ type: 'bell', freq: notes(15), dur: 0.4, vol: 0.06, at: A.now + 0.4 }); },
+  buy() { T({ type: 'pad', freq: notes(0), dur: 0.16, vol: 0.035, attack: 0.02, cutoff: 1500 }); [5, 7, 10].forEach((d, i) => pl(d, { vol: 0.11, at: A.now + i * 0.05 })); },
+  unlock() { T({ type: 'bell', freq: notes(12), dur: 0.2, vol: 0.08 }); T({ type: 'bell', freq: notes(14), dur: 0.3, vol: 0.07, at: A.now + 0.12 }); },
+  deny() { T({ type: 'triangle', freq: notes(-4), dur: 0.08, vol: 0.12 }); },
+  // A new part of the park: the shanty's call, on bells.
+  zone() { [0, 3, 4, 5, 3, 5].forEach((d, i) => T({ type: 'bell', freq: notes(d + 5), dur: 0.16, vol: 0.06, at: A.now + i * 0.16 })); },
+  // The end: the whole call and its answer, and a pad on the open fifth.
+  finale() {
+    [0, 3, 4, 5, 3, 5, 7, 5, 4, 3, 1, 0].forEach((d, i) => T({ type: 'bell', freq: notes(d + 5), dur: 0.2, vol: 0.06, at: A.now + i * 0.2 }));
+    [notes(0) / 2, notes(3) / 2, notes(5) / 2].forEach((f, i) => T({ type: 'pad', freq: f, dur: 2.6, vol: 0.02, attack: 0.5, release: 1.6, cutoff: 1100, at: A.now + 2.3 + i * 0.03 }));
+  },
+};
+for (const [k, f] of Object.entries(sfx)) sfx[k] = (...a) => { lvl = LEVEL[k] || 1; try { f(...a); } finally { lvl = 1; } };
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'zone', 'find'], S: () => S, E };
+
+// ---------- Music ----------
+let music = null, soundtrack = null;
+function song() { return (soundtrack ??= createSoundtrack(music.strudel))(E.phaseKey(S)); }
+createMusic(A, { song }).then(m => { music = m; music.update(); if (DEBUG) window.__game.music = m; }).catch(e => console.warn('music', e));
+const refreshMusic = () => { if (music) music.update(); };
+
+// ---------- Felt ----------
+// A fibre texture laid over every felt shape: short wisps of light and dark.
+function fibres(size = 160, seed = 3) {
+  const c = Sprites.canvas(size, size), g = c.getContext('2d');
+  let s = seed; const r = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < size * 7; i++) {
+    const x = r() * size, y = r() * size, a = r() * TAU, l = 2 + r() * 6;
+    g.strokeStyle = r() < 0.5 ? `rgba(255,255,255,${0.05 + r() * 0.07})` : `rgba(0,0,0,${0.08 + r() * 0.1})`;
+    g.lineWidth = 0.6 + r() * 0.6;
+    g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); g.stroke();
+  }
+  return c;
+}
+const FIB = fibres();
+document.documentElement.style.setProperty('--felt', `url(${FIB.toDataURL()})`);
+let fibPat = null;
+const fib = g => (fibPat ??= g.createPattern(FIB, 'repeat'));
+// Fill a path as a piece of felt: colour, fibres, a soft shadow, a stitched edge.
+function felt(g, path, col, { stitch = 'rgba(255,255,255,0.35)', shadow = 3, fibre = 1, inset = 0 } = {}) {
+  g.save();
+  if (shadow) { g.shadowColor = 'rgba(8,4,20,0.6)'; g.shadowBlur = 5; g.shadowOffsetY = shadow; }
+  path(g); g.fillStyle = col; g.fill();
+  g.restore();
+  if (fibre) { g.save(); path(g); g.clip(); g.globalAlpha = fibre; g.fillStyle = fib(g); g.fill(); g.restore(); }
+  if (stitch) {
+    g.save(); path(g); g.clip();
+    g.setLineDash([3.5, 2.8]); g.lineWidth = inset ? 1.3 : 2.6; g.strokeStyle = stitch;
+    if (inset) { g.translate(0, 0); }
+    path(g); g.stroke(); g.restore();
+  }
+}
+const rrect = (x, y, w, h, r) => g => { g.beginPath(); g.roundRect(x, y, w, h, r); };
+const ellp = (x, y, rx, ry) => g => { g.beginPath(); g.ellipse(x, y, rx, ry, 0, 0, TAU); };
+const poly = pts => g => { g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.closePath(); };
+
+// ---------- Layout: the park is 1000×640; on phones it's turned on its side so you can draw on it ----------
+const cv = $('stage'), cx = cv.getContext('2d');
+let tall = false, VW = 1000, VH = 640, k = 1, dpr = 1, q = 1;
+function layout() {
+  const cw = cv.parentElement.clientWidth;
+  tall = cw < 600;
+  VW = tall ? E.H : E.W; VH = tall ? E.W : E.H;
+  dpr = Math.min(2, devicePixelRatio || 1);
+  k = cw / VW; q = k * dpr;
+  cv.style.height = `${VH * k}px`;
+  cv.width = Math.round(VW * q); cv.height = Math.round(VH * q);
+  bg = null; fogKey = '';
+}
+// World (park) coordinates to view coordinates, and back.
+const P = (x, y) => (tall ? [y, E.W - x] : [x, y]);
+const IP = (vx, vy) => (tall ? [E.W - vy, vx] : [vx, vy]);
+const worldT = g => (tall ? g.setTransform(0, -q, q, 0, 0, q * E.W) : g.setTransform(q, 0, 0, q, 0, 0));
+const viewT = g => g.setTransform(q, 0, 0, q, 0, 0);
+
+// ---------- The ground: lanes, hedges, trees, roofs (cached, in park coordinates) ----------
+const BLD = {
+  block: { x: 36, y: 218, w: 162, h: 60, name: 'SHOWERS' },
+  club: { x: 826, y: 92, w: 160, h: 146, name: 'CLUBHOUSE' },
+  home: { x: 850, y: 424, w: 130, h: 64, name: 'DOBBIN' },
+};
+const TREES = [[660, 160], [640, 380], [740, 250], [830, 300], [760, 470], [650, 600], [840, 380], [738, 120], [660, 30], [850, 600], [760, 630], [640, 250]];
+let bg = null;
+function background() {
+  const s = Math.min(2, q);
+  bg = Sprites.canvas(Math.round(E.W * s), Math.round(E.H * s));
+  const g = bg.getContext('2d');
+  g.scale(s, s);
+  g.fillStyle = C.navy; g.fillRect(0, 0, E.W, E.H);
+  g.fillStyle = fib(g); g.fillRect(0, 0, E.W, E.H);
+  // Mown patches of the meadow, a shade lighter.
+  let sd = 11; const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 26; i++) { const x = r() * E.W, y = r() * E.H; felt(g, ellp(x, y, 40 + r() * 50, 20 + r() * 26), '#24406e', { stitch: null, shadow: 0, fibre: 0.8 }); }
+  // Lanes: the main drive from the gate past the bin to the bungalow, and the loops off it.
+  const lane = (pts, w = 22) => {
+    g.save(); g.lineCap = 'round'; g.lineJoin = 'round';
+    g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y)));
+    g.strokeStyle = '#0b0716aa'; g.lineWidth = w + 4; g.stroke();
+    g.strokeStyle = C.ink; g.lineWidth = w; g.stroke();
+    g.setLineDash([5, 5]); g.strokeStyle = 'rgba(255,255,255,0.14)'; g.lineWidth = 1.5; g.stroke();
+    g.restore();
+  };
+  lane([[0, 336], [200, 336], [450, 336], [650, 330], [830, 340], [920, 400], [926, 520]]);
+  lane([[450, 336], [450, 50], [650, 50]], 16);
+  lane([[450, 336], [450, 600], [650, 600]], 16);
+  lane([[545, 50], [545, 600]], 14);
+  lane([[200, 336], [300, 260], [380, 180]], 12);
+  lane([[200, 336], [300, 420], [370, 500]], 12);
+  lane([[650, 330], [740, 340], [826, 180]], 12);
+  // Hedge round the park.
+  g.save(); g.setLineDash([2, 9]); g.lineCap = 'round'; g.strokeStyle = C.blue; g.lineWidth = 9; g.strokeRect(8, 8, E.W - 16, E.H - 16); g.restore();
+  // Trees in the woods: round felt crowns from above.
+  for (const [x, y] of TREES) {
+    felt(g, ellp(x, y, 30, 30), C.blue, { stitch: 'rgba(255,255,255,0.22)' });
+    felt(g, ellp(x - 6, y - 6, 16, 16), '#2a6bb0', { stitch: null, shadow: 0 });
+  }
+  // Roofs, seen from above: the shower block, the clubhouse, Dobbin's bungalow.
+  for (const b of Object.values(BLD)) {
+    felt(g, rrect(b.x, b.y, b.w, b.h, 8), C.ink, { stitch: 'rgba(255,255,255,0.3)', shadow: 5 });
+    g.save(); g.strokeStyle = 'rgba(255,255,255,0.08)'; g.lineWidth = 2;
+    for (let x = b.x + 12; x < b.x + b.w; x += 12) { g.beginPath(); g.moveTo(x, b.y + 4); g.lineTo(x, b.y + b.h - 4); g.stroke(); }
+    g.restore();
+  }
+  // The taps: a standpipe and its puddle, where everyone gossips.
+  felt(g, ellp(176, 300, 18, 9), '#1b4d8c', { stitch: null, shadow: 0 });
+}
+
+// ---------- Fog: what the fireflies haven't lit yet ----------
+let fog = null, fogKey = '';
+function fogCanvas() {
+  if (fogKey === S.fog && fog) return fog;
+  fogKey = S.fog;
+  fog ??= Sprites.canvas(E.GW, E.GH);
+  const g = fog.getContext('2d'), img = g.createImageData(E.GW, E.GH);
+  for (let i = 0; i < E.GW * E.GH; i++) { img.data[i * 4] = 0x16; img.data[i * 4 + 1] = 0x0f; img.data[i * 4 + 2] = 0x26; img.data[i * 4 + 3] = S.fog[i] === '1' ? 0 : 222; }
+  g.putImageData(img, 0, 0);
+  return fog;
+}
+
+// ---------- Sprites: felt dwellings, the bin, Dobbin, the props ----------
+const SPR = {};
+function spr(key, w, h, draw) {
+  if (SPR[key]) return SPR[key];
+  const c = Sprites.canvas(w * 2, h * 2), g = c.getContext('2d');
+  g.scale(2, 2); draw(g);
+  return (SPR[key] = c);
+}
+const winCol = lit => (lit ? C.cyan : C.deep);
+function dwelling(kind, lit, crowd = 0) {
+  return spr(`${kind}:${lit ? 1 : 0}:${crowd}`, 72, 56, g => {
+    g.translate(36, 44);
+    if (kind === 'tent') {
+      felt(g, poly([[-24, 6], [0, -32], [24, 6]]), lit ? '#0aa6e6' : C.sky);
+      felt(g, poly([[-7, 6], [0, -16], [7, 6]]), winCol(lit), { stitch: lit ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.2)', shadow: 0 });
+      g.strokeStyle = 'rgba(255,255,255,0.5)'; g.lineWidth = 1; g.beginPath(); g.moveTo(-24, 6); g.lineTo(-32, 10); g.moveTo(24, 6); g.lineTo(32, 10); g.stroke();
+    } else if (kind === 'caravan') {
+      felt(g, rrect(-30, -24, 60, 28, 11), lit ? '#e3f6ff' : C.soft, { stitch: 'rgba(32,53,98,0.5)' });
+      felt(g, rrect(-30, -8, 60, 6, 2), C.sky, { stitch: null, shadow: 0 });
+      felt(g, rrect(-18, -19, 16, 10, 3), winCol(lit), { stitch: null, shadow: 0 });
+      felt(g, rrect(6, -19, 16, 10, 3), winCol(lit), { stitch: null, shadow: 0 });
+      felt(g, ellp(-10, 6, 6, 6), C.ink, { stitch: 'rgba(255,255,255,0.4)' });
+      g.strokeStyle = C.soft; g.lineWidth = 2; g.beginPath(); g.moveTo(30, -2); g.lineTo(38, 4); g.stroke();
+    } else if (kind === 'yurt') {
+      felt(g, g2 => { g2.beginPath(); g2.moveTo(-26, 6); g2.lineTo(-26, -10); g2.quadraticCurveTo(0, -36, 26, -10); g2.lineTo(26, 6); g2.closePath(); }, lit ? '#e3f6ff' : C.soft, { stitch: 'rgba(32,53,98,0.5)' });
+      g.strokeStyle = 'rgba(30,87,156,0.6)'; g.lineWidth = 2; g.beginPath(); g.moveTo(-26, -10); g.quadraticCurveTo(0, -16, 26, -10); g.stroke();
+      felt(g, rrect(-7, -6, 14, 12, 3), winCol(lit), { stitch: null, shadow: 0 });
+    }
+    // Wellies outside: more of them as more families squeeze in.
+    for (let i = 0; i < crowd; i++) {
+      const x = -26 + i * 7, col = i % 2 ? C.white : C.cyan;
+      felt(g, rrect(x, 4, 4, 7, 1.5), col, { stitch: null, shadow: 1, fibre: 0.4 });
+    }
+  });
+}
+// The wastebasket: wire mesh, a lid, two button eyes and an expression of total confidence.
+function drawBin(g, x, y, t) {
+  const lidUp = Math.max(0, lidFlip);
+  g.save(); g.translate(x, y);
+  // Sugar water caps, one per sip, stacked beside it.
+  const caps = Math.min(8, E.lv(S, 'range'));
+  for (let i = 0; i < caps; i++) felt(g, ellp(-38 - (i % 2) * 2, 22 - i * 4, 7, 3), i % 2 ? C.cyan : C.sky, { stitch: null, shadow: 1, fibre: 0.5 });
+  // Body.
+  const body = poly([[-22, -22], [22, -22], [17, 26], [-17, 26]]);
+  felt(g, body, '#2d6fb8', { stitch: 'rgba(255,255,255,0.45)', shadow: 4 });
+  g.save(); body(g); g.clip(); g.strokeStyle = 'rgba(255,255,255,0.18)'; g.lineWidth = 1;
+  for (let i = -30; i < 40; i += 7) { g.beginPath(); g.moveTo(i, -22); g.lineTo(i - 10, 26); g.stroke(); g.beginPath(); g.moveTo(i, -22); g.lineTo(i + 10, 26); g.stroke(); }
+  g.restore();
+  // Peaches in the top, visible over the rim.
+  const pe = Math.min(6, Math.ceil(E.lv(S, 'bait') / 6));
+  for (let i = 0; i < pe; i++) felt(g, ellp(-14 + i * 6, -22, 5, 4), i % 2 ? '#f2a2c4' : '#ffc0a8', { stitch: null, shadow: 0, fibre: 0.5 });
+  // Sticky notes on its side, one per order slot.
+  for (let i = 0; i < E.slots(S); i++) { felt(g, rrect(14 + (i % 2) * 7, -12 + Math.floor(i / 2) * 9, 8, 8, 1), C.white, { stitch: null, shadow: 1, fibre: 0.5 }); }
+  // The sign Dobbin screwed on, and (later) the second sign under it.
+  felt(g, rrect(-17, -6, 30, 14, 2), C.white, { stitch: 'rgba(32,21,51,0.4)', shadow: 1 });
+  g.fillStyle = C.deep; g.font = '800 4.6px Sniglet, sans-serif'; g.textAlign = 'center';
+  g.fillText('LIGHTS OUT', -2, 0); g.fillText('AT 10', -2, 5.5);
+  if (S.one.onsign) { felt(g, rrect(-15, 10, 26, 12, 2), C.cyan, { stitch: 'rgba(32,21,51,0.4)', shadow: 1 }); g.fillStyle = C.deep; g.fillText('LIGHTS ON', -2, 15.5); g.fillText('AT 10', -2, 20.5); }
+  // Eyes: half-lidded, very sure of itself.
+  for (const ex of [-8, 6]) {
+    felt(g, ellp(ex, -14, 4.5, 4), C.white, { stitch: null, shadow: 0, fibre: 0.3 });
+    g.fillStyle = C.deep; g.beginPath(); g.arc(ex + 1, -13, 2, 0, TAU); g.fill();
+    g.fillStyle = '#2d6fb8'; g.fillRect(ex - 5, -19, 10, 4);
+  }
+  // The clockwork key, turning.
+  if (S.one.lid) {
+    g.save(); g.translate(-24, 0); g.rotate(reduced ? 0 : t * (1 + E.lv(S, 'wind') * 0.4));
+    g.strokeStyle = C.soft; g.lineWidth = 2; g.beginPath(); g.moveTo(-3, 0); g.lineTo(3, 0); g.stroke();
+    const ks = 4 + E.lv(S, 'wind') * 0.4;
+    felt(g, ellp(-5, -ks / 2 - 1, 3, ks / 2), C.soft, { stitch: null, shadow: 0 }); felt(g, ellp(-5, ks / 2 + 1, 3, ks / 2), C.soft, { stitch: null, shadow: 0 });
+    g.restore();
+  }
+  // The lid, hinged at the back, flicking up when it launches.
+  g.save(); g.translate(-24, -24); g.rotate(-lidUp * 0.9);
+  felt(g, rrect(0, -5, 48, 7, 3), C.sky, { stitch: 'rgba(255,255,255,0.5)', shadow: 2 });
+  // The paper fan taped on top.
+  const fan = E.lv(S, 'fan');
+  if (fan) { g.save(); g.translate(40, -6); for (let i = 0; i < 5; i++) { g.save(); g.rotate(-1.2 + i * 0.3); felt(g, rrect(0, -1.5, 6 + fan * 0.9, 3, 1), i % 2 ? C.white : C.cyan, { stitch: null, shadow: 0, fibre: 0.3 }); g.restore(); } g.restore(); }
+  // The captain's hat.
+  if (S.one.hat) { felt(g, poly([[12, -5], [24, -18], [36, -5]]), C.white, { stitch: 'rgba(32,21,51,0.4)', shadow: 1 }); felt(g, rrect(10, -7, 28, 4, 2), C.ink, { stitch: null, shadow: 0 }); felt(g, ellp(24, -11, 2.5, 2.5), C.cyan, { stitch: null, shadow: 0 }); }
+  g.restore();
+  // Fireflies asleep in the bin, hovering just above it.
+  const n = Math.min(S.n, 12);
+  for (let i = 0; i < n; i++) {
+    const a = t * 1.3 + i * 2.4, rx = Math.cos(a) * (10 + (i % 4) * 4), ry = Math.sin(a * 1.3) * 5 - 34 - (i % 3) * 5;
+    glow(g, rx, ry, 2.2, 0.5 + 0.5 * Math.sin(t * 4 + i));
+  }
+  g.restore();
+}
+function glow(g, x, y, r = 2.4, a = 1) {
+  const gr = g.createRadialGradient(x, y, 0, x, y, r * 4);
+  gr.addColorStop(0, `rgba(12,230,242,${0.65 * a})`); gr.addColorStop(1, 'rgba(12,230,242,0)');
+  g.fillStyle = gr; g.fillRect(x - r * 4, y - r * 4, r * 8, r * 8);
+  g.fillStyle = `rgba(255,255,255,${0.4 + 0.6 * a})`; g.beginPath(); g.arc(x, y, r * 0.7, 0, TAU); g.fill();
+}
+// Dobbin: tartan dressing gown, nightcap, slippers, torch, megaphone, temper.
+function drawDobbin(g, x, y, t, flip, shouting) {
+  g.save(); g.translate(x, y); if (flip) g.scale(-1, 1);
+  const step = reduced ? 0 : Math.sin(t * 9) * (S.dob.target && !shouting ? 2 : 0);
+  // Slippers.
+  felt(g, ellp(-5 + step, 22, 6, 3), C.cyan, { stitch: null, shadow: 1 }); felt(g, ellp(6 - step, 22, 6, 3), C.cyan, { stitch: null, shadow: 1 });
+  // Gown, with a tartan of stitched lines.
+  const gown = poly([[-10, -8], [10, -8], [13, 20], [-13, 20]]);
+  felt(g, gown, C.sky, { stitch: 'rgba(255,255,255,0.5)' });
+  g.save(); gown(g); g.clip(); g.strokeStyle = 'rgba(32,21,51,0.35)'; g.lineWidth = 1.4;
+  for (let i = -12; i < 14; i += 6) { g.beginPath(); g.moveTo(i, -8); g.lineTo(i, 20); g.stroke(); }
+  for (let j = -6; j < 20; j += 6) { g.beginPath(); g.moveTo(-14, j); g.lineTo(14, j); g.stroke(); }
+  g.restore();
+  // The Take a Hike leaflet stuck to his back.
+  if (S.one.hike) { g.save(); g.translate(-11, 4); g.rotate(-0.2); felt(g, rrect(-4, -4, 9, 11, 1), C.white, { stitch: null, shadow: 1, fibre: 0.4 }); g.fillStyle = C.sky; g.fillRect(-2, 3, 4, 2); g.restore(); }
+  // Head and nightcap.
+  felt(g, ellp(0, -16, 8, 8), C.soft, { stitch: null, shadow: 1 });
+  g.fillStyle = C.deep; g.fillRect(2, -18, 2, 2); g.fillRect(-3, -18, 2, 2);
+  if (shouting) { g.beginPath(); g.ellipse(1, -12, 2.5, 2, 0, 0, TAU); g.fill(); } else g.fillRect(-2, -12, 5, 1.2);
+  // Moustache: important.
+  g.fillStyle = C.white; g.beginPath(); g.ellipse(1, -13.5, 4.5, 1.6, 0, 0, TAU); g.fill();
+  felt(g, poly([[-8, -20], [8, -21], [-14, -34]]), C.blue, { stitch: 'rgba(255,255,255,0.4)', shadow: 0 });
+  felt(g, ellp(-14, -34, 2.6, 2.6), S.one.cap ? C.cyan : C.white, { stitch: null, shadow: 0 });
+  if (S.one.cap) { g.fillStyle = C.cyan; g.beginPath(); g.arc(-14, -30.5, 1.6, 0, TAU); g.fill(); }
+  // Torch in front; the megaphone, bigger with every swap.
+  felt(g, rrect(8, -4, 9, 4, 1.5), C.soft, { stitch: null, shadow: 0 });
+  const ml = E.lv(S, 'mega');
+  if (ml && ART.mega) { const ms = 10 + Math.min(14, ml * 0.35); g.drawImage(ART.mega, -14 - ms * 0.6, -6 - ms * 0.5, ms, ms); }
+  g.restore();
+}
+// Hand-drawn props on the map, as felt cut-outs.
+function prop(kind) {
+  return spr('prop:' + kind, 60, 50, g => {
+    g.translate(30, 30);
+    if (kind === 'fire') {
+      for (let i = 0; i < 6; i++) { const a = i / 6 * TAU; felt(g, ellp(Math.cos(a) * 13, Math.sin(a) * 6 + 4, 5, 3), C.ink, { stitch: 'rgba(255,255,255,0.3)', shadow: 1 }); }
+      felt(g, poly([[-9, 4], [0, -18], [9, 4]]), C.sky, { stitch: null, shadow: 0 });
+      felt(g, poly([[-5, 4], [0, -9], [5, 4]]), C.cyan, { stitch: null, shadow: 0 });
+    } else if (kind === 'post') {
+      felt(g, rrect(-12, -20, 24, 30, 2), C.ink, { stitch: 'rgba(255,255,255,0.3)' });
+      for (let i = 0; i < 3; i++) felt(g, rrect(-9, -17 + i * 9, 18, 7, 1), i === 1 ? C.cyan : C.white, { stitch: null, shadow: 0, fibre: 0.4 });
+    } else if (kind === 'gnome') {
+      felt(g, poly([[-8, 12], [8, 12], [5, -4], [-5, -4]]), C.sky, { stitch: 'rgba(255,255,255,0.4)' });
+      felt(g, ellp(0, -7, 5, 5), C.soft, { stitch: null });
+      felt(g, poly([[-6, -9], [6, -9], [0, -26]]), C.cyan, { stitch: null, shadow: 0 });
+      felt(g, poly([[-5, -4], [5, -4], [0, 6]]), C.white, { stitch: null, shadow: 0 });
+      felt(g, rrect(6, 0, 6, 3, 1), C.soft, { stitch: null, shadow: 0 });
+    } else if (kind === 'chair') {
+      felt(g, rrect(-12, -14, 24, 8, 3), C.blue, { stitch: 'rgba(255,255,255,0.3)' });
+      felt(g, rrect(-12, -6, 24, 6, 2), C.blue, { stitch: null });
+      g.strokeStyle = C.soft; g.lineWidth = 2; g.beginPath(); g.moveTo(-10, 0); g.lineTo(-10, 10); g.moveTo(10, 0); g.lineTo(10, 10); g.stroke();
+    } else if (kind === 'cushion') {
+      felt(g, ellp(0, 0, 11, 5), '#f2a2c4', { stitch: 'rgba(255,255,255,0.5)' });
+      felt(g, rrect(9, -2, 6, 3, 1), '#f2a2c4', { stitch: null, shadow: 0 });
+    } else if (kind === 'mug') {
+      felt(g, rrect(-4, -6, 8, 10, 2), C.white, { stitch: null, shadow: 1 });
+      g.strokeStyle = C.white; g.lineWidth = 1.5; g.beginPath(); g.arc(5, -1, 3, -1.2, 1.2); g.stroke();
+    }
+  });
+}
+const FIND_ICON = {
+  sock: g => felt(g, poly([[-4, -12], [4, -12], [4, 2], [10, 6], [8, 12], [-4, 8]]), C.white, { stitch: 'rgba(30,87,156,0.6)' }),
+  letter: g => { felt(g, rrect(-11, -7, 22, 14, 2), C.white, { stitch: null }); g.strokeStyle = C.sky; g.lineWidth = 1.2; g.beginPath(); g.moveTo(-11, -7); g.lineTo(0, 2); g.lineTo(11, -7); g.stroke(); },
+  notebook: g => { felt(g, rrect(-9, -11, 18, 22, 2), C.sky, { stitch: 'rgba(255,255,255,0.6)' }); g.strokeStyle = C.white; g.lineWidth = 1.5; g.beginPath(); g.ellipse(0, 0, 4, 3, 0, 0, TAU); g.stroke(); },
+  photo: g => { felt(g, rrect(-10, -10, 20, 20, 1), C.white, { stitch: null }); felt(g, rrect(-7, -7, 14, 11, 0), C.blue, { stitch: null, shadow: 0 }); glow(g, 2, -2, 1.4, 1); },
+  catapult: g => { g.strokeStyle = '#8fb8d8'; g.lineWidth = 3.5; g.lineCap = 'round'; g.beginPath(); g.moveTo(0, 12); g.lineTo(0, 0); g.lineTo(-7, -10); g.moveTo(0, 0); g.lineTo(7, -10); g.stroke(); },
+  sign: g => { felt(g, rrect(-13, -9, 26, 14, 2), C.soft, { stitch: 'rgba(32,21,51,0.4)' }); g.fillStyle = C.deep; g.font = '800 4px Sniglet'; g.textAlign = 'center'; g.fillText('THAT MEANS', 0, -2); g.fillText('YOU, DOBBIN', 0, 3); },
+};
+
+// ---------- Restyled icons: the megaphone, the paper, the radio, the coffee ----------
+const ART = {};
+async function feltIcon(file, col, size) {
+  const svg = Sprites.recolor(await Sprites.loadSvg(`./art/${file}`), col);
+  const src = await Sprites.svgToCanvas(svg, size, size);
+  const c = Sprites.canvas(size + 6, size + 6), g = c.getContext('2d');
+  g.drawImage(Sprites.silhouette(src, 'rgba(8,4,20,0.6)'), 3, 5);
+  g.drawImage(src, 3, 3);
+  // Fibres, only where the icon is, and a stitched glint.
+  g.globalCompositeOperation = 'source-atop';
+  g.fillStyle = g.createPattern(FIB, 'repeat'); g.fillRect(0, 0, c.width, c.height);
+  g.globalCompositeOperation = 'source-over';
+  return Sprites.outline(c, 'rgba(255,255,255,0.35)', 1);
+}
+async function loadArt() {
+  try {
+    ART.mega = await feltIcon('ph--megaphone-fill.svg', C.white, 40);
+    ART.paper = await feltIcon('ph--newspaper-fill.svg', C.soft, 40);
+    ART.radio = await feltIcon('ph--radio-fill.svg', C.cyan, 40);
+    ART.coffee = await feltIcon('ph--coffee-fill.svg', C.white, 32);
+  } catch (e) { console.warn('art', e); }
+}
+
+// ---------- Drawing the thread: a strand of glowing yarn ----------
+function yarn(g, pts, { alpha = 1, taut = false, w = 3.4, dash = null } = {}) {
+  if (pts.length < 2) return;
+  g.save(); g.lineCap = 'round'; g.lineJoin = 'round';
+  const path = () => { g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); };
+  if (dash) g.setLineDash(dash);
+  path(); g.strokeStyle = `rgba(12,230,242,${0.25 * alpha})`; g.lineWidth = w * 3; g.stroke();
+  path(); g.strokeStyle = taut ? `rgba(255,255,255,${alpha})` : `rgba(12,230,242,${0.95 * alpha})`; g.lineWidth = w; g.stroke();
+  g.setLineDash([2, 4]); path(); g.strokeStyle = `rgba(255,255,255,${0.7 * alpha})`; g.lineWidth = w * 0.4; g.stroke();
+  g.restore();
+}
+
+// ---------- Input: draw a path out of the bin ----------
+let draw = null, lastPath = null, lastTarget = null, lidFlip = 0, nudge = 0;
+const floats = [], bubbles = [];
+function toWorld(e) { const r = cv.getBoundingClientRect(); const vx = (e.clientX - r.left) / r.width * VW, vy = (e.clientY - r.top) / r.height * VH; return IP(vx, vy); }
+cv.addEventListener('pointerdown', e => {
+  if (S.ended || S.finale) return;
+  e.preventDefault(); cv.setPointerCapture?.(e.pointerId);
+  draw = { pts: [[E.BIN.x, E.BIN.y - 10]], len: 0, taut: false, plucks: 0 };
+  extend(toWorld(e));
+});
+function extend([x, y]) {
+  if (!draw) return;
+  x = Math.max(4, Math.min(E.W - 4, x)); y = Math.max(4, Math.min(E.H - 4, y));
+  const [lx, ly] = draw.pts[draw.pts.length - 1], d = Math.hypot(x - lx, y - ly);
+  if (d < 7) return;
+  const R = E.range(S);
+  if (draw.len + d > R) {
+    const left = R - draw.len;
+    if (left > 2) { draw.pts.push([lx + (x - lx) * left / d, ly + (y - ly) * left / d]); draw.len = R; }
+    draw.taut = true; return;
+  }
+  draw.pts.push([x, y]); draw.len += d;
+  const pk = Math.floor(draw.len / 45);
+  if (pk > draw.plucks) { draw.plucks = pk; sfx.thread(pk); }
+}
+cv.addEventListener('pointermove', e => { if (draw) for (const ev of (e.getCoalescedEvents?.() || [e])) extend(toWorld(ev)); });
+const endDraw = () => {
+  if (!draw) return;
+  const d = draw; draw = null;
+  if (d.len < 18) { hint(); return; }
+  send(d.pts);
+};
+cv.addEventListener('pointerup', endDraw);
+cv.addEventListener('pointercancel', () => { draw = null; });
+cv.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  e.preventDefault();
+  if (S.ended || S.finale) return;
+  const t = E.TARGETS.filter(t => S.open[t.id] && !S.lit[t.id] && !S.flights.some(f => f.target === t.id)).sort((a, b) => E.rate(S, b.id, 0) - E.rate(S, a.id, 0));
+  for (const x of t) { const p = E.autoPath(S, x.id); if (p) { send(p); return; } }
+  say('THE BIN', 'Nothing in reach that isn’t lit already, or the torch is in the way. The bin is not worried. The bin is never worried.', 'bin');
+});
+let misses = 0;
+function hint() { misses++; if (misses === 1 || misses % 5 === 0) say('THE BIN', 'Drag from the bin, all the way to a dark window, and let go. A firefly follows the thread. It never misses. (Mind Dobbin’s torch.)', 'bin'); }
+function send(pts) {
+  if (S.n <= 0) { sfx.deny(); if (every('empty', 4000)) say('THE BIN', 'Empty. Every firefly is out on a job. They come home when Dobbin shoos them off a window.', 'bin'); return; }
+  const f = E.launch(S, pts);
+  if (!f) return;
+  sfx.launch(); lidFlip = 1;
+  if (f.target) { lastPath = f.path; lastTarget = f.target; }
+  if (!f.target && every('scout', 30000)) say('THE BIN', 'Into the dark, to have a look. That was on purpose. Everything the bin does is on purpose.', 'bin');
+  if (S.launches === 1) say('OVERHEARD', 'Did you SEE that? A light, in the shower block. At this hour! Somebody’s going to get it. Somebody is going to get it from DOBBIN.');
+  renderOrders();
+}
+
+// ---------- HUD ----------
+function hud() {
+  $('gossip').textContent = fmt(S.g);
+  $('ffN').textContent = S.n;
+  $('ffT').textContent = `of ${E.fireflies(S)} in the bin`;
+  const frac = Math.min(1, Math.log10(1 + S.life) / Math.log10(1 + E.WORLD));
+  $('meterFill').style.width = `${(frac * 100).toFixed(1)}%`;
+  $('meterTxt').textContent = S.ended || S.finale ? 'Everyone on Earth has heard' : `${fmt(S.life)} heard · ${E.reachName(S)}`;
+  const lit = Object.keys(S.lit).length;
+  const parts = [
+    `<span>gossip <b>${short(Math.max(S.avg, E.litRate(S)))}/s</b></span>`,
+    `<span>lit <b>${lit}</b></span>`,
+    `<span>thread <b>${E.range(S)}</b></span>`,
+    `<span>shout <b>×${E.megaMul(S).toFixed(2)}</b></span>`,
+    `<span>Dobbin <b>${Math.round(E.dobSpeed(S))}</b> pace · torch <b>${Math.round(E.beamLen(S))}</b></span>`,
+  ];
+  if (S.syncFound) parts.push('<span class="sync">⟳ a ring makes them blink together, ×2</span>');
+  $('sub').innerHTML = parts.join('');
+}
+
+// ---------- Orders: pinned paths for the clockwork lid ----------
+const ordersEl = $('orders'), ordList = $('ordList');
+let ordSig = '';
+function orderState(o) {
+  if (S.lit[o.target]) return ['lit', true];
+  if (S.flights.some(f => f.target === o.target && f.kind === 'out')) return ['on its way', true];
+  if (!E.pathClear(S, o.path)) return ['torch in the way', false];
+  return S.n ? ['next', false] : ['bin empty', false];
+}
+function renderOrders() {
+  ordersEl.hidden = !S.one.lid || S.ended || S.finale;
+  if (ordersEl.hidden) return;
+  $('ordN').textContent = `${S.orders.length} of ${E.slots(S)} · every ${E.lidEvery(S).toFixed(1)} s`;
+  const sig = S.orders.map(o => o.target + (o.sync ? '⟳' : '')).join('|') + '/' + E.slots(S);
+  if (sig !== ordSig) {
+    ordSig = sig;
+    ordList.innerHTML = '';
+    if (!S.orders.length) { const li = document.createElement('li'); li.className = 'empty'; li.textContent = 'Draw a path to a window, then pin it here.'; ordList.append(li); }
+    S.orders.forEach((o, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = '<span class="nm"></span><button type="button" aria-label="Move up">↑</button><button type="button" aria-label="Move down">↓</button><button type="button" aria-label="Unpin">×</button>';
+      li.querySelector('.nm').innerHTML = `${i + 1} · <span></span> <em></em>`;
+      li.querySelector('.nm span').textContent = E.TG[o.target].name + (o.sync ? ' ⟳' : '');
+      const [up, dn, x] = li.querySelectorAll('button');
+      up.setAttribute('aria-disabled', String(i === 0)); dn.setAttribute('aria-disabled', String(i === S.orders.length - 1));
+      up.addEventListener('click', () => { if (i > 0) { [S.orders[i - 1], S.orders[i]] = [S.orders[i], S.orders[i - 1]]; sfx.thread(3); save(); renderOrders(); } });
+      dn.addEventListener('click', () => { if (i < S.orders.length - 1) { [S.orders[i + 1], S.orders[i]] = [S.orders[i], S.orders[i + 1]]; sfx.thread(1); save(); renderOrders(); } });
+      x.addEventListener('click', () => { S.orders.splice(i, 1); sfx.deny(); save(); renderOrders(); });
+      ordList.append(li);
+    });
+  }
+  S.orders.forEach((o, i) => {
+    const el = ordList.children[i]?.querySelector('.nm'); if (!el) return;
+    const [txt, on] = orderState(o);
+    el.classList.toggle('on', on); el.querySelector('em').textContent = txt;
+  });
+  const pin = $('pinBtn');
+  const can = lastPath && lastTarget && S.orders.length < E.slots(S) && !S.orders.some(o => o.target === lastTarget);
+  pin.setAttribute('aria-disabled', String(!can));
+  pin.textContent = !lastTarget ? 'Pin a path: draw one to a window first' : S.orders.some(o => o.target === lastTarget) ? `Already pinned: ${E.TG[lastTarget].name}` : S.orders.length >= E.slots(S) ? 'Full: unpin one, or buy a Sticky Note' : `Pin last path: ${E.TG[lastTarget].name}${E.loops(lastPath) ? ' ⟳' : ''}`;
+}
+const ordInfo = () => ({ id: 'orders', name: 'Standing orders', desc: 'The clockwork lid flicks a firefly down a pinned path by itself. It goes down the list from the top and takes the first order whose window is dark, as soon as the torch is out of the way and there’s a firefly in the bin. Reorder with ↑ ↓; × unpins.', fx: `Lid flicks every ${E.lidEvery(S).toFixed(1)} s · ${E.slots(S)} order slots`, joke: 'The bin calls this delegating. It is a bin with a list.' });
+$('pinBtn').addEventListener('click', () => {
+  if ($('pinBtn').getAttribute('aria-disabled') === 'true') { sfx.deny(); return; }
+  if (E.pin(S, lastPath, lastTarget)) { sfx.unlock(); save(); renderOrders(); if (S.orders.length === 1) say('THE BIN', `Pinned: ${E.TG[lastTarget].name}. The lid will do that one itself now, whenever it’s dark and Dobbin’s looking the other way. Delegation. The bin was born to delegate.`, 'bin'); }
+});
+
+// ---------- Shop ----------
+const shop = $('shop');
+const newUntil = {};
+let shopSig = '';
+function renderShop() {
+  const closed = S.ended || S.finale;
+  const fresh = closed ? [] : E.reveals(S);
+  for (const id of fresh) { if (S.launches > 1) sfx.unlock(); newUntil[id] = performance.now() + 9000; }
+  const all = closed ? [] : E.items(S);
+  const sig = all.map(i => `${i.id}:${E.cost(S, i.id)}:${E.maxed(S, i.id)}`).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    for (const it of all) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (it.kind === 'odd' ? ' odd' : '');
+      b.dataset.id = it.id;
+      b.innerHTML = '<b></b><em></em>';
+      b.querySelector('b').textContent = it.name;
+      const mx = E.maxed(S, it.id);
+      b.dataset.cost = mx ? Infinity : E.cost(S, it.id);
+      b.querySelector('em').textContent = mx ? `${E.lv(S, it.id)} · that’s all` : `${short(E.cost(S, it.id))}${it.kind === 'lv' ? ` · ${E.lv(S, it.id)}` : it.kind === 'pitch' ? ` · ${pitchCount(it)}` : ''}`;
+      b.setAttribute('aria-describedby', 'tip');
+      b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, upTip(it.id)); });
+      b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+      b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, upTip(it.id)); });
+      b.addEventListener('blur', hideTip);
+      b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+      b.addEventListener('click', () => {
+        if (b.dataset.touch && tipFor !== it.id) { showTip(b, upTip(it.id)); return; }
+        if (b.getAttribute('aria-disabled') !== 'true') doBuy(it.id); else sfx.deny();
+      });
+      shop.append(b);
+    }
+  }
+  const now = performance.now();
+  let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = S.g >= Number(b.dataset.cost);
+    if (can) n++;
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  $('afford').textContent = n ? `${n} affordable` : '';
+  document.querySelector('aside h2').hidden = !all.length;
+  renderCalls(); renderShelf(); renderOrders();
+}
+const pitchCount = it => { const f = E.free(S, it.zone).length; return f ? `${f} free` : `+${E.crowd(S, it.zone)} squeezed in`; };
+const ZONE_NOUN = ['window', 'tent', 'caravan', 'yurt', 'clubhouse window'];
+function effect(id) {
+  const it = E.BY_ID[id], T = JSON.parse(JSON.stringify(S));
+  if (it.kind === 'odd') return 'Does nothing useful. You can see it, though, which is the point.';
+  T.g = 1e30; if (!T.seen.includes(id)) T.seen.push(id); E.buy(T, id);
+  const zr = z => E.TARGETS.find(t => t.zone === z);
+  switch (id) {
+    case 'bait': return `Fireflies ${E.fireflies(S)} → ${E.fireflies(T)}`;
+    case 'range': { const nxt = E.ZONES.findIndex((z, i) => i > E.zone(S) && Math.min(...E.TARGETS.filter(t => t.zone === i).map(t => Math.hypot(t.x - E.BIN.x, t.y - E.BIN.y))) <= E.range(T) && Math.min(...E.TARGETS.filter(t => t.zone === i).map(t => Math.hypot(t.x - E.BIN.x, t.y - E.BIN.y))) > E.range(S)); return `Thread ${E.range(S)} → ${E.range(T)}${nxt > 0 ? ` · long enough to reach ${E.ZONES[nxt].name}` : ''}`; }
+    case 'fan': return `Flight speed ${Math.round(E.speed(S))} → ${Math.round(E.speed(T))}`;
+    case 'mega': return `Each LIGHTS OUT ×${E.megaMul(S).toFixed(2)} → ×${E.megaMul(T).toFixed(2)} (a shout is worth ${E.SHOUT_SECS} s of that window’s gossip, times this)`;
+    case 'coffee': return `Dobbin’s pace ${Math.round(E.dobSpeed(S))} → ${Math.round(E.dobSpeed(T))}`;
+    case 'dim': return `Torch beam ${Math.round(E.beamLen(S))} → ${Math.round(E.beamLen(T))} long`;
+    case 'lid': return 'Opens standing orders: 2 slots, a flick every 6 s';
+    case 'wind': return `The lid flicks every ${E.lidEvery(S).toFixed(1)} s → ${E.lidEvery(T).toFixed(1)} s`;
+    case 'notes': return `Order slots ${E.slots(S)} → ${E.slots(T)}`;
+  }
+  if (it.kind === 'pitch') {
+    const f = E.free(S, it.zone).length, base = E.rate(S, zr(it.zone).id, 0);
+    if (f) return `${cap(ZONE_NOUN[it.zone])}s ${E.TARGETS.filter(t => t.zone === it.zone && S.open[t.id]).length} → ${E.TARGETS.filter(t => t.zone === it.zone && T.open[t.id]).length} · each one lit: ${short(base)} gossip/s`;
+    return `Each lit ${ZONE_NOUN[it.zone]}: ${short(base)} → ${short(E.rate(T, zr(it.zone).id, 0))} gossip/s (×${E.crowdMul(S, it.zone).toFixed(2)} → ×${E.crowdMul(T, it.zone).toFixed(2)})`;
+  }
+  if (it.mult) return `All gossip ×${E.reachMul(S)} → ×${E.reachMul(T)}`;
+  return '';
+}
+const cap = s => s[0].toUpperCase() + s.slice(1);
+let tipFor = null;
+function upTip(id) {
+  const it = E.BY_ID[id];
+  let desc = it.desc;
+  if (it.kind === 'pitch' && !E.free(S, it.zone).length) desc = `Every pitch in ${E.ZONES[it.zone].name} is booked, so another family squeezes in with friends who’ve heard about the lights: more people up and talking at every lit ${ZONE_NOUN[it.zone]} there (×1.07 each).`;
+  const lvTxt = it.kind === 'lv' ? ` · level ${E.lv(S, id)} of ${it.cap}` : '';
+  return { id, name: it.name, desc, fx: effect(id), joke: it.joke, foot: E.maxed(S, id) ? `That’s all of them${lvTxt}` : `${fmt(E.cost(S, id))} gossip${lvTxt}` };
+}
+function showTip(b, it) {
+  if (!it) return;
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><span class="fx"></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('.fx').textContent = it.fx || ''; tip.querySelector('.fx').hidden = !it.fx;
+  tip.querySelector('i').textContent = it.joke || ''; tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || ''; tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 780;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  if (b.closest('#side') && innerWidth > 780) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${Math.max(8, col.left - t.width - 14)}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - t.width - 8, r.left))}px`;
+    tip.style.top = `${r.bottom + 8 + t.height < innerHeight ? r.bottom + 8 : Math.max(8, r.top - t.height - 8)}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+let tipMoved = 0;
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 780) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .choice, .bought, .pin, #ordHead')) hideTip(); });
+const explained = new Set();
+function wireTip(b, info, act) {
+  b.setAttribute('aria-describedby', 'tip');
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, info()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, info()); });
+  b.addEventListener('blur', hideTip);
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  b.addEventListener('click', () => {
+    if (b.dataset.touch && !explained.has(b.id)) { explained.add(b.id); showTip(b, info()); return; }
+    hideTip(); act?.();
+  });
+}
+wireTip($('ordHead'), ordInfo, () => showTip($('ordHead'), ordInfo()));
+// The ending: two buttons at the top of the column, once everyone has heard.
+const ENDS = {
+  keys: { name: 'Take his keys', line: 'The bin becomes landlord.', desc: 'Dobbin hands the bin the keys to Dobbin’s Hollow, and retires to a deck chair by the shower block. The bin is landlord now. Ends the game.', joke: 'Somebody has to shout LIGHTS OUT. The bin has always been very sure it would be good at it.' },
+  lid: { name: 'Hand him the lid', line: 'Dobbin gets one go.', desc: 'The bin offers Dobbin its lid, and a firefly, and the whole park to draw across. Ends the game.', joke: 'He hasn’t done this since he was nine. The bin suspects he has thought about it every night since.' },
+};
+function renderCalls() {
+  const calls = $('calls');
+  if (!S.finale || S.ended) { if (calls.children.length) calls.innerHTML = ''; return; }
+  if (calls.children.length) return;
+  for (const [id, en] of Object.entries(ENDS)) {
+    const b = document.createElement('button'); b.type = 'button'; b.id = 'end-' + id; b.className = 'choice patch' + (id === 'lid' ? ' alt' : '');
+    b.innerHTML = '<b></b><span></span>';
+    b.querySelector('b').textContent = en.name; b.querySelector('span').textContent = en.line;
+    wireTip(b, () => ({ id: 'end-' + id, name: en.name, desc: en.desc, joke: en.joke, foot: 'You only get to choose once.' }), () => endGame(id));
+    calls.append(b);
+  }
+}
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!S.boughtOpen === shelfEl.open) return;
+  S.boughtOpen = shelfEl.open; save();
+});
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : [...E.bought(S), ...S.finds.map(id => ({ id, kind: 'find', name: E.FIND[id].name, desc: 'Found in the dark by a firefly. The whole park is talking about it: all gossip ×1.25.', joke: E.FIND[id].text }))];
+  const sig = list.map(i => i.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (it.kind === 'odd' ? ' odd' : '');
+    b.textContent = it.kind === 'find' ? `✦ ${it.name}` : it.name; b.dataset.id = it.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, { id: 'bought:' + it.id, name: it.name, desc: it.desc, joke: it.joke, foot: it.kind === 'odd' ? 'does nothing, on purpose' : it.kind === 'find' ? 'found, not bought' : it.mult ? `all gossip ×${it.mult}` : 'bought', inline: true }); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + it.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+function doBuy(id) {
+  const it = E.BY_ID[id];
+  const got = E.buy(S, id);
+  if (!got) { sfx.deny(); return; }
+  delete newUntil[id];
+  hideTip(); sfx.buy();
+  if (it.kind === 'pitch') {
+    const t = E.TG[got];
+    if (t) { floats.push({ x: t.x, y: t.y - 30, text: 'booked!', t: 0 }); say('OVERHEARD', `New arrivals on ${E.ZONES[it.zone].name}: ${t.name}. They’ve heard about the lights. EVERYONE has heard about the lights. ${it.joke}`); }
+    else if (E.crowd(S, it.zone) % 4 === 1) say('OVERHEARD', `Another lot squeezed in on ${E.ZONES[it.zone].name}, friends of friends, “just for the weekend”. That’s ${E.crowd(S, it.zone)} extra families. Count the wellies.`);
+  } else if (it.kind === 'odd' || it.kind === 'one' || E.lv(S, id) === 1) say(it.kind === 'odd' || it.mult ? 'OVERHEARD' : 'THE BIN', it.joke, it.kind === 'odd' || it.mult ? '' : 'bin');
+  else if (id === 'mega' && E.lv(S, id) % 5 === 0) say('OVERHEARD', `Dobbin’s megaphone is enormous now. He hasn’t noticed. ${E.lv(S, id)} swaps. They heard him in the next village.`);
+  else if (id === 'coffee' && E.lv(S, id) % 3 === 0) say('OVERHEARD', `Another flask on Dobbin’s porch. ${E.lv(S, id)} flasks. He’s practically jogging. Nana Vee timed him.`);
+  else if (id === 'bait' && E.lv(S, id) % 6 === 0) say('THE BIN', `Another peach. ${E.fireflies(S)} fireflies now. The bin has never smelled better, and it knows it.`, 'bin');
+  save(); renderShop(); hud(); refreshMusic();
+}
+
+// ---------- Log ----------
+function say(who, text, cls = '') {
+  const el = $('log');
+  el.innerHTML = `<b class="${cls || (who === 'DOBBIN' ? 'dob' : who === 'WHILE YOU WERE AWAY' ? 'away' : '')}"></b><span></span>`;
+  el.querySelector('b').textContent = who; el.querySelector('span').textContent = text;
+  el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
+}
+const SHOUTED = [
+  n => `Dobbin’s out AGAIN in the tartan gown, shouting LIGHTS OUT at ${n}. Their lights were OFF. I saw it with my own EYES.`,
+  n => `${cap(n)} say they were fast asleep. ASLEEP. With Dobbin bellowing through the zip!`,
+  n => `He shouted at ${n} for a full minute, and then the light went out by ITSELF. By itself, Maureen.`,
+  n => `Somebody in ${n} shouted back “IT’S NOT US” and Dobbin said “THEN WHO IS IT” and nobody knew. NOBODY.`,
+  n => `Light on at ${n}. Dobbin there in nine seconds flat. Slippers! On the gravel! You could hear it from the taps.`,
+];
+const CAUGHT = [
+  'Dobbin caught one in his jam jar. Held it up to his face. Said “hello, you”. Then let it GO. I am not making this up.',
+  'One flew straight into his torch beam and he had it in the jar before you could blink. Thirty-odd years of practice, that. Then he let it out again.',
+];
+const LIT = [
+  n => `A light, on, at ${n}. At this hour. I’m not saying anything. I’m just SAYING.`,
+  n => `${cap(n)}: light on. Someone’s in trouble. Someone is in so much trouble.`,
+];
+const ZONE_LINES = [,
+  'The tent meadow. Three tents, all asleep, all about to be the most talked-about tents in the county.',
+  'Caravan row. Net curtains, gnomes, and people who have been coming here since 1974 and will TELL you.',
+  'The yurts in the woods: wind chimes, herbal tea, and a yoga teacher who says Dobbin has “very blocked energy”.',
+  'The clubhouse, and behind it, Dobbin’s own bungalow. His own windows. Imagine. IMAGINE.',
+];
+const REACH_LINES = {
+  'the whole park': ['DOBBIN', 'Dobbin stopped by the taps tonight and stared at the bin for a WHOLE minute. Like it owed him money. Then he said “hm” and walked off.'],
+  'the village': ['OVERHEARD', 'The whole village knows. And Dobbin’s started lifting the bin’s lid on every round. He sniffs. He knows something. He doesn’t know what he knows.'],
+  'the county': ['OVERHEARD', 'Dobbin was heard saying “Dreadful” under his breath, by the bin. About himself? About the BIN? Caravan row has split into two camps.'],
+  'the country': ['OVERHEARD', 'Dobbin sat on the bench by the taps till two in the morning. Didn’t say a word. Fireflies everywhere. Nana Vee swears he was SMILING.'],
+};
+
+// ---------- The end ----------
+function startFinale() {
+  sfx.finale(); refreshMusic();
+  say('OVERHEARD', 'That’s it. That’s EVERYONE. Eight billion people have heard about the lights at Dobbin’s Hollow. And Dobbin is walking, very slowly, in his slippers, straight to the bin by the taps.');
+  setTimeout(() => { if (!S.ended) say('DOBBIN', '“I know it’s you,” he says to the bin. “I know because it was me, once. Every night, in my dad’s windows.” He holds up his jam jar, full. “So. What now?”'); }, reduced ? 0 : 6000);
+  hideTip(true); save(); renderShop(); hud();
+}
+const STORY = {
+  keys: { title: 'The bin takes the keys.', num: 'EIGHT BILLION PEOPLE HAVE HEARD · THE BIN IS LANDLORD', p: [
+    'Dobbin stood by the bin for a long time with the jam jar in his hand. Then he unscrewed his sign, and took the great ring of keys off his dressing-gown cord, and hung it on the bin’s handle.',
+    '“Forty years I’ve shouted at lights,” he said. “I used to BE the lights. My dad shouted at me.” He looked at the park: every window lit, every camper up, the whole world talking. “Your turn.”',
+    'The bin is landlord of Dobbin’s Hollow now. It has a sign: LIGHTS OUT AT 10. It means it. Mostly.',
+    'And every night at five past ten, from a deck chair by the shower block, a retired man in a tartan dressing gown flicks one firefly, very carefully, into the bin’s lid. It lights up like a lantern. The bin shouts LIGHTS OUT. Nobody in the park has ever been happier.',
+  ] },
+  lid: { title: 'Dobbin leaves his light on.', num: 'EIGHT BILLION PEOPLE HAVE HEARD · DOBBIN GETS ONE GO', p: [
+    'Dobbin stood by the bin for a long time with the jam jar in his hand. The bin, which never misses, looked at him for a long time too. Then it flipped open its lid and held it out.',
+    '“Me?” said Dobbin. “I haven’t done this since I was nine.” His dad’s sign was in the nettles. His catapult was under the clubhouse steps. His notebook said go round in a ring.',
+    'He drew one long thread across the whole park, round in a ring and up to his own bedroom window, and the firefly went all the way, and the window lit up.',
+    'Then Mr Dobbin, landlord, went to bed with his light on, and nobody, not one person in eight billion, came to shout at him. The bin kept watch by the taps. Somebody had to.',
+  ] },
+};
+function endGame(choice, resumed) {
+  if (!S.ended) { S.ended = true; S.choice = choice || 'keys'; S.endT = S.t; }
+  S.choice ||= 'keys';
+  // The finished park: every window lit, the dark all gone.
+  S.fog = '1'.repeat(E.GW * E.GH);
+  S.lit = Object.fromEntries(E.TARGETS.filter(t => S.open[t.id] || resumed).map(t => [t.id, { sync: 1 }]));
+  if (resumed) for (const t of E.TARGETS) S.open[t.id] = 1;
+  save();
+  hideTip(true);
+  const st = STORY[S.choice];
+  $('endTitle').textContent = st.title; $('endNum').textContent = st.num;
+  $('story').innerHTML = '';
+  for (const p of st.p) { const el = document.createElement('p'); el.textContent = p; $('story').append(el); }
+  const sig = document.createElement('p'); sig.className = 'sig'; sig.textContent = '— as overheard at the taps, by everyone'; $('story').append(sig);
+  $('ending').hidden = false;
+  renderShop(); hud(); refreshMusic();
+  if (!resumed) {
+    sfx.finale();
+    say('OVERHEARD', S.choice === 'keys' ? 'The BIN is landlord now. The BIN. I said to Maureen, I said, at least it’s consistent.' : 'Dobbin’s bedroom light was on ALL NIGHT. Nobody said a word. Not one word. Well. Everybody said a word. But not to HIM.');
+    $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+    const h = Math.floor(S.t / 3600), m = Math.floor(S.t / 60) % 60;
+    if (window.DailyGame) DailyGame.finish({ lines: [`⏱ ${h ? `${h}h${String(m).padStart(2, '0')}m` : `${m}m`}`, `🗑️✨ ${S.shouts.toLocaleString('en-US')} × LIGHTS OUT`, S.choice === 'keys' ? '🔑 the bin is landlord now' : '🛏️💡 Dobbin left his light on'] });
+  }
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Drawing ----------
+let clock = 0;
+function compose(t) {
+  const g = cx;
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.clearRect(0, 0, cv.width, cv.height);
+  if (!bg) background();
+  worldT(g);
+  g.drawImage(bg, 0, 0, E.W, E.H);
+  // Skylights in the roofs: the shower block, the clubhouse, the bungalow.
+  for (const tg of E.TARGETS) {
+    if (!['block', 'club', 'home'].includes(tg.kind)) continue;
+    const open = S.open[tg.id], lit = S.lit[tg.id];
+    felt(g, rrect(tg.x - 13, tg.y - 10, 26, 20, 4), !open ? C.navy : lit ? C.cyan : C.deep, { stitch: open ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.12)', shadow: 0, fibre: 0.6 });
+    if (!open) { g.strokeStyle = 'rgba(255,255,255,0.18)'; g.lineWidth = 2; g.beginPath(); g.moveTo(tg.x - 9, tg.y - 6); g.lineTo(tg.x + 9, tg.y + 6); g.moveTo(tg.x + 9, tg.y - 6); g.lineTo(tg.x - 9, tg.y + 6); g.stroke(); }
+  }
+  // Every lit window throws a soft pool of light on the felt.
+  for (const id of Object.keys(S.lit)) { const tg = E.TG[id], hg = g.createRadialGradient(tg.x, tg.y, 4, tg.x, tg.y, 58); hg.addColorStop(0, 'rgba(12,230,242,0.3)'); hg.addColorStop(1, 'rgba(12,230,242,0)'); g.fillStyle = hg; g.fillRect(tg.x - 58, tg.y - 58, 116, 116); }
+  // Bunting over the clubhouse, a string per do squeezed in.
+  const bunt = Math.min(6, E.crowd(S, 4));
+  for (let i = 0; i < bunt; i++) { const y0 = BLD.club.y + 18 + i * 20; g.strokeStyle = 'rgba(255,255,255,0.5)'; g.lineWidth = 1; g.beginPath(); g.moveTo(BLD.club.x + 6, y0); g.quadraticCurveTo(BLD.club.x + 80, y0 + 10, BLD.club.x + BLD.club.w - 6, y0); g.stroke(); for (let j = 1; j < 9; j++) { const u = j / 9, bx = BLD.club.x + 6 + u * (BLD.club.w - 12), by = y0 + 10 * 4 * u * (1 - u) * 0.5; g.fillStyle = j % 2 ? C.cyan : C.white; g.beginPath(); g.moveTo(bx - 3, by); g.lineTo(bx + 3, by); g.lineTo(bx, by + 6); g.fill(); } }
+  // Pinned orders, faint, so you can see your program.
+  if (S.one.lid && !S.ended) for (const o of S.orders) yarn(g, o.path, { alpha: 0.18, w: 2, dash: [6, 6] });
+  // Dobbin's torch beam.
+  if (!S.ended) beam(g);
+  viewT(g);
+  // Upright felt things, back to front.
+  const things = [];
+  for (const tg of E.TARGETS) if (['tent', 'caravan', 'yurt'].includes(tg.kind) && S.open[tg.id]) things.push({ y: tg.y, f: () => drawDwelling(g, tg, t) });
+  things.push({ y: E.BIN.y, f: () => { const [x, y] = P(E.BIN.x, E.BIN.y); g.save(); g.translate(x, y - 8); g.scale(1.45, 1.45); drawBin(g, 0, 0, t); g.restore(); } });
+  if (S.one.fire) things.push({ y: 452, f: () => { const [x, y] = P(196, 452); g.drawImage(prop('fire'), x - 36, y - 41, 72, 60); glow(g, x, y - 8, 6, 0.4 + 0.2 * Math.sin(t * 7)); } });
+  if (S.one.post) things.push({ y: 392, f: () => { const [x, y] = P(214, 392); g.drawImage(prop('post'), x - 36, y - 41, 72, 60); } });
+  if (S.one.gnome) things.push({ y: 470, f: () => { const [x, y] = P(640, 470); g.drawImage(prop('gnome'), x - 36, y - 41, 72, 60); glow(g, x + 12, y - 30 + 30, 1.5, 0.6); } });
+  things.push({ y: 516, f: () => { const [x, y] = P(872, 516); g.drawImage(prop('chair'), x - 30, y - 34, 60, 50); if (S.one.cushion) g.drawImage(prop('cushion'), x - 30, y - 42, 60, 50); } });
+  const mugs = E.lv(S, 'coffee');
+  if (mugs) things.push({ y: 540, f: () => { for (let i = 0; i < Math.min(16, mugs); i++) { const [x, y] = P(884 + (i % 8) * 13, 548 + Math.floor(i / 8) * 16); g.drawImage(prop('mug'), x - 24, y - 27, 48, 40); } } });
+  if (S.one.paper && ART.paper) things.push({ y: 300, f: () => { const [x, y] = P(840, 300); g.drawImage(ART.paper, x - 16, y - 24, 32, 32); } });
+  if (S.one.radio && ART.radio) things.push({ y: 266, f: () => { const [x, y] = P(966, 266); g.drawImage(ART.radio, x - 17, y - 28, 34, 34); if (!reduced) for (let i = 0; i < 3; i++) { g.strokeStyle = `rgba(12,230,242,${0.5 - ((t * 0.8 + i / 3) % 1) * 0.5})`; g.lineWidth = 1.5; g.beginPath(); g.arc(x, y - 18, 10 + ((t * 0.8 + i / 3) % 1) * 22, -2.4, -0.7); g.stroke(); } } });
+  for (const id of S.finds) { const fd = E.FIND[id]; things.push({ y: fd.y, f: () => { const [x, y] = P(fd.x, fd.y); g.save(); g.translate(x, y - 6); FIND_ICON[id](g); g.restore(); } }); }
+  if (S.ended) things.push({ y: 0, f: () => drawEndingProps(g, t) });
+  const d = S.dob;
+  if (!(S.ended)) things.push({ y: d.y, f: () => { const [x, y] = P(d.x, d.y); const [ax] = P(d.x + Math.cos(d.a), d.y + Math.sin(d.a)); g.save(); g.translate(x, y - 24); g.scale(1.35, 1.35); drawDobbin(g, 0, 0, t, ax < x, d.shout > 0); g.restore(); if (S.jar.length) { felt(g, rrect(x - 28, y - 38, 9, 12, 2), 'rgba(207,233,247,0.35)', { stitch: null, shadow: 0, fibre: 0 }); for (let i = 0; i < Math.min(3, S.jar.length); i++) glow(g, x - 24 + i * 1.5, y - 32 + i * 2, 1.4, 0.8); } } });
+  things.sort((a, b) => a.y - b.y).forEach(o => o.f());
+  // The dark: soft-edged fog over everything not yet lit up.
+  worldT(g);
+  g.imageSmoothingEnabled = true;
+  g.drawImage(fogCanvas(), 0, 0, E.W, E.H);
+  // Snores in the dark, from campers who don't know they're about to be famous.
+  viewT(g);
+  g.font = '800 17px Sniglet, sans-serif'; g.textAlign = 'center';
+  for (const tg of E.TARGETS) {
+    if (!S.open[tg.id] || E.known(S, tg.id)) continue;
+    const [x, y] = P(tg.x, tg.y), ph = ((t * 0.35 + (hash(tg.id) % 100) / 100) % 1);
+    g.fillStyle = `rgba(207,233,247,${0.6 * (1 - ph)})`;
+    g.fillText('Z', x + ph * 10, y - 6 - ph * 20); g.font = '800 12px Sniglet, sans-serif'; g.fillText('z', x + 11 + ph * 8, y - 20 - ph * 16); g.font = '800 17px Sniglet, sans-serif';
+  }
+  // Fireflies in flight, and the thread being drawn.
+  worldT(g);
+  for (const f of S.flights) {
+    if (f.kind === 'out' && f.d < f.len) { const done = []; let acc = 0; for (let i = 0; i < f.path.length; i++) { if (i) acc += Math.hypot(f.path[i][0] - f.path[i - 1][0], f.path[i][1] - f.path[i - 1][1]); if (acc <= f.d) done.push(f.path[i]); } done.push([f.x ?? f.path[0][0], f.y ?? f.path[0][1]]); yarn(g, f.path, { alpha: 0.22, w: 2 }); yarn(g, done.slice(-40), { alpha: 0.55, w: 2.2 }); }
+    if (f.x != null) glow(g, f.x, f.y, 3, 1);
+  }
+  if (draw) {
+    yarn(g, draw.pts, { taut: draw.taut });
+    const [ex, ey] = draw.pts[draw.pts.length - 1], tid = E.targetAt(S, ex, ey);
+    if (tid) { const tg = E.TG[tid]; g.save(); g.strokeStyle = C.white; g.lineWidth = 2; g.setLineDash([4, 3]); g.beginPath(); g.arc(tg.x, tg.y, 22, 0, TAU); g.stroke(); g.restore(); }
+    if (E.loops(draw.pts) && S.syncFound) { g.fillStyle = C.cyan; }
+  }
+  // Floating numbers and Dobbin's shouts, upright.
+  viewT(g);
+  g.textAlign = 'center';
+  for (const f of floats) {
+    const [x, y] = P(f.x, f.y), a = Math.max(0, 1 - f.t / 1.6);
+    g.font = `800 ${f.big ? 22 : 15}px Sniglet, sans-serif`;
+    g.lineWidth = 4; g.strokeStyle = `rgba(32,21,51,${0.8 * a})`; g.strokeText(f.text, x, y - f.t * 22);
+    g.fillStyle = f.col ? f.col.replace('A', a) : `rgba(255,255,255,${a})`; g.fillText(f.text, x, y - f.t * 22);
+  }
+  if (S.dob.shout > 0 && !S.ended) {
+    const [x, y] = P(S.dob.x, S.dob.y);
+    g.save(); g.translate(x, y - 78);
+    g.font = `800 ${13 + Math.min(6, E.lv(S, 'mega') * 0.12)}px Sniglet, sans-serif`;
+    const bw = g.measureText('LIGHTS OUT!').width + 22;
+    felt(g, rrect(-bw / 2, -14, bw, 24, 10), C.white, { stitch: 'rgba(32,21,51,0.4)', shadow: 2 });
+    felt(g, poly([[-6, 9], [6, 9], [0, 18]]), C.white, { stitch: null, shadow: 0 });
+    g.fillStyle = C.deep; g.fillText('LIGHTS OUT!', 0, 3);
+    g.restore();
+  }
+  // A first-time nudge: drag from the bin.
+  if (S.launches === 0 && !S.ended) {
+    const [bx, by] = P(E.BIN.x, E.BIN.y), [tx, ty] = P(E.TG.s2.x, E.TG.s2.y), u = reduced ? 0.7 : (t * 0.5) % 1;
+    g.save(); g.setLineDash([5, 5]); g.strokeStyle = `rgba(255,255,255,${0.7 - u * 0.4})`; g.lineWidth = 2;
+    g.beginPath(); g.moveTo(bx, by - 30); g.quadraticCurveTo((bx + tx) / 2 + 30, (by + ty) / 2 - 20, bx + (tx - bx) * u, by - 30 + (ty - by + 30) * u); g.stroke(); g.restore();
+    g.font = '400 17px "Patrick Hand", sans-serif'; g.fillStyle = C.white;
+    const [lx, ly] = P(210, 380);
+    g.fillText('drag from the bin to a dark window', lx + (tall ? 0 : 60), ly + (tall ? 0 : 6));
+  }
+}
+function drawDwelling(g, tg, t) {
+  const lit = !!S.lit[tg.id], [x, y] = P(tg.x, tg.y);
+  const crowd = Math.min(4, Math.ceil(E.crowd(S, tg.zone) / 3));
+  const s = dwelling(tg.kind, lit, crowd);
+  g.drawImage(s, x - 47, y - 57, 94, 73);
+  if (lit) {
+    const sync = S.lit[tg.id].sync, ph = sync ? t * 3 : t * 2.2 + (hash(tg.id) % 100) / 16;
+    const a = sync ? Math.pow(Math.max(0, Math.sin(ph)), 3) : 0.5 + 0.5 * Math.sin(ph);
+    const wy = tg.kind === 'tent' ? y - 12 : tg.kind === 'caravan' ? y - 18 : y - 5;
+    glow(g, x + (tg.kind === 'caravan' ? -13 : 0), wy, 3.2, reduced ? 0.8 : a);
+    // Gossip bubbles over the lit ones now and then.
+    if (!reduced && ((t * 0.4 + (hash(tg.id) % 50) / 50) % 1) < 0.25) {
+      g.fillStyle = 'rgba(255,255,255,0.75)'; g.font = '800 11px Sniglet, sans-serif'; g.textAlign = 'center'; g.fillText('…!', x + 18, y - 52);
+    }
+  }
+}
+function beam(g) {
+  const d = S.dob, L = E.beamLen(S);
+  if (S.finale) return;
+  g.save();
+  const gr = g.createRadialGradient(d.x, d.y, 4, d.x, d.y, L);
+  gr.addColorStop(0, 'rgba(255,255,255,0.32)'); gr.addColorStop(0.7, 'rgba(207,233,247,0.12)'); gr.addColorStop(1, 'rgba(207,233,247,0)');
+  g.fillStyle = gr;
+  g.beginPath(); g.moveTo(d.x, d.y); g.arc(d.x, d.y, L, d.a - E.BEAM_HALF, d.a + E.BEAM_HALF); g.closePath(); g.fill();
+  g.restore();
+}
+function drawEndingProps(g, t) {
+  if (S.choice === 'keys') {
+    // A deck chair by the showers, a retired man in it, and the keys on the bin.
+    const [x, y] = P(214, 300);
+    g.drawImage(prop('chair'), x - 30, y - 34, 60, 50);
+    const d0 = { ...S.dob }; drawDobbin(g, x, y - 26, t, true, false); Object.assign(S.dob, d0);
+    const [bx, by] = P(E.BIN.x, E.BIN.y);
+    g.strokeStyle = C.white; g.lineWidth = 2; g.beginPath(); g.arc(bx + 22, by - 4, 6, 0, TAU); g.stroke();
+    felt(g, rrect(bx + 20, by + 1, 4, 10, 1), C.cyan, { stitch: null, shadow: 0 });
+    glow(g, bx, by - 40, 4, 0.6 + 0.4 * Math.sin(t * 3));
+  } else {
+    // Dobbin at the bin with its lid in his hands, his bedroom window lit.
+    const [x, y] = P(E.BIN.x + 40, E.BIN.y + 4);
+    drawDobbin(g, x, y - 18, t, true, false);
+    felt(g, rrect(x - 30, y - 34, 30, 6, 3), C.sky, { stitch: 'rgba(255,255,255,0.5)', shadow: 2 });
+    const [wx, wy] = P(E.TG.b2.x, E.TG.b2.y); glow(g, wx, wy, 6, 0.8 + 0.2 * Math.sin(t * 2));
+  }
+}
+
+// ---------- Loop ----------
+let last = performance.now(), lastFrame = performance.now(), saveAcc = 0, uiAcc = 0, phaseWas = E.phaseKey(S), reachWas = E.reachName(S), tellAcc = 0;
+function step(dt) {
+  if (S.ended) return;
+  const ev = E.tick(S, dt);
+  for (const id of ev.lit) { sfx.lit(); if (Math.random() < 0.12 && every('litline', 20000)) say('OVERHEARD', LIT[Math.floor(Math.random() * LIT.length)](E.TG[id].name)); }
+  for (const id of ev.sync) { sfx.sync(); const tg = E.TG[id]; floats.push({ x: tg.x, y: tg.y - 24, text: '⟳ ×2', t: 0, col: 'rgba(12,230,242,A)' }); }
+  for (const s of ev.shout) {
+    sfx.shout();
+    const tg = E.TG[s.id]; floats.push({ x: tg.x, y: tg.y - 40, text: `+${short(s.b)}`, t: 0 });
+    if (S.shouts === 1) say('DOBBIN', '“LIGHTS OUT! LIGHTS! OUT!” Mr Dobbin, landlord, in his tartan dressing gown, at the shower block. Their light was off. It was off the whole time. The campers are AWAKE now. Every one of them. Talking.');
+    else if ((tellAcc += 1) >= 7 && Math.random() < 0.35) { tellAcc = 0; say('OVERHEARD', SHOUTED[Math.floor(Math.random() * SHOUTED.length)](tg.name)); }
+  }
+  if (ev.caught) { sfx.caught(); if (!S.told.caught || (Math.random() < 0.2 && every('caughtline', 30000))) { S.told.caught = 1; say('OVERHEARD', CAUGHT[S.caught % CAUGHT.length]); } }
+  if (ev.home) sfx.home();
+  if (ev.gain > 0 && Object.keys(S.lit).length) sfx.gossip();
+  for (const id of ev.finds) {
+    sfx.find(); const fd = E.FIND[id];
+    floats.push({ x: fd.x, y: fd.y - 18, text: '✦ found', t: 0, col: 'rgba(12,230,242,A)' });
+    say('OVERHEARD', fd.text + (id === 'notebook' && !S.told.sync ? ' (Draw a thread that crosses itself before the window, and see.)' : ' Everyone’s talking about it: all gossip ×1.25.'));
+    if (id === 'notebook') S.told.sync = 1;
+  }
+  if (ev.sync.length && !S.told.syncSeen) { S.told.syncSeen = 1; if (!S.finds.includes('notebook')) say('OVERHEARD', 'Did you SEE that one? Went round in a ring, and then the whole window blinked in TIME. Like the ones in the Smoky Mountains on the telly. Twice the talk, that.'); }
+  if (ev.zone != null && ev.zone > 0) { sfx.zone(); say('OVERHEARD', ZONE_LINES[ev.zone]); renderShop(); }
+  if (ev.finale) startFinale();
+  const rn = E.reachName(S);
+  if (rn !== reachWas) { reachWas = rn; const ln = REACH_LINES[rn]; if (ln) say(ln[0], ln[1]); }
+  const ph = E.phaseKey(S);
+  if (ph !== phaseWas) { phaseWas = ph; refreshMusic(); }
+  saveAcc += dt; if (saveAcc > 5) { saveAcc = 0; save(); }
+  uiAcc += dt; if (uiAcc > 0.25) { uiAcc = 0; hud(); renderShop(); }
+}
+function frame(now) {
+  const dt = Math.max(0, Math.min(0.1, (now - last) / 1000)); last = now; lastFrame = now;
+  step(dt);
+  clock += dt;
+  lidFlip = Math.max(0, lidFlip - dt * 4);
+  for (const f of floats) f.t += dt;
+  for (let i = floats.length - 1; i >= 0; i--) if (floats[i].t >= 1.6) floats.splice(i, 1);
+  compose(clock);
+  requestAnimationFrame(frame);
+}
+// In a background tab rAF stops: keep the park ticking on a timer.
+setInterval(() => {
+  const now = performance.now();
+  if (now - lastFrame < 400) return;
+  const dt = Math.min(1, (now - last) / 1000); last = now;
+  step(dt);
+}, 250);
+addEventListener('pagehide', save);
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('resize', () => { const w = cv.parentElement.clientWidth; if (Math.abs(w / k - VW) > 1) layout(); });
+
+// ---------- Start ----------
+layout();
+loadArt().then(() => {
+  if (!Sprites.sheetRequested()) return;
+  const reg = (name, w, h, f) => { const c = Sprites.canvas(w * 2, h * 2), q2 = c.getContext('2d'); q2.fillStyle = C.navy; q2.fillRect(0, 0, c.width, c.height); q2.scale(2, 2); f(q2); Sprites.register(name, c); };
+  const keep = JSON.stringify(S);
+  Object.assign(S.one, { hat: 1, cap: 1, hike: 1, onsign: 1, lid: 1 }); S.lv = { ...S.lv, bait: 30, range: 8, fan: 6, mega: 30, wind: 5, notes: 3, coffee: 8 }; S.n = 6;
+  reg('the bin, everything bought', 120, 110, q2 => drawBin(q2, 60, 70, 0.5));
+  reg('the bin, new', 120, 110, q2 => { const o = S.one, l = S.lv; S.one = {}; S.lv = {}; drawBin(q2, 60, 70, 0.5); S.one = o; S.lv = l; });
+  reg('Dobbin, all dressed up', 70, 80, q2 => drawDobbin(q2, 35, 52, 0, false, false));
+  reg('Dobbin, shouting', 70, 80, q2 => drawDobbin(q2, 35, 52, 0, true, true));
+  for (const kd of ['tent', 'caravan', 'yurt']) { Sprites.register(`${kd}, dark`, dwelling(kd, false, 0)); Sprites.register(`${kd}, lit, crowded`, dwelling(kd, true, 4)); }
+  for (const p of ['fire', 'post', 'gnome', 'chair', 'cushion', 'mug']) Sprites.register(`prop: ${p}`, prop(p));
+  for (const id of Object.keys(FIND_ICON)) reg(`find: ${id}`, 40, 40, q2 => { q2.translate(20, 22); FIND_ICON[id](q2); });
+  for (const [n, c] of Object.entries(ART)) Sprites.register(`${n} (restyled Phosphor icon)`, c);
+  Object.assign(S, JSON.parse(keep));
+  Sprites.showSheet({ zoom: 2 });
+});
+// Away: the campers kept talking, more quietly.
+if (!S.ended && !S.finale && S.savedAt) {
+  const r = E.away(S, (Date.now() - S.savedAt) / 1000);
+  if (r && r.g >= 1) say('WHILE YOU WERE AWAY', `${r.sec >= 5400 ? `${Math.round(r.sec / 3600)} hours` : `${Math.max(1, Math.round(r.sec / 60))} minutes`} away, and the park never stopped talking: ${fmt(r.g)} more gossip${r.sec >= E.AWAY_CAP ? ' (they ran out of things to say after six hours)' : ''}. Every firefly is home in the bin.`);
+}
+if (S.ended) { endGame(S.choice, true); say('OVERHEARD', S.choice === 'lid' ? 'Dobbin’s light is still on. Nobody is shouting. It is very strange and very nice.' : 'The bin is landlord. Dobbin is in his deck chair. Every light in the park is on.'); }
+else if (S.finale) startFinale();
+else if (!S.launches) say('OVERHEARD', 'Psst. Dobbin’s Hollow, just after ten. Mr Dobbin has screwed his LIGHTS OUT AT 10 sign to the bin by the taps. The bin is full of fireflies. The bin is VERY sure of its aim. Drag from the bin to a dark window.');
+else if (!$('log').textContent) say('OVERHEARD', 'Back at the taps. The park’s dark, Dobbin’s doing his rounds, and the bin has that look again.');
+save();
+hud(); renderShop();
+document.fonts?.ready.then(() => { layout(); });
+if (DEBUG) {
+  Object.assign(window.__game, { endGame, startFinale, send });
+  // A path in page coordinates from the bin to a window, for test scripts that draw it with a real pointer.
+  window.__pathTo = id => { const r = cv.getBoundingClientRect(); const p = E.autoPath(S, id, { loop: false }) || [[E.BIN.x, E.BIN.y], [E.TG[id].x, E.TG[id].y]]; return p.map(([x, y]) => { const [vx, vy] = P(x, y); return [r.left + vx * r.width / VW, r.top + vy * r.height / VH]; }); };
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

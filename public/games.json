@@ -930,5 +930,51 @@
     "tone": "deadpan bureaucratic",
     "context": "none",
     "palette": "nyx8"
+  },
+  {
+    "n": 26,
+    "slug": "who-left-the-lights-on",
+    "date": "2026-11-17",
+    "title": "Who Left the Lights On?",
+    "tagline": "Mr Dobbin screwed his LIGHTS OUT AT 10 sign to the wastebasket by the taps. The bin is full of fireflies and very sure of its aim, and soon every dark window in Dobbin’s Hollow is lit, and the whole world is talking.",
+    "emoji": "🗑️✨",
+    "scale": "billions",
+    "minutes": "200–300",
+    "seed": 263263292,
+    "subject": {
+      "text": "an overconfident wastebasket",
+      "emoji": "🗑️",
+      "name": "wastebasket",
+      "subgroup": "office",
+      "trait": "overconfident {}"
+    },
+    "verb": "launching",
+    "object": "fireflies",
+    "interaction": "draw a path",
+    "arc": {
+      "drive": "mischief",
+      "obstacle": "a landlord",
+      "turn": "the roles reverse",
+      "initial": "D"
+    },
+    "length": "story (3–10 hours, over several sittings)",
+    "structure": [
+      "a map you explore and reveal",
+      "automation you program (an action queue with priorities)"
+    ],
+    "twist": "a hidden mechanic to discover",
+    "ending": "choose between two endings",
+    "look": "felt and yarn",
+    "music": {
+      "style": "sea shanty",
+      "scale": "in-sen"
+    },
+    "tone": "breathless gossip",
+    "context": {
+      "kind": "calendar",
+      "nod": "an obscure observance day on the release date",
+      "topic": "Take a Hike Day (17 November)"
+    },
+    "palette": "eulbink"
   }
 ]

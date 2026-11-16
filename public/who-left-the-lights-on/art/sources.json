@@ -1,0 +1,38 @@
+{
+  "ph--megaphone-fill.svg": {
+    "icon": "ph:megaphone-fill",
+    "set": "Phosphor",
+    "setUrl": "https://github.com/phosphor-icons/core",
+    "author": "Phosphor Icons",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/phosphor-icons/core/blob/main/LICENSE",
+    "source": "https://icon-sets.iconify.design/ph/megaphone-fill/"
+  },
+  "ph--newspaper-fill.svg": {
+    "icon": "ph:newspaper-fill",
+    "set": "Phosphor",
+    "setUrl": "https://github.com/phosphor-icons/core",
+    "author": "Phosphor Icons",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/phosphor-icons/core/blob/main/LICENSE",
+    "source": "https://icon-sets.iconify.design/ph/newspaper-fill/"
+  },
+  "ph--radio-fill.svg": {
+    "icon": "ph:radio-fill",
+    "set": "Phosphor",
+    "setUrl": "https://github.com/phosphor-icons/core",
+    "author": "Phosphor Icons",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/phosphor-icons/core/blob/main/LICENSE",
+    "source": "https://icon-sets.iconify.design/ph/radio-fill/"
+  },
+  "ph--coffee-fill.svg": {
+    "icon": "ph:coffee-fill",
+    "set": "Phosphor",
+    "setUrl": "https://github.com/phosphor-icons/core",
+    "author": "Phosphor Icons",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/phosphor-icons/core/blob/main/LICENSE",
+    "source": "https://icon-sets.iconify.design/ph/coffee-fill/"
+  }
+}
