@@ -1,0 +1,38 @@
+{
+  "tabler--book.svg": {
+    "icon": "tabler:book",
+    "set": "Tabler Icons",
+    "setUrl": "https://github.com/tabler/tabler-icons",
+    "author": "Paweł Kuna",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/tabler/tabler-icons/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/tabler/book/"
+  },
+  "tabler--cup.svg": {
+    "icon": "tabler:cup",
+    "set": "Tabler Icons",
+    "setUrl": "https://github.com/tabler/tabler-icons",
+    "author": "Paweł Kuna",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/tabler/tabler-icons/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/tabler/cup/"
+  },
+  "tabler--bottle.svg": {
+    "icon": "tabler:bottle",
+    "set": "Tabler Icons",
+    "setUrl": "https://github.com/tabler/tabler-icons",
+    "author": "Paweł Kuna",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/tabler/tabler-icons/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/tabler/bottle/"
+  },
+  "tabler--umbrella.svg": {
+    "icon": "tabler:umbrella",
+    "set": "Tabler Icons",
+    "setUrl": "https://github.com/tabler/tabler-icons",
+    "author": "Paweł Kuna",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/tabler/tabler-icons/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/tabler/umbrella/"
+  }
+}

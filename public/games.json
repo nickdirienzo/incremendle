@@ -976,5 +976,47 @@
       "topic": "Take a Hike Day (17 November)"
     },
     "palette": "eulbink"
+  },
+  {
+    "n": 27,
+    "slug": "rain-stops-play",
+    "date": "2026-11-18",
+    "title": "Rain Stops Play",
+    "tagline": "Reg, the pavilion loudspeaker, has called forty seasons of cricket in a tiny knitted hat and its throat is raw. The 1703 almanac says egg oil, and the hens behind the pavilion are right there.",
+    "emoji": "📢🥚",
+    "scale": "millions",
+    "minutes": "60–180",
+    "seed": 4255480681,
+    "subject": {
+      "text": "a loudspeaker in a tiny hat",
+      "emoji": "📢",
+      "name": "loudspeaker",
+      "subgroup": "sound",
+      "trait": "{} in a tiny hat"
+    },
+    "verb": "distilling",
+    "object": "eggs",
+    "interaction": "rub",
+    "arc": {
+      "drive": "comfort",
+      "obstacle": "a critic",
+      "turn": "it gets undone, and that's fine",
+      "initial": "M"
+    },
+    "length": "short (1–3 hours)",
+    "structure": [
+      "a second, parallel game that opens midway",
+      "producers that make producers (tier 2 makes tier 1)"
+    ],
+    "twist": "a day/night or weather cycle",
+    "ending": "a secret ending behind the obvious one",
+    "look": "ballpoint notebook doodle",
+    "music": {
+      "style": "baroque harpsichord",
+      "scale": "lydian"
+    },
+    "tone": "sports commentary",
+    "context": "none",
+    "palette": "lost-century"
   }
 ]

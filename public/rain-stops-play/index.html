@@ -1,0 +1,1584 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rain Stops Play · Incremendle</title>
+<meta name="description" content="Reg, the pavilion loudspeaker, has called forty seasons in a tiny knitted hat and its throat is raw. The 1703 almanac says egg oil. The hens are right there. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Rain Stops Play">
+<meta property="og:description" content="Reg, the pavilion loudspeaker, has called forty seasons of cricket in a tiny knitted hat and its throat is raw. The 1703 almanac says egg oil, and the hens behind the pavilion are right there.">
+<meta property="og:url" content="https://incremendle.com/rain-stops-play/">
+<meta property="og:image" content="https://incremendle.com/rain-stops-play/og.png?v=91baffd1">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Rain Stops Play: Reg, the pavilion loudspeaker, has called forty seasons of cricket in a tiny knitted hat and its throat is raw. The 1703 almanac says egg oil, and the hens behind the pavilion are right there.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/caveat/font.css">
+<link rel="stylesheet" href="/shared/fonts/kalam/font.css">
+<style>
+  /* A ballpoint doodle in Maud's reporter's notebook, in Lost Century: the paper (#d2c9a5), the ruled
+     lines (#8caba1), a teal ballpoint (#4b726e), a dark one (#4b3d44), Maud's red pen (#ae5d40), and a
+     dab of highlighter (#b3a555) where something matters. */
+  :root {
+    --paper: #d2c9a5; --paper2: #d1b187; --rule: #8caba1; --ink: #4b726e; --dark: #4b3d44; --red: #ae5d40; --rust: #c77b58;
+    --hi: #b3a555; --gold: #ba9158; --plum: #574852; --grey: #847875; --mush: #ab9b8e; --olive: #77743b; --brown: #4d4539;
+    --hand: 'Caveat', 'Comic Sans MS', cursive; --body: 'Kalam', 'Comic Sans MS', cursive;
+    color-scheme: light;
+  }
+  html, body { background: #4d4539; color: var(--dark); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 16px/1.35 var(--body);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(10px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image: radial-gradient(ellipse at 30% 0%, #574852 0%, transparent 65%);
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 0 0 6px; }
+  h1 { font: 700 44px/1 var(--hand); margin: 0; color: var(--paper); letter-spacing: .5px; transform: rotate(-1deg); }
+  header p { margin: 0; font: 22px/1 var(--hand); color: var(--mush); }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } h1 { font-size: 36px; } }
+  main { min-width: 0; }
+
+  /* The page itself: everything in the play area sits on Maud's notebook paper. */
+  .page { position: relative; background: var(--paper); border-radius: 3px 6px 6px 3px; box-shadow: 0 1px 0 #fff3 inset, 6px 9px 0 #0003, 0 14px 30px #0005; padding: 10px 12px 10px; }
+  .page::before { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: repeating-linear-gradient(180deg, transparent 0 27px, #8caba166 27px 28px); }
+  .hud { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 4px 14px; align-items: center; margin-bottom: 6px; }
+  .res { font: 700 34px/1 var(--hand); color: var(--ink); white-space: nowrap; }
+  .res small { font: 400 20px/1 var(--hand); color: var(--dark); }
+  .res .rate { display: block; font: 400 17px/1 var(--hand); color: var(--plum); margin-top: 2px; }
+  .comfort { display: flex; align-items: center; gap: 8px; min-width: 0; font: 700 20px/1 var(--hand); color: var(--dark); }
+  .meter { position: relative; flex: 1; min-width: 60px; height: 16px; border: 2px solid var(--ink); border-radius: 9px 7px 10px 6px; overflow: hidden; background: #d2c9a5; }
+  .meter i { position: absolute; inset: 0 auto 0 0; width: 0; transition: width .4s;
+    background: repeating-linear-gradient(-45deg, var(--ink) 0 2px, transparent 2px 6px); }
+  .meter.red i { background: repeating-linear-gradient(-45deg, var(--red) 0 2px, transparent 2px 6px); }
+  .meter .notch { position: absolute; top: 0; bottom: 0; width: 1.5px; background: #4b726e88; }
+  .hudbtn { font: 700 19px/1 var(--hand); color: var(--dark); background: var(--paper); border: 2px solid var(--dark); border-radius: 12px 4px 10px 5px; padding: 5px 10px 6px; cursor: pointer; white-space: nowrap; box-shadow: 2px 3px 0 #4b3d4455; }
+  .hudbtn em { font-style: normal; color: var(--ink); }
+  .hudbtn.can { background: #b3a55588; animation: nudge 1.6s ease-in-out infinite; }
+  .hudbtn[aria-disabled="true"] { color: var(--grey); border-color: var(--grey); box-shadow: none; cursor: default; }
+  .hudbtn:focus-visible { outline: 2px dashed var(--red); outline-offset: 3px; }
+  @keyframes nudge { 50% { transform: translateY(-2px) rotate(-1deg); } }
+  .match { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; align-items: center; }
+  .match .res { font-size: 28px; }
+  .fixture { display: flex; align-items: center; gap: 8px; font: 700 19px/1 var(--hand); color: var(--dark); min-width: 0; }
+  .fixture span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sub { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0 16px; font: 18px/1.15 var(--hand); color: var(--plum); min-height: 20px; }
+  .sub b { font-weight: 700; color: var(--ink); }
+  .sub .wx { color: var(--dark); }
+  @media (max-width: 520px) { .hud { grid-template-columns: 1fr auto; } .comfort { grid-column: 1 / -1; order: 3; } .sub { order: 5; } .match { order: 4; } }
+
+  canvas#stage { display: block; width: 100%; aspect-ratio: 800 / 520; touch-action: none; cursor: grab; -webkit-tap-highlight-color: transparent; user-select: none; position: relative; }
+  canvas#stage.rubbing { cursor: grabbing; }
+  canvas#stage:focus-visible { outline: 2px dashed var(--red); outline-offset: 4px; }
+
+  .log { position: relative; margin: 8px 0 0; min-height: 2.8em; font: 16px/1.35 var(--body); color: var(--dark); border-left: 3px solid var(--red); padding: 2px 10px 4px; }
+  .log b { font: 700 17px/1 var(--hand); color: var(--paper); background: var(--ink); padding: 1px 7px 2px; margin-right: 8px; border-radius: 6px 2px 6px 2px; }
+  .log b.m { background: var(--red); }
+  .log b.c { background: var(--olive); }
+  .log b.w { background: var(--plum); }
+  .log.fresh span { animation: ink .7s ease-out; }
+  @keyframes ink { from { opacity: .1; } }
+
+  aside { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; scrollbar-width: thin; padding: 2px 4px 8px 2px; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  .col { background: var(--paper); border-radius: 3px; box-shadow: 4px 6px 0 #0003; padding: 10px 10px 8px; background-image: repeating-linear-gradient(180deg, transparent 0 23px, #8caba155 23px 24px); }
+  #calls { display: grid; gap: 8px; margin-bottom: 10px; }
+  #calls:empty { display: none; }
+  .call { position: relative; text-align: left; font: 17px/1.15 var(--body); color: var(--dark); background: var(--paper); border: 2.5px solid var(--dark); border-radius: 14px 5px 12px 6px; box-shadow: 3px 4px 0 #4b3d4466; padding: 6px 10px 8px; cursor: pointer; }
+  .call b { display: block; font: 700 28px/1 var(--hand); color: var(--red); }
+  .call.can { background: #b3a55599; animation: nudge 1.6s ease-in-out infinite; }
+  .call.tea b { color: var(--ink); }
+  .call:focus-visible { outline: 2px dashed var(--red); outline-offset: 4px; }
+  aside h2 { font: 700 30px/1 var(--hand); margin: 0 0 6px; color: var(--dark); }
+  #afford { font: 400 20px/1 var(--hand); color: var(--ink); }
+  .tabs { display: flex; gap: 6px; margin-bottom: 8px; }
+  .tabs button { flex: 1; position: relative; font: 700 19px/1 var(--hand); color: var(--plum); background: transparent; border: 2px solid var(--grey); border-bottom-width: 3px; border-radius: 10px 10px 2px 2px; padding: 5px 6px; cursor: pointer; }
+  .tabs button[aria-selected="true"] { color: var(--dark); border-color: var(--dark); background: #b3a55555; }
+  .tabs button small { font: 400 16px var(--hand); color: var(--ink); }
+  .tabs button.fresh::after { content: ''; position: absolute; top: 3px; right: 5px; width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
+  .tabs button:focus-visible { outline: 2px dashed var(--red); outline-offset: 2px; }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  @media (max-width: 760px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up {
+    position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 17px/1.05 var(--hand); color: var(--plum);
+    background: transparent; border: 2px solid var(--grey); border-radius: 8px 3px 9px 4px; padding: 4px 7px 5px; cursor: pointer;
+  }
+  .up b { font: 700 18px/1.1 var(--hand); color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { border-color: var(--ink); background: #b3a55566; }
+  .up.can em { color: var(--ink); font-weight: 700; }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up[aria-disabled="true"]:not(.can) b { color: var(--grey); }
+  .up.odd { border-style: dashed; }
+  .up.odd b::before, .bought.odd::before { content: '✎ '; color: var(--red); }
+  .up .tag { position: absolute; top: -10px; right: 4px; font: 700 15px/1 var(--hand); font-style: normal; color: var(--paper); background: var(--red); padding: 1px 6px 2px; border-radius: 6px 2px 6px 2px; transform: rotate(4deg); }
+  .up.new { animation: glint 1.1s ease-in-out 6; }
+  @keyframes glint { 50% { box-shadow: 0 0 0 3px #ae5d4066; transform: rotate(-1deg); } }
+  .up:focus-visible, .bought:focus-visible { outline: 2px dashed var(--red); outline-offset: 2px; }
+  #tip {
+    position: fixed; z-index: 50; width: 280px; padding: 9px 12px 10px; pointer-events: none; font: 16px/1.3 var(--body); color: var(--dark);
+    background: var(--paper); border: 2px solid var(--dark); border-radius: 4px 12px 6px 10px; box-shadow: 5px 7px 0 #0004;
+    background-image: repeating-linear-gradient(180deg, transparent 0 21px, #8caba166 21px 22px);
+  }
+  #tip b { display: block; font: 700 27px/1 var(--hand); color: var(--dark); margin-bottom: 3px; }
+  #tip .fx { display: block; margin-top: 6px; padding: 2px 6px; color: var(--dark); background: #b3a55599; font: 700 18px/1.15 var(--hand); }
+  #tip i { display: block; margin-top: 6px; padding-top: 4px; border-top: 1.5px dashed var(--grey); color: var(--ink); }
+  #tip small { display: block; margin-top: 5px; font: 700 19px/1 var(--hand); color: var(--red); }
+  #tip.inline { position: static; width: auto; margin-top: 10px; }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 700 24px/1 var(--hand); color: var(--dark); cursor: pointer; list-style: none; padding: 3px 2px; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: '›'; color: var(--red); transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 2px dashed var(--red); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 2px 2px; }
+  .bought { max-width: 100%; font: 700 17px/1.05 var(--hand); color: var(--dark); background: transparent; border: 1.5px solid var(--grey); border-radius: 7px 3px 7px 3px; padding: 2px 7px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { border-style: dashed; }
+  .bought:hover, .bought.on { background: #b3a55588; border-color: var(--dark); }
+
+  #ending { margin: 22px auto 0; max-width: 680px; color: var(--dark); background: var(--paper); border-radius: 3px; box-shadow: 6px 9px 0 #0004; padding: 18px 28px 22px;
+    background-image: repeating-linear-gradient(180deg, transparent 0 27px, #8caba166 27px 28px); }
+  #ending .num { font: 700 20px/1 var(--hand); color: var(--red); letter-spacing: .5px; }
+  #ending h2 { font: 700 50px/1 var(--hand); margin: 6px 0 8px; color: var(--dark); }
+  #ending p { margin: 9px 0; }
+  #ending .review { margin: 14px 0; padding: 8px 14px; border: 2px solid var(--red); border-radius: 12px 4px 10px 6px; color: var(--red); font: 22px/1.25 var(--hand); transform: rotate(-.6deg); }
+  #ending .review b { display: block; font: 700 30px/1 var(--hand); letter-spacing: 3px; }
+  #ending .sig { color: var(--ink); font: 22px/1 var(--hand); }
+  #shareBtn, #againBtn { font: 700 26px/1 var(--hand); color: var(--dark); background: #b3a55599; border: 2.5px solid var(--dark); border-radius: 14px 5px 12px 6px; box-shadow: 3px 4px 0 #4b3d4466; padding: 6px 18px 8px; margin: 12px 8px 0 0; cursor: pointer; }
+  #againBtn { background: transparent; }
+  #shareBtn:focus-visible, #againBtn:focus-visible { outline: 2px dashed var(--red); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .call.can, .hudbtn.can, .log.fresh span { animation: none; } .meter i, #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/soundfonts": "/shared/lib/@strudel/soundfonts@1.3.0/index.mjs",
+  "roughjs": "/shared/lib/roughjs@4.6.6/rough.esm.js"
+} }
+</script>
+<script src="/shared/daily.js" data-day="27" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Rain Stops Play</h1>
+    <p id="where">from the notebook of Maud Pettigrew, the <i>Gazette</i></p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="page">
+        <div class="hud">
+          <div class="res" title="Drops of egg oil (oleum ovorum), rubbed out of hard yolks and dripped out of the still."><span id="drops">0</span> <small>drops of oil</small><span class="rate" id="dps"></span></div>
+          <div class="comfort" title="Reg’s Comfort: one notch per dose of egg oil. Ten notches and Reg’s throat is as good as new.">
+            <span>Comfort</span><div class="meter" id="cm"><i id="cmeter"></i></div><span id="ctext">0/10</span>
+          </div>
+          <button class="hudbtn" id="doseBtn" type="button">Dose Reg · <em id="doseCost">40</em></button>
+          <div class="match" id="matchBox" hidden>
+            <div class="res" title="Cheers from the crowd, for Reg’s commentary. Spent on the match."><span id="cheers">0</span> <small>cheers</small><span class="rate" id="cps"></span></div>
+            <div class="fixture" title="The fixture list: each match is called once the crowd has cheered enough. The last fixture leads to the Final."><span id="fixName"></span><div class="meter red"><i id="fmeter"></i></div><span id="fixTxt"></span></div>
+          </div>
+          <div class="sub" id="sub"></div>
+        </div>
+        <canvas id="stage" tabindex="0" aria-label="Maud’s notebook: the pavilion with Reg the loudspeaker on its roof, the cricket field, the hen run and the mortar. Rub the pestle round the mortar to make egg oil; once the season is on, rub the ball by the bowler to shine it. Keyboard: left and right arrows rub the mortar, up and down rub the ball."></canvas>
+        <p class="log" id="log" aria-live="polite"></p>
+      </div>
+    </main>
+    <aside id="side">
+      <div class="col">
+        <div id="calls"></div>
+        <h2>Shopping list <span id="afford"></span></h2>
+        <div class="tabs" id="tabs" role="tablist" hidden></div>
+        <div id="shop" role="tabpanel"></div>
+        <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      </div>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" hidden>
+    <div class="num" id="endNum">THE GAZETTE · CRICKET</div>
+    <h2 id="endHead">The Final</h2>
+    <div id="story"></div>
+    <button id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import { grain } from '/shared/kit/fx.mjs';
+import rough from 'roughjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const fmt = E.fmt;
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DEBUG = location.search.includes('debug');
+const C = { paper: '#d2c9a5', paper2: '#d1b187', rule: '#8caba1', ink: '#4b726e', dark: '#4b3d44', red: '#ae5d40', rust: '#c77b58',
+  hi: '#b3a555', gold: '#ba9158', plum: '#574852', grey: '#847875', mush: '#ab9b8e', olive: '#77743b', brown: '#4d4539', wine: '#79444a', ochre: '#927441' };
+
+// ---------- State ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:27:save';
+let raw = null;
+try { raw = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+const S = E.load(raw);
+const save = () => { S.savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound: F lydian, the minuet's key (F G A B C D E; the B natural is the lydian lift) ----------
+// Trims measured with npm run mix: music near -24 dBFS RMS, effects peaking near -10. LV evens out the effects
+// (the rub, the drop and the shine repeat all game, so they sit a couple of dB under the rest; the egg-laying tock is
+// a background tick).
+const A = createAudio({ sfxTrim: 4.87, musicTrim: 5 });
+const LV = { rub: 1.0, drop: 0.9, shine: 1.3, ball: 0.87, call: 1.25, lay: 1.2, hatch: 1.5, crow: 1.52, buy: 0.61, unlock: 0.66, deny: 0.85, dose: 0.25, fixture: 0.35, rain: 1.37, sun: 1.13, finale: 0.35, secret: 1.13 };
+let gainNow = 1;
+const T = o => A.tone({ ...o, vol: o.vol * gainNow });
+const N = (kind, o = {}) => A.noiseHit(kind, { ...o, vol: (o.vol ?? 0.25) * gainNow });
+const notes = scale('lydian', 65);   // F4 G A B C D E
+const rl = {};
+const limit = (k, ms) => { const t = performance.now(); if (t - (rl[k] || 0) < ms && !DEBUG) return false; rl[k] = t; return true; };
+let rubStep = 0;
+const sfx = {
+  // A turn of the pestle: a little harpsichord-ish pluck that walks up the scale and back.
+  rub() { if (!limit('rub', 70)) return; const k = [0, 1, 2, 3, 4, 3, 2, 1][rubStep++ % 8]; T({ type: 'pluck', freq: notes(k + 7), dur: 0.06, vol: 0.11, cutoff: 2600 }); N('shaker', { vol: 0.025, dur: 0.05 }); },
+  // A drop of oil lands in the jar.
+  drop() { if (!limit('drop', 140)) return; T({ type: 'bell', freq: notes(11), dur: 0.1, vol: 0.09 }); T({ type: 'sine', freq: notes(9), dur: 0.06, vol: 0.06, glide: 0.7, at: A.now + 0.05 }); },
+  // The ball on the bowler's trousers.
+  shine() { if (!limit('shine', 90)) return; N('shaker', { vol: 0.05, dur: 0.07 }); T({ type: 'triangle', freq: notes(14), dur: 0.03, vol: 0.05 }); },
+  // A delivery: the run-up thud, the bat, and the crowd.
+  ball(k = 0.5) { N('kick', { vol: 0.06 }); T({ type: 'triangle', freq: notes(12), dur: 0.04, vol: 0.12, at: A.now + 0.18 }); N('whoosh', { vol: 0.03 + 0.04 * k, dur: 0.6 + 0.4 * k, at: A.now + 0.25 }); },
+  // Reg calls it: two vowels, rounder and softer the more comfortable Reg is.
+  call(c = S.comfort) {
+    if (!limit('call', 600)) return;
+    const f = 1 - c / 10, cut = 700 + 900 * f + 300, type = c >= 7 ? 'triangle' : 'sawtooth';
+    T({ type, freq: notes(4), dur: 0.16, vol: 0.05 + 0.03 * f, glide: 1.12, cutoff: cut });
+    T({ type, freq: notes(6), dur: 0.26, vol: 0.05 + 0.03 * f, glide: 0.9, cutoff: cut, at: A.now + 0.17 });
+  },
+  // An egg rolls into the still: a soft low tock, now and then.
+  lay() { if (!limit('lay', 2600)) return; T({ type: 'pluck', freq: notes(0), dur: 0.08, vol: 0.06, cutoff: 1400 }); },
+  // A chick hatches.
+  hatch() { if (!limit('hatch', 1500)) return; T({ type: 'sine', freq: notes(16), dur: 0.07, vol: 0.06, glide: 1.25 }); T({ type: 'sine', freq: notes(17), dur: 0.06, vol: 0.05, glide: 1.2, at: A.now + 0.1 }); },
+  // A rooster crows over the commentary (politely, on the scale).
+  crow() { if (!limit('crow', 9000)) return; T({ type: 'triangle', freq: notes(7), dur: 0.12, vol: 0.06, glide: 1.5, cutoff: 1800 }); T({ type: 'triangle', freq: notes(11), dur: 0.5, vol: 0.06, glide: 0.8, cutoff: 1800, at: A.now + 0.13 }); },
+  buy() { [0, 2, 3, 4, 7].forEach((d, i) => T({ type: 'pluck', freq: notes(d + 7), dur: 0.09, vol: 0.12, at: A.now + i * 0.055, cutoff: 3000 })); },
+  unlock() { T({ type: 'bell', freq: notes(10), dur: 0.25, vol: 0.11 }); T({ type: 'bell', freq: notes(13), dur: 0.35, vol: 0.09, at: A.now + 0.12 }); },
+  deny() { T({ type: 'triangle', freq: notes(-3), dur: 0.08, vol: 0.12 }); },
+  // A dose down Reg's horn: three glugs and a warm chord.
+  dose() {
+    [0, 0.14, 0.28].forEach((t, i) => T({ type: 'sine', freq: notes(4 - i), dur: 0.1, vol: 0.12, glide: 0.6, at: A.now + t }));
+    [0, 2, 4, 7].forEach(d => T({ type: 'keys', freq: notes(d + 7), dur: 0.6, vol: 0.05, at: A.now + 0.45 }));
+    T({ type: 'bell', freq: notes(14), dur: 0.5, vol: 0.07, at: A.now + 0.5 });
+  },
+  // A fixture called: a short harpsichord flourish and a bell.
+  fixture() { [0, 1, 2, 3, 4, 5, 6, 7].forEach((d, i) => T({ type: 'pluck', freq: notes(d + 7), dur: 0.07, vol: 0.1, at: A.now + i * 0.06, cutoff: 3200 })); [7, 9, 11].forEach(d => T({ type: 'keys', freq: notes(d), dur: 0.7, vol: 0.05, at: A.now + 0.5 })); N('whoosh', { vol: 0.05, dur: 1, at: A.now + 0.4 }); },
+  rain() { N('whoosh', { vol: 0.05, dur: 1.6 }); [4, 2, 0].forEach((d, i) => T({ type: 'bell', freq: notes(d + 7), dur: 0.3, vol: 0.05, at: A.now + 0.3 + i * 0.2 })); },
+  sun() { [0, 3, 4].forEach((d, i) => T({ type: 'bell', freq: notes(d + 7), dur: 0.3, vol: 0.06, at: A.now + i * 0.16 })); },
+  // The Final, called: a cadence F - G (the lydian II) - C - F, and the crowd.
+  finale() {
+    const t0 = A.now;
+    [[0, 2, 4], [1, 3, 5], [4, 6, 8], [7, 9, 11]].forEach((ch, k) => ch.forEach(d => T({ type: 'keys', freq: notes(d + 7), dur: 0.5, vol: 0.05, at: t0 + k * 0.5 })));
+    [14, 16, 18, 21].forEach((d, i) => T({ type: 'bell', freq: notes(d), dur: 0.5, vol: 0.06, at: t0 + 2 + i * 0.12 }));
+    N('whoosh', { vol: 0.07, dur: 2.2, at: t0 + 1.5 });
+  },
+  // The other Final: rain on the page, and one long quiet chord with the lydian B in it.
+  secret() {
+    const t0 = A.now;
+    N('whoosh', { vol: 0.04, dur: 2.5, at: t0 });
+    [0, 4, 7, 10, 3 + 7].forEach((d, i) => T({ type: 'bell', freq: notes(d + 7), dur: 0.8, vol: 0.05, at: t0 + 0.6 + i * 0.35 }));
+    [65, 72, 77, 83].forEach(m => T({ type: 'pad', freq: 440 * Math.pow(2, (m - 69) / 12), dur: 2.5, vol: 0.018, attack: 0.6, release: 1.8, cutoff: 1200, at: t0 + 2.2 }));
+  },
+};
+for (const [name, f] of Object.entries(sfx)) sfx[name] = (...a) => { gainNow = LV[name] ?? 1; try { f(...a); } finally { gainNow = 1; } };
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'secret', 'fixture', 'dose'], S: () => S, E };
+
+// ---------- Music: one minuet, arranged for the yard, the season, the rain, the Final ----------
+let music = null, soundtrack = null;
+const phaseKey = () => E.phase(S);
+function song() { return (soundtrack ??= createSoundtrack(music.strudel))(phaseKey()); }
+createMusic(A, { soundfonts: true, song }).then(m => { music = m; music.update(); if (DEBUG) window.__game.music = m; }).catch(e => console.warn('music', e));
+const refreshMusic = () => { if (music) music.update(); };
+
+// ---------- Ballpoint ----------
+// Every line is drawn with a little wobble, and the wobble "boils" (re-draws) a few times a second,
+// like a flip-book of the same doodle.
+const W = 800, H = 520;
+const cv = $('stage');
+let g = cv.getContext('2d');
+let seedN = 0, boil = 0;
+const hash = (a, b = 0, c = 0) => { let h = (a * 374761393 + b * 668265263 + c * 2147483647) | 0; h = (h ^ (h >>> 13)) * 1274126177; h ^= h >>> 16; return (h >>> 0) / 4294967296; };
+const jr = () => hash(seedN++, boil, 7);
+const J = (a = 0.7) => (jr() - 0.5) * 2 * a;
+function pen(col = C.ink, w = 1.4) { g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.lineJoin = 'round'; }
+function line(pts, col = C.ink, w = 1.4, j = 0.7) {
+  pen(col, w); g.beginPath();
+  pts.forEach(([x, y], i) => i ? g.lineTo(x + J(j), y + J(j)) : g.moveTo(x + J(j), y + J(j)));
+  g.stroke();
+}
+// A curve through points, smoothed.
+function curve(pts, col = C.ink, w = 1.4, j = 0.6) {
+  pen(col, w); g.beginPath();
+  const p = pts.map(([x, y]) => [x + J(j), y + J(j)]);
+  g.moveTo(p[0][0], p[0][1]);
+  for (let i = 1; i < p.length - 1; i++) g.quadraticCurveTo(p[i][0], p[i][1], (p[i][0] + p[i + 1][0]) / 2, (p[i][1] + p[i + 1][1]) / 2);
+  g.lineTo(p.at(-1)[0], p.at(-1)[1]);
+  g.stroke();
+}
+// A doodled ellipse: one loop, overshooting where the pen comes round again.
+function oval(x, y, rx, ry, col = C.ink, w = 1.4, { fill = null, over = 0.35, rot = 0, j = 0.6 } = {}) {
+  const n = Math.max(10, Math.round((rx + ry) / 2.2)), a0 = jr() * 6.28, pts = [];
+  for (let i = 0; i <= n * (1 + over / 6.28); i++) {
+    const a = a0 + i / n * 6.28, wob = 1 + J(0.04);
+    const px = Math.cos(a) * rx * wob, py = Math.sin(a) * ry * wob;
+    pts.push([x + px * Math.cos(rot) - py * Math.sin(rot), y + px * Math.sin(rot) + py * Math.cos(rot)]);
+  }
+  if (fill) { g.fillStyle = fill; g.beginPath(); g.ellipse(x, y, rx, ry, rot, 0, 6.29); g.fill(); }
+  curve(pts, col, w, j * 0.5);
+}
+// Hatching inside a path: parallel strokes, clipped.
+function hatch(path, x0, y0, x1, y1, col = C.ink, gap = 4, ang = -0.8, w = 1) {
+  g.save(); g.clip(path); pen(col, w); g.beginPath();
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, R = Math.hypot(x1 - x0, y1 - y0) / 2 + 4;
+  const dx = Math.cos(ang), dy = Math.sin(ang), nx = -dy, ny = dx;
+  for (let d = -R; d <= R; d += gap) {
+    const ox = cx + nx * d, oy = cy + ny * d;
+    g.moveTo(ox - dx * R + J(0.8), oy - dy * R + J(0.8)); g.lineTo(ox + dx * R + J(0.8), oy + dy * R + J(0.8));
+  }
+  g.stroke(); g.restore();
+}
+const P = () => new Path2D();
+function rectP(x, y, w, h) { const p = P(); p.rect(x, y, w, h); return p; }
+function ellP(x, y, rx, ry) { const p = P(); p.ellipse(x, y, rx, ry, 0, 0, 6.29); return p; }
+function polyP(pts) { const p = P(); pts.forEach(([x, y], i) => i ? p.lineTo(x, y) : p.moveTo(x, y)); p.closePath(); return p; }
+function box(x, y, w, h, col = C.ink, lw = 1.4) { line([[x, y], [x + w, y], [x + w, y + h], [x, y + h], [x, y - 1]], col, lw); }
+function write(text, x, y, size = 18, col = C.dark, align = 'left', weight = 700, rot = 0) {
+  g.save(); g.translate(x, y); if (rot) g.rotate(rot);
+  g.font = `${weight} ${size}px Caveat, 'Comic Sans MS', cursive`; g.fillStyle = col; g.textAlign = align; g.textBaseline = 'alphabetic';
+  g.fillText(text, 0, 0); g.restore();
+}
+
+// ---------- The page ----------
+let paper = null;
+function drawPaper(s) {
+  paper = Sprites.canvas(Math.round(W * s), Math.round(H * s));
+  const q = paper.getContext('2d'); q.setTransform(s, 0, 0, s, 0, 0);
+  q.fillStyle = C.paper; q.fillRect(0, 0, W, H);
+  grain(q, W, H, { amount: 0.06 });
+  q.strokeStyle = '#8caba1aa'; q.lineWidth = 1;
+  for (let y = 34; y < H; y += 26) { q.beginPath(); q.moveTo(0, y); q.lineTo(W, y); q.stroke(); }
+  q.strokeStyle = '#c77b58aa'; q.lineWidth = 1.2; q.beginPath(); q.moveTo(46, 0); q.lineTo(46, H); q.stroke();
+  q.fillStyle = '#ab9b8e'; for (const y of [70, 260, 450]) { q.beginPath(); q.arc(20, y, 8, 0, 6.29); q.fill(); }
+}
+
+// Geometry of the scene.
+const GROUND = 238;                       // the cricket ground's grass line
+const REG = { x: 146, y: 90 };            // the loudspeaker's throat, on its pole on the pavilion roof
+const MAUD = { x: 268, y: GROUND };       // Maud's bench by the press box
+const MORTAR = { x: 600, y: 428, r: 54 }; // the mortar, the rub target
+const BALL = { x: 600, y: 84, r: 30 };    // the ball, in a callout bubble by the bowler
+const BOWLER = { x: 470, y: GROUND };
+const BAT = { x: 650, y: GROUND };
+const UMP = { x: 448, y: GROUND };
+
+// Reg: a horn on a pole, a tiny knitted hat, sound lines, and the props it collects.
+function drawReg(t, { hat = true, quiet = false, scale = 1.4 } = {}) {
+  g.save(); g.translate(REG.x, REG.y); g.scale(scale, scale);
+  // the pole and its bracket
+  line([[-6, 6], [-6, 56]], C.dark, 2.2);
+  line([[-14, 56], [2, 56]], C.dark, 1.6);
+  // the horn: a narrow throat on the left, the bell flaring right
+  const horn = polyP([[-18, -6], [-2, -8], [44, -26], [46, 24], [-2, 8], [-18, 6]]);
+  g.fillStyle = '#d1b187'; g.fill(horn);
+  hatch(horn, -18, -26, 46, 24, '#4b726e66', 5, 0.9, 0.9);
+  line([[-18, -6], [-2, -8], [44, -26]], C.dark, 1.8);
+  line([[-18, 6], [-2, 8], [46, 24]], C.dark, 1.8);
+  line([[-18, -6], [-18, 6]], C.dark, 1.8);
+  oval(45, -1, 6, 25, C.dark, 1.8);
+  oval(45, -1, 2.5, 13, C.ink, 1);
+  // the funnel, sitting in the bell
+  if (S.one.funnel) { line([[34, -14], [60, -32], [60, -36], [74, -36], [74, -32], [44, -4]], C.dark, 1.4); hatch(polyP([[34, -14], [60, -32], [74, -32], [44, -4]]), 34, -36, 74, -4, '#847875', 3, 0.3, 0.8); }
+  // the tiny knitted hat, on the throat end
+  if (hat) {
+    const hp = polyP([[-20, -6], [-17, -18], [-9, -23], [-1, -19], [0, -8]]);
+    g.fillStyle = '#c77b58'; g.fill(hp);
+    for (let i = 0; i < 4; i++) line([[-18 + i * 4.5, -9], [-15 + i * 4.5, -19 + Math.abs(i - 1.5) * 2]], C.wine, 1);
+    line([[-20, -6], [-17, -18], [-9, -23], [-1, -19], [0, -8]], C.dark, 1.5);
+    line([[-21, -6], [1, -8]], C.dark, 2.4);
+    if (S.one.pompom) { oval(-9, -27, 4.5, 4.5, C.dark, 1.2, { fill: C.hi }); for (let i = 0; i < 5; i++) line([[-9, -27], [-9 + Math.cos(i * 1.3) * 5, -27 + Math.sin(i * 1.3) * 5]], C.olive, 0.8); }
+  }
+  // sound lines out of the bell: busy when the throat is raw, gentle when it's comfortable
+  if (!quiet) {
+    const raw = 1 - S.comfort / 10, n = 3;
+    for (let i = 0; i < n; i++) {
+      const r = 14 + i * 9 + (reduced ? 0 : (t * 18) % 9), a = 0.55;
+      const pts = [];
+      for (let k = 0; k <= 8; k++) { const th = -a + k / 8 * 2 * a; const zig = raw * ((k % 2) ? 3 : -3); pts.push([52 + Math.cos(th) * (r + zig), -1 + Math.sin(th) * (r + zig)]); }
+      curve(pts, i === 0 ? C.ink : '#4b726e99', 1.2, 0.4);
+    }
+  }
+  g.restore();
+}
+
+function drawPavilion() {
+  const x0 = 62, x1 = 236, top = 150;
+  // roof
+  line([[x0 - 8, top + 4], [149, top - 22], [x1 + 8, top + 4], [x0 - 8, top + 4]], C.dark, 1.8);
+  hatch(polyP([[x0 - 8, top + 4], [149, top - 22], [x1 + 8, top + 4]]), x0 - 8, top - 22, x1 + 8, top + 4, '#4b3d4455', 5, -0.3, 1);
+  // walls, veranda, posts
+  box(x0, top + 4, x1 - x0, GROUND - top - 4, C.dark, 1.6);
+  line([[x0, top + 30], [x1, top + 30]], C.dark, 1.2);
+  for (let x = x0 + 20; x < x1; x += 34) line([[x, top + 30], [x, GROUND]], C.ink, 1.2);
+  // windows and a clock
+  for (const x of [x0 + 14, x1 - 44]) { box(x, top + 8, 30, 16, C.ink, 1.1); line([[x + 15, top + 8], [x + 15, top + 24]], C.ink, 0.9); }
+  oval(149, top + 14, 7, 7, C.dark, 1.2); line([[149, top + 14], [149, top + 9]], C.dark, 1); line([[149, top + 14], [153, top + 15]], C.dark, 1);
+  // steps and the honours board
+  line([[128, GROUND - 6], [170, GROUND - 6]], C.dark, 1.1);
+  box(118, top + 40, 62, 26, C.ink, 1);
+  write('HONOURS', 149, top + 52, 11, C.ink, 'center');
+  write('REG 1985–', 149, top + 63, 10, C.ink, 'center', 400);
+  // the almanac on its stool, not inside: it lives in the still room (below)
+}
+
+function drawGround(t) {
+  // the grass line and the boundary rope
+  curve([[46, GROUND], [300, GROUND + 1], [560, GROUND - 1], [800, GROUND]], C.dark, 1.5);
+  for (let x = 300; x < 790; x += 26) line([[x, GROUND + 4], [x + 6, GROUND + 3]], C.olive, 1);
+  // the pitch strip
+  line([[455, GROUND - 3], [665, GROUND - 3]], C.ochre, 3, 0.3);
+  // stumps
+  for (const x of [462, 658]) for (const dx of [-3, 0, 3]) line([[x + dx, GROUND - 3], [x + dx, GROUND - 22]], C.dark, 1.3, 0.2);
+  // the sightscreen
+  box(752, 150, 34, GROUND - 150, C.dark, 1.4);
+  line([[756, 150], [756, GROUND]], C.mush, 0.6);
+  if (S.one.pigeon) drawPigeon(769, 150, t);
+  // trees beyond
+  for (const [x, y, r] of [[398, 198, 18], [424, 188, 24], [700, 190, 24]]) {
+    const p = ellP(x, y, r, r * 0.8);
+    hatch(p, x - r, y - r, x + r, y + r, '#77743b99', 4, 0.7, 1);
+    oval(x, y, r, r * 0.8, C.olive, 1.2);
+    line([[x, y + r * 0.7], [x, GROUND]], C.brown, 1.4);
+  }
+}
+
+function drawPigeon(x, y, t) {
+  const bob = reduced ? 0 : Math.sin(t * 3) * 0.6;
+  g.save(); g.translate(x, y - 7 + bob);
+  oval(0, 0, 8, 6, C.dark, 1.2, { fill: '#ab9b8e' });
+  oval(7, -6, 4, 4, C.dark, 1.2, { fill: '#ab9b8e' });
+  line([[10, -6], [14, -5]], C.red, 1.2);
+  line([[-8, -1], [-14, 2]], C.dark, 1.2);
+  g.restore();
+}
+
+// A stick cricketer, doodled: head, cap, body, legs. pose 0..1 for the bowler's arm.
+function cricketer(x, y, { cap = true, arm = 0, bat = false, hat = false, sc = 1, col = C.dark } = {}) {
+  g.save(); g.translate(x, y); g.scale(sc, sc);
+  oval(0, -30, 4.5, 4.5, col, 1.3, { fill: C.paper });
+  if (cap) line([[-5, -33], [5, -34], [8, -32]], col, 2.2);
+  line([[0, -25], [0, -12]], col, 1.5);
+  line([[0, -12], [-5, 0]], col, 1.5); line([[0, -12], [5, 0]], col, 1.5);
+  const a = -2.4 + arm * 3.4;
+  line([[0, -22], [Math.cos(a) * 11, -22 + Math.sin(a) * 11]], col, 1.5);
+  line([[0, -22], [-7, -15]], col, 1.5);
+  if (bat) line([[3, -18], [12, -4]], C.brown, 3, 0.3);
+  if (hat) { // the umpire's tiny hat: a wide brim, a white crown, a red band
+    line([[-7, -35], [7, -35]], col, 1.6);
+    const hp = polyP([[-4, -35], [-3.5, -40], [3.5, -40], [4, -35]]); g.fillStyle = C.paper; g.fill(hp);
+    line([[-4, -35], [-3.5, -40], [3.5, -40], [4, -35]], col, 1.2);
+    line([[-4, -36.5], [4, -36.5]], C.red, 1.2);
+  }
+  g.restore();
+}
+
+// ---------- The match ----------
+let ballFly = null;     // a delivery in flight, for the picture
+function drawMatch(t) {
+  const on = E.season(S) || S.ended;
+  if (!on) {
+    // No play: the groundsman mows, a chalkboard explains.
+    const mx = 400 + (reduced ? 0 : Math.sin(t * 0.3) * 120);
+    cricketer(mx, GROUND, { cap: false, sc: 0.9 });
+    box(mx + 6, GROUND - 10, 16, 8, C.dark, 1.2); oval(mx + 10, GROUND - 1, 3, 3, C.dark, 1); oval(mx + 19, GROUND - 1, 3, 3, C.dark, 1);
+    box(560, 150, 120, 62, C.dark, 1.6);
+    g.fillStyle = '#4b3d44'; g.fillRect(562, 152, 116, 58);
+    write('NO PLAY', 620, 176, 20, C.paper, 'center');
+    write('ANNOUNCER POORLY', 620, 200, 15, C.paper, 'center', 400);
+    line([[580, 212], [572, GROUND]], C.dark, 1.4); line([[660, 212], [668, GROUND]], C.dark, 1.4);
+    return;
+  }
+  const rain = E.raining(S) && !S.ended;
+  // bunting along the boundary: one string per level
+  for (let k = 0; k < (S.lv.bunting || 0); k++) {
+    const y0 = 150 + k * 14, pts = [];
+    for (let x = 300; x <= 750; x += 10) pts.push([x, y0 + Math.sin((x - 300) / 450 * Math.PI) * 14]);
+    curve(pts, C.dark, 1, 0.3);
+    for (let i = 0; i < 22; i++) {
+      const x = 310 + i * 20, y = y0 + Math.sin((x - 300) / 450 * Math.PI) * 14;
+      const f = polyP([[x - 5, y], [x + 5, y], [x, y + 10]]);
+      g.fillStyle = [C.red, C.hi, C.ink, C.rust][(i + k) % 4]; g.fill(f);
+      line([[x - 5, y], [x, y + 10], [x + 5, y]], C.dark, 0.9, 0.2);
+    }
+  }
+  if (S.one.roller) { // the heavy roller, parked by the pavilion
+    oval(300, GROUND - 12, 12, 12, C.dark, 1.6, { fill: '#847875' });
+    line([[300, GROUND - 12], [326, GROUND - 34], [334, GROUND - 30]], C.dark, 1.6);
+    if (!rain && !reduced) write('(flat)', 300, GROUND + 14, 12, C.grey, 'center', 400);
+  }
+  if (S.one.board) drawScoreboard();
+  // the twelfth man on the boundary, rubbing a ball on his trousers: a stain per level
+  if (S.lv.twelfth) {
+    const x = 712, y = GROUND, rub = reduced ? 0 : Math.sin(t * 9) * 2;
+    cricketer(x, y, { cap: true, sc: 0.95 });
+    oval(x + 4 + rub, y - 12, 2.4, 2.4, C.red, 1.2, { fill: C.red });
+    for (let i = 0; i < S.lv.twelfth; i++) line([[x + 2 + i * 1.6, y - 10], [x + 1 + i * 1.6, y - 3]], C.red, 1.2, 0.2);
+    write('12th', x, y - 44, 12, C.ink, 'center');
+  }
+  if (rain) {
+    // covers on, everyone in the pavilion
+    const cov = polyP([[440, GROUND - 2], [452, GROUND - 14], [670, GROUND - 14], [682, GROUND - 2]]);
+    g.fillStyle = '#847875'; g.fill(cov); line([[440, GROUND - 2], [452, GROUND - 14], [670, GROUND - 14], [682, GROUND - 2]], C.dark, 1.4);
+    write('COVERS ON', 561, GROUND - 4, 14, C.paper, 'center');
+    cricketer(UMP.x - 40, GROUND, { cap: false, hat: !!S.one.umpire, sc: 0.95 });
+    return;
+  }
+  // fielders, the umpire, the batsman, the bowler
+  for (const [x, s] of [[360, 0.75], [600, 0.8], [740, 0.7], [520, 0.7]]) cricketer(x, GROUND - 2, { sc: s, col: C.ink });
+  cricketer(UMP.x, GROUND, { cap: false, hat: !!S.one.umpire });
+  cricketer(BAT.x, GROUND, { bat: true, arm: 0.2 });
+  const run = S.ballT / E.deliveryEvery(S);
+  const bx = BOWLER.x - 40 + Math.min(1, run * 1.2) * 40;
+  cricketer(bx, GROUND, { arm: run > 0.85 ? (run - 0.85) / 0.15 : 0.1 });
+  // a delivery in flight
+  if (ballFly) {
+    const u = ballFly.t / 0.5;
+    if (u < 1) oval(BOWLER.x + (BAT.x - BOWLER.x) * u, GROUND - 26 + Math.sin(u * Math.PI) * -10 + u * 20, 2.5, 2.5, C.red, 1.2, { fill: C.red });
+    else { const v = (ballFly.t - 0.5) / 1.4; if (v < 1) oval(BAT.x - 240 * v * ballFly.k - 30 * v, GROUND - 22 - Math.sin(v * Math.PI) * 90 * ballFly.k, 2.5, 2.5, C.red, 1.2, { fill: C.red }); }
+  }
+  // the ball, in a callout by the bowler: rub it shiny
+  if (E.playing(S) || S.finale) drawBallCallout(t);
+}
+function drawBallCallout(t) {
+  line([[BALL.x - 10, BALL.y + BALL.r + 2], [bx0(), GROUND - 30]], C.grey, 1, 0.4);
+  oval(BALL.x, BALL.y, BALL.r + 9, BALL.r + 9, C.grey, 1, { over: 0.1 });
+  const shine = S.finale ? fin.shine : S.shine;
+  oval(BALL.x, BALL.y, BALL.r, BALL.r, C.dark, 1.8, { fill: C.red });
+  // the seam
+  curve([[BALL.x - 6, BALL.y - BALL.r + 2], [BALL.x + 4, BALL.y], [BALL.x - 6, BALL.y + BALL.r - 2]], C.paper, 1.2, 0.2);
+  // shine: highlights that grow with each rub
+  if (shine > 0) {
+    g.save(); g.globalAlpha = 0.25 + 0.65 * shine;
+    oval(BALL.x + 10, BALL.y - 12, 3 + 7 * shine, 2 + 4 * shine, C.paper, 1.2, { fill: C.paper, rot: -0.6 });
+    g.restore();
+    for (let i = 0; i < Math.round(shine * 4); i++) { const a = -2.2 + i * 0.5; line([[BALL.x + Math.cos(a) * (BALL.r + 13), BALL.y + Math.sin(a) * (BALL.r + 13)], [BALL.x + Math.cos(a) * (BALL.r + 19), BALL.y + Math.sin(a) * (BALL.r + 19)]], C.hi, 2, 0.3); }
+  }
+  // the shine meter, as an arc of ink
+  g.strokeStyle = C.ink; g.lineWidth = 3; g.beginPath(); g.arc(BALL.x, BALL.y, BALL.r + 5, -Math.PI / 2, -Math.PI / 2 + shine * Math.PI * 2); g.stroke();
+  if (!S.balls || (S.finale && !fin.balls)) write('rub the ball!', BALL.x, BALL.y + BALL.r + 24, 17, C.red, 'center', 700, -0.04);
+}
+const bx0 = () => BOWLER.x - 34;
+
+function drawScoreboard() {
+  const x = 318, y = 80;
+  box(x, y, 64, 66, C.dark, 1.6);
+  line([[x + 10, y + 66], [x + 10, GROUND]], C.dark, 1.4); line([[x + 54, y + 66], [x + 54, GROUND]], C.dark, 1.4);
+  write('RUNS', x + 32, y + 14, 12, C.dark, 'center');
+  const runs = S.finale ? fin.runs : S.ended ? 241 : S.runs || 0;
+  write(String(runs % 1000), x + 32, y + 36, 22, C.ink, 'center');
+  write(S.finale ? `NEED ${Math.max(0, fin.need - fin.runs)}` : `GAME ${Math.min(S.fixture + 1, E.FIXTURES.length)}`, x + 32, y + 58, 13, C.dark, 'center');
+}
+
+// Maud, her bench (or deckchair), her flask, her notebook.
+function drawMaud(t, { climbing = 0 } = {}) {
+  const x = MAUD.x, y = MAUD.y;
+  // the bench
+  line([[x - 26, y - 14], [x + 22, y - 14]], C.dark, 2);
+  line([[x - 22, y - 14], [x - 22, y]], C.dark, 1.4); line([[x + 18, y - 14], [x + 18, y]], C.dark, 1.4);
+  // flask and cups on the bench
+  if (S.one.cups || S.finale || S.ended) drawTea(x + 12, y - 15, S.one.cups || S.finale || S.ended ? 2 : 1);
+  if (S.one.deckchair) { // the deckchair, striped, just behind
+    const d = polyP([[x - 34, y], [x - 46, y - 30], [x - 30, y - 34], [x - 18, y]]);
+    g.save(); g.clip(d); for (let i = 0; i < 6; i++) { g.fillStyle = i % 2 ? C.paper : C.red; g.fillRect(x - 48 + i * 5, y - 36, 5, 40); } g.restore();
+    line([[x - 34, y], [x - 46, y - 30], [x - 30, y - 34], [x - 18, y]], C.dark, 1.4);
+    line([[x - 44, y], [x - 26, y - 22]], C.dark, 1.2);
+  }
+  if (climbing) return;
+  // Maud: hat, glasses, notebook, pen
+  const sx = S.one.deckchair ? x - 34 : x - 6, sy = S.one.deckchair ? y - 6 : y - 14;
+  oval(sx, sy - 26, 5.5, 6, C.dark, 1.3, { fill: C.paper });
+  line([[sx - 9, sy - 30], [sx + 9, sy - 30]], C.dark, 1.8);
+  oval(sx, sy - 33, 5, 3, C.dark, 1.2, { fill: C.wine });
+  line([[sx + 1, sy - 26], [sx + 6, sy - 26]], C.dark, 0.9);
+  line([[sx, sy - 20], [sx, sy - 6]], C.dark, 1.5);
+  line([[sx, sy - 6], [sx + 10, sy - 6], [sx + 10, sy + 6]], C.dark, 1.5);
+  const scrib = reduced ? 0 : Math.sin(t * 7) * 1.4;
+  box(sx + 5, sy - 18, 10, 8, C.red, 1.2);
+  line([[sx, sy - 16], [sx + 9 + scrib, sy - 14]], C.dark, 1.3);
+  write('M.', sx - 12, sy - 34, 12, C.red, 'center');
+}
+function drawTea(x, y, cups) {
+  const fl = SPR.flask; if (fl) g.drawImage(fl, x - 10, y - 22, 18, 22);
+  for (let i = 0; i < cups; i++) { const c = SPR.cup; if (c) g.drawImage(c, x + 6 + i * 9, y - 9, 10, 10); }
+}
+
+// ---------- The coop ----------
+const HEN_SPOTS = Array.from({ length: 44 }, (_, i) => ({ x: 196 + hash(i, 3) * 250, y: 392 + hash(i, 5) * 96, f: hash(i, 9) < 0.5 ? -1 : 1, p: hash(i, 11) * 6 }));
+HEN_SPOTS.sort((a, b) => a.y - b.y);
+function hen(x, y, f = 1, peck = 0, { sc = 1, brood = false, rooster = false, hat = false } = {}) {
+  g.save(); g.translate(x, y); g.scale(f * sc, sc);
+  const body = ellP(0, -9, 10, 7.5);
+  g.fillStyle = rooster ? '#d1b187' : C.paper; g.fill(body);
+  if (rooster) hatch(body, -10, -17, 10, -2, '#79444a88', 3.5, 0.6, 0.9);
+  oval(0, -9, 10, 7.5, C.dark, 1.3);
+  // tail
+  if (rooster) { curve([[-9, -12], [-16, -24], [-12, -10]], C.wine, 1.4); curve([[-9, -10], [-19, -18], [-14, -6]], C.olive, 1.3); }
+  else line([[-9, -12], [-14, -17], [-12, -9]], C.dark, 1.2);
+  // head
+  const hy = -18 + peck * 9, hx = 8 + peck * 4;
+  oval(hx, hy, 4.5, 4.5, C.dark, 1.2, { fill: rooster ? '#d1b187' : C.paper });
+  line([[hx + 4, hy - 1], [hx + 8, hy + 1], [hx + 4, hy + 2]], C.ochre, 1.2, 0.2);
+  curve([[hx - 3, hy - 4], [hx - 1, hy - 8], [hx + 1, hy - 5], [hx + 3, hy - 8], [hx + 4, hy - 4]], C.red, rooster ? 2 : 1.4, 0.2);
+  line([[hx + 3, hy + 3], [hx + 3, hy + 6]], C.red, 1.4, 0.2);
+  g.fillStyle = C.dark; g.fillRect(hx + 1, hy - 1.5, 1.4, 1.4);
+  if (hat) { // the rooster's tiny hat, knitted to match Reg's
+    const hp = polyP([[hx - 4, hy - 5], [hx - 2, hy - 12], [hx + 3, hy - 13], [hx + 5, hy - 5]]);
+    g.fillStyle = C.rust; g.fill(hp); line([[hx - 4, hy - 5], [hx - 2, hy - 12], [hx + 3, hy - 13], [hx + 5, hy - 5]], C.dark, 1.2);
+    oval(hx + 1, hy - 15, 2.2, 2.2, C.dark, 1, { fill: C.hi });
+  }
+  if (!brood) { line([[-2, -2], [-3, 4]], C.ochre, 1.2, 0.2); line([[3, -2], [4, 4]], C.ochre, 1.2, 0.2); }
+  g.restore();
+}
+function drawCoop(t) {
+  // the shed
+  const x0 = 64, x1 = 176, top = 330, bot = 478;
+  line([[x0 - 8, top + 4], [(x0 + x1) / 2, top - 30], [x1 + 8, top + 4], [x0 - 8, top + 4]], C.dark, 1.7);
+  hatch(polyP([[x0 - 8, top + 4], [(x0 + x1) / 2, top - 30], [x1 + 8, top + 4]]), x0 - 8, top - 30, x1 + 8, top + 4, '#79444a77', 4, 0.4, 1);
+  box(x0, top + 4, x1 - x0, bot - top - 4, C.dark, 1.6);
+  for (let x = x0 + 12; x < x1; x += 12) line([[x, top + 6], [x, bot]], '#4b3d4433', 1, 0.3);
+  write('COOP', (x0 + x1) / 2, top - 2, 15, C.dark, 'center');
+  // nesting boxes: broodies peep out
+  const nb = Math.min(8, Math.floor(S.broodies));
+  for (let i = 0; i < 8; i++) {
+    const bx = x0 + 8 + (i % 4) * 25, by = top + 26 + Math.floor(i / 4) * 46;
+    box(bx, by, 22, 30, C.ink, 1.1);
+    if (S.one.bale) for (let k = 0; k < 4; k++) line([[bx + 2 + k * 5, by + 30], [bx + 5 + k * 5, by + 25]], C.hi, 1.2, 0.3);
+    if (i < nb) hen(bx + 10, by + 30, i % 2 ? -1 : 1, 0, { sc: 0.85, brood: true });
+  }
+  if (S.broodies >= 9) write(`+${fmt(Math.floor(S.broodies) - 8)} broody`, (x0 + x1) / 2, bot - 10, 14, C.ink, 'center');
+  // the door and its ramp
+  box(x0 + 40, bot - 34, 26, 34, C.dark, 1.3);
+  line([[x0 + 66, bot], [x0 + 90, bot + 14]], C.dark, 1.3);
+  // the straw bale
+  if (S.one.bale) {
+    box(180, 452, 44, 26, C.ochre, 1.6);
+    hatch(rectP(180, 452, 44, 26), 180, 452, 224, 478, '#b3a555', 3, -0.2, 1.2);
+    line([[180, 465], [224, 465]], C.brown, 1);
+  }
+  // roosters on the roof ridge, crowing now and then
+  const nr = Math.min(5, S.roosters);
+  for (let i = 0; i < nr; i++) {
+    const rx = (x0 + x1) / 2 - 36 + i * 18, ry = top - 26 + Math.abs(i - 2) * 7;
+    const crowing = !reduced && ((t * 0.25 + i * 0.37) % 1) < 0.08;
+    hen(rx, ry, i % 2 ? -1 : 1, crowing ? -0.5 : 0, { sc: 0.95, rooster: true, hat: !!S.one.roohat });
+    if (crowing) write('COCK-A-', rx + 12, ry - 30, 11, C.red, 'center');
+  }
+  if (S.roosters > 5) write(`+${S.roosters - 5}`, x1 + 18, top - 14, 15, C.red, 'center');
+  // the run's fence
+  line([[60, 500], [470, 500]], C.dark, 1.4);
+  for (let x = 64; x <= 470; x += 18) line([[x, 486], [x, 504]], C.dark, 1.1, 0.3);
+  // hens about the run
+  const nh = Math.min(HEN_SPOTS.length, Math.floor(S.hens));
+  for (let i = 0; i < HEN_SPOTS.length; i++) {
+    const s = HEN_SPOTS[i]; if (s.idx === undefined) s.idx = i;
+  }
+  let drawn = 0;
+  for (const s of HEN_SPOTS) {
+    if (s.idx >= nh) continue; drawn++;
+    const wob = reduced ? 0 : Math.sin(t * 0.7 + s.p) * 6;
+    const peck = reduced ? 0 : Math.max(0, Math.sin(t * 2.3 + s.p * 3) - 0.75) * 4;
+    hen(s.x + wob, s.y, s.f, Math.min(1, peck));
+  }
+  if (S.hens >= 1) write(`${fmt(Math.floor(S.hens))} hen${Math.floor(S.hens) === 1 ? '' : 's'}`, 456, 300, 24, C.ink, 'right', 700, -0.03);
+  // chicks hatching out and running off to grow up
+  for (const c of chicks) {
+    const u = c.t / 3;
+    const x = 160 + u * 120 + c.dx, y = 470 + c.dy;
+    oval(x, y - 4, 3.5, 3, C.dark, 1, { fill: C.hi });
+    line([[x + 3, y - 5], [x + 5, y - 4]], C.ochre, 1);
+  }
+  // eggs rolling from the coop down the chute into the still
+  for (const e of eggs) { oval(e.x, e.y, 4, 5, C.dark, 1, { fill: C.paper, rot: e.r }); }
+}
+
+// ---------- The still room ----------
+function drawStillRoom(t) {
+  // a little divider: the still room starts here
+  curve([[478, 262], [482, 380], [476, 510]], '#4b3d4455', 1.2);
+  // the almanac, open on its stool
+  const al = SPR.book;
+  line([[500, 322], [500, 356]], C.dark, 1.3); line([[536, 322], [536, 356]], C.dark, 1.3); line([[494, 322], [542, 322]], C.dark, 1.6);
+  if (al) g.drawImage(al, 494, 282, 46, 42);
+  write('Oleum Ovorum', 518, 278, 14, C.red, 'center', 700, -0.05);
+  write('anno 1703', 518, 366, 12, C.ink, 'center', 400);
+  // the copper still: a pot, a dome, a coil per level, a drip into a jar
+  const lv = S.lv.still || 0, px = 720, py = 380;
+  oval(px, py, 30 + lv * 3, 26 + lv * 2, C.dark, 1.7, { fill: '#c77b58' });
+  hatch(ellP(px, py, 30 + lv * 3, 26 + lv * 2), px - 34, py - 30, px + 34, py + 30, '#79444a88', 4, -0.7, 1);
+  oval(px, py - 30 - lv * 2, 14, 10, C.dark, 1.5, { fill: '#c77b58' });
+  line([[px + 12, py - 34 - lv * 2], [px + 40, py - 56], [px + 58, py - 44]], C.dark, 1.6);
+  for (let i = 0; i <= lv; i++) oval(px + 58, py - 34 + i * 12, 12, 5, C.ink, 1.3);
+  line([[px + 58, py - 30 + lv * 12 + 6], [px + 58, py + 24 + Math.max(0, 1 - lv) * 8]], C.dark, 1.4);
+  // fire under the pot
+  for (let i = 0; i < 4; i++) { const fx = px - 18 + i * 12, fl = reduced ? 0 : Math.sin(t * 9 + i) * 3; curve([[fx - 4, py + 34], [fx + fl, py + 20 - i % 2 * 4], [fx + 4, py + 34]], C.rust, 1.3, 0.3); }
+  line([[px - 26, py + 36], [px + 26, py + 36]], C.dark, 1.4);
+  // the jar under the drip, filling with every dose's worth
+  const jx = px + 58, jy = py + 70;
+  box(jx - 14, jy - 32, 28, 34, C.dark, 1.5);
+  const fill = Math.min(1, S.drops / Math.max(1, E.doseCost(S)));
+  if (fill > 0) { g.fillStyle = '#ba915899'; g.fillRect(jx - 12, jy + 1 - 32 * fill, 24, 32 * fill); }
+  write('OIL', jx, jy - 12, 12, C.dark, 'center');
+  if (!reduced && S.hens >= 1) { const d = (t * 1.6) % 1; oval(jx, py + 26 + d * 10, 1.8, 2.6, C.gold, 1, { fill: C.gold }); }
+  // the chute the eggs roll down
+  line([[178, 486], [470, 496], [640, 470], [688, 410]], '#4b3d4466', 1.2);
+  // the mortar and pestle
+  drawMortar(t);
+}
+let pestleA = -0.6, pestleWob = 0;
+function drawMortar(t) {
+  const { x, y, r } = MORTAR;
+  // pestle behind
+  const a = pestleA, tipx = x + Math.cos(a) * r * 0.45, tipy = y - 8 + Math.sin(a) * r * 0.18;
+  const hx = tipx + Math.cos(a) * 22 + 14, hy = tipy - 70;
+  if (Math.sin(a) < 0) drawPestle(tipx, tipy, hx, hy);
+  // bowl
+  const bowl = P(); bowl.moveTo(x - r, y - 10); bowl.quadraticCurveTo(x - r + 4, y + r * 0.9, x, y + r * 0.9); bowl.quadraticCurveTo(x + r - 4, y + r * 0.9, x + r, y - 10); bowl.closePath();
+  g.fillStyle = '#ab9b8e'; g.fill(bowl);
+  hatch(bowl, x - r, y - 10, x + r, y + r, '#57485277', 5, 0.8, 1);
+  curve([[x - r, y - 10], [x - r + 4, y + r * 0.9], [x, y + r * 0.9]], C.dark, 1.8);
+  curve([[x, y + r * 0.9], [x + r - 4, y + r * 0.9], [x + r, y - 10]], C.dark, 1.8);
+  oval(x, y - 10, r, r * 0.22, C.dark, 1.8, { fill: '#d1b187' });
+  // yolks in the bowl, and the oil sweating out
+  for (let i = 0; i < 5; i++) oval(x - 26 + i * 13, y - 10 + (i % 2) * 3, 5, 3, C.ochre, 1, { fill: C.hi });
+  // the spout: a drop of oil hangs while you rub
+  line([[x + r, y - 10], [x + r + 10, y - 4]], C.dark, 1.5);
+  if (dropT > 0) oval(x + r + 11, y + (1 - dropT) * 14, 2, 3, C.gold, 1, { fill: C.gold });
+  if (Math.sin(a) >= 0) drawPestle(tipx, tipy, hx, hy);
+  // a hint until you've got the hang of it
+  if (S.rubs < 8 && !S.ended) {
+    const k = reduced ? 0 : t * 1.5;
+    const pts = []; for (let i = 0; i <= 14; i++) { const th = k + i / 14 * 4.6; pts.push([x + Math.cos(th) * (r + 16), y - 10 + Math.sin(th) * (r * 0.4 + 10)]); }
+    curve(pts, C.red, 1.8, 0.2);
+    const e = pts.at(-1), pr = pts.at(-2), ang = Math.atan2(e[1] - pr[1], e[0] - pr[0]);
+    line([[e[0] - Math.cos(ang - 0.5) * 8, e[1] - Math.sin(ang - 0.5) * 8], e, [e[0] - Math.cos(ang + 0.5) * 8, e[1] - Math.sin(ang + 0.5) * 8]], C.red, 1.8, 0.2);
+    write('rub round the mortar!', x, y + r + 24, 19, C.red, 'center', 700, -0.03);
+  }
+}
+function drawPestle(tx, ty, hx, hy) {
+  const w = 7 + (S.lv.pestle || 0) * 1.6;
+  const dx = hx - tx, dy = hy - ty, L = Math.hypot(dx, dy), nx = -dy / L, ny = dx / L;
+  const p = polyP([[tx + nx * w, ty + ny * w], [hx + nx * 4, hy + ny * 4], [hx - nx * 4, hy - ny * 4], [tx - nx * w, ty - ny * w]]);
+  g.fillStyle = '#d1b187'; g.fill(p);
+  hatch(p, Math.min(tx, hx) - 10, Math.min(ty, hy) - 10, Math.max(tx, hx) + 10, Math.max(ty, hy) + 10, '#4d453988', 3.5, 0.2, 0.9);
+  line([[tx + nx * w, ty + ny * w], [hx + nx * 4, hy + ny * 4], [hx - nx * 4, hy - ny * 4], [tx - nx * w, ty - ny * w]], C.dark, 1.6);
+  oval(tx, ty, w, w * 0.6, C.dark, 1.6, { fill: '#d1b187' });
+  for (let i = 1; i <= (S.lv.pestle || 0); i++) line([[tx + (hx - tx) * (0.2 + i * 0.1) + nx * 6, ty + (hy - ty) * (0.2 + i * 0.1) + ny * 6], [tx + (hx - tx) * (0.2 + i * 0.1) - nx * 6, ty + (hy - ty) * (0.2 + i * 0.1) - ny * 6]], C.brown, 1.4, 0.2);
+}
+
+// ---------- Weather ----------
+let rainDrops = [];
+function drawWeather(t) {
+  const rain = (E.raining(S) && !S.ended) || (S.ended && S.how === 'rain') || (fin && fin.rain);
+  if (!rain) {
+    // the sun in the top margin, doodled
+    const x = 760, y = 40;
+    oval(x, y, 15, 15, C.ochre, 1.6, { fill: '#b3a55599' });
+    for (let i = 0; i < 9; i++) { const a = i / 9 * 6.28 + (reduced ? 0 : t * 0.1); line([[x + Math.cos(a) * 20, y + Math.sin(a) * 20], [x + Math.cos(a) * 28, y + Math.sin(a) * 28]], C.ochre, 1.4, 0.3); }
+  }
+  // the cloud: on its way in the last third of the sun, or overhead
+  const p = (S.wt % E.CYCLE);
+  const coming = !S.ended && !fin && p > E.RAIN_AT - 30 && p < E.RAIN_AT;
+  if (rain || coming || (fin && fin.cloud > 0)) {
+    let cx = 640, k = 1;
+    if (coming) { k = (p - (E.RAIN_AT - 30)) / 30; cx = 820 - k * 180; }
+    if (fin && !fin.rain) { cx = 840 - fin.cloud * 300; k = 0.5 + fin.cloud * 0.5; }
+    const cy = 44;
+    g.save(); g.translate(cx, cy); g.scale(0.7 + 0.5 * k, 0.7 + 0.5 * k);
+    const cl = P(); for (const [dx, dy, r] of [[-40, 6, 20], [-14, -8, 26], [16, -4, 24], [40, 8, 18], [0, 12, 22]]) cl.ellipse(dx, dy, r, r * 0.8, 0, 0, 6.29);
+    g.fillStyle = '#ab9b8e'; g.fill(cl);
+    hatch(cl, -62, -36, 62, 32, '#4b3d4455', 4, -0.6, 1);
+    for (const [dx, dy, r] of [[-40, 6, 20], [-14, -8, 26], [16, -4, 24], [40, 8, 18]]) oval(dx, dy, r, r * 0.8, C.dark, 1.3, { over: 0.1 });
+    g.restore();
+  }
+  if (rain) {
+    pen('#4b726e88', 1.1); g.beginPath();
+    for (const d of rainDrops) { g.moveTo(d.x, d.y); g.lineTo(d.x - 4, d.y + 12); }
+    g.stroke();
+    if (!S.ended && !fin) write('RAIN STOPS PLAY', 560, 120, 28, C.red, 'center', 700, -0.06);
+  }
+}
+function stepRain(dt) {
+  const rain = (E.raining(S) && !S.ended) || (S.ended && S.how === 'rain') || (fin && fin.rain);
+  if (!rain || reduced) { if (reduced && rain && !rainDrops.length) for (let i = 0; i < 70; i++) rainDrops.push({ x: hash(i, 1) * 820, y: hash(i, 2) * 520 }); if (!rain) rainDrops = []; return; }
+  while (rainDrops.length < 90) rainDrops.push({ x: Math.random() * 840, y: Math.random() * -520 + (rainDrops.length < 2 ? 0 : Math.random() * 520) });
+  for (const d of rainDrops) { d.y += 380 * dt; d.x -= 120 * dt; if (d.y > 530) { d.y = -20; d.x = Math.random() * 860; } }
+}
+
+// ---------- Floats, speech, chicks, eggs ----------
+let floats = [], chicks = [], eggs = [], dropT = 0;
+let speech = null;   // Reg's latest call, in a speech squiggle
+function call(text) { speech = { text, t: 0 }; sfx.call(); }
+function drawSpeech() {
+  if (!speech) return;
+  const a = Math.min(1, (3.2 - speech.t) * 2, speech.t * 6);
+  if (a <= 0) return;
+  g.save(); g.globalAlpha = Math.max(0, a);
+  g.font = `700 19px Caveat, cursive`;
+  const w = Math.min(330, g.measureText(speech.text).width + 24);
+  const x = 212, y = 20;
+  const bub = P(); bub.roundRect(x, y, w, 30, 12);
+  g.fillStyle = '#d2c9a5ee'; g.fill(bub);
+  line([[x + 10, y + 30], [REG.x + 70, REG.y - 26], [x + 26, y + 30]], C.dark, 1.3);
+  curve([[x + 8, y], [x + w / 2, y - 2], [x + w - 6, y + 1], [x + w + 2, y + 15], [x + w - 6, y + 30], [x + w / 2, y + 31], [x + 6, y + 30], [x - 2, y + 15], [x + 8, y]], C.dark, 1.3, 0.4);
+  g.save(); g.beginPath(); g.rect(x + 4, y, w - 8, 32); g.clip();
+  write(speech.text, x + 12, y + 21, 19, C.dark, 'left');
+  g.restore(); g.restore();
+}
+function float(text, x, y, color = C.ink, size = 20) { floats.push({ text, x, y, t: 0, color, size }); if (floats.length > 30) floats.shift(); }
+
+// ---------- The frame ----------
+let zoom = 1, dpr = 1;
+function layout() {
+  dpr = Math.min(2, window.devicePixelRatio || 1);
+  const w = cv.clientWidth || 600;
+  zoom = w / W;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(w * H / W * dpr);
+  drawPaper(zoom * dpr);
+}
+let clock = 0;
+function render() {
+  g = cv.getContext('2d');
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  if (paper) g.drawImage(paper, 0, 0); else { g.fillStyle = C.paper; g.fillRect(0, 0, cv.width, cv.height); }
+  g.setTransform(zoom * dpr, 0, 0, zoom * dpr, 0, 0);
+  seedN = 0; boil = reduced ? 0 : Math.floor(clock * 4) % 3;
+  const t = clock;
+  drawPavilion();
+  drawGround(t);
+  drawMatch(t);
+  drawMaud(t, { climbing: secretT > 3 || (S.ended && S.how === 'rain') ? 1 : 0 });
+  drawReg(t, { hat: !(S.ended && S.how === 'rain') && !(secretT > 6), quiet: (S.ended && S.how === 'rain') || secretT > 0.5 });
+  if (S.ended && S.how === 'rain' || secretT > 3) drawMaudOnRoof(t);
+  // a squiggle between the ground and the yard
+  curve([[52, 258], [260, 254], [520, 260], [790, 255]], '#4b3d4466', 1.2);
+  drawCoop(t);
+  drawStillRoom(t);
+  drawWeather(t);
+  if (S.ended && S.how !== 'rain') drawTrophy(t);
+  drawSpeech();
+  for (const f of floats) {
+    g.globalAlpha = Math.max(0, 1 - f.t / 1.4);
+    write(f.text, f.x, f.y - f.t * 26, f.size, f.color, 'center');
+    g.globalAlpha = 1;
+  }
+  if (inkRun > 0) drawInkRun();
+}
+// The ink runs: in the rain the drawing streaks down the page. Nothing is lost but the picture.
+let inkRun = 0;
+function drawInkRun() {
+  g.save(); g.globalAlpha = Math.min(0.55, inkRun * 0.12);
+  for (let i = 0; i < 120; i++) {
+    const x = 50 + hash(i, 21) * 740, y0 = hash(i, 22) * 300, L = (20 + hash(i, 23) * 120) * Math.min(1, inkRun / 4);
+    const gr = g.createLinearGradient(x, y0, x, y0 + L); gr.addColorStop(0, '#4b726e'); gr.addColorStop(1, '#4b726e00');
+    g.strokeStyle = gr; g.lineWidth = 1 + hash(i, 24) * 2.5; g.beginPath(); g.moveTo(x, y0); g.lineTo(x + hash(i, 25) * 3 - 1.5, y0 + L); g.stroke();
+  }
+  g.restore();
+}
+function drawMaudOnRoof(t) {
+  // Maud on the pavilion roof beside Reg, with the flask and two cups, under an umbrella.
+  const x = 110, y = 140;
+  const um = SPR.umbrella; if (um) g.drawImage(um, x - 26, y - 92, 56, 56);
+  oval(x, y - 32, 5.5, 6, C.dark, 1.3, { fill: C.paper });
+  line([[x - 9, y - 36], [x + 9, y - 36]], C.dark, 1.8); oval(x, y - 39, 5, 3, C.dark, 1.2, { fill: C.wine });
+  line([[x, y - 26], [x, y - 10]], C.dark, 1.5); line([[x, y - 10], [x - 5, y + 2]], C.dark, 1.5); line([[x, y - 10], [x + 6, y + 2]], C.dark, 1.5);
+  line([[x, y - 22], [x + 12, y - 20]], C.dark, 1.5);
+  const c = SPR.cup; if (c) { g.drawImage(c, x + 10, y - 28, 10, 10); g.drawImage(c, REG.x - 30, REG.y + 6, 10, 10); }
+  // Reg's hat, in her other hand
+  if (S.ended || secretT > 6) { const hp = polyP([[x - 14, y - 16], [x - 12, y - 26], [x - 5, y - 29], [x + 1, y - 26], [x + 2, y - 16]]); g.fillStyle = C.rust; g.fill(hp); line([[x - 14, y - 16], [x - 12, y - 26], [x - 5, y - 29], [x + 1, y - 26], [x + 2, y - 16]], C.dark, 1.3); }
+}
+function drawTrophy(t) {
+  const x = 600, y = 112;
+  const cup = P(); cup.moveTo(x - 16, y - 30); cup.quadraticCurveTo(x - 14, y, x, y + 2); cup.quadraticCurveTo(x + 14, y, x + 16, y - 30); cup.closePath();
+  g.fillStyle = '#b3a555'; g.fill(cup);
+  hatch(cup, x - 16, y - 30, x + 16, y + 2, '#92744199', 3, 0.8, 1);
+  line([[x - 16, y - 30], [x + 16, y - 30]], C.dark, 1.6);
+  curve([[x - 16, y - 30], [x - 14, y], [x, y + 2], [x + 14, y], [x + 16, y - 30]], C.dark, 1.6);
+  oval(x - 19, y - 20, 5, 8, C.dark, 1.3); oval(x + 19, y - 20, 5, 8, C.dark, 1.3);
+  line([[x, y + 2], [x, y + 12]], C.dark, 1.6); box(x - 10, y + 12, 20, 8, C.dark, 1.5);
+  write('★★★★☆', x, y - 40, 16, C.red, 'center');
+}
+
+// ---------- Input: rubbing ----------
+const toWorld = e => { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * W, y: (e.clientY - r.top) / r.height * H }; };
+let rubbing = null;   // { target: 'mortar' | 'ball', x, y, dist }
+const STROKE = 150, SHINE_STROKE = 110;
+const strokeTimes = [];
+function canStroke() { const now = performance.now(); while (strokeTimes.length && now - strokeTimes[0] > 1000) strokeTimes.shift(); if (strokeTimes.length >= 5) return false; strokeTimes.push(now); return true; }
+function targetAt(p) {
+  const ballOn = (E.playing(S) && !S.ended) || (fin && !fin.done);
+  if (ballOn && Math.hypot(p.x - BALL.x, p.y - BALL.y) < BALL.r + 34) return 'ball';
+  if (S.ended || fin) return null;
+  if (Math.hypot(p.x - MORTAR.x, (p.y - MORTAR.y) * 1.3) < MORTAR.r + 70) return 'mortar';
+  if (p.y > 262 && p.x > 470) return 'mortar';
+  return null;
+}
+cv.addEventListener('pointerdown', e => {
+  const p = toWorld(e), tg = targetAt(p);
+  if (!tg) return;
+  e.preventDefault();
+  try { cv.setPointerCapture(e.pointerId); } catch (_) {}
+  rubbing = { target: tg, x: p.x, y: p.y, dist: tg === 'mortar' ? STROKE * 0.55 : SHINE_STROKE * 0.55, id: e.pointerId };
+  cv.classList.add('rubbing');
+  if (tg === 'mortar') pestleA = Math.atan2(p.y - MORTAR.y, p.x - MORTAR.x);
+});
+cv.addEventListener('pointermove', e => {
+  if (!rubbing || e.pointerId !== rubbing.id) return;
+  const p = toWorld(e);
+  const d = Math.min(80, Math.hypot(p.x - rubbing.x, p.y - rubbing.y));
+  rubbing.x = p.x; rubbing.y = p.y;
+  rubbing.dist += d;
+  if (rubbing.target === 'mortar') {
+    pestleA = Math.atan2(p.y - MORTAR.y, p.x - MORTAR.x);
+    while (rubbing.dist >= STROKE) { rubbing.dist -= STROKE; doRub(); }
+  } else {
+    while (rubbing.dist >= SHINE_STROKE) { rubbing.dist -= SHINE_STROKE; doShine(); }
+  }
+});
+const endRub = e => { if (rubbing && (!e || e.pointerId === rubbing.id)) { rubbing = null; cv.classList.remove('rubbing'); } };
+cv.addEventListener('pointerup', endRub); cv.addEventListener('pointercancel', endRub);
+// Keyboard: left/right rub the mortar, up/down rub the ball.
+let lastKey = '';
+cv.addEventListener('keydown', e => {
+  const k = e.key;
+  if (['ArrowLeft', 'ArrowRight'].includes(k)) { e.preventDefault(); if (k !== lastKey) { lastKey = k; pestleA += 1.6; doRub(); } }
+  if (['ArrowUp', 'ArrowDown'].includes(k)) { e.preventDefault(); if (k !== lastKey) { lastKey = k; doShine(); } }
+  if (k === ' ' || k === 'Enter') { e.preventDefault(); lastKey = ''; pestleA += 1.6; doRub(); }
+});
+cv.addEventListener('keyup', () => {});
+
+const RUB_CALLS = ['AND HE RUBS!', 'A LOVELY TURN!', 'ROUND THE MORTAR!', 'TEXTBOOK!', 'OIL! OIL!', 'BEAUTIFULLY WEIGHTED!', 'AND AGAIN!', 'WHAT A ROTATION!'];
+function doRub() {
+  if (S.ended || fin) return;
+  if (!canStroke()) return;
+  const d = E.rub(S);
+  sfx.rub(); dropT = 1;
+  if (S.rubs % 3 === 0) sfx.drop();
+  float(`+${fmt(d)}`, MORTAR.x + MORTAR.r + 20, MORTAR.y - 20, C.ochre, 20);
+  if (S.rubs === 1) say('REG', 'AND WE’RE UNDER WAY! The pestle goes round, the yolks give up their oil, and Reg, your announcer for forty seasons, is very nearly speechless. Keep rubbing.');
+  if (S.rubs % 11 === 1 && !speechBusy()) call(RUB_CALLS[(S.rubs / 11 | 0) % RUB_CALLS.length]);
+}
+const SHINE_CALLS = ['ON THE TROUSERS!', 'POLISHING!', 'SHINE ON, SHINE ON!', 'LOOK AT THAT LUSTRE!'];
+function doShine() {
+  if (fin && !fin.done) { if (!canStroke()) return; fin.shine = Math.min(1, fin.shine + E.SHINE_PER_RUB); sfx.shine(); return; }
+  if (!canStroke()) return;
+  if (!E.shine(S)) return;
+  sfx.shine();
+  if (S.shine >= 1 && !speechBusy() && Math.random() < 0.35) call(SHINE_CALLS[Math.floor(Math.random() * SHINE_CALLS.length)]);
+}
+const speechBusy = () => speech && speech.t < 2.2;
+
+// ---------- The log ----------
+const TAG = { REG: '', MAUD: 'm', COOP: 'c', 'WHILE YOU WERE OUT': 'w', 'THE ALMANAC': 'w' };
+function say(who, text) {
+  const el = $('log');
+  el.innerHTML = '<b></b><span></span>';
+  const b = el.querySelector('b'); b.textContent = who; if (TAG[who]) b.className = TAG[who];
+  el.querySelector('span').textContent = text;
+  el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
+  logT = 0;
+}
+const cool = {};
+const sayCool = (k, s) => { const t = performance.now(); if (t - (cool[k] || -1e9) < s * 1000) return false; cool[k] = t; return true; };
+let logT = 0, ambI = 0;
+const AMBIENT = {
+  yard: [
+    ['REG', 'For those just joining us: no cricket today. The announcer is poorly. The announcer is also, technically, the one telling you this.'],
+    ['COOP', 'A hen has wandered onto the outfield, looked at the empty pitch, and wandered off again. A real student of the game.'],
+    ['MAUD', 'Maud has been in the press box all morning, though there is no match. “Habit,” she says. She is drawing the hens.'],
+    ['THE ALMANAC', '“Take the Yolkes of Egges boyled hard, and rubbe them in a Morter till the Oyle sweate out.” — the almanac, 1703. Spelling theirs.'],
+    ['REG', 'Reg has called forty seasons at this ground. It has called rain, bad light, a streaker (1977) and a swan (1991). It has never once been quiet.'],
+  ],
+  season: [
+    ['REG', 'AND THE CROWD IS UP! Well. Some of the crowd is up. Mrs Ferris has been up since the tea interval.'],
+    ['MAUD', 'Maud, in red pen, in the margin: “Can hear him from the post office. Again.”'],
+    ['REG', 'The rooster has crowed over the last three deliveries. Reg would like it known that the rooster is not accredited.'],
+    ['COOP', 'Meanwhile, behind the pavilion, the coop goes about its business at a steady run rate.'],
+    ['REG', 'A gentle breeze from the river end. It is a breeze Reg could describe for an hour. Reg has been asked not to.'],
+  ],
+  rain: [
+    ['REG', 'Rain stops play. Everyone in the pavilion. The covers are on and the broodies are delighted.'],
+    ['MAUD', 'Maud doesn’t go in when it rains. She sits under the press box eaves with her flask and listens to the rain on the roof. It is the only time she looks up.'],
+    ['COOP', 'Rain on the coop roof, and twice the hatching inside it. The hens have never once complained about the weather.'],
+    ['REG', 'Reg, in the rain, is very nearly quiet. It finds the drumming on its horn oddly soothing. Reg would not like this to get about.'],
+  ],
+};
+function ambient(dt) {
+  logT += dt;
+  if (S.ended || fin || logT < 32 || !S.rubs) return;
+  const L = AMBIENT[E.raining(S) && E.season(S) ? 'rain' : E.season(S) ? 'season' : 'yard'];
+  const [w, line] = L[ambI++ % L.length];
+  say(w, line);
+}
+
+// ---------- HUD ----------
+function hud() {
+  $('drops').textContent = fmt(S.drops);
+  const lr = E.layRate(S);
+  $('dps').textContent = lr > 0 ? `${E.fmtRate(lr)} a second from the coop` : `${fmt(E.rubYield(S))} a rub`;
+  $('cmeter').style.width = `${S.comfort * 10}%`;
+  $('ctext').textContent = `${S.comfort}/10`;
+  const cm = $('cm'); if (!cm.dataset.n) { cm.dataset.n = 1; for (let i = 1; i < 10; i++) { const n = document.createElement('span'); n.className = 'notch'; n.style.left = `${i * 10}%`; cm.append(n); } }
+  const db = $('doseBtn');
+  const full = S.comfort >= E.DOSES.length;
+  db.hidden = full || S.ended || !!fin;
+  if (!db.hidden) {
+    const c = E.doseCost(S), can = S.drops >= c;
+    $('doseCost').textContent = fmt(c);
+    db.setAttribute('aria-disabled', String(!can)); db.classList.toggle('can', can);
+  }
+  const season = E.season(S) && !S.ended;
+  $('matchBox').hidden = !season;
+  if (season) {
+    $('cheers').textContent = fmt(S.cheers);
+    const per = E.cheersPer(S, 1);
+    $('cps').textContent = `${E.fmtRate(per)} a ball, fully shined`;
+    if (S.fixture < E.FIXTURES.length) {
+      const F = E.FIXTURES[S.fixture];
+      $('fixName').textContent = `Game ${S.fixture + 1}/${E.FIXTURES.length} v ${F.name}`;
+      $('fmeter').style.width = `${Math.min(100, S.fixProg / F.need * 100)}%`;
+      $('fixTxt').textContent = `${fmt(S.fixProg)}/${fmt(F.need)}`;
+    } else {
+      $('fixName').textContent = 'Every fixture called. The Final awaits.';
+      $('fmeter').style.width = '100%'; $('fixTxt').textContent = '';
+    }
+  }
+  const bits = [];
+  const rain = E.raining(S), tl = Math.ceil(E.untilChange(S));
+  const mm = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  if (!S.ended && !fin) bits.push(`<span class="wx">${rain ? `🌧 rain${E.season(S) ? ', play stopped' : ''}, hatching ×2 · sun in ${mm(tl)}` : `☀ sun · rain in ${mm(tl)}`}</span>`);
+  bits.push(`<span>a rub: <b>${fmt(E.rubYield(S))}</b> drops</span>`);
+  if (S.hens >= 1) bits.push(`<span>hens <b>${fmt(Math.floor(S.hens))}</b> → <b>${E.fmtRate(lr)}</b>/s</span>`);
+  if (S.broodies >= 1) bits.push(`<span>broodies <b>${fmt(Math.floor(S.broodies))}</b> hatch <b>${E.fmtRate(E.hatchRate(S) * 60)}</b> hens/min</span>`);
+  if (S.roosters >= 1) bits.push(`<span>roosters <b>${S.roosters}</b> set <b>${E.fmtRate(E.broodRate(S) * 60)}</b> broodies/min</span>`);
+  if (season && S.fixture < E.FIXTURES.length) {
+    bits.push(`<span>a ball every <b>${E.deliveryEvery(S)}</b> s</span>`);
+    if (S.lv.twelfth) bits.push(`<span>12th man shines <b>${Math.round(E.autoShine(S) * 100)}%</b>/s</span>`);
+    if (S.one.board) bits.push(`<span>scoreboard <b>${E.fmtRate(E.boardRate(S))}</b> cheers/s</span>`);
+  }
+  const html = bits.join('');
+  if (html !== hud.html) { hud.html = html; $('sub').innerHTML = html; }
+}
+wireTip($('doseBtn'), () => {
+  if (S.comfort >= E.DOSES.length) return null;
+  const n = S.comfort + 1;
+  const what = n === E.SEASON_AT ? 'Reg will be fit to call again: the cricket season opens.' : n === E.DOSES.length ? 'The last dose: Comfort in full. With every fixture called, that means the Final.' : n > E.SEASON_AT ? `Reg’s voice carries better: cheers a ball ×${E.voice(S).toFixed(2)} → ×${(E.voice(S) + 0.25).toFixed(2)}.` : 'Reg’s throat eases, and new things turn up on the shopping list.';
+  return { id: 'dose', name: `Dose ${n} of ${E.DOSES.length}`, desc: 'A measure of egg oil down Reg’s horn, by the funnel or the spoon. Each one leaves Reg a little more comfortable, and a little softer-spoken.', fx: `Comfort ${S.comfort} → ${n}. ${what}`, foot: `${fmt(E.doseCost(S))} drops` };
+}, doDose);
+function doDose() {
+  if (!E.dose(S)) { sfx.deny(); return; }
+  sfx.dose();
+  const D = E.DOSES[S.comfort - 1];
+  say('REG', D.line);
+  float(`Comfort ${S.comfort}`, REG.x + 70, REG.y + 30, C.red, 24);
+  call(['AAAH.', 'MUCH BETTER.', 'TESTING, TESTING.', 'WE’RE BACK!', 'SMOOTH AS YOU LIKE.', 'LOVELY STUFF.', 'BUTTERY.', 'VELVET!', 'LIKE HONEY.', 'PERFECT.'][S.comfort - 1]);
+  if (S.comfort === E.SEASON_AT) { S.tab = 'cheers'; S.ballT = 0; }
+  after(); refreshMusic();
+}
+
+// ---------- Calls: the Final, at the top of the column ----------
+let callSig = '';
+function renderCalls() {
+  const el = $('calls');
+  const ready = E.finalReady(S) && !S.ended && !fin;
+  const tea = fin && !fin.done && fin.t > 4;
+  const sig = `${ready}|${tea}|${S.ended}`;
+  if (sig === callSig) return;
+  callSig = sig; el.innerHTML = '';
+  if (ready) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'call can'; b.id = 'finalBtn';
+    b.innerHTML = '<b>The Final</b><span>v Mudlow Town, for the Parish Cup</span>';
+    wireTip(b, () => ({ id: 'final', name: 'The Final', desc: 'Every fixture called, and Reg’s throat as good as new. Mudlow Town, for the Parish Cup. Maud will be there. The forecast says rain by four.', fx: 'Ends the game. Rub the ball for the bowler and Reg will call it home, ball by ball.', foot: 'no charge' }), doFinal);
+    el.append(b);
+  } else if (tea) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'call tea'; b.id = 'teaBtn';
+    b.innerHTML = '<b>Pour Maud’s tea</b><span>two cups, and rain on the way</span>';
+    wireTip(b, () => ({ id: 'tea', name: 'Pour Maud’s tea', desc: 'Maud has brought her flask to the Final, and two cups. The cloud is coming over the river end. Reg could stop talking, just for a minute, and let it.', fx: 'Ends the game the other way.', foot: 'she has been waiting for this' }), doTea);
+    el.append(b);
+  }
+}
+
+// ---------- Shop ----------
+const shop = $('shop');
+const newUntil = {};
+const unseen = new Set();
+const TABS = [{ cur: 'drops', name: 'Coop & Still' }, { cur: 'cheers', name: 'The Match' }];
+let shopSig = '';
+const clone = () => JSON.parse(JSON.stringify(S));
+const priceOf = it => `${fmt(E.cost(S, it.id))} ${it.cur === 'cheers' ? 'cheers' : 'drops'}`;
+function renderShop() {
+  const closed = S.ended || !!fin;
+  const fresh = closed ? [] : E.reveal(S);
+  const all = closed ? [] : E.items(S).sort((a, b) => (a.kind === 'make' ? 0 : 1) - (b.kind === 'make' ? 0 : 1) || E.cost(S, a.id) - E.cost(S, b.id));
+  const tabs = TABS.filter(t => all.some(i => i.cur === t.cur));
+  const tab = tabs.some(t => t.cur === S.tab) ? S.tab : (tabs[0]?.cur || 'drops');
+  for (const id of fresh) {
+    if (S.rubs > 1) sfx.unlock();
+    if (E.BY_ID[id].cur === tab) newUntil[id] = performance.now() + 9000; else unseen.add(id);
+  }
+  const items = all.filter(i => i.cur === tab);
+  const sig = tab + '#' + tabs.length + '#' + items.map(i => `${i.id}:${E.cost(S, i.id)}:${E.lv(S, i.id)}`).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    for (const it of items) if (unseen.delete(it.id)) newUntil[it.id] = performance.now() + 9000;
+    $('tabs').hidden = tabs.length < 2;
+    $('tabs').replaceChildren(...tabs.map(t => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.setAttribute('role', 'tab'); b.dataset.cur = t.cur; b.setAttribute('aria-selected', String(t.cur === tab));
+      b.innerHTML = `${t.name} <small></small>`;
+      b.addEventListener('click', () => { S.tab = t.cur; save(); renderShop(); });
+      return b;
+    }));
+    shop.innerHTML = '';
+    for (const it of items) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (it.kind === 'odd' ? ' odd' : '');
+      b.dataset.id = it.id; b.dataset.cost = E.cost(S, it.id); b.dataset.cur = it.cur;
+      b.innerHTML = '<b></b><em></em>';
+      b.querySelector('b').textContent = it.name;
+      const count = it.kind === 'make' ? ` · ${fmt(Math.floor(it.id === 'hen' ? S.hens : it.id === 'broody' ? S.broodies : S.roosters))}` : it.kind === 'lv' ? ` · ${S.lv[it.id]}/${it.max}` : '';
+      b.querySelector('em').textContent = `${fmt(E.cost(S, it.id))}${it.cur === 'cheers' ? ' 📣' : ' 💧'}${count}`;
+      b.setAttribute('aria-describedby', 'tip');
+      b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, upTip(it.id)); });
+      b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+      b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, upTip(it.id)); });
+      b.addEventListener('blur', hideTip);
+      b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+      b.addEventListener('click', () => {
+        if (b.dataset.touch && tipFor !== it.id) { showTip(b, upTip(it.id)); return; }
+        if (b.getAttribute('aria-disabled') !== 'true') doBuy(it.id); else sfx.deny();
+      });
+      shop.append(b);
+    }
+  }
+  const now = performance.now();
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = E.have(S, b.dataset.cur) >= Number(b.dataset.cost);
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  // The heading counts everything affordable; each tab says how much of it is behind that tab.
+  let n = 0;
+  for (const b of $('tabs').children) {
+    const c = all.filter(i => i.cur === b.dataset.cur && E.canBuy(S, i.id)).length;
+    n += c; b.querySelector('small').textContent = c ? `· ${c}` : '';
+    b.classList.toggle('fresh', all.some(i => i.cur === b.dataset.cur && unseen.has(i.id)));
+  }
+  if (tabs.length < 2) n = all.filter(i => E.canBuy(S, i.id)).length;
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  document.querySelector('aside h2').hidden = !all.length;
+  renderShelf();
+  document.querySelector('.col').hidden = !all.length && !$('calls').children.length && shelfEl.hidden;
+}
+// What a purchase changes, now → after.
+function effect(id) {
+  const it = E.BY_ID[id], T = clone();
+  if (it.kind === 'odd') return 'Changes nothing in the numbers. Goes in the picture, for good.';
+  T.drops = T.cheers = Infinity; E.buy(T, id);
+  const r = x => E.fmtRate(x);
+  if (id === 'hen') return `Oil from the coop: ${r(E.layRate(S))} → ${r(E.layRate(T))} drops a second`;
+  if (id === 'still') return `Oil from the coop: ${r(E.layRate(S))} → ${r(E.layRate(T))} drops a second (each egg ×2)`;
+  if (id === 'broody' || id === 'bale') return `Hatching: ${r(E.hatchRate(S) * 60)} → ${r(E.hatchRate(T) * 60)} new hens a minute${E.raining(S) ? ' (raining: ×2 now)' : ' (×2 in the rain)'}`;
+  if (id === 'rooster') return `New broodies: ${r(E.broodRate(S) * 60)} → ${r(E.broodRate(T) * 60)} a minute${E.raining(S) ? ' (raining: ×2 now)' : ' (×2 in the rain)'}`;
+  if (id === 'pestle') return `Oil per rub: ${fmt(E.rubYield(S))} → ${fmt(E.rubYield(T))} drops`;
+  if (id === 'funnel') return `Next dose: ${fmt(E.doseCost(S))} → ${fmt(E.doseCost(T))} drops`;
+  if (id === 'twelfth') return `Shine from the twelfth man: ${Math.round(E.autoShine(S) * 100)}% → ${Math.round(E.autoShine(T) * 100)}% a second`;
+  if (id === 'bunting') return `Cheers a ball, fully shined: ${r(E.cheersPer(S, 1))} → ${r(E.cheersPer(T, 1))}`;
+  if (id === 'board') return `Reg reads the score between balls: 0 → ${r(E.boardRate(T))} cheers a second while play is on`;
+  if (id === 'roller') return `A ball every ${E.deliveryEvery(S)} s → ${E.deliveryEvery(T)} s`;
+  return '';
+}
+let tipFor = null;
+function upTip(id) {
+  const it = E.BY_ID[id];
+  const lvl = it.kind === 'lv' ? ` · level ${S.lv[id]} of ${it.max}` : it.kind === 'make' ? ` · you have ${fmt(Math.floor(id === 'hen' ? S.hens : id === 'broody' ? S.broodies : S.roosters))}` : '';
+  return { id, name: it.name, desc: it.desc, fx: effect(id), joke: it.kind === 'odd' ? it.joke : '', foot: `${priceOf(it)}${lvl}` };
+}
+function showTip(b, it) {
+  if (!it) return;
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><span class="fx"></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('.fx').textContent = it.fx || '';
+  tip.querySelector('.fx').hidden = !it.fx;
+  tip.querySelector('i').textContent = it.joke || '';
+  tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || '';
+  tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  const inSide = !!b.closest('#side');
+  if (inSide && r.left > t.width + 24 && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 14}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - t.width - 8, r.left))}px`;
+    tip.style.top = `${r.bottom + 8 + t.height < innerHeight ? r.bottom + 8 : Math.max(8, r.top - t.height - 8)}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+let tipMoved = 0;
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .call, .bought, .hudbtn')) hideTip(); });
+const explained = new Set();
+function wireTip(b, info, act) {
+  b.setAttribute('aria-describedby', 'tip');
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, info()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, info()); });
+  b.addEventListener('blur', hideTip);
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  b.addEventListener('click', () => {
+    if (b.dataset.touch && !explained.has(b.id)) { explained.add(b.id); showTip(b, info()); return; }
+    hideTip(); act();
+    if (b.matches(':hover') && !b.dataset.touch && b.isConnected) showTip(b, info());
+  });
+}
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!S.boughtOpen === shelfEl.open) return;
+  S.boughtOpen = shelfEl.open; save();
+});
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(i => i.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (it.kind === 'odd' ? ' odd' : '');
+    b.textContent = it.name; b.dataset.id = it.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, { id: 'bought:' + it.id, name: it.name, desc: it.desc, joke: it.joke, foot: it.kind === 'odd' ? 'for the picture' : '', inline: true }); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + it.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+const HEN_LINES = {
+  1: 'AND IT’S A NEW SIGNING FOR THE COOP. She’s a big unit. She has already laid one on the scorer’s chair.',
+  5: 'Five hens. A proper side. Reg would like to read out the team: Hen, Hen, Hen, Hen and, at number five, Hen.',
+  10: 'Ten hens! Ten! Reg has not been this excited since the swan (1991).',
+  25: 'Twenty-five hens. The coop has applied to be a separate parish.',
+  50: 'Fifty hens. The egg-and-cress sandwiches at tea are now available in sizes.',
+};
+function doBuy(id) {
+  const it = E.BY_ID[id];
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  delete newUntil[id];
+  hideTip();
+  sfx.buy();
+  if (id === 'hen') { if (HEN_LINES[S.n.hen]) say('REG', HEN_LINES[S.n.hen]); }
+  else if (id === 'broody') { if (S.n.broody === 1 || S.n.broody % 10 === 0) say('COOP', it.joke); }
+  else if (id === 'rooster') { if (S.n.rooster === 1) say('REG', it.joke); else if (S.n.rooster % 5 === 0) say('REG', `Rooster number ${S.n.rooster}. They have formed a commentary team. They are not as good as Reg. They are louder.`); sfx.crow(); }
+  else if (id === 'deckchair' || id === 'cups') say('MAUD', it.joke);
+  else say(it.cur === 'cheers' ? 'REG' : it.id === 'pompom' || it.id === 'roohat' || it.id === 'pestle' ? 'REG' : 'COOP', it.joke);
+  if (it.kind === 'make') call(id === 'hen' ? 'NEW HEN!' : id === 'broody' ? 'SHE’S SITTING!' : 'ROOSTER! (BOO.)');
+  float(it.kind === 'odd' ? '✎' : '+', it.cur === 'cheers' ? 560 : 300, it.cur === 'cheers' ? 170 : 420, C.red, 26);
+  after();
+}
+function after() { save(); hud(); renderShop(); renderCalls(); }
+
+// ---------- Ticking ----------
+const MAUD_REVIEWS = [
+  '★☆☆☆☆ “Audible from the car park.”',
+  '★☆☆☆☆ “Audible from the next village. The next village has written in.”',
+  '★☆☆☆☆ “Clearer. Not quieter. I said quieter.”',
+  '★★☆☆☆ “Less like a goose in a drainpipe. More like a swan, shouting.”',
+  '★★☆☆☆ “Smooth as you like. Loud as you like, too.”',
+  '★★★☆☆ “Very nearly quiet enough to hear the cricket.”',
+];
+let eggT = 0;
+function step(dt) {
+  if (S.ended) return;
+  const was = S.drops;
+  for (const ev of E.tick(S, dt)) {
+    if (ev.type === 'weather') {
+      if (ev.rain) { sfx.rain(); if (sayCool('wx', 20)) say(E.season(S) ? 'REG' : 'COOP', E.season(S) ? 'AND THAT’S RAIN. Rain stops play. Covers on, everyone in, and the broodies are thrilled: twice the hatching while it lasts.' : 'Rain on the coop roof. The broodies sit tighter in the wet: twice the hatching while it lasts.'); }
+      else { sfx.sun(); if (E.season(S) && sayCool('wx2', 20)) say('REG', 'The sun’s out! Covers off! PLAY! Reg has missed you all terribly in the last forty-five seconds.'); }
+      refreshMusic();
+    }
+    if (ev.type === 'hatch') { sfx.hatch(); if (chicks.length < 6) chicks.push({ t: 0, dx: Math.random() * 20, dy: Math.random() * 14 }); if (sayCool('hatch', 50)) say('COOP', E.raining(S) ? 'A chick, in the rain, unfazed. They make them tough round here.' : ['AND IT’S A CHICK! Straight out of the shell and into the first eleven.', 'Another one hatched! The broody gives it a look that says: you’ll be laying by Thursday.'][Math.floor(Math.random() * 2)]); }
+    if (ev.type === 'brood') { if (sayCool('brood', 70)) say('COOP', 'Another hen has gone broody. She sat down at eleven and has given no sign of getting up.'); sfx.crow(); }
+    if (ev.type === 'ball') {
+      ballFly = { t: 0, k: 0.3 + ev.shine * 0.7 };
+      sfx.ball(ev.shine);
+      S.runs = (S.runs || 0) + Math.round(ev.shine * 6);
+      float(`+${fmt(ev.cheers)} 📣`, 600, 170, C.red, 20);
+      const lines = ev.shine >= 0.9 ? ['SIX! INTO THE TREES!', 'FOUR! SHOT!', 'GLORIOUS STROKE!', 'OVER THE ROPE!'] : ev.shine >= 0.5 ? ['A SINGLE.', 'TWO RUNS!', 'NICELY TAKEN.', 'GOOD LENGTH!'] : ['DOT BALL.', 'NO RUN.', 'LEFT ALONE.', 'A LITTLE DULL.'];
+      if (!speechBusy() || ev.shine >= 0.9) call(lines[Math.floor(Math.random() * lines.length)]);
+    }
+    if (ev.type === 'fixture') {
+      sfx.fixture();
+      const F = E.FIXTURES[ev.n - 1];
+      say('MAUD', `Game ${ev.n}, v ${F.name}: called. Maud’s review in the Gazette: ${MAUD_REVIEWS[ev.n - 1]}`);
+      float(MAUD_REVIEWS[ev.n - 1].split(' ')[0], 280, 170, C.red, 24);
+      call(ev.n === E.FIXTURES.length ? 'THAT’S THE SEASON!' : 'MATCH CALLED!');
+    }
+  }
+  // Eggs roll down the chute about as often as the hens lay (capped, for the picture).
+  if (S.hens >= 1) { eggT += dt * Math.min(1.5, 0.15 + Math.sqrt(S.hens) * 0.08); if (eggT >= 1) { eggT = 0; if (eggs.length < 8) eggs.push({ u: 0, x: 178, y: 486, r: 0 }); sfx.lay(); } }
+  if (S.drops > was && Math.floor(S.t) % 47 === 0 && Math.floor(S.t - dt) % 47 !== 0 && E.layRate(S) > 0 && sayCool('lay', 120)) say('COOP', `The coop is laying steadily: ${E.fmtRate(E.layRate(S))} drops a second through the still, whether anyone’s watching or not.`);
+  saveAcc += dt; if (saveAcc > 5) { saveAcc = 0; save(); }
+  ambient(dt);
+  uiAcc += dt; if (uiAcc > 0.2) { uiAcc = 0; hud(); renderShop(); renderCalls(); }
+  const ph = phaseKey(); if (ph !== phaseWas) { phaseWas = ph; refreshMusic(); }
+}
+let saveAcc = 0, uiAcc = 0, phaseWas = phaseKey();
+function stepPictures(dt) {
+  for (const c of chicks) c.t += dt; chicks = chicks.filter(c => c.t < 3);
+  const route = [[178, 486], [470, 496], [640, 470], [688, 410]];
+  for (const e of eggs) {
+    e.u += dt * 0.28; e.r += dt * 6;
+    const seg = Math.min(2.999, e.u * 3), i = Math.floor(seg), f = seg - i;
+    e.x = route[i][0] + (route[i + 1][0] - route[i][0]) * f; e.y = route[i][1] + (route[i + 1][1] - route[i][1]) * f - 5;
+  }
+  eggs = eggs.filter(e => e.u < 1);
+  if (ballFly) { ballFly.t += dt; if (ballFly.t > 2) ballFly = null; }
+  if (speech) { speech.t += dt; if (speech.t > 3.4) speech = null; }
+  dropT = Math.max(0, dropT - dt * 2.5);
+  for (const f of floats) f.t += dt; floats = floats.filter(f => f.t < 1.4);
+  stepRain(dt);
+}
+
+// ---------- The Final ----------
+let fin = null, secretT = 0;
+function doFinal() {
+  if (!E.finalReady(S) || fin || S.ended) return;
+  S.finale = true; save();
+  fin = { t: 0, runs: 0, need: 30, shine: 0, ballT: 0, balls: 0, cloud: 0, rain: false, done: false };
+  hideTip(true); renderShop(); renderCalls(); hud(); refreshMusic();
+  sfx.unlock();
+  say('REG', 'THE FINAL. Mudlow Town have made 240; we need 30 to win the Parish Cup. The twelfth man is too nervous to watch, so it’s all on you: rub the ball, and Reg will call every one.');
+  call('THE FINAL!');
+}
+function stepFinal(dt) {
+  if (!fin || fin.done) return;
+  fin.t += dt;
+  fin.cloud = Math.min(1, fin.t / 50);
+  if (fin.t > 4 && !fin.teaSaid) { fin.teaSaid = true; renderCalls(); say('MAUD', 'Maud has unscrewed her flask. She has brought two cups. She is looking at the cloud over the river end, and then, for a long time, at Reg.'); }
+  fin.ballT += dt;
+  if (fin.ballT >= 4) {
+    fin.ballT = 0; fin.balls++;
+    const runs = Math.round(fin.shine * 6);
+    fin.runs += runs;
+    ballFly = { t: 0, k: 0.3 + fin.shine * 0.7 };
+    sfx.ball(fin.shine);
+    call(runs >= 6 ? 'SIX!!' : runs >= 4 ? 'FOUR!' : runs ? `${runs} RUN${runs > 1 ? 'S' : ''}.` : 'NO RUN.');
+    fin.shine = 0;
+    if (fin.runs >= fin.need) { fin.done = true; fin.how = 'called'; renderCalls(); finishSequence(); return; }
+  }
+  if (fin.cloud >= 1) { doTea(true); }
+}
+function doTea(byRain) {
+  if (!fin || fin.done) return;
+  fin.done = true; fin.how = 'rain'; fin.rain = true;
+  renderCalls(); hideTip(true);
+  sfx.secret();
+  say('REG', byRain === true ? 'And here comes the rain. Rain stops play. Reg opens its horn to say so, and then, for the first time in forty seasons, doesn’t.' : 'Maud pours two cups. Reg opens its horn to call the next ball, and then, for the first time in forty seasons, doesn’t. Here comes the rain.');
+  speech = null;
+  secretSequence();
+}
+function finishSequence() {
+  sfx.finale();
+  say('REG', 'AND THAT’S THE PARISH CUP! THE WINNING RUNS! Reg has called the Final, all of it, as loud and as lovely as it has ever called anything.');
+  call('THE CUP IS OURS!!');
+  setTimeout(() => end(false, 'called'), 4500);
+}
+function secretSequence() {
+  const t0 = performance.now();
+  const tick = () => {
+    secretT = (performance.now() - t0) / 1000;
+    inkRun = Math.max(0, secretT - 1);
+    if (secretT > 3.2 && !secretSequence.a) { secretSequence.a = 1; say('MAUD', 'Maud climbs the pavilion ladder with the flask, the two cups and an umbrella. She sits down next to Reg on the roof.'); }
+    if (secretT > 6.5 && !secretSequence.b) { secretSequence.b = 1; say('MAUD', 'She takes off Reg’s tiny hat, wrings it out, and puts it in her pocket. She knitted it, years ago, to muffle him a bit. It never worked. It doesn’t need to now.'); }
+    if (secretT > 10) { end(false, 'rain'); return; }
+    requestAnimationFrame(tick);
+  };
+  if (document.hidden) { setTimeout(() => end(false, 'rain'), 100); return; }
+  requestAnimationFrame(tick);
+}
+
+// ---------- The end ----------
+function end(resumed, how) {
+  if (S.ended && !resumed) return;
+  S.ended = true; S.finale = false; if (how) S.how = how; if (!S.how) S.how = 'called';
+  fin = null; secretT = 0;
+  if (S.how === 'rain') inkRun = 4;
+  save();
+  hideTip(true);
+  const rain = S.how === 'rain';
+  $('endNum').textContent = rain ? 'THE GAZETTE · CRICKET · RAINED OFF' : 'THE GAZETTE · CRICKET · THE PARISH CUP';
+  $('endHead').textContent = rain ? 'Rain Stops Play' : 'The Final, Called';
+  const story = rain ? [
+    'The rain came over the river end at ten past four, and the Final was abandoned without a result. Nobody won the Parish Cup. Nobody seemed to mind.',
+    'Reg did not call it. Reg, for once in forty seasons, did not call anything. The crowd went in for tea. The hens went in out of the wet. On the roof of the pavilion, Maud and a loudspeaker shared a flask and listened to the rain on the corrugated iron.',
+    'The ink in Maud’s notebook ran all down the page: the hens, the still, the scoreboard, the whole season, in long blue streaks. She didn’t mind that either. It was only a drawing. Everything it was a drawing of is still there.',
+    'She had knitted Reg’s hat herself, years ago, to muffle it. Comfortable at last, Reg had nothing to say. That, it turns out, was the comfort.',
+  ] : [
+    'Reg called the winning runs of the Final at four o’clock precisely, in a voice as smooth as egg oil and very nearly as loud as it had ever been. The Parish Cup stays at the ground for another year.',
+    `It took ${S.total >= 1e6 ? fmt(Math.floor(S.total)) : 'millions of'} drops of oil, ${S.total >= 1e6 ? fmt(Math.floor(S.hens)) : 'thousands of'} hens, a great many roosters and one very patient mortar to get Reg’s throat back. The crowd cheered everything. Reg called everything.`,
+    'Maud wrote her review in red pen on the back page of her notebook, and put it in the Gazette on Thursday.',
+    'The forecast had said rain by four. It came at ten past. Maud waited under the press box eaves with her flask and two cups until it did.',
+  ];
+  $('story').innerHTML = '';
+  for (const p of story) { const el = document.createElement('p'); el.textContent = p; $('story').append(el); }
+  const rv = document.createElement('div'); rv.className = 'review';
+  rv.innerHTML = '<b></b><span></span>';
+  rv.querySelector('b').textContent = rain ? '★★★★★' : '★★★★☆';
+  rv.querySelector('span').textContent = rain ? '“No commentary today. The best thing he has ever said.” — M. Pettigrew, the Gazette' : '“Clear, warm, glorious, and much, much too loud. Four stars. I have never given five.” — M. Pettigrew, the Gazette';
+  $('story').append(rv);
+  const sig = document.createElement('p'); sig.className = 'sig'; sig.textContent = rain ? '— rained off, and that’s fine' : '— still too loud, and very nearly fine'; $('story').append(sig);
+  $('ending').hidden = false;
+  renderShop(); renderCalls(); hud(); refreshMusic();
+  if (resumed) say('MAUD', rain ? 'Maud’s notebook, the last page, in red pen, slightly run: “★★★★★ No commentary today.”' : 'Maud’s notebook, the last page, in red pen: “★★★★☆ Much, much too loud.”');
+  if (!resumed) {
+    $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+    const tm = `⏱ ${Math.floor(S.t / 3600) ? Math.floor(S.t / 3600) + 'h' : ''}${String(Math.floor(S.t % 3600 / 60)).padStart(Math.floor(S.t / 3600) ? 2 : 1, '0')}m`;
+    if (window.DailyGame) DailyGame.finish({ lines: rain
+      ? [tm, `💧 ${fmt(S.total)} drops of egg oil`, '🌧 rained off', '★★★★★ for saying nothing']
+      : [tm, `💧 ${fmt(S.total)} drops of egg oil`, '🏏 the Final, called', '★★★★☆ still too loud'] });
+  }
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Loop ----------
+let last = performance.now(), lastFrame = performance.now();
+function frame(now) {
+  const dt = Math.max(0, Math.min(0.1, (now - last) / 1000)); last = now; lastFrame = now;
+  step(dt); stepFinal(dt);
+  clock += dt;
+  stepPictures(dt);
+  render();
+  requestAnimationFrame(frame);
+}
+// In a background tab rAF stops: keep the coop and the match going on a timer.
+setInterval(() => {
+  const now = performance.now();
+  if (now - lastFrame < 400) return;
+  const dt = Math.min(1, (now - last) / 1000); last = now;
+  step(dt); stepFinal(dt);
+}, 250);
+addEventListener('pagehide', save);
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('resize', layout);
+
+// ---------- Sprites: line icons redrawn in ballpoint ----------
+const SPR = {};
+async function inkSprite(name, file, size, opts = {}) {
+  try {
+    const svg = await Sprites.loadSvg(`./art/${file}`);
+    SPR[name] = Sprites.roughen(rough, Sprites.recolor(svg, C.dark), size, { roughness: 1.4, bowing: 1.2, stroke: C.dark, strokeWidth: 1.6, fill: 'none', ...opts });
+    Sprites.register(`${name} (ballpoint)`, SPR[name]);
+  } catch (e) { console.warn('sprite', name, e); }
+}
+const spritesReady = Promise.all([
+  inkSprite('book', 'tabler--book.svg', 92, { fill: '#d1b187', fillStyle: 'hachure', hachureGap: 5 }),
+  inkSprite('cup', 'tabler--cup.svg', 40, { fill: C.paper, fillStyle: 'solid' }),
+  inkSprite('flask', 'tabler--bottle.svg', 72, { fill: C.olive, fillStyle: 'hachure', hachureGap: 4 }),
+  inkSprite('umbrella', 'tabler--umbrella.svg', 112, { fill: C.red, fillStyle: 'hachure', hachureGap: 5 }),
+]);
+// Hand-drawn pieces for the ?sprites sheet.
+function sheet() {
+  const reg = (name, w, h, f, s = 2) => {
+    const c = Sprites.canvas(w * s, h * s), q = c.getContext('2d');
+    q.fillStyle = C.paper; q.fillRect(0, 0, c.width, c.height);
+    const keep = g; g = q; q.setTransform(s, 0, 0, s, 0, 0); seedN = 0; f(); g = keep;
+    Sprites.register(name, c);
+  };
+  const keep = JSON.stringify(S);
+  const restore = () => { const o = JSON.parse(keep); for (const k of Object.keys(o)) S[k] = o[k]; };
+  reg('Reg, raw throat', 170, 150, () => { S.comfort = 0; g.translate(-100, -36); drawReg(0); });
+  reg('Reg, comfortable, pom-pom and funnel', 190, 150, () => { S.comfort = 10; S.one.pompom = S.one.funnel = true; g.translate(-100, -36); drawReg(0); });
+  restore();
+  reg('a hen, a broody, a rooster in a tiny hat', 90, 34, () => { hen(15, 30, 1, 0); hen(45, 30, 1, 0, { brood: true }); hen(74, 30, -1, 0, { rooster: true, hat: true }); });
+  reg('Maud, her deckchair, flask and two cups', 90, 60, () => { S.one.deckchair = S.one.cups = true; g.translate(-MAUD.x + 50, -MAUD.y + 56); drawMaud(0); });
+  restore();
+  reg('the bowler, the umpire in his hat, the batsman', 120, 50, () => { cricketer(20, 46, { arm: 0.7 }); cricketer(60, 46, { cap: false, hat: true }); cricketer(100, 46, { bat: true }); });
+  reg('the mortar and the heaviest pestle', 150, 130, () => { S.lv.pestle = 5; g.translate(-MORTAR.x + 75, -MORTAR.y + 80); drawMortar(0); });
+  restore();
+  reg('the copper still at its biggest', 140, 170, () => { S.lv.still = 4; S.hens = 5; g.translate(-660, -280); drawStillRoom(0); });
+  restore();
+  reg('the scoreboard and the pigeon', 110, 180, () => { S.one.board = true; g.translate(-300, -66); drawScoreboard(); drawPigeon(380, 140, 0); });
+  restore();
+  // The whole page with everything bought, mid-season.
+  reg('the page with everything bought', 800, 520, () => {
+    S.comfort = 10; S.fixture = 3; S.hens = 60; S.broodies = 12; S.roosters = 6; S.rubs = 99; S.balls = 9; S.wt = 10;
+    for (const it of E.ITEMS) { if (it.kind === 'lv') S.lv[it.id] = it.max; else if (it.kind !== 'make') S.one[it.id] = true; }
+    drawPavilion(); drawGround(0); drawMatch(0); drawMaud(0); drawReg(0); drawCoop(0); drawStillRoom(0); drawWeather(0);
+  }, 1);
+  restore();
+}
+
+// ---------- Start ----------
+layout();
+if (DEBUG) Object.assign(window.__game, { end, doFinal, doTea, doRub, doShine, fin: () => fin });
+const away = S.savedAt ? (Date.now() - S.savedAt) / 1000 : 0;
+if (S.ended) end(true);
+else if (S.finale) { S.finale = false; doFinal(); }
+else if (!S.rubs) say('REG', 'Testing, testing. Reg here, the pavilion loudspeaker, forty seasons and a tiny hat. My throat is raw, and Maud of the Gazette says I sound like a goose in a drainpipe. The almanac says egg oil. The hens are right there. Rub round the mortar, would you?');
+else {
+  const off = E.offline(S, away);
+  if (off) say('WHILE YOU WERE OUT', `${Math.round(off.secs / 60)} minutes away. The coop kept laying, at a gentle pace: ${fmt(off.drops)} drops of oil${off.cheers >= 1 ? `, and the twelfth man kept bowling for ${fmt(off.cheers)} cheers${off.fixtures ? ` (${off.fixtures} match${off.fixtures > 1 ? 'es' : ''} called)` : ''}` : ''}. Nothing hatched: nobody was watching.`);
+  else say('REG', 'And we’re back. Reg resumes commentary, with apologies for the interruption, which Reg also commentated.');
+}
+save();
+hud(); renderShop(); renderCalls();
+document.fonts?.ready.then(layout);
+spritesReady.then(() => { if (Sprites.sheetRequested()) { sheet(); Sprites.showSheet({ zoom: 1 }); } });
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

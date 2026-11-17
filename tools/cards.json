@@ -2280,5 +2280,63 @@
   "endT": 0,
   "told": {},
   "boughtOpen": false
+ },
+ "rain-stops-play": {
+  "drops": 184000,
+  "total": 1400000,
+  "rubs": 1500,
+  "hens": 620,
+  "broodies": 22,
+  "roosters": 3,
+  "comfort": 5,
+  "cheers": 380,
+  "cheersTotal": 900,
+  "fixture": 3,
+  "fixProg": 420,
+  "shine": 0.75,
+  "wt": 30,
+  "t": 2600,
+  "lv": {
+   "pestle": 3,
+   "still": 2,
+   "twelfth": 2,
+   "bunting": 2
+  },
+  "one": {
+   "pompom": true,
+   "deckchair": true,
+   "bale": true,
+   "pigeon": true,
+   "board": true,
+   "roohat": true,
+   "roller": true
+  },
+  "n": {
+   "hen": 70,
+   "broody": 12,
+   "rooster": 3
+  },
+  "seen": {
+   "hen": 1,
+   "pestle": 1,
+   "pompom": 1,
+   "broody": 1,
+   "still": 1,
+   "deckchair": 1,
+   "bale": 1,
+   "rooster": 1,
+   "roohat": 1,
+   "twelfth": 1,
+   "bunting": 1,
+   "pigeon": 1,
+   "board": 1,
+   "roller": 1,
+   "funnel": 1,
+   "umpire": 1
+  },
+  "tab": "drops",
+  "savedAt": 0,
+  "runs": 96,
+  "balls": 30
  }
 }
