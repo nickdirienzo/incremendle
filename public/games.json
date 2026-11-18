@@ -1018,5 +1018,48 @@
     "tone": "sports commentary",
     "context": "none",
     "palette": "lost-century"
+  },
+  {
+    "n": 28,
+    "slug": "dyed-in-the-wool",
+    "date": "2026-11-19",
+    "title": "Dyed in the Wool",
+    "tagline": "The neighbours said lemons are a bit sour. So the lemon at number 9 Vine Street steeps the sunniest yarn the street has ever seen, one summer at a time, while Vi the lime next door copies every colour.",
+    "emoji": "🍋🧶",
+    "scale": "absurd",
+    "minutes": "240–360",
+    "seed": 1706211053,
+    "subject": {
+      "text": "a lemon who just moved in",
+      "emoji": "🍋",
+      "name": "lemon",
+      "subgroup": "food-fruit",
+      "trait": "{} who just moved in"
+    },
+    "verb": "brewing",
+    "object": "yarn balls",
+    "interaction": "hold-to-charge",
+    "arc": {
+      "drive": "pride",
+      "obstacle": "the neighbors",
+      "turn": "it works far too well",
+      "initial": "V"
+    },
+    "length": "story (3–10 hours, over several sittings)",
+    "structure": [
+      "a forced reset on a timer (a season, a lifespan); runs grow longer as you learn",
+      "a market whose prices move",
+      "a recipe book: combine things to discover new ones"
+    ],
+    "twist": "a rival who copies you",
+    "ending": "hit a target",
+    "look": "woodcut",
+    "music": {
+      "style": "steel drum calypso",
+      "scale": "hirajoshi"
+    },
+    "tone": "cozy",
+    "context": "none",
+    "palette": "vinik24"
   }
 ]

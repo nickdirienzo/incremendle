@@ -1,0 +1,1418 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dyed in the Wool · Incremendle</title>
+<meta name="description" content="The neighbours said lemons are a bit sour. So the lemon at number 9 Vine Street steeps the sunniest yarn the street has ever seen, one summer at a time, while Vi the lime next door copies every colour. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Dyed in the Wool">
+<meta property="og:description" content="The neighbours said lemons are a bit sour. So the lemon at number 9 Vine Street steeps the sunniest yarn the street has ever seen, one summer at a time, while Vi the lime next door copies every colour.">
+<meta property="og:url" content="https://incremendle.com/dyed-in-the-wool/">
+<meta property="og:image" content="https://incremendle.com/dyed-in-the-wool/og.png?v=7229a6e4">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Dyed in the Wool: The neighbours said lemons are a bit sour. So the lemon at number 9 Vine Street steeps the sunniest yarn the street has ever seen, one summer at a time, while Vi the lime next door copies every colour.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/im-fell-english/font.css">
+<link rel="stylesheet" href="/shared/fonts/im-fell-english-sc/font.css">
+<style>
+  /* Vinik24, cut in wood: black key block on oatmeal paper, a few ink blocks for colour.
+     #000000 #6f6776 #9a9a97 #c5ccb8 #8b5580 #c38890 #a593a5 #666092 #9a4f50 #c28d75 #7ca1c0 #416aa3
+     #8d6268 #be955c #68aca9 #387080 #6e6962 #93a167 #6eaa78 #557064 #9d9f7f #7e9e99 #5d6872 #433455 */
+  :root {
+    --k: #000000; --paper: #c5ccb8; --grey: #9a9a97; --dgrey: #6f6776; --night: #433455; --ochre: #be955c; --red: #9a4f50;
+    --salmon: #c28d75; --green: #6eaa78; --dgreen: #557064; --blue: #416aa3; --sky: #7ca1c0; --plum: #8b5580; --khaki: #9d9f7f;
+    --bg: var(--paper); --ink: var(--k);
+    --fell: 'IM Fell English', Georgia, serif; --sc: 'IM Fell English SC', 'IM Fell English', Georgia, serif;
+    color-scheme: light;
+  }
+  html, body { background: var(--bg); color: var(--ink); }
+  /* Keep this: any display rule (flex, grid) would otherwise override the hidden attribute. */
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 17px/1.3 var(--fell);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(14px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image: repeating-linear-gradient(0deg, transparent 0 5px, #9a9a9714 5px 6px);
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; margin: 0 0 8px; }
+  header h1 { font: 400 clamp(28px, 4.6vw, 40px)/1 var(--sc); margin: 0; letter-spacing: 1px; text-shadow: 2px 2px 0 var(--ochre); }
+  header p { margin: 0; font-style: italic; color: var(--night); }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 20px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } }
+  .block { border: 2.5px solid var(--k); box-shadow: 4px 4px 0 var(--k); background: var(--paper); }
+  .stagebox { position: relative; max-width: min(100%, calc(52vh * 820 / 430)); }
+  .stagebox.tall { max-width: 100%; }
+  canvas#stage { display: block; width: 100%; height: auto; touch-action: none; cursor: pointer; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  /* The dye chart and the street's chalkboard sit under the scene. */
+  .bench { display: flex; gap: 14px; margin-top: 10px; align-items: flex-start; flex-wrap: wrap; max-width: min(100%, calc(52vh * 820 / 430 + 200px)); }
+  .chart { padding: 6px 10px 8px; flex: 0 0 auto; }
+  .chart h3, .board h3 { margin: 0 0 4px; font: 400 17px var(--sc); letter-spacing: .5px; display: flex; justify-content: space-between; gap: 10px; }
+  .chart h3 small { font: italic 14px var(--fell); color: var(--dgrey); }
+  .rows { display: grid; gap: 3px; }
+  .row { display: flex; align-items: center; gap: 3px; }
+  .row .dye { width: 92px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 4px; }
+  .row .dye i { display: inline-block; width: 10px; height: 10px; border: 1.5px solid var(--k); flex: none; }
+  .cell { width: 24px; height: 22px; padding: 0; border: 1.5px solid var(--k); background: var(--paper); font: 15px/1 var(--sc); cursor: pointer; position: relative; color: var(--k); }
+  .cell.found { background-image: repeating-linear-gradient(-45deg, transparent 0 3px, #0000001f 3px 4px); }
+  .cell.sel { outline: 3px solid var(--k); outline-offset: 1px; z-index: 1; }
+  .cell.vi::after { content: "V"; position: absolute; right: -4px; top: -7px; font: 11px/1 var(--sc); background: var(--green); border: 1px solid var(--k); padding: 0 1px; }
+  .cell:focus-visible { outline: 3px dashed var(--red); outline-offset: 1px; }
+  .cell.new { animation: pulse 1.6s ease-in-out 4; }
+  .board { flex: 1 1 200px; min-width: 190px; max-width: 330px; padding: 6px 10px 8px; background: var(--night); color: var(--paper); border-color: var(--k); }
+  .board h3 { color: var(--paper); }
+  .board h3 small { font: italic 14px var(--fell); color: var(--khaki); }
+  .price { display: flex; align-items: center; gap: 6px; width: 100%; padding: 1px 4px; margin: 1px 0; background: none; border: 1px dashed transparent; color: var(--paper); font: 16px/1.2 var(--fell); cursor: pointer; text-align: left; }
+  .price i { width: 12px; height: 12px; border: 1.5px solid var(--paper); flex: none; }
+  .price span { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .price b { font-weight: 400; white-space: nowrap; }
+  .price em { font-style: normal; width: 12px; text-align: center; }
+  .price .up { color: var(--green); } .price .down { color: var(--salmon); }
+  .price.sel { border-color: var(--paper); }
+  .price:hover { background: #ffffff14; }
+  .price:focus-visible { outline: 2px dashed var(--ochre); }
+  .vi { margin: 4px 0 0; font: italic 15px var(--fell); color: var(--khaki); }
+  .meters { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; margin: 10px 2px 0; }
+  @media (max-width: 520px) { .meters { grid-template-columns: 1fr; } }
+  .meter .label { display: flex; justify-content: space-between; gap: 10px; font-size: 15px; }
+  .meter .label b { font-weight: 400; font-family: var(--sc); }
+  .bar { position: relative; height: 12px; border: 2px solid var(--k); background: var(--paper); overflow: hidden; }
+  .bar i { position: absolute; inset: 0 auto 0 0; width: 0; transition: width .4s;
+           background: repeating-linear-gradient(90deg, var(--ochre) 0 6px, var(--red) 6px 12px, var(--sky) 12px 18px, var(--green) 18px 24px); }
+  .bar.clock i { background: repeating-linear-gradient(-45deg, var(--k) 0 2px, var(--grey) 2px 6px); transition: none; }
+  .bar.clock.late i { background: repeating-linear-gradient(-45deg, var(--red) 0 2px, var(--salmon) 2px 6px); }
+  .stats { display: flex; flex-wrap: wrap; gap: 2px 16px; margin: 8px 2px 0; font-size: 16px; }
+  .stats .tipped { cursor: help; border-bottom: 1px dotted var(--dgrey); }
+  .stats .tipped:focus-visible { outline: 2px dashed var(--red); outline-offset: 2px; }
+  .log { margin: 8px 2px 0; min-height: 2.6em; font-size: 18px; font-style: italic; }
+  .log.fresh { animation: fresh 1.2s ease-out; }
+  @keyframes fresh { from { color: var(--red); } }
+  /* The Fair, over the scene */
+  .card { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(88%, 460px); box-sizing: border-box; padding: 12px 16px 14px; }
+  .stagebox.tall .card { top: 6px; transform: translateX(-50%); width: 94%; }
+  .card h3 { margin: 0 0 4px; font: 400 23px var(--sc); }
+  .card .who { font-size: 14px; letter-spacing: 1px; font-family: var(--sc); color: var(--red); }
+  .card p { margin: 6px 0; }
+  .card q { font-style: italic; }
+  .btn { font: 19px var(--sc); color: var(--k); background: var(--ochre); border: 2.5px solid var(--k); box-shadow: 3px 3px 0 var(--k); padding: 4px 14px; cursor: pointer; }
+  .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--k); }
+  .btn:focus-visible { outline: 3px dashed var(--red); outline-offset: 2px; }
+  /* The column stays in view and scrolls on its own, so nothing on it is ever below the fold. */
+  aside { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; overscroll-behavior: contain; padding: 8px 10px 10px; box-sizing: border-box; scrollbar-width: thin; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  aside h2 { font: 400 22px var(--sc); margin: 0 0 6px; }
+  #afford { font: italic 16px var(--fell); color: var(--red); }
+  .tabs { display: flex; gap: 6px; margin: 0 0 8px; }
+  .tabs button { font: 18px var(--sc); background: none; border: 0; border-bottom: 3px solid transparent; padding: 1px 6px; cursor: pointer; color: var(--k); }
+  .tabs button[aria-selected="true"] { border-bottom-color: var(--k); }
+  .tabs button small { font: italic 15px var(--fell); color: var(--red); }
+  .tabs button.fresh::after { content: " ●"; color: var(--red); font-size: 12px; vertical-align: middle; }
+  .tabs button:focus-visible { outline: 2px dashed var(--red); }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  @media (max-width: 760px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up { position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 16px/1.1 var(--fell); color: var(--k);
+        background: var(--paper); border: 2px solid var(--k); padding: 3px 7px 3px; cursor: pointer; }
+  .up b { font-weight: 400; font-family: var(--sc); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; font-size: 15px; color: var(--dgrey); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { background: var(--ochre); box-shadow: 3px 3px 0 var(--k); }
+  .up.can em { color: var(--k); }
+  .up.rep { border-width: 2.5px; }
+  .up.rep.can { background: var(--salmon); }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up[aria-disabled="true"]:not(.can) { opacity: .72; }
+  .up.odd { border-style: dashed; }
+  .up .tag { position: absolute; top: -9px; right: 6px; font: 13px var(--sc); padding: 0 5px; background: var(--red); color: var(--paper); border: 1.5px solid var(--k); font-style: normal; }
+  .up.new { animation: pulse 1.6s ease-in-out 4; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 3px var(--red); } }
+  .up:focus-visible { outline: 3px dashed var(--red); outline-offset: 2px; }
+  .none { font-style: italic; color: var(--dgrey); margin: 2px 0 0; grid-column: 1 / -1; }
+  #tip { position: fixed; z-index: 50; width: 250px; padding: 8px 12px 10px; pointer-events: none; font: 16px/1.2 var(--fell); color: var(--k);
+         background: var(--paper); border: 2.5px solid var(--k); box-shadow: 4px 4px 0 var(--k); }
+  #tip b { display: block; font: 400 20px var(--sc); border-bottom: 2px solid var(--k); margin-bottom: 4px; }
+  #tip span { white-space: pre-line; }
+  #tip small { display: block; white-space: pre-line; margin-top: 6px; font-size: 15px; color: var(--night); }
+  #tip i { display: block; margin-top: 6px; font-size: 15px; border-top: 1.5px dashed var(--k); padding-top: 5px; }
+  #tip.inline { position: static; width: auto; margin-top: 10px; }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 18px var(--sc); cursor: pointer; list-style: none; padding: 2px 9px; border: 2px dashed var(--k); }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: "\25B8"; transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 2px dashed var(--red); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .bought { max-width: 100%; font: 15px/1.1 var(--fell); color: var(--k); background: var(--paper); border: 1.5px solid var(--k); padding: 2px 7px; cursor: help;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { border-style: dashed; }
+  .bought:hover, .bought.on { background: var(--ochre); }
+  .bought:focus-visible { outline: 2px dashed var(--red); outline-offset: 2px; }
+  #ending { margin: 24px auto 10px; max-width: 720px; text-align: center; padding: 18px 26px 20px; }
+  #ending h2 { font: 400 34px/1.1 var(--sc); margin: 0 0 8px; }
+  #ending .stamp { display: inline-block; margin: 4px 0 10px; padding: 2px 14px; border: 2px solid var(--k); font: 17px var(--sc); letter-spacing: 1px; background: var(--ochre); }
+  #ending p { margin: 9px 0; font-size: 18px; }
+  #shareBtn, #againBtn { margin: 4px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .cell.new, .log.fresh { animation: none; } .bar i, #bought summary::before { transition: none; } }
+</style>
+<!-- Libraries from /shared/lib/libs.json, by version. List only what this game imports: the credits tool reads these.
+     Strudel's soundfonts import @strudel/core and @strudel/webaudio, which are both inside the @strudel/web bundle. -->
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/soundfonts": "/shared/lib/@strudel/soundfonts@1.3.0/index.mjs"
+} }
+</script>
+<!-- Shared site runtime: top bar, credits, share card, streaks. data-day is this game's "n" from games.json (an internal id, never shown). -->
+<script src="/shared/daily.js" data-day="28" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Dyed in the Wool</h1>
+    <p>Hold to steep. Let go when it’s just right.</p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="stagebox block" id="stagebox">
+        <canvas id="stage" width="820" height="430" aria-label="Vine Street, cut in wood: a terrace of three houses under a hatched sky, the Downs and a church spire behind. A lemon stands on the pavement outside number 9 with a dye pot, a stall of yarn and a little dye garden; Vi the lime peers over the fence from number 11."></canvas>
+        <div class="card block" id="fair" hidden>
+          <div class="who" id="fairWho">THE VINE STREET FAIR</div>
+          <h3 id="fairHead">The Fair</h3>
+          <p><q id="fairQuote"></q></p>
+          <p id="fairTally"></p>
+          <button class="btn" id="nextBtn" type="button">Next summer ▸</button>
+        </div>
+      </div>
+      <div class="bench" id="bench">
+        <div class="chart block" id="chart">
+          <h3>The Dye Chart <small id="chartN"></small></h3>
+          <div class="rows" id="rows"></div>
+        </div>
+        <div class="board block" id="board">
+          <h3>Vine St. · a yard <small>now</small></h3>
+          <div id="prices"></div>
+          <p class="vi" id="viLine"></p>
+        </div>
+      </div>
+      <div class="meters">
+        <div class="meter">
+          <div class="label"><span>The Big Cosy · <b id="cosyNow">nothing yet</b></span><span id="cosyOf"></span></div>
+          <div class="bar" id="cosyBar"><i id="cosyFill"></i></div>
+        </div>
+        <div class="meter">
+          <div class="label"><span id="clockLabel">Summer 1</span><span id="clockVal"></span></div>
+          <div class="bar clock" id="clockBar"><i id="clockFill"></i></div>
+        </div>
+      </div>
+      <div class="stats">
+        <span id="steepBox" class="tipped" tabindex="0" aria-describedby="tip">🧶 <b id="perSteep">4</b> yd a steep</span>
+        <span id="priceBox" class="tipped" tabindex="0" aria-describedby="tip">🪙 <b id="perYard">0.5</b>p a yard</span>
+        <span id="purseBox" class="tipped" tabindex="0" aria-describedby="tip">👛 <b id="purse">0</b>p</span>
+        <span id="kettleBox" class="tipped" tabindex="0" aria-describedby="tip" hidden>🫖 <b id="kettleRate">0</b> yd/s</span>
+        <span id="ribbonBox" class="tipped" tabindex="0" aria-describedby="tip" hidden>🎀 <b id="ribbons">0</b></span>
+      </div>
+      <div class="log" id="log" aria-live="polite"></div>
+    </main>
+    <aside id="side" class="block">
+      <h2 id="shopHead">The Shop <span id="afford"></span></h2>
+      <div class="tabs" id="tabs" role="tablist" hidden>
+        <button type="button" role="tab" id="tabP" aria-selected="true">Pennies <small id="tabPc"></small></button>
+        <button type="button" role="tab" id="tabR" aria-selected="false">Ribbons <small id="tabRc"></small></button>
+      </div>
+      <div id="shop"></div>
+      <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" class="block" hidden>
+    <h2>Not sour. Just right.</h2>
+    <div class="stamp" id="endStamp">VINE STREET · THE EARTH IN A JUMPER</div>
+    <p id="endText"></p>
+    <p id="endStats"></p>
+    <button class="btn" id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import * as Fx from '/shared/kit/fx.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const DEBUG = location.search.includes('debug');
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:28:save';
+let S = E.newState();
+try { const raw = localStorage.getItem(KEY); if (raw) S = E.load(JSON.parse(raw)); } catch (e) {}
+const save = () => { S.lastSeen = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const C = { k: '#000000', paper: '#c5ccb8', grey: '#9a9a97', dgrey: '#6f6776', plum: '#8b5580', pink: '#c38890', lilac: '#a593a5', violet: '#666092',
+  red: '#9a4f50', salmon: '#c28d75', sky: '#7ca1c0', blue: '#416aa3', rose: '#8d6268', ochre: '#be955c', teal: '#68aca9', dteal: '#387080',
+  taupe: '#6e6962', olive: '#93a167', green: '#6eaa78', dgreen: '#557064', khaki: '#9d9f7f', sage: '#7e9e99', slate: '#5d6872', night: '#433455' };
+const FELL = "'IM Fell English', Georgia, serif", SC = "'IM Fell English SC', 'IM Fell English', Georgia, serif";
+const fmt = E.fmt, fs = E.fmtShort;
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const mmss = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+const per = x => x < 10 ? (Math.round(x * 100) / 100).toString() : x < 100 ? x.toFixed(1) : fmt(x);
+
+// ---------- Sound: everything on A hirajoshi (A B C E F), the steel band's five notes ----------
+const A = createAudio({ sfxTrim: 4, musicTrim: 8 });
+const N = scale('hirajoshi', 57);
+const sfx = {
+  // The pot coming up to heat: soft plucks that climb the scale as the shade deepens.
+  bubble(i = 0) { A.tone({ type: 'pluck', freq: N(i), dur: 0.06, vol: 0.06, cutoff: 1800 }); },
+  // Into the just-right band: one clear bell.
+  ready() { A.tone({ type: 'bell', freq: N(10), dur: 0.22, vol: 0.09 }); },
+  // Lift the yarn out: a pan pair, a chord if it was just right, a soft low thud if it stewed.
+  lift(q = 1) {
+    if (q > 1) { [5, 7, 9].forEach((d, i) => A.tone({ type: 'bell', freq: N(d), dur: 0.14, vol: 0.09, at: A.now + i * 0.045 })); }
+    else if (q >= 0.6 && q < 0.7) { A.tone({ type: 'triangle', freq: N(-3), dur: 0.12, vol: 0.12, cutoff: 700 }); A.tone({ type: 'pluck', freq: N(1), dur: 0.08, vol: 0.06, at: A.now + 0.06 }); }
+    else { A.tone({ type: 'pluck', freq: N(3), dur: 0.09, vol: 0.1 }); A.tone({ type: 'pluck', freq: N(5), dur: 0.09, vol: 0.07, at: A.now + 0.06 }); }
+  },
+  coin(k = 0) { A.tone({ type: 'bell', freq: N(12 + (k % 3)), dur: 0.06, vol: 0.05 }); },
+  // A colour nobody's seen: a little steel-band flourish.
+  discover() { [0, 2, 4, 5, 7, 9].forEach((d, i) => A.tone({ type: 'bell', freq: N(d + 3), dur: 0.12, vol: 0.08, at: A.now + i * 0.07 })); A.tone({ type: 'pad', freq: N(-5), dur: 0.8, vol: 0.04, attack: 0.05, at: A.now + 0.1 }); },
+  // The kettles, simmering on their own: a soft whistle now and then.
+  kettle(k = 0) { A.tone({ type: 'sine', freq: N(9 + (k % 3)), dur: 0.18, vol: 0.035, attack: 0.05 }); },
+  buy() { [0, 2, 4].forEach((d, i) => A.tone({ type: 'bell', freq: N(d + 5), dur: 0.12, vol: 0.09, at: A.now + i * 0.06 })); },
+  pot() { [0, 2, 4, 7].forEach((d, i) => A.tone({ type: 'bell', freq: N(d + 3), dur: 0.16, vol: 0.09, at: A.now + i * 0.08 })); A.tone({ type: 'pad', freq: N(-5), dur: 0.6, vol: 0.05, attack: 0.04 }); },
+  wool(k = 0) { A.tone({ type: 'pluck', freq: N(4 + (k % 4)), dur: 0.08, vol: 0.1 }); },
+  unlock() { A.tone({ type: 'bell', freq: N(9), dur: 0.3, vol: 0.08 }); A.tone({ type: 'bell', freq: N(11), dur: 0.35, vol: 0.07, at: A.now + 0.12 }); },
+  deny() { A.tone({ type: 'triangle', freq: N(1), dur: 0.07, vol: 0.1 }); A.tone({ type: 'triangle', freq: N(0), dur: 0.1, vol: 0.09, at: A.now + 0.08 }); },
+  pickDye() { A.tone({ type: 'pluck', freq: N(6), dur: 0.05, vol: 0.07, cutoff: 2400 }); },
+  // Vi's at the fence: two notes down, a little tut.
+  vi() { A.tone({ type: 'pluck', freq: N(7), dur: 0.1, vol: 0.08 }); A.tone({ type: 'pluck', freq: N(4), dur: 0.14, vol: 0.08, at: A.now + 0.12 }); },
+  // The Big Cosy wraps something new.
+  cosy() { [0, 1, 2, 3, 4, 5, 6, 7].forEach((d, i) => A.tone({ type: 'bell', freq: N(d + 5), dur: 0.1, vol: 0.06, at: A.now + i * 0.05 })); },
+  // The Fair: Mr Pepper's band strikes up.
+  fair() { [0, 2, 4, 2, 5, 4, 7].forEach((d, i) => A.tone({ type: 'bell', freq: N(d + 4), dur: 0.14, vol: 0.09, at: A.now + i * 0.12 })); A.tone({ type: 'pad', freq: N(-5), dur: 1.2, vol: 0.05, attack: 0.1, at: A.now + 0.2 }); },
+  summer() { [0, 1, 2, 3, 4, 5, 7].forEach((d, i) => A.tone({ type: 'bell', freq: N(d + 2), dur: 0.14, vol: 0.08, at: A.now + i * 0.07 })); A.tone({ type: 'keys', freq: N(4), dur: 0.6, vol: 0.06, at: A.now + 0.5 }); },
+  finale() {
+    const tune = [0, 2, 3, 5, 7, 5, 4, 5, 7, 9, 10, 9, 12];
+    tune.forEach((s, i) => A.tone({ type: 'bell', freq: N(s), dur: 0.2, vol: 0.1, at: A.now + i * 0.15 }));
+    [0, 2, 4].forEach(s => A.tone({ type: 'pad', freq: N(s - 5), dur: 3, vol: 0.04, attack: 0.6, at: A.now + 1.2 }));
+    A.tone({ type: 'bell', freq: N(12), dur: 1.4, vol: 0.07, at: A.now + 2 });
+  },
+};
+// Per-effect levels, measured with npm run mix so every effect peaks near -10 dBFS.
+// The rapid ones (the bubbling while you hold, the coin, picking a dye, the kettles) sit a few dB under on purpose.
+const LEVEL = { bubble: 12.7, ready: 1.52, lift: 1.16, coin: 13.9, discover: 0.91, kettle: 2.23, buy: 0.91, pot: 0.86, wool: 1.73, unlock: 1.01, deny: 1.23, pickDye: 4.76, vi: 1.9, cosy: 1.54, fair: 0.91, summer: 0.86, finale: 0.93 };
+for (const k of Object.keys(sfx)) {
+  const fn = sfx[k];
+  sfx[k] = (...a) => {
+    const tone = A.tone, m = LEVEL[k] || 1;
+    A.tone = o => tone({ ...o, vol: (o.vol ?? 0.3) * m });
+    try { fn(...a); } finally { A.tone = tone; }
+  };
+}
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'fair', 'summer', 'discover', 'cosy'], S: () => S, E };
+
+// The game owns playback; music.mjs arranges the calypso per phase.
+const musicKey = () => E.phase(S);
+let music = null, soundtrack = null, lastKey = musicKey();
+function song() {
+  soundtrack ||= createSoundtrack(music.strudel);
+  return soundtrack(musicKey());
+}
+createMusic(A, { soundfonts: true, packs: ['vcsl'], song }).then(m => { music = m; music.update(); if (DEBUG) Object.assign(window.__game, { music: m, song }); }).catch(e => console.warn('music', e));
+
+// ---------- Layout: the scene is drawn at 820×430; phones see the middle 520 of it ----------
+const cv = $('stage'), g = cv.getContext('2d');
+let L = null;
+function layout() {
+  const narrow = $('stagebox').clientWidth < 560;
+  if (L && L.narrow === narrow) return false;
+  L = narrow ? { narrow, W: 520, H: 430, x0: 160 } : { narrow, W: 820, H: 430, x0: 0 };
+  $('stagebox').classList.toggle('tall', narrow);
+  cv.width = L.W; cv.height = L.H; dpr = 0; bg = null;
+  return true;
+}
+let dpr = 0;
+function fit() {
+  const d = Math.min(2, devicePixelRatio || 1), r = cv.getBoundingClientRect();
+  const w = Math.round((r.width || L.W) * d);
+  if (cv.width !== w || dpr !== d) { dpr = d; cv.width = w; cv.height = Math.round(w * L.H / L.W); bg = null; }
+}
+
+// ---------- Woodcut helpers: flat ink, a black key line, and carved hatching ----------
+const LW = 2;
+function ink(x, fill, stroke = C.k, lw = LW) { if (fill) { x.fillStyle = fill; x.fill(); } if (stroke) { x.strokeStyle = stroke; x.lineWidth = lw; x.lineJoin = 'round'; x.stroke(); } }
+// Parallel cuts inside the current path.
+function hatch(x, { gap = 5, angle = -0.6, color = C.k, lw = 1, alpha = 0.55, box = [0, 0, 820, 430] } = {}) {
+  x.save(); x.clip(); x.globalAlpha *= alpha; x.strokeStyle = color; x.lineWidth = lw;
+  const [bx, by, bw, bh] = box, cx = bx + bw / 2, cy = by + bh / 2, R = Math.hypot(bw, bh) / 2 + 4;
+  const ca = Math.cos(angle), sa = Math.sin(angle);
+  x.beginPath();
+  for (let d = -R; d <= R; d += gap) { x.moveTo(cx - ca * R - sa * d, cy - sa * R + ca * d); x.lineTo(cx + ca * R - sa * d, cy + sa * R + ca * d); }
+  x.stroke(); x.restore();
+}
+// Knitting: stripes in the colours found so far, with little V stitches. Fills the current path.
+function knit(x, box, cols, { row = 6, seed = 0 } = {}) {
+  const [bx, by, bw, bh] = box;
+  x.save(); x.clip();
+  for (let i = 0, y = by; y < by + bh; y += row, i++) { x.fillStyle = cols[(i + seed) % cols.length]; x.fillRect(bx, y, bw, row + 0.5); }
+  x.strokeStyle = '#00000055'; x.lineWidth = 1;
+  x.beginPath();
+  for (let y = by; y < by + bh; y += row) for (let xx = bx + ((y / row) % 2) * 2; xx < bx + bw; xx += 5) { x.moveTo(xx, y + 1); x.lineTo(xx + 2, y + row - 1); x.lineTo(xx + 4, y + 1); }
+  x.stroke(); x.restore();
+}
+const yarnCols = () => {
+  const ks = Object.keys(S.found).filter(k => E.CROSS[k].h > 0).slice(-6).map(k => E.CROSS[k].ink);
+  return ks.length >= 3 ? ks : [C.ochre, C.red, C.sky, C.green, C.paper].slice(0, Math.max(3, ks.length + 2));
+};
+function rr(x, a, b, w, h, r) { x.beginPath(); x.roundRect ? x.roundRect(a, b, w, h, r) : x.rect(a, b, w, h); }
+function lerpHex(a, b, t) { const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); const A1 = p(a), B1 = p(b); return '#' + A1.map((v, i) => Math.round(v + (B1[i] - v) * Math.max(0, Math.min(1, t))).toString(16).padStart(2, '0')).join(''); }
+
+// ---------- Characters, drawn by hand ----------
+// The lemon: an oval with nubs, a leaf, a cheerful face. Wellies, glove and hat when it has them.
+function drawLemon(x, cx, fy, { t = 0, hold = 0, k = 1, glove = S.up.paw, wellies = S.up.wellies, hot = 0 } = {}) {
+  x.save(); x.translate(cx, fy); x.scale(k, k);
+  const bob = reduced ? 0 : Math.sin(t * 3) * 0.8 - hold * 1.5;
+  // legs
+  x.strokeStyle = C.k; x.lineWidth = 2.2; x.beginPath(); x.moveTo(-7, -14); x.lineTo(-8, -2); x.moveTo(7, -14); x.lineTo(8, -2); x.stroke();
+  if (wellies) { x.fillStyle = C.ochre; for (const s of [-1, 1]) { rr(x, s * 8 - 5, -9, 9, 9, 1.5); ink(x, C.ochre, C.k, 1.5); } }
+  else { x.fillStyle = C.k; x.fillRect(-12, -3, 7, 3); x.fillRect(5, -3, 7, 3); }
+  // body
+  x.beginPath(); x.ellipse(0, -36 + bob, 21, 25, 0.08, 0, Math.PI * 2);
+  x.moveTo(17, -48 + bob); x.ellipse(0, -36 + bob, 21, 25, 0.08, 0, 0);
+  ink(x, C.ochre, C.k, 2.4);
+  x.beginPath(); x.ellipse(0, -36 + bob, 21, 25, 0.08, 0, Math.PI * 2); hatch(x, { gap: 4, angle: 0.9, alpha: 0.35, box: [-25, -64 + bob, 50, 56] });
+  x.beginPath(); x.arc(-3, -44 + bob, 10, Math.PI * 1.05, Math.PI * 1.7); x.strokeStyle = C.paper; x.lineWidth = 3; x.stroke();          // shine
+  x.beginPath(); x.ellipse(2, -62 + bob, 4, 3, 0, 0, Math.PI * 2); ink(x, C.ochre, C.k, 1.8);                                    // nub
+  x.beginPath(); x.moveTo(2, -63 + bob); x.quadraticCurveTo(14, -74 + bob, 20, -66 + bob); x.quadraticCurveTo(10, -62 + bob, 2, -63 + bob); ink(x, C.green, C.k, 1.6); // leaf
+  // face
+  x.fillStyle = C.k; x.beginPath(); x.arc(-7, -39 + bob, 1.9, 0, 7); x.arc(6, -39 + bob, 1.9, 0, 7); x.fill();
+  x.strokeStyle = C.k; x.lineWidth = 1.6; x.beginPath(); x.arc(0, -33 + bob, 5, 0.2, Math.PI - 0.2); x.stroke();
+  x.fillStyle = C.pink; x.globalAlpha = 0.8; x.beginPath(); x.ellipse(-12, -33 + bob, 3, 2, 0, 0, 7); x.ellipse(11, -33 + bob, 3, 2, 0, 0, 7); x.fill(); x.globalAlpha = 1;
+  if (hot > 0.5) { x.fillStyle = C.sky; x.beginPath(); x.ellipse(17, -50 + bob, 1.6, 2.6, 0, 0, 7); x.fill(); }
+  // arm out toward the pot, holding the string
+  x.strokeStyle = C.k; x.lineWidth = 2.2; x.beginPath(); x.moveTo(18, -34 + bob); x.lineTo(30, -40 + bob - hold * 3); x.stroke();
+  if (glove) { x.beginPath(); x.ellipse(31, -41 + bob - hold * 3, 4.5, 3.5, -0.4, 0, 7); ink(x, C.red, C.k, 1.4); }
+  x.strokeStyle = C.k; x.lineWidth = 2.2; x.beginPath(); x.moveTo(-18, -34 + bob); x.lineTo(-25, -24 + bob); x.stroke();
+  x.restore();
+  return [cx + 31 * k, fy + (-41 + bob - hold * 3) * k];
+}
+// Vi: a lime, rounder and greener, in a headscarf, always looking this way.
+function drawVi(x, cx, fy, { t = 0, k = 1, shorts = false } = {}) {
+  x.save(); x.translate(cx, fy); x.scale(k, k);
+  const bob = reduced ? 0 : Math.sin(t * 2.4 + 1) * 0.7;
+  x.strokeStyle = C.k; x.lineWidth = 2; x.beginPath(); x.moveTo(-6, -12); x.lineTo(-7, -1); x.moveTo(6, -12); x.lineTo(7, -1); x.stroke();
+  x.beginPath(); x.ellipse(0, -30 + bob, 19, 19, 0, 0, Math.PI * 2); ink(x, C.olive, C.k, 2.4);
+  x.beginPath(); x.ellipse(0, -30 + bob, 19, 19, 0, 0, Math.PI * 2); hatch(x, { gap: 4, angle: -0.9, alpha: 0.35, box: [-20, -50 + bob, 40, 40] });
+  x.beginPath(); x.ellipse(0, -44 + bob, 17, 8, 0, Math.PI, 0); x.lineTo(-17, -44 + bob); ink(x, C.red, C.k, 1.8);       // headscarf
+  x.fillStyle = C.paper; for (let i = -12; i <= 12; i += 6) { x.beginPath(); x.arc(i, -47 + bob, 1.3, 0, 7); x.fill(); }
+  x.fillStyle = C.k; x.beginPath(); x.arc(-8, -32 + bob, 1.8, 0, 7); x.arc(3, -32 + bob, 1.8, 0, 7); x.fill();   // eyes, sideways: she's looking at you
+  x.strokeStyle = C.k; x.lineWidth = 1.5; x.beginPath(); x.moveTo(-6, -24 + bob); x.lineTo(2, -25 + bob); x.stroke();
+  if (shorts) { x.fillStyle = C.sky; x.fillRect(-9, -14, 18, 5); x.strokeRect(-9, -14, 18, 5); }
+  x.restore();
+}
+// Mrs Marrow of number 7, chair of the Residents' Committee: a long striped marrow with a clipboard.
+function drawMarrow(x, cx, fy, { t = 0, k = 1, fan = 0, shorts = false, glass = false } = {}) {
+  x.save(); x.translate(cx, fy); x.scale(k, k);
+  x.strokeStyle = C.k; x.lineWidth = 2; x.beginPath(); x.moveTo(-5, -10); x.lineTo(-6, -1); x.moveTo(5, -10); x.lineTo(6, -1); x.stroke();
+  x.beginPath(); x.ellipse(0, -36, 13, 28, 0.06, 0, Math.PI * 2); ink(x, C.dgreen, C.k, 2.4);
+  x.save(); x.beginPath(); x.ellipse(0, -36, 13, 28, 0.06, 0, Math.PI * 2); x.clip();
+  x.strokeStyle = C.olive; x.lineWidth = 3; for (let i = -10; i <= 10; i += 6) { x.beginPath(); x.moveTo(i, -66); x.quadraticCurveTo(i * 0.6, -36, i, -6); x.stroke(); } x.restore();
+  x.beginPath(); x.moveTo(-2, -63); x.lineTo(0, -70); x.lineTo(3, -64); ink(x, C.taupe, C.k, 1.5);
+  x.fillStyle = C.k; x.beginPath(); x.arc(-4, -44, 1.6, 0, 7); x.arc(4, -44, 1.6, 0, 7); x.fill();
+  x.strokeStyle = C.k; x.lineWidth = 1.5; x.beginPath(); if (glass) x.arc(0, -38, 3.5, 0.2, Math.PI - 0.2); else { x.moveTo(-3, -37); x.lineTo(3, -37); } x.stroke();
+  if (glass) { rr(x, 10, -38, 7, 10, 1); ink(x, C.ochre, C.k, 1.3); }
+  else { rr(x, -20, -34, 10, 13, 1); ink(x, C.paper, C.k, 1.5); x.strokeStyle = C.k; x.lineWidth = 0.8; for (let i = 0; i < 3; i++) { x.beginPath(); x.moveTo(-18, -30 + i * 3); x.lineTo(-12, -30 + i * 3); x.stroke(); } }
+  if (fan) { const a = reduced ? 0 : Math.sin(t * 10) * 0.4; x.save(); x.translate(14, -46); x.rotate(a); x.beginPath(); x.moveTo(0, 0); x.arc(0, 0, 10, -2.2, -0.9); x.closePath(); ink(x, C.pink, C.k, 1.3); x.restore(); }
+  if (shorts) { x.fillStyle = C.salmon; x.fillRect(-9, -13, 18, 5); }
+  x.restore();
+}
+
+// The rest of Vine Street, for the ending: the Plum twins from number 5 and Mr Pepper (and his pan) from number 3.
+function drawFruit(x, cx, fy, col, rx, ry, t, seed, pepper = false) {
+  const bob = reduced ? 0 : Math.sin(t * 3 + seed) * 0.8;
+  x.strokeStyle = C.k; x.lineWidth = 2; x.beginPath(); x.moveTo(-4 + cx, fy - 8); x.lineTo(-5 + cx, fy); x.moveTo(4 + cx, fy - 8); x.lineTo(5 + cx, fy); x.stroke();
+  x.beginPath(); x.ellipse(cx, fy - 8 - ry + bob, rx, ry, 0, 0, 7); ink(x, col, C.k, 2.2);
+  if (pepper) { x.beginPath(); x.moveTo(cx, fy - 8 - ry * 2 + bob); x.lineTo(cx + 2, fy - 14 - ry * 2 + bob); x.strokeStyle = C.dgreen; x.lineWidth = 3; x.stroke(); x.beginPath(); x.ellipse(cx + 22, fy - 16, 12, 4, 0, 0, 7); ink(x, C.grey, C.k, 1.6); }
+  else { x.beginPath(); x.moveTo(cx, fy - 8 - ry * 2 + bob); x.quadraticCurveTo(cx + 6, fy - 12 - ry * 2 + bob, cx + 9, fy - 6 - ry * 2 + bob); x.strokeStyle = C.taupe; x.lineWidth = 1.5; x.stroke(); }
+  x.fillStyle = C.k; x.beginPath(); x.arc(cx - 3.5, fy - 10 - ry + bob, 1.4, 0, 7); x.arc(cx + 3.5, fy - 10 - ry + bob, 1.4, 0, 7); x.fill();
+  x.strokeStyle = C.k; x.lineWidth = 1.3; x.beginPath(); x.arc(cx, fy - 6 - ry + bob, 3, 0.2, Math.PI - 0.2); x.stroke();
+  x.fillStyle = C.sky; x.fillRect(cx - rx * 0.7, fy - 11, rx * 1.4, 4);                                  // shorts
+  rr(x, cx - rx - 6, fy - 12 - ry + bob, 5, 8, 1); ink(x, C.ochre, C.k, 1.1);                          // a glass of lemonade
+}
+
+// ---------- The pots ----------
+// The liquid shades from pale to the colour as it steeps, and to gravy past it.
+function brewColour(c = 1) {
+  const ink2 = E.CROSS[S.sel].ink;
+  if (c <= 1) return lerpHex(C.paper, ink2, 0.25 + 0.75 * c);
+  return lerpHex(ink2, C.taupe, Math.min(1, (c - 1) / 0.5));
+}
+// Where the yarn goes in, for each pot: [x, y] of the surface centre, in scene coordinates.
+function potSpot(r = S.pot) {
+  return [[450, 382], [452, 374], [460, 382], [465, 366], [480, 382], [470, 344], [520, 392], [540, 398], [560, 400], [640, 168], [760, 196]][r];
+}
+function drawPot(x, r, liquid, t, { cosy = S.up.cosy, flame = E.lv(S, 'burner') } = {}) {
+  const [sx, sy] = potSpot(r);
+  const fire = (fx, fy, w) => {           // a camping ring with flames; bigger with every Bigger Burner
+    x.fillStyle = C.k; x.fillRect(fx - w / 2, fy, w, 5);
+    const n = 3 + flame, h = 6 + flame * 2;
+    for (let i = 0; i < n; i++) {
+      const px = fx - w / 2 + 4 + i * (w - 8) / Math.max(1, n - 1), fl = reduced ? 1 : 0.8 + 0.3 * Math.sin(t * 13 + i * 2);
+      x.beginPath(); x.moveTo(px - 3, fy); x.quadraticCurveTo(px - 2, fy - h * fl, px, fy - h * fl - 2); x.quadraticCurveTo(px + 2, fy - h * fl, px + 3, fy); ink(x, i % 2 ? C.red : C.ochre, C.k, 1);
+    }
+    x.strokeStyle = C.k; x.lineWidth = 2; x.beginPath(); x.moveTo(fx - w / 2 + 2, fy + 5); x.lineTo(fx - w / 2 - 4, fy + 24); x.moveTo(fx + w / 2 - 2, fy + 5); x.lineTo(fx + w / 2 + 4, fy + 24); x.stroke();
+  };
+  const body = (w, h, col, rim = 0) => {
+    // a straight-sided pot from the surface (sx, sy) down h, w wide
+    x.beginPath(); x.moveTo(sx - w / 2, sy); x.lineTo(sx - w / 2 + rim, sy + h); x.quadraticCurveTo(sx, sy + h + 6, sx + w / 2 - rim, sy + h); x.lineTo(sx + w / 2, sy); x.closePath();
+    ink(x, col, C.k, 2.4);
+    x.beginPath(); x.moveTo(sx - w / 2, sy); x.lineTo(sx - w / 2 + rim, sy + h); x.lineTo(sx + w / 2 - rim, sy + h); x.lineTo(sx + w / 2, sy); x.closePath(); hatch(x, { gap: 4, angle: 1.35, alpha: 0.45, box: [sx - w / 2, sy, w, h + 6] });
+    if (cosy) { x.beginPath(); x.rect(sx - w / 2 + rim * 0.3, sy + h * 0.25, w - rim * 0.6, h * 0.45); knit(x, [sx - w / 2, sy + h * 0.25, w, h * 0.45], yarnCols(), { row: 4 }); x.beginPath(); x.rect(sx - w / 2 + rim * 0.3, sy + h * 0.25, w - rim * 0.6, h * 0.45); ink(x, null, C.k, 1.5); }
+    x.beginPath(); x.ellipse(sx, sy, w / 2, Math.max(4, w * 0.09), 0, 0, Math.PI * 2); ink(x, liquid, C.k, 2.4);
+    if (!reduced) for (let i = 0; i < 3; i++) { const bx = sx - w * 0.3 + ((t * 9 + i * w * 0.3) % (w * 0.6)), by = sy + Math.sin(t * 5 + i) * 1.5; x.beginPath(); x.arc(bx, by, 1.6, 0, 7); x.strokeStyle = C.paper; x.lineWidth = 1; x.stroke(); }
+  };
+  const water = (w, h, col, edge) => { x.beginPath(); x.ellipse(sx, sy, w / 2, h / 2, 0, 0, Math.PI * 2); ink(x, edge, C.k, 2.4); x.beginPath(); x.ellipse(sx, sy, w / 2 - 6, h / 2 - 4, 0, 0, Math.PI * 2); ink(x, col, C.k, 1.5); x.beginPath(); x.ellipse(sx, sy, w / 2 - 6, h / 2 - 4, 0, 0, Math.PI * 2); hatch(x, { gap: 6, angle: 0, alpha: 0.25, color: C.paper, box: [sx - w / 2, sy - h / 2, w, h] }); };
+  switch (r) {
+    case 0: fire(sx, sy + 20, 34); body(36, 18, C.grey); x.strokeStyle = C.k; x.lineWidth = 4; x.beginPath(); x.moveTo(sx + 18, sy + 4); x.lineTo(sx + 44, sy - 2); x.stroke(); break;
+    case 1: fire(sx, sy + 30, 44); body(46, 28, C.slate); for (const s of [-1, 1]) { x.beginPath(); x.arc(sx + s * 26, sy + 8, 4, 0, 7); ink(x, null, C.k, 2.5); } break;
+    case 2: fire(sx, sy + 22, 60); body(74, 20, C.salmon, 6); x.strokeStyle = C.k; x.lineWidth = 3; x.beginPath(); x.arc(sx, sy - 6, 34, Math.PI * 1.1, Math.PI * 1.9); x.stroke(); break;
+    case 3: fire(sx, sy + 38, 60); body(84, 36, C.red, 10); x.strokeStyle = C.k; x.lineWidth = 1.2; for (let i = 0; i < 6; i++) { x.beginPath(); x.arc(sx - 30 + i * 12, sy + 18, 2, 0, 7); x.stroke(); } break;
+    case 4: fire(sx, sy + 26, 100); body(130, 24, C.grey, 10); for (const s of [-1, 1]) { x.beginPath(); x.ellipse(sx + s * 68, sy + 4, 5, 8, 0, 0, 7); ink(x, null, C.k, 2.5); } break;
+    case 5: fire(sx, sy + 72, 60); body(66, 70, C.dgreen, 2); x.strokeStyle = C.k; x.lineWidth = 2; for (const yy of [0.3, 0.7]) { x.beginPath(); x.moveTo(sx - 33, sy + 70 * yy); x.lineTo(sx + 33, sy + 70 * yy); x.stroke(); } break;
+    case 6: water(200, 34, liquid, C.sky); x.strokeStyle = C.red; x.lineWidth = 3; for (let i = -3; i <= 3; i++) { x.beginPath(); x.moveTo(sx + i * 26, sy - 12); x.lineTo(sx + i * 26 + 4, sy - 16); x.stroke(); } break;
+    case 7: water(240, 40, liquid, C.khaki); for (let i = 0; i < 9; i++) { x.beginPath(); x.ellipse(sx - 115 + i * 29, sy + 14 - Math.abs(i - 4) * 2, 9, 5, 0, 0, 7); ink(x, C.grey, C.k, 1.5); } break;
+    case 8: water(300, 46, liquid, C.green); for (let i = 0; i < 3; i++) { const dx = sx - 60 + i * 50 + (reduced ? 0 : Math.sin(t * 0.6 + i) * 12), dy = sy - 4 + i * 3; x.beginPath(); x.ellipse(dx, dy, 8, 5, 0, 0, 7); ink(x, liquid === C.paper ? C.paper : lerpHex(liquid, C.paper, 0.3), C.k, 1.5); x.beginPath(); x.arc(dx + 7, dy - 6, 3.5, 0, 7); ink(x, lerpHex(liquid, C.paper, 0.3), C.k, 1.5); x.fillStyle = C.ochre; x.fillRect(dx + 10, dy - 7, 4, 2); } break;
+    default: break; // the reservoir and the bay are part of the landscape (see buildBg/drawLand)
+  }
+}
+const POT_ART = ['saucepan', 'stockpot', 'jam pan', 'copper', 'tin bath', 'water butt', 'paddling pool', 'garden pond', 'duck pond', 'reservoir', 'the bay'];
+
+// ---------- Small things ----------
+function drawKettle(x, cx, by, col = C.slate, k = 1) {
+  x.save(); x.translate(cx, by); x.scale(k, k);
+  x.beginPath(); x.moveTo(-7, 0); x.quadraticCurveTo(-8, -10, 0, -11); x.quadraticCurveTo(8, -10, 7, 0); x.closePath(); ink(x, col, C.k, 1.6);
+  x.beginPath(); x.moveTo(6, -5); x.lineTo(11, -9); x.strokeStyle = C.k; x.lineWidth = 2; x.stroke();
+  x.beginPath(); x.arc(0, -11, 5, Math.PI, 0); x.strokeStyle = C.k; x.lineWidth = 1.6; x.stroke();
+  x.restore();
+}
+function drawBall(x, cx, cy, r, col) {
+  x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); ink(x, col, C.k, 1.5);
+  x.strokeStyle = '#00000088'; x.lineWidth = 0.9;
+  for (let i = -1; i <= 1; i++) { x.beginPath(); x.ellipse(cx, cy, r * 0.9, r * 0.45, 0.6 + i * 0.5, 0, Math.PI * 2); x.stroke(); }
+}
+function drawRosette(x, cx, cy, col = C.blue, k = 1) {
+  x.save(); x.translate(cx, cy); x.scale(k, k);
+  x.beginPath(); x.moveTo(-3, 2); x.lineTo(-6, 14); x.lineTo(-2, 11); x.lineTo(0, 15); x.lineTo(1, 2); ink(x, col, C.k, 1);
+  x.beginPath(); x.moveTo(2, 2); x.lineTo(6, 13); x.lineTo(3, 11); x.lineTo(1, 14); ink(x, col, C.k, 1);
+  x.beginPath(); for (let i = 0; i < 16; i++) { const a = i * Math.PI / 8, rr2 = i % 2 ? 6 : 7.5; x.lineTo(Math.cos(a) * rr2, Math.sin(a) * rr2); } x.closePath(); ink(x, col, C.k, 1.2);
+  x.beginPath(); x.arc(0, 0, 3, 0, 7); ink(x, C.ochre, C.k, 1);
+  x.restore();
+}
+function drawThermo(x, cx, cy, temp) {
+  rr(x, cx - 5, cy - 30, 10, 40, 4); ink(x, C.ochre, C.k, 1.6);
+  x.fillStyle = C.paper; x.fillRect(cx - 1.5, cy - 26, 3, 30);
+  const f = Math.min(1, (temp - 10) / 32), burst = S.ended;
+  x.fillStyle = C.red; x.fillRect(cx - 1.5, cy + 4 - 30 * f, 3, 30 * f);
+  x.beginPath(); x.arc(cx, cy + 7, 3.5, 0, 7); ink(x, C.red, C.k, 1);
+  if (burst) { x.strokeStyle = C.red; x.lineWidth = 1.5; for (let i = 0; i < 5; i++) { const a = -Math.PI / 2 + (i - 2) * 0.45; x.beginPath(); x.moveTo(cx + Math.cos(a) * 4, cy - 31 + Math.sin(a) * 4); x.lineTo(cx + Math.cos(a) * 10, cy - 31 + Math.sin(a) * 10); x.stroke(); } }
+}
+// Dye plants: one little clump each in the front garden of number 9.
+const PLANT_ART = [
+  (x, px, py) => { for (let i = 0; i < 3; i++) { x.beginPath(); x.arc(px - 5 + i * 5, py - 12 - (i % 2) * 4, 3.4, 0, 7); ink(x, C.ochre, C.k, 1.2); x.fillStyle = C.red; x.beginPath(); x.arc(px - 5 + i * 5, py - 12 - (i % 2) * 4, 1.2, 0, 7); x.fill(); } },
+  (x, px, py) => { x.beginPath(); x.ellipse(px, py - 6, 6, 6, 0, 0, 7); ink(x, C.salmon, C.k, 1.2); x.beginPath(); x.moveTo(px, py - 12); x.lineTo(px - 2, py - 22); x.moveTo(px, py - 12); x.lineTo(px + 3, py - 21); x.strokeStyle = C.dgreen; x.lineWidth = 2; x.stroke(); },
+  (x, px, py) => { x.beginPath(); x.ellipse(px, py - 5, 5, 5, 0, 0, 7); ink(x, C.plum, C.k, 1.2); for (const s of [-1, 1]) { x.beginPath(); x.ellipse(px + s * 4, py - 16, 3, 7, s * 0.4, 0, 7); ink(x, C.green, C.k, 1); } },
+  (x, px, py) => { for (let i = -1; i <= 1; i++) { x.beginPath(); x.moveTo(px + i * 4, py); x.lineTo(px + i * 6, py - 20); x.lineTo(px + i * 4 + 2, py); ink(x, C.dgreen, C.k, 1); } },
+  (x, px, py) => { x.strokeStyle = C.rose; x.lineWidth = 1.6; x.beginPath(); x.arc(px, py - 4, 9, Math.PI, Math.PI * 1.9); x.stroke(); for (let i = 0; i < 4; i++) { x.beginPath(); x.arc(px - 6 + i * 4, py - 10 + (i % 2) * 3, 2.2, 0, 7); ink(x, C.night, C.k, 0.8); } },
+  (x, px, py) => { x.beginPath(); x.arc(px, py - 7, 7, 0, 7); ink(x, C.violet, C.k, 1.3); x.strokeStyle = C.lilac; x.lineWidth = 1; for (let i = -1; i <= 1; i++) { x.beginPath(); x.moveTo(px, py - 1); x.lineTo(px + i * 5, py - 12); x.stroke(); } },
+  (x, px, py) => { x.fillStyle = C.taupe; x.fillRect(px - 1.5, py - 18, 3, 18); x.beginPath(); x.arc(px, py - 22, 8, 0, 7); ink(x, C.dgreen, C.k, 1.3); x.beginPath(); x.arc(px + 3, py - 22, 2, 0, 7); ink(x, C.taupe, C.k, 0.8); },
+  (x, px, py) => { x.strokeStyle = C.dgreen; x.lineWidth = 1.5; x.beginPath(); x.moveTo(px, py); x.lineTo(px, py - 20); x.stroke(); for (let i = 0; i < 5; i++) { x.beginPath(); x.arc(px - 4 + (i % 3) * 4, py - 20 - Math.floor(i / 3) * 4, 2, 0, 7); ink(x, C.ochre, C.k, 0.7); } },
+  (x, px, py) => { for (let i = -1; i <= 1; i++) { x.beginPath(); x.ellipse(px + i * 4, py - 10, 2.2, 8, i * 0.3, 0, 7); ink(x, C.green, C.k, 1); } x.beginPath(); x.ellipse(px, py - 1, 6, 2.5, 0, 0, 7); ink(x, C.red, C.k, 1); },
+  (x, px, py) => { x.strokeStyle = C.dgreen; x.lineWidth = 1.5; x.beginPath(); x.moveTo(px, py); x.lineTo(px, py - 18); x.stroke(); for (let i = 0; i < 4; i++) { x.beginPath(); x.ellipse(px + (i % 2 ? 4 : -4), py - 6 - i * 4, 4, 2, i % 2 ? 0.4 : -0.4, 0, 7); ink(x, C.blue, C.k, 0.8); } },
+];
+
+// ---------- Sprites for the ?sprites sheet (and the icon-based ones we draw from) ----------
+const spr = {};
+// Woodcut stamps from the icon set: a flat ink fill, a black key line, carved hatching.
+async function stamp(file, size, fill) {
+  const src = await Sprites.loadSvg(file);
+  const shape = await Sprites.svgToCanvas(Sprites.recolor(src, fill), size);
+  const pad = 2, c = Sprites.canvas(size + pad * 2, size + pad * 2), x = c.getContext('2d');
+  x.drawImage(Sprites.outline(shape, C.k, 2), pad - 2, pad - 2);
+  x.drawImage(shape, pad, pad);
+  x.globalCompositeOperation = 'source-atop'; x.strokeStyle = C.k; x.globalAlpha = 0.35; x.lineWidth = 1;
+  for (let d = -size; d < size * 2; d += 4) { x.beginPath(); x.moveTo(d, 0); x.lineTo(d - size, size + pad * 2); x.stroke(); }
+  return c;
+}
+async function makeSprites() {
+  spr.fan = Sprites.register('desk fan (stamp)', await stamp('./art/mdi--fan.svg', 22, C.sky));
+  spr.jug = Sprites.register('big jug (stamp)', await stamp('./art/game-icons--jug.svg', 30, C.paper));
+  spr.lantern = Sprites.register('storm lantern (stamp)', await stamp('./art/game-icons--lantern.svg', 22, C.ochre));
+  spr.shed = Sprites.register('garden shed (stamp)', await stamp('./art/mdi--shed.svg', 40, C.taupe));
+  spr.boot = Sprites.register('wellies (stamp)', await stamp('./art/game-icons--fur-boot.svg', 14, C.ochre));
+  spr.cabbage = Sprites.register('red cabbage (stamp)', await stamp('./art/game-icons--cabbage.svg', 16, C.violet));
+  spr.beet = Sprites.register('beetroot (stamp)', await stamp('./art/game-icons--beet.svg', 16, C.plum));
+  spr.kettleIcon = Sprites.register('kettle (stamp)', await stamp('./art/material-symbols--kettle.svg', 16, C.slate));
+  spr.thermo = Sprites.register('thermometer (stamp)', await stamp('./art/mdi--thermometer.svg', 18, C.red));
+  spr.cauldron = Sprites.register('copper (stamp)', await stamp('./art/game-icons--cauldron.svg', 24, C.red));
+  const sheet = (name, w, h, fn) => { const c = Sprites.canvas(w, h); fn(c.getContext('2d')); return Sprites.register(name, c); };
+  sheet('the lemon (hand-drawn)', 80, 90, x => drawLemon(x, 32, 86, { glove: true, wellies: true }));
+  sheet('Vi, the lime at number 11', 60, 70, x => drawVi(x, 30, 66));
+  sheet('Mrs Marrow of number 7', 60, 90, x => drawMarrow(x, 30, 86));
+  sheet('kettles', 70, 24, x => { for (let i = 0; i < 4; i++) drawKettle(x, 10 + i * 16, 20); });
+  sheet('yarn balls', 80, 24, x => ['#be955c', '#9a4f50', '#7ca1c0', '#6eaa78', '#8b5580'].forEach((c, i) => drawBall(x, 10 + i * 15, 12, 6, c)));
+  sheet('prize rosettes', 70, 34, x => [C.blue, C.red, C.ochre, C.green].forEach((c, i) => drawRosette(x, 10 + i * 16, 12, c)));
+  sheet('dye plants', 230, 34, x => PLANT_ART.forEach((f, i) => f(x, 12 + i * 22, 30)));
+  sheet('porch thermometer', 24, 50, x => drawThermo(x, 12, 40, 30));
+  for (let r = 0; r <= 8; r++) {
+    const [sx, sy] = potSpot(r), w = r >= 6 ? 330 : 160, h = r === 5 ? 120 : 80;
+    sheet(`pot: ${POT_ART[r]}`, w, h, x => { x.translate(w / 2 - sx, 30 - sy); drawPot(x, r, lerpHex(C.paper, C.ochre, 0.8), 0, { cosy: false, flame: 1 }); });
+  }
+}
+
+// ---------- The background: sky, sun, Downs, town, the sea; rebuilt when it changes ----------
+let bg = null, bgSig = '';
+function buildBg() {
+  const k = cv.width / L.W;
+  const c = Sprites.canvas(cv.width, cv.height), x = c.getContext('2d');
+  x.scale(k, k); x.translate(-L.x0, 0);
+  const st = E.cosyStage(S), cols = yarnCols();
+  // paper sky with carved horizontal lines, thicker toward the top
+  x.fillStyle = C.paper; x.fillRect(0, 0, 820, 430);
+  x.strokeStyle = C.sky; for (let y = 4, i = 0; y < 170; y += 5 + i * 0.25, i++) { x.lineWidth = Math.max(0.5, 2.6 - y / 70); x.beginPath(); x.moveTo(0, y); x.lineTo(820, y); x.stroke(); }
+  // the sun, with a face, getting redder as it gets warmer
+  const temp = E.cosyTemp(S), sunC = temp > 30 ? C.salmon : C.ochre;
+  x.save(); x.translate(706, 54);
+  x.strokeStyle = C.k; x.lineWidth = 2; for (let i = 0; i < 16; i++) { const a = i * Math.PI / 8; x.beginPath(); x.moveTo(Math.cos(a) * 30, Math.sin(a) * 30); x.lineTo(Math.cos(a) * (i % 2 ? 38 : 44), Math.sin(a) * (i % 2 ? 38 : 44)); x.stroke(); }
+  x.beginPath(); x.arc(0, 0, 26, 0, 7); ink(x, sunC, C.k, 2.4);
+  x.fillStyle = C.k; x.beginPath(); x.arc(-8, -4, 2.2, 0, 7); x.arc(8, -4, 2.2, 0, 7); x.fill();
+  x.strokeStyle = C.k; x.lineWidth = 1.8; x.beginPath(); x.arc(0, 4, 8, 0.25, Math.PI - 0.25); x.stroke();
+  if (temp > 32) { x.fillStyle = C.sky; x.beginPath(); x.ellipse(20, -12, 2.5, 4, 0, 0, 7); x.fill(); }
+  x.restore();
+  // clouds (knitted at stage 7)
+  for (const [cx, cy, s] of [[180, 52, 1], [430, 36, 0.8], [600, 92, 0.7]]) {
+    x.beginPath(); x.ellipse(cx, cy, 44 * s, 15 * s, 0, 0, 7); x.ellipse(cx - 22 * s, cy + 4 * s, 26 * s, 11 * s, 0, 0, 7); x.ellipse(cx + 26 * s, cy + 5 * s, 24 * s, 10 * s, 0, 0, 7);
+    if (st >= 7) { knit(x, [cx - 60 * s, cy - 20 * s, 120 * s, 40 * s], cols, { row: 5, seed: cx }); x.beginPath(); x.ellipse(cx, cy, 44 * s, 15 * s, 0, 0, 7); ink(x, null, C.k, 1.6); }
+    else { ink(x, C.paper, null); x.beginPath(); x.ellipse(cx, cy, 44 * s, 15 * s, 0, 0, 7); ink(x, null, C.k, 1.6); }
+  }
+  // the sea, a slice of it between the hills on the right (knitted at stage 8; the brew, once it's the Bay)
+  x.beginPath(); x.rect(600, 176, 220, 30);
+  if (S.pot >= 10 && !S.ended) ink(x, brewColour(1), null); else if (st >= 8) knit(x, [600, 176, 220, 30], cols, { row: 4, seed: 3 }); else { ink(x, C.sky, null); x.beginPath(); x.rect(600, 176, 220, 30); hatch(x, { gap: 4, angle: 0, alpha: 0.4, color: C.blue, box: [600, 176, 220, 30] }); }
+  // the Downs
+  const downs = (pts, col, seed) => {
+    x.beginPath(); x.moveTo(pts[0][0], 430); for (const [px, py] of pts) x.lineTo(px, py); x.lineTo(pts.at(-1)[0], 430); x.closePath();
+    if (st >= 6) knit(x, [0, 120, 820, 310], cols, { row: 7, seed }); else { ink(x, col, null); x.beginPath(); x.moveTo(pts[0][0], 430); for (const [px, py] of pts) x.lineTo(px, py); x.lineTo(pts.at(-1)[0], 430); x.closePath(); hatch(x, { gap: 6, angle: -0.25, alpha: 0.35, box: [0, 120, 820, 310] }); }
+    x.beginPath(); x.moveTo(pts[0][0], pts[0][1]); for (const [px, py] of pts) x.lineTo(px, py); x.strokeStyle = C.k; x.lineWidth = 2.2; x.stroke();
+  };
+  const curve = (y0, amp, ph, x0 = -10, x1 = 830) => { const p = []; for (let xx = x0; xx <= x1; xx += 20) p.push([xx, y0 - amp * Math.sin(xx / 120 + ph) - amp * 0.4 * Math.sin(xx / 47 + ph * 2)]); return p; };
+  downs(curve(150, 18, 0.4, -10, 610), C.khaki, 0);
+  // the reservoir up on the Downs, with its dam, once you're steeping in it
+  if (S.pot >= 9 || S.ended) { x.beginPath(); x.ellipse(640, 168, 70, 12, 0, 0, 7); ink(x, S.pot === 9 && !S.ended ? brewColour(1) : C.sky, C.k, 2); x.fillStyle = C.grey; x.fillRect(570, 164, 8, 14); x.strokeRect(570, 164, 8, 14); }
+  downs(curve(196, 12, 2.1), C.olive, 2);
+  // the town on the Downs: roofs and the church spire (knitted at stage 5)
+  const town = () => {
+    x.beginPath();
+    for (const [tx, tw2, th] of [[60, 26, 16], [92, 20, 12], [118, 30, 18], [520, 24, 14], [548, 30, 18]]) { x.moveTo(tx, 192); x.lineTo(tx, 192 - th); x.lineTo(tx + tw2 / 2, 182 - th); x.lineTo(tx + tw2, 192 - th); x.lineTo(tx + tw2, 192); }
+    x.moveTo(150, 194); x.lineTo(150, 160); x.lineTo(158, 118); x.lineTo(166, 160); x.lineTo(166, 194);
+  };
+  town(); if (st >= 5) knit(x, [50, 110, 530, 90], cols, { row: 4, seed: 5 }); else ink(x, C.grey, null); town(); ink(x, null, C.k, 1.8);
+  // the pavement and the road
+  x.fillStyle = C.grey; x.fillRect(0, 330, 820, 100);
+  x.strokeStyle = C.k; x.lineWidth = 1.2; for (let xx = 0; xx < 820; xx += 46) { x.beginPath(); x.moveTo(xx, 330); x.lineTo(xx - 14, 430); x.stroke(); }
+  x.beginPath(); x.moveTo(0, 330); x.lineTo(820, 330); x.lineWidth = 2.4; x.stroke();
+  // the terrace: numbers 7, 9 and 11
+  const house = (hx, hw, wall, door, n, knitIt, seed) => {
+    x.beginPath(); x.rect(hx, 102, hw, 186);
+    if (knitIt) knit(x, [hx, 102, hw, 186], cols, { row: 7, seed }); else { ink(x, wall, null); x.beginPath(); x.rect(hx, 102, hw, 186); hatch(x, { gap: 7, angle: 0, alpha: 0.28, box: [hx, 102, hw, 186] }); }
+    x.beginPath(); x.rect(hx, 102, hw, 186); ink(x, null, C.k, 2.4);
+    x.beginPath(); x.moveTo(hx - 6, 104); x.lineTo(hx + 18, 74); x.lineTo(hx + hw - 18, 74); x.lineTo(hx + hw + 6, 104); x.closePath(); ink(x, C.slate, C.k, 2.4);
+    x.beginPath(); x.moveTo(hx - 6, 104); x.lineTo(hx + 18, 74); x.lineTo(hx + hw - 18, 74); x.lineTo(hx + hw + 6, 104); x.closePath(); hatch(x, { gap: 4, angle: 0, alpha: 0.5, box: [hx - 6, 74, hw + 12, 30] });
+    x.fillStyle = C.red; x.fillRect(hx + hw - 50, 56, 18, 20); x.strokeRect(hx + hw - 50, 56, 18, 20);                          // chimney
+    for (const [wx, wy] of [[hx + 22, 120], [hx + hw - 72, 120], [hx + 22, 198]]) { x.beginPath(); x.rect(wx, wy, 50, 46); ink(x, C.night, C.k, 2.2); x.strokeStyle = C.paper; x.lineWidth = 2; x.beginPath(); x.moveTo(wx + 25, wy + 2); x.lineTo(wx + 25, wy + 44); x.moveTo(wx + 2, wy + 23); x.lineTo(wx + 48, wy + 23); x.stroke(); x.fillStyle = C.paper; x.fillRect(wx - 4, wy + 46, 58, 5); x.strokeStyle = C.k; x.lineWidth = 1.5; x.strokeRect(wx - 4, wy + 46, 58, 5); }
+    x.beginPath(); x.rect(hx + hw - 64, 214, 34, 74); ink(x, door, C.k, 2.2);
+    x.fillStyle = C.ochre; x.beginPath(); x.arc(hx + hw - 36, 252, 2.2, 0, 7); x.fill();
+    x.font = `15px ${SC}`; x.fillStyle = C.paper; x.textAlign = 'center'; x.fillText(String(n), hx + hw - 47, 230);
+  };
+  house(70, 200, C.pink, C.dgreen, 7, st >= 4, 1);
+  house(276, 214, C.ochre, C.blue, 9, st >= 2, 2);
+  house(496, 212, C.sage, C.olive, 11, st >= 4, 4);
+  // front garden walls, the gate of number 9 (knitted at stage 1), the fence between 9 and 11
+  x.fillStyle = C.red; x.fillRect(60, 312, 760, 18); x.strokeStyle = C.k; x.lineWidth = 2; x.strokeRect(60, 312, 760, 18);
+  x.lineWidth = 1; for (let xx = 60; xx < 820; xx += 16) { x.beginPath(); x.moveTo(xx, 312); x.lineTo(xx, 330); x.stroke(); } x.beginPath(); x.moveTo(60, 321); x.lineTo(820, 321); x.stroke();
+  x.beginPath(); x.rect(424, 298, 38, 32); if (st >= 1) { knit(x, [424, 298, 38, 32], cols, { row: 5 }); x.beginPath(); x.rect(424, 298, 38, 32); ink(x, null, C.k, 2.2); } else { ink(x, C.paper, C.k, 2.2); x.strokeStyle = C.k; x.lineWidth = 2; for (let i = 1; i < 4; i++) { x.beginPath(); x.moveTo(424 + i * 9.5, 298); x.lineTo(424 + i * 9.5, 330); x.stroke(); } }
+  const fh = S.up.fence ? 82 : 46;
+  x.beginPath(); x.rect(489, 330 - fh, 12, fh); ink(x, C.taupe, C.k, 2); x.beginPath(); x.rect(489, 330 - fh, 12, fh); hatch(x, { gap: 3, angle: 1.4, alpha: 0.5, box: [489, 330 - fh, 12, fh] });
+  return c;
+}
+
+// ---------- Things on the street that change every frame ----------
+const lamp = { x: 296 };
+function drawStreet(x, t) {
+  const st = E.cosyStage(S), cols = yarnCols(), temp = E.cosyTemp(S);
+  // the lamppost (knitted at stage 3), with the bunting from number 9's window
+  x.beginPath(); x.rect(lamp.x - 4, 236, 8, 168);
+  if (st >= 3) { knit(x, [lamp.x - 4, 236, 8, 168], cols, { row: 5 }); x.beginPath(); x.rect(lamp.x - 4, 236, 8, 168); ink(x, null, C.k, 1.8); } else ink(x, C.k, null);
+  x.beginPath(); x.moveTo(lamp.x - 14, 236); x.lineTo(lamp.x + 14, 236); x.lineTo(lamp.x + 9, 214); x.lineTo(lamp.x - 9, 214); x.closePath(); ink(x, C.paper, C.k, 2);
+  x.beginPath(); x.moveTo(lamp.x - 9, 214); x.lineTo(lamp.x, 204); x.lineTo(lamp.x + 9, 214); ink(x, C.k, C.k, 1.5);
+  if (S.up.bunting) {
+    const found = Object.keys(S.found).map(k => E.CROSS[k].ink);
+    x.strokeStyle = C.k; x.lineWidth = 1.2; x.beginPath(); x.moveTo(lamp.x + 8, 222); x.quadraticCurveTo(360, 196, 418, 168); x.stroke();
+    for (let i = 0; i < 10; i++) {
+      const f = (i + 0.5) / 10, bx = (1 - f) * (1 - f) * (lamp.x + 8) + 2 * (1 - f) * f * 360 + f * f * 418, by = (1 - f) * (1 - f) * 222 + 2 * (1 - f) * f * 196 + f * f * 168;
+      x.beginPath(); x.moveTo(bx - 5, by); x.lineTo(bx + 5, by); x.lineTo(bx, by + 10); x.closePath(); ink(x, found[i % found.length], C.k, 1);
+    }
+  }
+  // the post box on the corner of number 7, in its bobble hat
+  const pb = 668;
+  rr(x, pb - 13, 340, 26, 54, 10); ink(x, C.red, C.k, 2.2); x.fillStyle = C.k; x.fillRect(pb - 8, 356, 16, 3);
+  if (S.up.postbox) { x.beginPath(); x.ellipse(pb, 342, 15, 9, 0, Math.PI, 0); x.closePath(); knit(x, [pb - 15, 330, 30, 13], cols, { row: 3 }); x.beginPath(); x.ellipse(pb, 342, 15, 9, 0, Math.PI, 0); x.closePath(); ink(x, null, C.k, 1.6); x.beginPath(); x.arc(pb, 331, 4.5, 0, 7); ink(x, cols[0], C.k, 1.3); }
+  // the shed (Garden Shed), with a pot for every level
+  const shed = E.lv(S, 'shed');
+  if (shed) { x.drawImage(spr.shed, 222, 278, 30, 30); x.font = `12px ${SC}`; x.fillStyle = C.k; x.textAlign = 'left'; x.fillText(`×${shed}`, 250, 284); }
+  // the dye garden: a clump for every dyestuff planted
+  for (let i = 0; i < S.plants; i++) PLANT_ART[i](x, 322 + i * 10.5, 311);
+  if (S.up.frame) { x.beginPath(); x.moveTo(462, 311); x.lineTo(462, 294); x.lineTo(488, 288); x.lineTo(488, 311); x.closePath(); ink(x, '#c5ccb888', C.k, 1.6); x.strokeStyle = C.k; x.lineWidth = 0.8; x.beginPath(); x.moveTo(475, 291); x.lineTo(475, 311); x.stroke(); }
+  // number 9's front door: rosettes, the mat, the thermometer, the hot water bottle
+  const pr = Math.min(12, E.lv(S, 'prize'));
+  const rc = [C.blue, C.red, C.ochre, C.green];
+  for (let i = 0; i < pr; i++) drawRosette(x, 432 + (i % 3) * 10, 222 + Math.floor(i / 3) * 14, rc[i % 4], 0.7);
+  if (S.up.mat) { x.beginPath(); x.rect(418, 288, 44, 8); ink(x, C.taupe, C.k, 1.4); x.font = `8px ${SC}`; x.fillStyle = C.paper; x.textAlign = 'center'; x.fillText('NOT SOUR', 440, 295); }
+  if (S.up.thermo) { drawThermo(x, 474, 252, temp); x.font = `11px ${SC}`; x.fillStyle = C.k; x.textAlign = 'center'; x.fillText(S.ended ? 'POP!' : `${Math.round(temp)}°`, 474, 272); }
+  if (S.up.bottle) { rr(x, 404, 276, 14, 11, 3); ink(x, C.red, C.k, 1.4); }
+  // the downstairs window sill of number 9: the jug, and the kettles; the fan upstairs
+  // upstairs: the fan in the left window, the big jug on its sill
+  if (S.up.fan) { x.save(); x.translate(312, 142); if (!reduced) x.rotate(t * 8); x.translate(-11, -11); x.drawImage(spr.fan, 0, 0, 22, 22); x.restore(); }
+  if (S.up.jug) { x.drawImage(spr.jug, 326, 140, 22, 26); if (S.ended) { x.fillStyle = C.ochre; x.globalAlpha = 0.85; x.fillRect(331, 152, 12, 10); x.globalAlpha = 1; } }
+  // kettles: seven on the downstairs sill, seven more on the upstairs right sill, then a count
+  const kn = Math.min(14, S.kettles);
+  for (let i = 0; i < kn; i++) { const up = i >= 7, j = up ? i - 7 : i; drawKettle(x, (up ? 424 : 304) + j * 7, up ? 166 : 244, [C.slate, C.taupe, C.dteal][i % 3], 0.75); }
+  if (S.kettles > 14) { x.font = `13px ${SC}`; x.textAlign = 'left'; x.lineWidth = 3; x.strokeStyle = C.paper; x.strokeText(`×${fmt(S.kettles)}`, 472, 166); x.fillStyle = C.k; x.fillText(`×${fmt(S.kettles)}`, 472, 166); }
+  // the stall: a trestle per level of Bigger Stall, a basket of balls in the colours you've brewed
+  const tr = 1 + E.lv(S, 'stall');
+  const sw = 64 + Math.min(8, tr - 1) * 14, sx0 = 262 - sw;
+  x.beginPath(); x.rect(sx0, 356, sw, 8); ink(x, C.salmon, C.k, 2);
+  for (let i = 0; i <= Math.min(8, tr); i++) { const lx = sx0 + 4 + i * (sw - 8) / Math.max(1, Math.min(8, tr)); x.strokeStyle = C.k; x.lineWidth = 2; x.beginPath(); x.moveTo(lx, 364); x.lineTo(lx - 4, 392); x.moveTo(lx, 364); x.lineTo(lx + 4, 392); x.stroke(); }
+  const shown = Math.min(12, Math.max(1, Math.ceil(Math.log2(S.balls + 1) * 2)));
+  for (let i = 0; i < shown; i++) drawBall(x, sx0 + 10 + (i % 6) * ((sw - 20) / 5), 350 - Math.floor(i / 6) * 9, 5, recent[i % recent.length] || C.ochre);
+  x.font = `13px ${SC}`; x.fillStyle = C.k; x.textAlign = 'center'; x.fillText(S.balls > 1 ? `${fmt(S.balls)} balls a steep` : 'YARN', sx0 + sw / 2, 404);
+  // the lantern on its hook
+  if (S.up.lamp) { x.strokeStyle = C.k; x.lineWidth = 2; x.beginPath(); x.moveTo(398, 404); x.lineTo(398, 330); x.lineTo(412, 330); x.stroke(); x.drawImage(spr.lantern, 402, 330, 20, 20); }
+}
+let recent = [];
+
+// Neighbours: Mrs Marrow at her gate; Vi peering over the fence with her own pot.
+function drawNeighbours(x, t) {
+  const temp = E.cosyTemp(S);
+  if (!S.ended) drawMarrow(x, 196, 318, { t, fan: temp > 27 ? 1 : 0 });
+  if (!S.ended) drawVi(x, 528, 312 - (S.up.fence ? 34 : 0), { t });
+  // Vi's own pot, and her sign
+  const copying = S.copy && S.copy.on && !S.fair ? E.CROSS[S.copy.key].ink : null;
+  x.beginPath(); x.moveTo(600, 300); x.lineTo(604, 318); x.lineTo(626, 318); x.lineTo(630, 300); x.closePath(); ink(x, C.slate, C.k, 2);
+  x.beginPath(); x.ellipse(615, 300, 15, 4, 0, 0, 7); ink(x, copying || C.paper, C.k, 1.8);
+  x.beginPath(); x.rect(572, 204, 66, 36); ink(x, C.paper, C.k, 1.8); x.font = `11px ${SC}`; x.fillStyle = C.k; x.textAlign = 'center';
+  const sign = S.ended ? ['GONE TO', 'THE MOON'] : copying ? ['VI’S YARN', 'CHEAPER!'] : ['VI’S YARN', ''];
+  x.fillText(sign[0], 605, 219); x.fillStyle = C.red; x.fillText(sign[1], 605, 233);
+}
+
+// The pot, the lemon, the string, and the shade strip.
+function drawWork(x, t) {
+  const c = holding ? charge : 0;
+  const liquid = holding ? brewColour(c) : lerpHex(C.paper, E.CROSS[S.sel].ink, 0.45);
+  drawPot(x, Math.min(8, S.pot), liquid, t);
+  if (S.pot >= 9) {
+    // a hose from the pavement up to the reservoir (or out to the bay)
+    const [tx, ty] = potSpot(S.pot);
+    x.strokeStyle = C.k; x.lineWidth = 6; x.beginPath(); x.moveTo(450, 404); x.bezierCurveTo(560, 400, tx - 40, ty + 120, tx, ty + 6); x.stroke();
+    x.strokeStyle = C.dgreen; x.lineWidth = 3.5; x.stroke();
+    x.beginPath(); x.ellipse(450, 404, 20, 6, 0, 0, 7); ink(x, liquid, C.k, 2);
+  }
+  const [hx, hy] = drawLemon(x, 392, 410, { t, hold: c > 0 ? 1 : 0, hot: E.cosyTemp(S) > 30 ? 1 : 0 });
+  // the string, and the ball dangling in the brew
+  const [sx, sy] = S.pot >= 9 ? [450, 404] : potSpot(Math.min(8, S.pot));
+  const dip = holding ? 6 : -18 - (pop > 0 ? pop * 30 : 0);
+  x.strokeStyle = C.k; x.lineWidth = 1.2; x.beginPath(); x.moveTo(hx, hy); x.quadraticCurveTo((hx + sx) / 2, Math.min(hy, sy) - 20, sx, sy + dip - 5); x.stroke();
+  drawBall(x, sx, sy + dip, 6, holding ? brewColour(c) : (recent[0] || C.paper));
+  // the shade strip: pale at the bottom, the colour, then gravy; the just-right band marked
+  const mx = 346, my0 = 412, mh = 74, [lo, hi] = E.zone(S), toY = v => my0 - mh * Math.min(1, v / E.BOIL);
+  x.save();
+  for (let i = 0; i < mh; i++) { const v = (i / mh) * E.BOIL; x.fillStyle = brewColour(v); x.fillRect(mx - 7, my0 - i - 1, 14, 1.5); }
+  x.restore();
+  x.beginPath(); x.rect(mx - 7, my0 - mh, 14, mh); ink(x, null, C.k, 2);
+  x.beginPath(); x.rect(mx - 10, toY(hi), 20, toY(lo) - toY(hi)); ink(x, null, C.k, 2.2);
+  x.font = `11px ${SC}`; x.fillStyle = C.k; x.textAlign = 'right'; x.fillText('just', mx - 12, toY((lo + hi) / 2) - 1); x.fillText('right', mx - 12, toY((lo + hi) / 2) + 10);
+  // the first few steeps: a carved label pointing at the pot
+  if (S.steeps < 3 && !holding && !S.fair) {
+    const [px, py] = potSpot(Math.min(8, S.pot)), bob2 = reduced ? 0 : Math.sin(t * 4) * 3;
+    x.font = `16px ${SC}`; x.textAlign = 'center'; x.lineWidth = 4; x.strokeStyle = C.paper;
+    x.strokeText('hold the pot', px + 40, py - 62 + bob2); x.fillStyle = C.red; x.fillText('hold the pot', px + 40, py - 62 + bob2);
+    x.strokeStyle = C.red; x.lineWidth = 2; x.beginPath(); x.moveTo(px + 30, py - 54 + bob2); x.lineTo(px + 8, py - 18 + bob2); x.lineTo(px + 16, py - 22 + bob2); x.moveTo(px + 8, py - 18 + bob2); x.lineTo(px + 8, py - 27 + bob2); x.stroke();
+  }
+  if (holding) { const yy = toY(c); x.fillStyle = C.k; x.beginPath(); x.moveTo(mx + 9, yy); x.lineTo(mx + 17, yy - 5); x.lineTo(mx + 17, yy + 5); x.closePath(); x.fill(); }
+}
+
+const pops = [];
+function drawPops(x) {
+  x.textAlign = 'center';
+  for (const p of pops) {
+    const f = p.t / p.life;
+    x.globalAlpha = Math.max(0, 1 - f);
+    x.font = `${p.big ? 18 : 15}px ${SC}`;
+    x.lineWidth = 3; x.strokeStyle = C.paper; x.strokeText(p.text, p.x, p.y - f * 30);
+    x.fillStyle = p.c || C.k; x.fillText(p.text, p.x, p.y - f * 30);
+  }
+  x.globalAlpha = 1;
+}
+// The finished world: everyone at the gate with lemonade, the Earth in a jumper, the Moon in Vi's hat.
+function drawEnding(x, t) {
+  const cols = yarnCols();
+  // a print of the Earth in a jumper, pinned up in the sky
+  x.save(); x.translate(L.x0 + 46, 42);
+  x.beginPath(); x.arc(0, 0, 30, 0, 7); knit(x, [-30, -30, 60, 60], cols, { row: 5 }); x.beginPath(); x.arc(0, 0, 30, 0, 7); ink(x, null, C.k, 2.6);
+  x.beginPath(); x.ellipse(0, -27, 10, 4.5, 0, 0, 7); ink(x, C.paper, C.k, 1.6);                      // a roll neck at the North Pole
+  x.font = `13px ${SC}`; x.textAlign = 'left'; x.lineWidth = 3; x.strokeStyle = C.paper; x.strokeText('THE EARTH, 41°', 36, 16); x.fillStyle = C.k; x.fillText('THE EARTH, 41°', 36, 16);
+  x.restore();
+  // the Moon, in a bobble hat, by day
+  x.save(); x.translate(560, 40);
+  x.beginPath(); x.arc(0, 6, 16, 0, 7); ink(x, C.paper, C.k, 2);
+  x.beginPath(); x.ellipse(0, 0, 17, 10, 0, Math.PI, 0); x.closePath(); knit(x, [-17, -10, 34, 10], [C.green, C.olive, C.paper], { row: 3 }); x.beginPath(); x.ellipse(0, 0, 17, 10, 0, Math.PI, 0); x.closePath(); ink(x, null, C.k, 1.5);
+  x.beginPath(); x.arc(0, -12, 4, 0, 7); ink(x, C.green, C.k, 1.2);
+  x.restore();
+  // Vine Street on the pavement outside number 9, glasses up, the lemon with the jug
+  drawLemon(x, 400, 414, { t, hot: 1 });
+  x.drawImage(spr.jug, 424, 360, 24, 28); x.fillStyle = C.ochre; x.globalAlpha = 0.85; x.fillRect(429, 372, 13, 11); x.globalAlpha = 1;
+  drawMarrow(x, 476, 414, { t, shorts: true, glass: true });
+  drawFruit(x, 520, 414, C.plum, 11, 13, t, 0); drawFruit(x, 546, 414, C.plum, 11, 13, t, 1);
+  drawFruit(x, 590, 414, C.red, 14, 19, t, 2, true);
+}
+
+let T = 0;
+function draw() {
+  const k = cv.width / L.W;
+  const sig = `${cv.width}|${E.cosyStage(S)}|${S.pot >= 9 ? S.pot + S.sel : 0}|${S.up.fence ? 1 : 0}|${Object.keys(S.found).length}|${Math.round(E.cosyTemp(S) / 3)}|${S.ended ? 1 : 0}`;
+  if (!bg || bgSig !== sig) { bgSig = sig; bg = buildBg(); }
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.drawImage(bg, 0, 0);
+  g.setTransform(k, 0, 0, k, -L.x0 * k, 0);
+  drawStreet(g, T);
+  drawNeighbours(g, T);
+  if (!S.ended) drawWork(g, T); else drawEnding(g, T);
+  drawPops(g);
+  // a carved title cartouche, top left: the summer and the clock
+  if (!S.ended) {
+    const bx = L.x0 + 10, w = 168;
+    g.beginPath(); g.rect(bx, 10, w, 46); ink(g, C.paper, C.k, 2.4);
+    g.textAlign = 'left'; g.fillStyle = C.k; g.font = `18px ${SC}`; g.fillText(S.fair ? `Fair Day · Summer ${S.season}` : `Summer ${S.season}`, bx + 9, 30);
+    g.font = `15px ${FELL}`; g.fillStyle = !S.fair && E.timeLeft(S) <= 30 ? C.red : C.k;
+    g.fillText(S.fair ? 'the pavement is cleared' : `${mmss(E.timeLeft(S))} to the Fair`, bx + 9, 49);
+  }
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  if (paper) g.drawImage(paper, 0, 0, cv.width, cv.height);
+}
+// A paper grain laid over the whole print.
+let paper = null;
+function makePaper() { const c = Sprites.canvas(410, 215), x = c.getContext('2d'); Fx.grain(x, 410, 215, { amount: 0.07 }); paper = c; }
+
+// ---------- Steeping: hold the pot, let go ----------
+let holding = false, charge = 0, bubbleT = 0, bubbleI = 0, readyRung = false, pop = 0;
+function canSteep() { return !S.fair && !S.ended; }
+function startHold() { if (!canSteep() || holding) return; holding = true; charge = 0; bubbleI = 0; readyRung = false; }
+function release() {
+  if (!holding) return;
+  holding = false;
+  const r = E.steep(S, charge);
+  charge = 0;
+  if (!r) return;
+  pop = 1;
+  recent.unshift(E.CROSS[r.k].ink); recent = recent.slice(0, 12);
+  sfx.lift(r.q); setTimeout(() => sfx.coin(S.steeps), 120);
+  const [px, py] = S.pot >= 9 ? [450, 380] : potSpot(Math.min(8, S.pot));
+  pops.push({ text: `+${fmt(r.yd)} yd`, x: px, y: py - 26, t: 0, life: 1.3, big: true });
+  pops.push({ text: `${r.word}!`, x: px, y: py - 46, t: 0, life: 1.1, c: r.q > 1 ? C.red : r.word === 'stewed' ? C.taupe : C.dgrey });
+  if (r.fresh) discovered(r.k);
+  else if (T > holdT && (r.word === 'stewed' || Math.random() < 0.18)) say(steepLine(r), 0);
+  renderChart(); hud(); renderBoard();
+}
+function steepLine(r) {
+  const n = E.CROSS[r.k].name;
+  if (r.word === 'stewed') return pick([`Stewed. ${n} has gone the colour of gravy. It sells, but it isn’t proud of itself.`, `Too long in the pot. The lemon lifts out something more “brown” than “${n}”.`]);
+  if (r.word === 'pale') return pick([`A bit pale. ${n}, but whispered.`, `Out too soon: ${n}, faintly. Hold on a little longer.`]);
+  if (r.word === 'nearly') return pick([`Nearly. A respectable ${n}.`, `${n}, nearly there. A shade more and it’d sing.`]);
+  return pick([`${n}, just right. The lemon is very pleased with itself, which is allowed.`, `Just right! ${n}, deep and bright, the way only a squeeze of lemon does it.`, `${n}! Somebody across the road says “ooh”.`, `Just right. ${fmt(r.yd)} yards of ${n} onto the stall.`]);
+}
+function discovered(k) {
+  const cr = E.CROSS[k], a = E.DYES[cr.i].name, b = E.DYES[cr.j].name;
+  sfx.discover(); newCell[k] = performance.now() + 8000;
+  const what = cr.h === 2 ? 'The street goes quiet. It’s beautiful.' : cr.h === 0 ? 'It is, honestly, a bit grim. Somebody will buy it.' : 'Lovely.';
+  say(`New colour! ${a}${cr.i === cr.j ? ', twice' : ` and ${b.toLowerCase()}`}, with a squeeze of lemon: ${cr.name}. ${what} The street has never seen it, so it pays double for now.`, 5);
+}
+cv.addEventListener('pointerdown', e => {
+  if (e.button && e.button !== 0) return;
+  cv.setPointerCapture?.(e.pointerId); startHold(); e.preventDefault();
+});
+cv.addEventListener('pointerup', release);
+cv.addEventListener('pointercancel', release);
+cv.addEventListener('lostpointercapture', release);
+cv.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+  if (e.code !== 'Space' && e.key !== ' ') return;
+  const t = e.target;
+  if (t && t.closest && t.closest('button, summary, a, input, textarea, [tabindex]')) return;
+  e.preventDefault(); if (!e.repeat) startHold();
+});
+document.addEventListener('keyup', e => { if (e.code === 'Space' || e.key === ' ') release(); });
+addEventListener('blur', release);
+
+// ---------- Log ----------
+let logT = 0, ambT = 0, holdT = 0;
+const queue = [];
+// Lines that mustn't step on a discovery or a purchase wait their turn.
+function sayLater(msg, hold = 4) { if (T < holdT) queue.push([msg, hold]); else say(msg, hold); }
+function say(msg, hold = 0) {
+  const el = $('log'); el.textContent = msg; el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
+  logT = 0; if (hold) holdT = T + hold;
+}
+const AMBIENT = [
+  () => E.kettleYards(S) > 0 && `The kettles on the windowsill rattle their lids: ${fmt(E.kettleYards(S))} yards a second, steeping on their own.`,
+  () => `Mr Pepper at number 3 is practising on his steel pan. He tuned it himself. Five notes only, and he says that’s plenty.`,
+  () => S.up.thermo && `The porch thermometer says ${Math.round(E.cosyTemp(S))}°. ${E.cosyTemp(S) < 20 ? 'Lovely.' : E.cosyTemp(S) < 28 ? 'Warm for the time of year.' : E.cosyTemp(S) < 35 ? 'Mrs Marrow has started fanning herself with the minutes.' : 'Nobody on Vine Street has worn a coat since spring.'}`,
+  () => E.cosyStage(S) >= 3 && `Somebody has knitted the lampposts a cosy. Somebody else has knitted the cosy a cosy.`,
+  () => E.cosyStage(S) >= 4 && `Every house on Vine Street is wearing your yarn. Number 7’s is a cardigan. Mrs Marrow insists that’s different.`,
+  () => E.cosyStage(S) >= 5 && `The church in town has a knitted spire. The vicar says it keeps the bells warm.`,
+  () => E.cosyStage(S) >= 6 && `The Downs are in stripes now. The sheep up there look baffled, and quite warm.`,
+  () => E.cosyStage(S) >= 7 && `The clouds have been knitted. Nobody knows how. It hasn’t rained in weeks, which is suspicious.`,
+  () => S.copy?.on && `Vi has ${E.CROSS[S.copy.key].name} on her stall at number 11, a penny cheaper. She says lime juice is an acid too. She is, annoyingly, right.`,
+  () => S.season > 1 && `Mrs Marrow walks past with her clipboard and says nothing about the pots. That’s practically a compliment.`,
+  () => `A cat sits on the yarn stall. It does not buy anything.`,
+  () => S.up.fan && `The desk fan turns in the window. Nobody needs it. The lemon looks at it fondly.`,
+  () => S.up.jug && `The big jug catches the sun on the windowsill. Just in case.`,
+  () => E.cosyTemp(S) > 30 && `It’s ${Math.round(E.cosyTemp(S))}° on Vine Street, and every single person is wearing a jumper. They’re very proud of them.`,
+];
+
+// ---------- Tooltips (shared by the shop, the chart, the board, the stats) ----------
+let tipFor = null, tipMoved = 0;
+function tipWire(b, tipOf, act, { firstTapShows = true } = {}) {
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, tipOf()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, tipOf()); });
+  b.addEventListener('blur', hideTip);
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  // On touch the first tap shows what it does; the second does it.
+  b.addEventListener('click', () => {
+    const t = tipOf();
+    if (firstTapShows && b.dataset.touch && tipFor !== t.id) { showTip(b, t); return; }
+    act();
+    if (tipFor || (b.dataset.touch && !firstTapShows)) showTip(b, tipOf());
+  });
+}
+function showTip(b, it) {
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('i').textContent = it.joke || ''; tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || ''; tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== $('side')) { $('side').append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  if (b.closest('aside') && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 10}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    let left = r.right + 10, top = Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2));
+    if (left + t.width > innerWidth - 8) left = r.left - t.width - 10;
+    if (left < 8) { left = Math.max(8, Math.min(innerWidth - t.width - 8, r.left)); top = r.bottom + t.height + 14 < innerHeight ? r.bottom + 6 : Math.max(8, r.top - t.height - 6); }
+    tip.style.left = `${left}px`; tip.style.top = `${top}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  if (tip.parentElement !== $('side')) $('side').append(tip);
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .tipped, .bought, .cell, .price')) hideTip(); });
+
+// ---------- The dye chart ----------
+const newCell = {};
+let chartSig = '';
+function crossTip(k) {
+  const cr = E.CROSS[k], a = E.DYES[cr.i].name, b = E.DYES[cr.j].name;
+  const parts = cr.i === cr.j ? `${a}, twice, and a squeeze of lemon` : `${a} and ${b.toLowerCase()}, and a squeeze of lemon`;
+  if (!S.found[k]) return { id: 'x:' + k, name: 'Not tried yet', desc: `${parts}. Steep it once to find out what colour it makes.`, foot: 'nobody on Vine Street has seen this one: a new colour sells for double at first' };
+  const m = E.marketM(S, k), trend = trendOf(k);
+  const vi = S.copy.on && S.copy.key === k ? '\nVi is selling it too, cheaper: the price is sinking while you brew it' : '';
+  const kind = cr.h === 2 ? 'A lovely colour: the street pays extra for it.' : cr.h === 0 ? 'Muddy. Cheap, but somebody always buys it.' : '';
+  return { id: 'x:' + k, name: cr.name, desc: `${parts}. ${kind}`, foot: `${per(E.pricePerYard(S, k))}p a yard now (${m >= 1 ? '+' : '−'}${Math.round(Math.abs(m - 1) * 100)}% on the street${trend ? ', ' + (trend > 0 ? 'rising' : 'falling') : ''})${vi}` };
+}
+function renderChart() {
+  const rows = $('rows');
+  const sig = `${S.plants}|${Object.keys(S.found).length}`;
+  if (sig !== chartSig) {
+    chartSig = sig;
+    rows.innerHTML = '';
+    for (let i = 0; i < S.plants; i++) {
+      const row = document.createElement('div'); row.className = 'row';
+      const lab = document.createElement('span'); lab.className = 'dye'; lab.innerHTML = '<i></i>'; lab.querySelector('i').style.background = E.DYES[i].ink; lab.append(E.DYES[i].name);
+      row.append(lab);
+      for (let j = 0; j <= i; j++) {
+        const k = E.key(i, j), b = document.createElement('button');
+        b.type = 'button'; b.className = 'cell'; b.dataset.k = k; b.setAttribute('aria-describedby', 'tip');
+        b.setAttribute('aria-label', S.found[k] ? E.CROSS[k].name : `${E.DYES[i].name} and ${E.DYES[j].name}: not tried`);
+        tipWire(b, () => crossTip(k), () => choose(k), { firstTapShows: false });
+        row.append(b);
+      }
+      rows.append(row);
+    }
+  }
+  const now = performance.now();
+  for (const b of rows.querySelectorAll('.cell')) {
+    const k = b.dataset.k, f = !!S.found[k];
+    b.classList.toggle('found', f); b.textContent = f ? '' : '?';
+    b.style.background = f ? E.CROSS[k].ink : '';
+    b.classList.toggle('sel', S.sel === k);
+    b.classList.toggle('vi', !!(S.copy.on && S.copy.key === k));
+    b.classList.toggle('new', (newCell[k] || 0) > now);
+  }
+  const total = S.plants * (S.plants + 1) / 2, found = Object.keys(S.found).filter(k => E.unlocked(S, E.pair(k)[0])).length;
+  $('chartN').textContent = `${found} of ${total} found`;
+}
+function choose(k) {
+  if (S.sel === k || !E.choose(S, k)) return;
+  if (holding) release();
+  sfx.pickDye();
+  const cr = E.CROSS[k];
+  if (!S.found[k]) say(`${E.DYES[cr.i].name} and ${E.DYES[cr.j].name.toLowerCase()} in the pot${cr.i === cr.j ? ' (twice the ' + E.DYES[cr.i].name.toLowerCase() + ')' : ''}, and a squeeze of lemon. What colour will it be? Hold to find out.`, 3);
+  renderChart(); renderBoard(); hud(); save();
+}
+
+// ---------- The chalkboard: what the street pays a yard, right now ----------
+const hist = {};      // price a few seconds ago, for the arrows
+function trendOf(k) { const h = hist[k]; if (!h) return 0; const m = E.marketM(S, k); return m > h * 1.03 ? 1 : m < h * 0.97 ? -1 : 0; }
+let boardSig = '';
+function renderBoard() {
+  const ks = Object.keys(S.found).filter(k => E.unlocked(S, E.pair(k)[0])).sort((a, b) => E.pricePerYard(S, b) - E.pricePerYard(S, a)).slice(0, 5);
+  if (!ks.includes(S.sel) && S.found[S.sel]) ks[Math.min(4, ks.length)] = S.sel;
+  const box = $('prices');
+  const sig = ks.join('|');
+  if (sig !== boardSig) {
+    boardSig = sig; box.innerHTML = '';
+    for (const k of ks) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'price'; b.dataset.k = k; b.setAttribute('aria-describedby', 'tip');
+      b.innerHTML = '<i></i><span></span><b></b><em></em>';
+      tipWire(b, () => crossTip(k), () => choose(k), { firstTapShows: false });
+      box.append(b);
+    }
+  }
+  for (const b of box.querySelectorAll('.price')) {
+    const k = b.dataset.k, tr = trendOf(k);
+    b.querySelector('i').style.background = E.CROSS[k].ink;
+    b.querySelector('span').textContent = E.CROSS[k].name + (S.copy.on && S.copy.key === k ? ' (Vi)' : '');
+    b.querySelector('b').textContent = `${per(E.pricePerYard(S, k))}p`;
+    const em = b.querySelector('em'); em.textContent = tr > 0 ? '▲' : tr < 0 ? '▼' : '·'; em.className = tr > 0 ? 'up' : tr < 0 ? 'down' : '';
+    b.classList.toggle('sel', S.sel === k);
+  }
+  $('viLine').textContent = S.ended ? 'Vi has gone to knit the Moon a hat.' : S.fair ? 'The stalls are down for the Fair.' : S.copy.on ? `Vi’s selling ${E.CROSS[S.copy.key].name} too, cheaper. Its price is sinking.`
+    : Object.keys(S.found).length < 3 ? 'Vi, at number 11, is watching over the fence and taking notes.'
+    : `Vi is watching over the fence. ${S.copy.key && E.copyDelay(S) - S.copy.t > 0 ? `She’ll copy this in ${Math.ceil(E.copyDelay(S) - S.copy.t)}s.` : ''}`;
+}
+
+// ---------- The shop ----------
+const BUY_LINES = {
+  burner: 'A bigger gas ring under the pot. Whoomph. The lemon’s eyebrows survive, mostly.',
+  stall: 'Another trestle on the pavement. The stall now reaches the lamppost. Mrs Marrow measures it.',
+  thermo: 'A brass thermometer by the front door. It says 14°. “Lovely,” says the lemon, and taps it, the way people do.',
+  mat: 'A doormat: NOT SOUR. Mrs Marrow reads it twice on her way past, and walks a bit faster.',
+  bunting: 'Bunting from the window to the lamppost, a flag in every colour you’ve found. The street looks like a party nobody’s been told about.',
+  postbox: 'The post box on the corner gets a bobble hat. The postie says the letters come out warm now.',
+  fan: 'A little desk fan for the upstairs window. It is not hot. It is just nice to have one. The lemon watches it go round.',
+  jug: 'A very big glass jug for the windowsill. Empty, for now. Just in case anybody ever comes round thirsty.',
+  kettle: 'The Kettle Trick: a ball of wool on a string, dangled into a kettle that’s been steeped in the big pot. They simmer on the windowsill all day. The committee can’t clear a windowsill.',
+  paw: 'An oven glove, and a feel for it. The just-right band is wider. The lemon practises on a cup of tea.',
+  lamp: 'A storm lantern on a hook by the pot. Now you can steep after dark, and the summer goes on that bit longer.',
+  wellies: 'Yellow wellies, a size too big. Rain no longer stops play. Summers are longer.',
+  frame: 'A cold frame for the dye garden: the marigolds are still going in October. Summers are longer.',
+  cosy: 'A knitted cosy for the pot, in your own yarn. It stays hot through the first frosts. Summers are longer.',
+  bottle: 'Two hot water bottles: one for the pot, one for the lemon. Steep right through November.',
+  fence: 'Two more feet of fence between 9 and 11. Vi now has to stand on a bucket to see what you’re brewing. She does, but it takes her longer.',
+  prize: 'Another prize ribbon on the front door. People come to see the prizewinner steep, and bring their own wool to be dipped while they watch.',
+  shed: 'A pot in the shed for the winter, off the pavement, out of the committee’s reach.',
+};
+for (let i = 2; i < E.DYES.length; i++) BUY_LINES['plant' + i] = [
+  '', '', 'Beetroot in the dye garden. The lemon’s hands are pink for a week. It doesn’t have hands. Still pink.',
+  'Nettles, planted on purpose, which Mrs Marrow says is a first for Vine Street.',
+  'A blackberry bramble along the fence. Vi picks the ones on her side. Fair enough.',
+  'Red cabbage. With a squeeze of lemon it goes from purple to pink in front of your eyes. The kids from number 3 come to watch.',
+  'A little walnut tree. The husks make brown. Sometimes that’s what people want, and that’s fine.',
+  'Woad: yellow flowers, blue dye. Nobody believes the lemon until they see it.',
+  'Madder root: three years in the ground and then the reddest red there is. The lemon has waited. It is a patient lemon.',
+  'Indigo, the king of blues. The pot goes green, then the yarn comes out and turns blue in the air, like a magic trick.',
+][i];
+const PROD_LINES = {
+  ball: ['More wool in the pot. Every steep comes out bigger.', 'Another ball in the pot. The string is getting complicated.'],
+  kettle: ['A kettle on the windowsill. It simmers by itself, all day.', 'Another kettle. The windowsill is getting crowded.'],
+};
+const shop = $('shop');
+const newUntil = {}, freshTab = { p: false, r: false };
+let shopSig = '';
+const priceText = (cur, c) => cur === 'r' ? `🎀 ${fmt(c)}` : `${fmt(c)}p`;
+const withUp = (patch) => { const s = { ...S, lv: { ...S.lv }, up: { ...S.up }, ...patch }; return s; };
+function effectLine(id) {
+  const u = E.UP[id];
+  if (u.summer) { const s2 = withUp({}); s2.up[id] = 1; return `every summer: ${mmss(E.summerLength(S))} → ${mmss(E.summerLength(s2))}`; }
+  if (u.kind === 'plant') { const n = u.dye + 1; return `dye chart: ${S.plants} rows → ${n} · ${n} new crosses to try`; }
+  const s2 = withUp({}); if (u.kind === 'lv') s2.lv[id] = E.lv(S, id) + 1; else s2.up[id] = 1;
+  switch (id) {
+    case 'burner': return `a steep takes ${E.steepTime(S).toFixed(2)}s → ${E.steepTime(s2).toFixed(2)}s`;
+    case 'stall': return `${E.CROSS[S.sel].name}: ${per(E.pricePerYard(S))}p → ${per(E.pricePerYard(s2))}p a yard`;
+    case 'prize': return `a steep: ${fmt(E.potYards(S))} → ${fmt(E.potYards(s2))} yards (just right: ×1.5)`;
+    case 'shed': return `summers start with the ${E.POTS[Math.min(E.POTS.length - 1, E.lv(S, 'shed'))].name.toLowerCase()} → the ${E.POTS[Math.min(E.POTS.length - 1, E.lv(S, 'shed') + 1)].name.toLowerCase()}`;
+    case 'paw': { const [a, b] = E.zone(S), [c2, d] = E.zone(s2); return `just-right band: ${Math.round(a * 100)}–${Math.round(b * 100)}% → ${Math.round(c2 * 100)}–${Math.round(d * 100)}% of the deepest shade`; }
+    case 'fence': return `Vi copies a colour after ${E.copyDelay(S)}s → ${E.copyDelay(s2)}s of brewing it`;
+    case 'kettle': return 'kettles on sale: each steeps 3% of a pot every second, on its own';
+    default: return '';
+  }
+}
+function upTip(u) {
+  let foot = u.cur === 'r' ? `🎀 ${fmt(u.cost)} ribbons · kept for good` : u.kind === 'odd' ? `${fmt(u.cost)}p · stays at number 9` : `${fmt(u.cost)}p · cleared from the pavement at the Fair`;
+  if (u.kind === 'odd') foot += ' · does very little';
+  if (u.kind === 'lv') foot = `level ${E.lv(S, u.id)} · ${foot}`;
+  const fx = effectLine(u.id);
+  if (fx) foot = `${fx}\n${foot}`;
+  return { id: u.id, name: u.name, desc: u.desc, foot };
+}
+function potTip() {
+  const n = E.POTS[S.pot + 1], s2 = withUp({ pot: S.pot + 1 });
+  return { id: 'p:pot', name: `The ${n.name}`, desc: `A bigger pot: every steep takes ${fmt(n.yd / E.POTS[S.pot].yd)} times the yarn. The ${E.POTS[S.pot].name.toLowerCase()} goes back in the kitchen.`,
+    foot: `a steep: ${fmt(E.potYards(S))} → ${fmt(E.potYards(s2))} yards (just right: ×1.5)\n${fmt(E.potCost(S))}p · cleared from the pavement at the Fair` };
+}
+function ballTip() {
+  const n = Math.max(1, E.ballsAffordable(S)), s2 = withUp({ balls: S.balls + n });
+  return { id: 'p:ball', name: 'More Wool', desc: 'Another ball of undyed wool in every steep. Bigger pots take bigger balls, so it costs more after each new pot. Buys as many as you can afford.',
+    foot: `${S.balls} → ${S.balls + n} balls · a steep: ${fmt(E.potYards(S))} → ${fmt(E.potYards(s2))} yards\nnext ball ${fmt(E.ballCost(S))}p · cleared at the Fair` };
+}
+function kettleTip() {
+  const n = Math.max(1, E.kettlesAffordable(S)), s2 = withUp({ kettles: S.kettles + n });
+  return { id: 'p:kettle', name: 'Kettles', desc: 'A kettle on the windowsill steeps 3% of a pot every second, on its own, in whatever colour is in the big pot. Kettles live in the kitchen, so they stay. Buys as many as you can afford.',
+    foot: `${S.kettles} → ${S.kettles + n} kettles · ${fmt(E.kettleYards(S))} → ${fmt(E.kettleYards(s2))} yd a second\nnext kettle ${fmt(E.kettleCost(S))}p · kept` };
+}
+function tabCur() { return S.ribbonsTotal > 0 ? S.shopTab : 'p'; }
+$('tabP').addEventListener('click', () => { S.shopTab = 'p'; freshTab.p = false; hideTip(); renderShop(); save(); });
+$('tabR').addEventListener('click', () => { S.shopTab = 'r'; freshTab.r = false; hideTip(); renderShop(); save(); });
+function cells() {
+  const out = [];
+  if (S.ended) return out;
+  if (S.pot + 1 < E.POTS.length && (S.earned >= 12 || S.seen.includes('p:pot'))) out.push({ id: 'p:pot', cur: 'p', rep: true, name: () => `${E.POTS[S.pot + 1].name}`, cost: () => E.potCost(S), can: () => E.canPot(S), tip: potTip, go: buyPot });
+  if (S.earned >= 60 || S.seen.includes('p:ball')) out.push({ id: 'p:ball', cur: 'p', rep: true, name: () => `More Wool · ${S.balls}`, cost: () => E.ballCost(S), can: () => E.canBall(S), tip: ballTip, go: buyBall });
+  if (S.up.kettle) out.push({ id: 'p:kettle', cur: 'p', rep: true, name: () => `Kettles · ${S.kettles}`, cost: () => E.kettleCost(S), can: () => E.canKettle(S), tip: kettleTip, go: buyKettle });
+  for (const u of E.items(S).sort((a, b) => a.cost - b.cost)) out.push({ id: u.id, cur: u.cur, odd: u.kind === 'odd', name: () => u.kind === 'lv' ? `${u.name} · ${E.lv(S, u.id)}` : u.name, cost: () => E.cost(S, u.id), can: () => E.canBuy(S, u.id), tip: () => upTip({ ...u, cost: E.cost(S, u.id) }), go: () => doBuy(u.id) });
+  return out;
+}
+function renderShop() {
+  const all = cells();
+  for (const c of all) if (!S.seen.includes(c.id)) {
+    S.seen.push(c.id);
+    if (S.t > 2) { sfx.unlock(); newUntil[c.id] = performance.now() + 9000; }
+    if (c.cur !== tabCur()) freshTab[c.cur] = true;
+  }
+  const tabs = S.ribbonsTotal > 0;
+  $('tabs').hidden = !tabs || S.ended;
+  const cur = tabCur();
+  const list = all.filter(c => c.cur === cur);
+  const sig = cur + list.map(c => c.id).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    for (const c of list) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (c.odd ? ' odd' : '') + (c.rep ? ' rep' : '');
+      b.dataset.id = c.id;
+      b.innerHTML = '<b></b><em></em>';
+      b.setAttribute('aria-describedby', 'tip');
+      tipWire(b, c.tip, () => { if (b.getAttribute('aria-disabled') !== 'true') c.go(); else sfx.deny(); });
+      b._c = c;
+      shop.append(b);
+    }
+    if (S.ended) { const p = document.createElement('p'); p.className = 'none'; p.textContent = 'The stall is shut. Everybody’s round at number 9 for lemonade.'; shop.append(p); }
+    if (!list.length && !S.ended) { const p = document.createElement('p'); p.className = 'none'; p.textContent = cur === 'r' ? 'Nothing to spend ribbons on yet.' : S.fair ? 'The stall is packed away for the Fair.' : 'Nothing yet. Keep steeping.'; shop.append(p); }
+  }
+  const now = performance.now();
+  for (const b of shop.querySelectorAll('button.up')) {
+    const c = b._c, can = c.can();
+    b.querySelector('b').textContent = c.name();
+    b.querySelector('em').textContent = priceText(c.cur, c.cost());
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[c.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  const cnt = k => all.filter(c => c.cur === k && c.can()).length;
+  const n = cnt('p') + cnt('r');
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  $('tabPc').textContent = cnt('p') ? `· ${cnt('p')}` : '';
+  $('tabRc').textContent = cnt('r') ? `· ${cnt('r')}` : '';
+  $('tabP').setAttribute('aria-selected', String(cur === 'p')); $('tabR').setAttribute('aria-selected', String(cur === 'r'));
+  $('tabP').classList.toggle('fresh', freshTab.p && cur !== 'p'); $('tabR').classList.toggle('fresh', freshTab.r && cur !== 'r');
+  renderShelf();
+}
+let prodN = 0;
+function buyPot() {
+  if (!E.buyPot(S)) { sfx.deny(); return; }
+  delete newUntil['p:pot']; sfx.pot();
+  const n = E.POTS[S.pot].name;
+  const lines = { 'Stockpot': 'The stockpot. Room for a proper ball of wool. The lemon has to stand on tiptoe.', 'Jam Pan': 'A jam pan, wide and shallow, borrowed from nobody. The yarn swims in it.', 'Copper': 'A great copper pot from the scrap man. It takes two goes to carry it out of the gate.',
+    'Tin Bath': 'A tin bath on the pavement, full of dye, on a gas ring. The neighbours have opinions. The neighbours also have new jumpers.', 'Water Butt': 'The water butt from round the back, set on a burner. It holds forty gallons of lemon-bright dye, and a lot of wool.',
+    'Paddling Pool': 'A paddling pool on the pavement, full of dye. The kids from number 3 ask if they can go in. No.', 'Garden Pond': 'The garden pond. The frogs moved next door to Vi’s, which feels pointed.',
+    'Duck Pond': 'The village duck pond. The ducks don’t mind. The ducks come out yellow. The ducks seem pleased.', 'Reservoir': 'A hose from the pavement up to the reservoir on the Downs. The water board has questions. The water board is wearing your jumpers.',
+    'The Bay': 'A very long hose out to the bay. The whole bay is a dye pot now. The sea comes in lemon-coloured.' };
+  say(lines[n] || `The ${n}.`, 6);
+  save(); renderShop(); hud();
+}
+function buyBall() {
+  const n = E.buyBall(S, 999); if (!n) { sfx.deny(); return; }
+  delete newUntil['p:ball']; sfx.wool(prodN++);
+  if (S.balls === 2 || Math.random() < 0.2) say(n > 1 ? `${n} more balls of wool in the pot. Every steep now takes ${fmt(S.balls)}.` : PROD_LINES.ball[S.balls === 2 ? 0 : 1], 2);
+  save(); renderShop(); hud();
+}
+function buyKettle() {
+  const n = E.buyKettle(S, 999); if (!n) { sfx.deny(); return; }
+  delete newUntil['p:kettle']; sfx.wool(prodN++);
+  if (S.kettles === 1 || Math.random() < 0.25) say(n > 1 ? `${n} more kettles on the windowsill. ${fmt(S.kettles)} now, all simmering.` : PROD_LINES.kettle[S.kettles === 1 ? 0 : 1], 2);
+  save(); renderShop(); hud();
+}
+function doBuy(id) {
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  delete newUntil[id];
+  hideTip(); sfx.buy();
+  say(BUY_LINES[id] || `Bought: ${E.UP[id].name}.`, 6);
+  if (E.UP[id].kind === 'plant') { chartSig = ''; renderChart(); }
+  bg = null;
+  save(); renderShop(); hud(); renderBoard();
+}
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+const UI_KEY = window.DailyGame ? DailyGame.storageKey('ui') : 'di:28:ui';
+let ui = {};
+try { ui = JSON.parse(localStorage.getItem(UI_KEY) || '{}') || {}; } catch (e) {}
+shelfEl.open = !!ui.bought;
+const saveUi = () => { try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (e) {} };
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!ui.bought === shelfEl.open) return;
+  ui.bought = shelfEl.open; saveUi();
+});
+function boughtList() {
+  return Object.entries(E.UP).filter(([id, u]) => (u.kind === 'one' || u.kind === 'odd') ? S.up[id] : u.kind === 'plant' ? S.plants > u.dye : false).map(([id, u]) => ({ id, ...u }));
+}
+function boughtTip(u) {
+  return { id: 'bought:' + u.id, name: u.name, desc: u.desc, joke: BUY_LINES[u.id] || '', foot: u.kind === 'odd' ? 'Bought · did very little' : 'Bought · kept for good', inline: true };
+}
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : boughtList();
+  const sig = list.map(u => u.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(u => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (u.kind === 'odd' ? ' odd' : '');
+    b.textContent = (u.kind === 'odd' ? '✿ ' : u.kind === 'plant' ? '❦ ' : '') + u.name.replace(/^(The|A|An) /, ''); b.dataset.id = u.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, boughtTip(u)); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + u.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+
+// ---------- HUD ----------
+function hud() {
+  const st = E.cosyStage(S), next = E.COSY[st];
+  $('cosyNow').textContent = st ? E.COSY[st - 1][1] : 'nothing yet';
+  $('cosyOf').textContent = S.ended ? 'all of it' : next ? `${fs(S.total)} of ${fs(next[0])} yd → ${next[1]}` : '';
+  const lo = st ? E.COSY[st - 1][0] : 1, hi = next ? next[0] : E.TARGET;
+  const f = S.ended ? 1 : Math.max(0, Math.min(1, (Math.log10(Math.max(1, S.total)) - Math.log10(lo)) / (Math.log10(hi) - Math.log10(lo))));
+  $('cosyFill').style.width = `${(f * 100).toFixed(1)}%`;
+  const len = E.summerLength(S);
+  $('clockLabel').textContent = S.ended ? 'The last summer' : S.fair ? `Fair Day, after summer ${S.season}` : `Summer ${S.season} · ${mmss(len)} long`;
+  $('clockVal').textContent = S.ended ? '' : S.fair ? 'stalls down' : `Fair in ${mmss(E.timeLeft(S))}`;
+  $('clockFill').style.width = `${S.fair || S.ended ? 100 : 100 * Math.min(1, S.clock / len)}%`;
+  $('clockBar').classList.toggle('late', !S.fair && !S.ended && E.timeLeft(S) <= 30);
+  $('perSteep').textContent = fmt(E.potYards(S));
+  $('perYard').textContent = per(E.pricePerYard(S));
+  $('purse').textContent = fmt(S.pennies);
+  $('kettleBox').hidden = !S.up.kettle;
+  $('kettleRate').textContent = per(E.kettleYards(S));
+  $('ribbonBox').hidden = !S.ribbonsTotal;
+  $('ribbons').textContent = fmt(S.ribbons);
+}
+const STAT_TIPS = {
+  steepBox: () => ({ id: 'stat:steep', name: 'A steep', desc: `The ${E.POTS[S.pot].name.toLowerCase()}: ${fmt(E.POTS[S.pot].yd)} yards a ball, ${fmt(S.balls)} ball${S.balls > 1 ? 's' : ''}${E.lv(S, 'prize') ? `, ×${fmt(E.prizeMult(S))} for the prize ribbons` : ''}. Let go in the just-right band for half as much again; too pale or stewed makes less.`, foot: `${fmt(E.potYards(S))} yards a steep · a steep takes ${E.steepTime(S).toFixed(2)}s to the deepest good shade` }),
+  priceBox: () => ({ id: 'stat:price', name: 'A yard of ' + E.CROSS[S.sel].name, desc: `What Vine Street pays for a yard of the colour in the pot. Every colour has its own price, and the street changes its mind. Brew one colour long enough and Vi copies it, and its price sinks.${E.lv(S, 'stall') ? ` Your stall adds ×${per(E.stallMult(S))}.` : ''}`, foot: `${per(E.pricePerYard(S))}p a yard now` }),
+  purseBox: () => ({ id: 'stat:purse', name: 'This summer’s takings', desc: 'Pennies from the stall. Spend them on pots, wool and kettles. At the Fair the committee takes the takings for the Street Fund (bunting, mostly), so spend them.', foot: `${fmt(S.pennies)}p in the purse · ${fmt(S.earned)}p this summer` }),
+  kettleBox: () => ({ id: 'stat:kettles', name: 'The kettles', desc: `${fmt(S.kettles)} kettles on the windowsill, each steeping 3% of a pot every second, in whatever colour is in the big pot. They keep going at a low heat while you’re away (a quarter speed, up to four hours).`, foot: `${per(E.kettleYards(S))} yards a second, on their own` }),
+  ribbonBox: () => ({ id: 'stat:ribbons', name: 'Prize ribbons', desc: 'Won at the Vine Street Fair at the end of every summer: the more yards you steeped that summer, the more ribbons. Ribbons are kept for good. Spend them in the Ribbons tab.', foot: `${fmt(S.ribbons)} to spend · ${fmt(S.ribbonsTotal)} won` }),
+};
+for (const [id, f] of Object.entries(STAT_TIPS)) {
+  const el = $(id);
+  el.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(el, f()); });
+  el.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  el.addEventListener('focus', () => showTip(el, f()));
+  el.addEventListener('blur', hideTip);
+  el.addEventListener('click', () => { if (tipFor === f().id) hideTip(); else showTip(el, f()); });
+}
+
+// ---------- The Fair ----------
+const VERDICT = [
+  y => `${fmt(y)} yards. For a newcomer. I’ll say no more. Except: it was quite bright.`,
+  y => `${fmt(y)} yards, and not a sour note among them. I have written that down, and then crossed it out, and then written it again.`,
+  y => `${fmt(y)} yards. My cardigan is one of yours. I didn’t know that when I bought it. I’m keeping it.`,
+  y => `${fmt(y)} yards. The committee would like it noted that the pots on the pavement are a nuisance, and also that the committee is very warm.`,
+  y => `${fmt(y)} yards. People are driving in from the town to look at the lampposts. We have had to put out a sign.`,
+  y => `${fmt(y)} yards. I went up the Downs for some fresh air and they were wearing stripes. Is this you? It’s you.`,
+  y => `${fmt(y)} yards. I have not needed a coat since March. I am wearing three jumpers, all yours. I am perfectly comfortable. Perfectly.`,
+];
+function showFair() {
+  const card = $('fair');
+  card.hidden = !(S.fair && !S.ended);
+  if (card.hidden) return;
+  $('fairWho').textContent = `THE VINE STREET FAIR · SUMMER ${S.season}`;
+  $('fairHead').textContent = `Mrs Marrow judges the yarn`;
+  $('fairQuote').textContent = VERDICT[Math.min(VERDICT.length - 1, Math.floor((S.season - 1) / 2))](S.lastYards);
+  $('fairTally').textContent = `+${fmt(S.lastRibbons)} prize ribbons. The takings go to the Street Fund and the pavement is cleared. You keep the ribbons, the dye garden, the chart and the kettles. Spend your ribbons, then start summer ${S.season + 1}.`;
+}
+function fairCame() {
+  if (holding) { holding = false; charge = 0; }
+  sfx.fair();
+  say(`That’s the summer! Mr Pepper’s steel band strikes up, and Mrs Marrow walks the street with her clipboard. ${fmt(S.lastYards)} yards. +${fmt(S.lastRibbons)} ribbons.`, 8);
+  S.shopTab = 'r'; freshTab.r = false;
+  hideTip(true); showFair(); renderShop(); hud(); renderBoard(); save();
+}
+$('nextBtn').addEventListener('click', () => {
+  if (!E.nextSummer(S)) return;
+  S.shopTab = 'p'; hornDone = false;
+  sfx.summer();
+  const shed = E.lv(S, 'shed');
+  say(`Summer ${S.season}! ${mmss(E.summerLength(S))} on the clock until the Fair.${shed ? ` The ${E.POTS[S.pot].name.toLowerCase()} comes out of the shed.` : ''} The kettles are still on the sill. Hold the pot!`, 5);
+  showFair(); renderShop(); hud(); renderBoard(); save();
+});
+let hornDone = false;
+
+// ---------- The ending ----------
+let endT = -1;
+function end(resumed) {
+  if (holding) { holding = false; charge = 0; }
+  if (!S.ended) { S.endedAt = S.t; }
+  E.finishAll(S); save();
+  endT = resumed ? -1 : T; bg = null;
+  hideTip(true);
+  $('ending').hidden = false; $('fair').hidden = true; $('tabs').hidden = true; $('shopHead').hidden = true;
+  $('endText').textContent = 'It worked far too well. Vine Street, then the town, then the Downs, then the clouds, then the coast, and then one Tuesday in August the whole Earth was in a jumper, in every colour on the chart. It was 41° in the shade, and there was no shade: the shade had been knitted. The porch thermometer gave up with a small pop. Then the doorbell went. It was Mrs Marrow, in shorts, and behind her the whole street, red in the face, very proud of their jumpers. The lemon had the big jug ready. “Lemonade?” Mrs Marrow drank two glasses, put down her clipboard, and said: “Not sour at all. Just right.” Next door, Vi was already casting on something for the Moon.';
+  const tt = S.endedAt ?? S.t, h = Math.floor(tt / 3600), m = Math.floor(tt / 60) % 60;
+  const time = h ? `${h}h${String(m).padStart(2, '0')}m` : `${m}m`;
+  $('endStats').textContent = tt > 1 ? `${time} · ${S.season} summers · ${Object.keys(S.found).length} colours found · ${fmt(S.ribbonsTotal)} ribbons` : '';
+  chartSig = ''; renderChart(); hud(); renderShop(); renderBoard();
+  if (music) music.update();
+  if (!resumed) {
+    sfx.finale();
+    say('A hundred quadrillion yards. The Earth is in a jumper. It is very, very warm. Somebody is at the door.', 30);
+    if (window.DailyGame) DailyGame.finish({ lines: ['🍋 The Earth in a jumper: 100 quadrillion yards', `⏱ ${time} · ☀️ ${S.season} summers`, '🥤 Not sour. Just right.'] });
+  }
+  setTimeout(() => $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' }), resumed ? 0 : 2500);
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Loop ----------
+let last = performance.now(), hudT = 0, saveT = 0, dripT = 0, dripK = 0, histT = 0, stage = E.cosyStage(S);
+function frame(now) {
+  const dt = Math.min(0.25, (now - last) / 1000); last = now; T += dt;
+  if (layout()) hud();
+  pop = Math.max(0, pop - dt * 2.5);
+  if (!S.ended) {
+    if (holding) {
+      charge += dt / E.steepTime(S);
+      bubbleT += dt;
+      if (bubbleT > 0.16) { bubbleT = 0; sfx.bubble(Math.min(9, Math.floor(charge * 7))); }
+      if (!readyRung && charge >= E.zone(S)[0]) { readyRung = true; sfx.ready(); }
+      if (charge >= E.BOIL) release();
+    }
+    const wasFair = S.fair;
+    for (const ev of E.tick(S, dt)) {
+      if (ev.type === 'copy') { sfx.vi(); if (T > holdT - 3) say(pick([`Vi’s at the fence. Ten minutes later there’s ${E.CROSS[ev.k].name} on her stall, a penny cheaper. Lime juice is an acid too, it turns out.`, `Over the fence: Vi, on a bucket, taking notes. ${E.CROSS[ev.k].name} is on her stall by teatime.`, `Vi is selling ${E.CROSS[ev.k].name}. Hers is very slightly greener. The price is sinking. Try something she hasn’t seen.`]), 4); renderChart(); }
+    }
+    if (S.fair && !wasFair) fairCame();
+    if (!S.fair && !hornDone && E.timeLeft(S) <= 30) { hornDone = true; say('Thirty seconds to the Fair! Mr Pepper is tuning up. Get those last steeps in!', 4); }
+    // income that ticks in on its own: a soft whistle now and then
+    dripT += dt;
+    if (dripT > 5 && E.kettleYards(S) > 0 && !S.fair && !holding) { dripT = 0; sfx.kettle(dripK++); pops.push({ text: `+${fmt(E.kettleYards(S) * 5)} yd 🫖`, x: 360, y: 236, t: 0, life: 1.4, c: C.dteal }); }
+    if (E.cosyStage(S) > stage) { stage = E.cosyStage(S); if (stage <= E.COSY.length - 1) { sfx.cosy(); sayLater(`The Big Cosy: ${E.COSY[stage - 1][1]} ${stage === 1 ? 'has' : 'have'} been knitted a cosy in your yarn. ${['', 'The gate looks very snug.', 'Number 9 is wearing a jumper. So is the lemon’s front door.', 'The lampposts are in stripes. The pigeons approve.', 'All of Vine Street is wrapped up. Even Vi’s.', 'The town has caught it now. The church spire has a bobble.', 'The Downs are knitted, from the chalk to the sky.', 'The clouds. Somehow, the clouds.', 'The coast. The cliffs are in cable-knit.'][stage]}`, 6); } bg = null; }
+    if (S.total >= E.TARGET && !S.ended) end(false);
+  }
+  for (const p of pops) p.t += dt;
+  for (let k = pops.length - 1; k >= 0; k--) if (pops[k].t > pops[k].life) pops.splice(k, 1);
+  histT += dt; if (histT > 6) { histT = 0; for (const k of Object.keys(S.market)) hist[k] = E.marketM(S, k); }
+  const mk = musicKey(); if (mk !== lastKey) { lastKey = mk; if (music) music.update(); }
+  logT += dt; ambT += dt;
+  if (queue.length && T >= holdT) say(...queue.shift());
+  if (logT > 9 && ambT > 22 && !S.ended && !S.fair && T >= holdT) {
+    ambT = 0;
+    const opts = AMBIENT.map(f => f()).filter(Boolean);
+    if (opts.length) say(pick(opts));
+  }
+  hudT += dt; if (hudT > 0.25) { hudT = 0; hud(); renderShop(); renderBoard(); renderChart(); }
+  saveT += dt; if (saveT > 4) { saveT = 0; save(); }
+  fit(); draw();
+  requestAnimationFrame(frame);
+}
+// Away (a hidden tab or a closed one): the summer waits, and the kettles keep simmering at a low heat.
+function welcomeBack(away) {
+  const got = S.t > 5 ? E.offline(S, away) : null;
+  if (!got || got.yards < 1) return false;
+  const hrs = away / 3600, t = hrs >= 1 ? `${hrs.toFixed(1)} hours` : `${Math.round(away / 60)} minutes`;
+  say(`Welcome back to Vine Street! While you were out (${t}${got.capped ? ', though the kettles only kept going for four hours of it' : ''}), the kettles simmered at a low heat: ${fmt(got.yards)} yards of ${E.CROSS[S.sel].name}, ${fmt(got.pennies)}p in the purse. The summer waited for you.`, 8);
+  hud(); return true;
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { release(); save(); }
+  else { const away = S.lastSeen ? (Date.now() - S.lastSeen) / 1000 : 0; last = performance.now(); if (away > 60) welcomeBack(away); }
+});
+addEventListener('pagehide', save);
+
+// ---------- Start ----------
+try { await Promise.all([document.fonts.load(`20px ${FELL}`), document.fonts.load(`20px ${SC}`)]); } catch (e) {}
+await makeSprites();
+makePaper();
+layout();
+if (Sprites.sheetRequested()) Sprites.showSheet();
+fit();
+for (const k of Object.keys(S.market)) hist[k] = E.marketM(S, k);
+if (S.ended) { end(true); say('Vine Street, the morning after. Everybody is still in a jumper. There is a little lemonade left in the jug.'); }
+else {
+  const away = S.lastSeen ? (Date.now() - S.lastSeen) / 1000 : 0;
+  if (!(away > 60 && welcomeBack(away))) say(S.t > 5 ? (S.fair ? 'Fair Day on Vine Street. Mrs Marrow is still holding the clipboard.' : 'Vine Street. The pot is where you left it, and so is Vi.')
+    : 'Number 9 Vine Street. The lemon has just moved in, and Mrs Marrow from number 7 has already said, over the wall, that lemons are “a bit sour”. Well. Hold the pot to steep some yarn, and let go when it’s just right.');
+  if (S.fair) showFair();
+}
+if (DEBUG) Object.assign(window.__game, { hud, renderShop, steepOnce: (c = 0.9) => { startHold(); charge = c; release(); } });
+renderChart(); renderBoard(); hud(); renderShop();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

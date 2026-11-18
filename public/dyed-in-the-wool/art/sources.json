@@ -1,0 +1,92 @@
+{
+  "material-symbols--kettle.svg": {
+    "icon": "material-symbols:kettle",
+    "set": "Material Symbols",
+    "setUrl": "https://github.com/google/material-design-icons",
+    "author": "Google",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/google/material-design-icons/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/material-symbols/kettle/"
+  },
+  "game-icons--beet.svg": {
+    "icon": "game-icons:beet",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Delapouite",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/delapouite/beet.html"
+  },
+  "game-icons--cabbage.svg": {
+    "icon": "game-icons:cabbage",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Delapouite",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/delapouite/cabbage.html"
+  },
+  "game-icons--lantern.svg": {
+    "icon": "game-icons:lantern",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Lorc",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/lorc/lantern.html"
+  },
+  "game-icons--jug.svg": {
+    "icon": "game-icons:jug",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Delapouite",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/delapouite/jug.html"
+  },
+  "game-icons--fur-boot.svg": {
+    "icon": "game-icons:fur-boot",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Delapouite",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/delapouite/fur-boot.html"
+  },
+  "game-icons--cauldron.svg": {
+    "icon": "game-icons:cauldron",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Darkzaitzev",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/darkzaitzev/cauldron.html"
+  },
+  "mdi--fan.svg": {
+    "icon": "mdi:fan",
+    "set": "Material Design Icons",
+    "setUrl": "https://github.com/Templarian/MaterialDesign",
+    "author": "Pictogrammers",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/mdi/fan/"
+  },
+  "mdi--thermometer.svg": {
+    "icon": "mdi:thermometer",
+    "set": "Material Design Icons",
+    "setUrl": "https://github.com/Templarian/MaterialDesign",
+    "author": "Pictogrammers",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/mdi/thermometer/"
+  },
+  "mdi--shed.svg": {
+    "icon": "mdi:shed",
+    "set": "Material Design Icons",
+    "setUrl": "https://github.com/Templarian/MaterialDesign",
+    "author": "Pictogrammers",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/mdi/shed/"
+  }
+}
