@@ -1,0 +1,20 @@
+{
+  "lucide--scroll-text.svg": {
+    "icon": "lucide:scroll-text",
+    "set": "Lucide",
+    "setUrl": "https://github.com/lucide-icons/lucide",
+    "author": "Lucide Contributors",
+    "license": "ISC",
+    "licenseUrl": "https://github.com/lucide-icons/lucide/blob/main/LICENSE",
+    "source": "https://icon-sets.iconify.design/lucide/scroll-text/"
+  },
+  "tabler--crown.svg": {
+    "icon": "tabler:crown",
+    "set": "Tabler Icons",
+    "setUrl": "https://github.com/tabler/tabler-icons",
+    "author": "Pawe\u0142 Kuna",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/tabler/tabler-icons/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/tabler/crown/"
+  }
+}

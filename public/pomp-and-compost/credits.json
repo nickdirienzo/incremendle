@@ -1,0 +1,99 @@
+{
+  "libs": [
+    {
+      "name": "roughjs",
+      "version": "4.6.6",
+      "license": "MIT",
+      "what": "hand-drawn, sketchy shapes",
+      "home": "https://roughjs.com",
+      "support": "https://github.com/sponsors/pshihn"
+    },
+    {
+      "name": "@strudel/web",
+      "version": "1.3.0",
+      "license": "AGPL-3.0-or-later",
+      "what": "pattern music: synths, samples, Tidal mini-notation",
+      "home": "https://strudel.cc",
+      "support": "https://opencollective.com/tidalcycles"
+    },
+    {
+      "name": "@strudel/soundfonts",
+      "version": "1.3.0",
+      "license": "AGPL-3.0-or-later",
+      "what": "General MIDI instruments for Strudel (guitars, strings, brass, winds…)",
+      "home": "https://strudel.cc",
+      "support": "https://opencollective.com/tidalcycles"
+    }
+  ],
+  "art": [
+    {
+      "set": "Lucide",
+      "license": "ISC",
+      "licenseUrl": "https://github.com/lucide-icons/lucide/blob/main/LICENSE",
+      "home": "https://github.com/lucide-icons/lucide",
+      "support": "https://github.com/lucide-icons/lucide",
+      "icons": [
+        {
+          "icon": "lucide:umbrella",
+          "author": "Lucide Contributors",
+          "source": "https://icon-sets.iconify.design/lucide/umbrella/"
+        },
+        {
+          "icon": "lucide:search",
+          "author": "Lucide Contributors",
+          "source": "https://icon-sets.iconify.design/lucide/search/"
+        },
+        {
+          "icon": "lucide:scroll-text",
+          "author": "Lucide Contributors",
+          "source": "https://icon-sets.iconify.design/lucide/scroll-text/"
+        }
+      ]
+    },
+    {
+      "set": "Tabler Icons",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/tabler/tabler-icons/blob/master/LICENSE",
+      "home": "https://github.com/tabler/tabler-icons",
+      "support": "https://github.com/tabler/tabler-icons",
+      "icons": [
+        {
+          "icon": "tabler:crown",
+          "author": "Paweł Kuna",
+          "source": "https://icon-sets.iconify.design/tabler/crown/"
+        }
+      ]
+    }
+  ],
+  "sounds": [
+    {
+      "name": "Versilian Community Sample Library",
+      "license": "CC0-1.0",
+      "home": "https://github.com/sgossner/VCSL",
+      "author": "Versilian Studios"
+    },
+    {
+      "name": "WebAudioFont (General MIDI soundfonts)",
+      "license": "MIT",
+      "home": "https://github.com/surikov/webaudiofontdata",
+      "author": "Sergey Surikov, from free SoundFont collections"
+    }
+  ],
+  "fonts": [
+    {
+      "name": "Fredericka the Great",
+      "license": "OFL-1.1",
+      "home": "https://fonts.google.com/specimen/Fredericka+the+Great"
+    },
+    {
+      "name": "Gochi Hand",
+      "license": "OFL-1.1",
+      "home": "https://fonts.google.com/specimen/Gochi+Hand"
+    }
+  ],
+  "palette": {
+    "name": "Resurrect 32",
+    "author": "Kerrie Lake",
+    "home": "https://lospec.com/palette-list/resurrect-32"
+  }
+}

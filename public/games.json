@@ -1061,5 +1061,47 @@
     "tone": "cozy",
     "context": "none",
     "palette": "vinik24"
+  },
+  {
+    "n": 29,
+    "slug": "pomp-and-compost",
+    "date": "2026-11-20",
+    "title": "Pomp and Compost",
+    "tagline": "Rule One says nothing of the Crown may ever leave the palace. So the trumpet in the kitchen garden (legally the King; nobody checked) catches two centuries of royal socks as they fall from the attic, and composts them.",
+    "emoji": "🎺🧦",
+    "scale": "tens",
+    "minutes": "60–180",
+    "seed": 288762830,
+    "subject": {
+      "text": "a trumpet who is secretly royalty",
+      "emoji": "🎺",
+      "name": "trumpet",
+      "subgroup": "musical-instrument",
+      "trait": "{} who is secretly royalty"
+    },
+    "verb": "composting",
+    "object": "socks",
+    "interaction": "catch falling things",
+    "arc": {
+      "drive": "duty",
+      "obstacle": "a strict rule",
+      "turn": "a quiet, smaller win",
+      "initial": "O"
+    },
+    "length": "short (1–3 hours)",
+    "structure": [
+      "a collection to complete",
+      "a mid-game rule change that reshapes everything"
+    ],
+    "twist": "storage caps you must build past",
+    "ending": "a final showdown",
+    "look": "chalkboard",
+    "music": {
+      "style": "lo-fi hip hop",
+      "scale": "mixolydian"
+    },
+    "tone": "museum audio guide",
+    "context": "none",
+    "palette": "resurrect-32"
   }
 ]

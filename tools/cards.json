@@ -2493,5 +2493,86 @@
   "shopTab": "p",
   "lastSeen": 0,
   "endedAt": null
+ },
+ "pomp-and-compost": {
+  "started": true,
+  "phase": 2,
+  "bookIn": true,
+  "soil": 31,
+  "soilSeen": 2100,
+  "soilTotal": 2100,
+  "soilAtRule": 1100,
+  "heap": 14,
+  "dropped": 2200,
+  "caught": 2150,
+  "souvenirs": 23,
+  "cat": {
+   "monday": true,
+   "hunting": true,
+   "bed": true,
+   "argyle": true,
+   "skating": true,
+   "christening": true,
+   "toe": true,
+   "football": true,
+   "holey": true,
+   "message": true,
+   "stocking": true,
+   "coronation": true
+  },
+  "paired": {
+   "monday": true,
+   "hunting": true,
+   "bed": true,
+   "argyle": true,
+   "skating": true,
+   "christening": true,
+   "toe": true
+  },
+  "line": [
+   "argyle",
+   "toe",
+   "coronation",
+   "bed",
+   "holey",
+   "message"
+  ],
+  "lv": {
+   "worms": 14,
+   "footman": 10,
+   "bell": 6,
+   "bins": 8,
+   "umbrella": 6,
+   "pegs": 5,
+   "labels": 3
+  },
+  "one": {
+   "post": true,
+   "gnome": true,
+   "glass": true,
+   "portrait": true,
+   "rope": true,
+   "sign": true,
+   "crest": false
+  },
+  "seen": {
+   "worms": true,
+   "footman": true,
+   "bell": true,
+   "bins": true,
+   "post": true,
+   "gnome": true,
+   "glass": true,
+   "portrait": true,
+   "umbrella": true,
+   "rope": true,
+   "sign": true,
+   "pegs": true,
+   "labels": true,
+   "crest": true
+  },
+  "t": 3300,
+  "savedAt": 0,
+  "ended": false
  }
 }

@@ -1,0 +1,1336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pomp and Compost · Incremendle</title>
+<meta name="description" content="Rule One: nothing of the Crown leaves the palace. So the trumpet catches two centuries of royal socks as they fall from the attic, and composts them. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pomp and Compost">
+<meta property="og:description" content="Rule One says nothing of the Crown may ever leave the palace. So the trumpet in the kitchen garden (legally the King; nobody checked) catches two centuries of royal socks as they fall from the attic, and composts them.">
+<meta property="og:url" content="https://incremendle.com/pomp-and-compost/">
+<meta property="og:image" content="https://incremendle.com/pomp-and-compost/og.png?v=4ac92def">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Pomp and Compost: Rule One says nothing of the Crown may ever leave the palace. So the trumpet in the kitchen garden (legally the King; nobody checked) catches two centuries of royal socks as they fall from the attic, and composts them.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/fredericka-the-great/font.css">
+<link rel="stylesheet" href="/shared/fonts/gochi-hand/font.css">
+<style>
+  /* A chalk drawing on the potting-shed blackboard, in Resurrect 32: the board (#0b5e65, rubbed-out #0b8a8f),
+     the frame (#966c6c, #625565), white chalk, and the coloured sticks: brass (#fbb954), primrose (#fbff86),
+     sky (#8fd3ff), pink (#f68181, #fca790), lilac (#eaaded), leaf (#91db69), mint (#8ff8e2), and red (#e83b3b). */
+  :root {
+    --board: #0b5e65; --board2: #0b8a8f; --deep: #3e3546; --frame: #966c6c; --frame2: #625565; --chalk: #ffffff;
+    --brass: #fbb954; --prim: #fbff86; --sky: #8fd3ff; --pink: #f68181; --peach: #fca790; --lilac: #eaaded; --leaf: #91db69;
+    --mint: #8ff8e2; --red: #e83b3b; --sand: #e3c896; --mush: #ab947a; --plum: #6b3e75;
+    --hand: 'Gochi Hand', 'Comic Sans MS', cursive; --title: 'Fredericka the Great', Georgia, serif;
+    color-scheme: dark;
+  }
+  html, body { background: var(--deep); color: var(--chalk); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 17px/1.3 var(--hand);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(10px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image: radial-gradient(ellipse at 50% -10%, #625565 0%, transparent 60%);
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 0 0 6px; }
+  h1 { font: 400 40px/1.05 var(--title); margin: 0; color: var(--prim); letter-spacing: .5px; }
+  header p { margin: 0; font: 19px/1.1 var(--hand); color: var(--mush); }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } h1 { font-size: 32px; } }
+  main { min-width: 0; }
+
+  /* The blackboard, in its wooden frame. */
+  .board { position: relative; background: var(--board); border: 9px solid var(--frame); border-radius: 4px;
+    box-shadow: 0 0 0 2px var(--frame2), inset 0 0 40px #0006, 6px 9px 0 #0004; padding: 8px 10px 8px; }
+  .board::after { content: ''; position: absolute; left: 6%; right: 6%; bottom: -9px; height: 6px; background: var(--frame2); border-radius: 2px; }
+  .hud { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 14px; align-items: center; margin-bottom: 4px; }
+  .res { font: 34px/1 var(--hand); color: var(--prim); white-space: nowrap; }
+  .res small { font-size: 20px; color: var(--chalk); }
+  .res .rate { display: block; font-size: 16px; color: var(--mint); margin-top: 1px; }
+  .goal { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 19px; color: var(--chalk); }
+  .goal span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .meter { position: relative; flex: 1; min-width: 50px; height: 14px; border: 2px solid #ffffffcc; border-radius: 8px 5px 9px 6px; overflow: hidden; }
+  .meter i { position: absolute; inset: 0 auto 0 0; width: 0; transition: width .4s; background: repeating-linear-gradient(-55deg, #fbff86cc 0 3px, transparent 3px 7px); }
+  .sub { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0 16px; font-size: 17px; color: #ffffffcc; min-height: 21px; }
+  .sub b { font-weight: 400; color: var(--prim); }
+  .sub .warn { color: var(--peach); }
+  @media (max-width: 520px) { .hud { grid-template-columns: 1fr; } .res { font-size: 30px; } }
+
+  canvas#stage { display: block; width: 100%; max-width: calc((100vh - 350px) * 720 / 560); min-width: min(100%, 520px); margin: 0 auto; aspect-ratio: 720 / 560; touch-action: none; cursor: ew-resize; -webkit-tap-highlight-color: transparent; user-select: none; }
+  canvas#stage:focus-visible { outline: 2px dashed var(--prim); outline-offset: 3px; }
+
+  .book { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; align-items: center; margin-top: 6px; }
+  .book h3 { margin: 0; font: 400 18px/1 var(--title); color: var(--prim); white-space: nowrap; }
+  #cat { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 3px; }
+  @media (max-width: 520px) { .book { grid-template-columns: 1fr; } #cat { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+  #cat canvas { width: 100%; aspect-ratio: 1; display: block; }
+  .log { margin: 6px 0 0; min-height: 2.7em; font: 18px/1.3 var(--hand); color: var(--chalk); border-top: 2px dashed #ffffff55; padding: 6px 2px 2px; }
+  .log b { font: 400 15px/1 var(--title); color: var(--board); background: var(--prim); padding: 2px 7px 3px; margin-right: 8px; border-radius: 6px 2px 6px 2px; }
+  .log b.o { background: var(--peach); }
+  .log b.r { background: var(--sky); }
+  .log b.w { background: var(--mint); }
+  .log.fresh span { animation: dust .8s ease-out; }
+  @keyframes dust { from { opacity: .1; filter: blur(1px); } }
+
+  aside { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; scrollbar-width: thin; padding: 2px 4px 8px 2px; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  .col { background: var(--board); border: 7px solid var(--frame); border-radius: 4px; box-shadow: 0 0 0 2px var(--frame2), inset 0 0 30px #0005, 4px 6px 0 #0004; padding: 10px 10px 8px; }
+  #calls { display: grid; gap: 8px; margin-bottom: 10px; }
+  #calls:empty { display: none; }
+  .call { position: relative; text-align: left; font: 17px/1.15 var(--hand); color: var(--chalk); background: #ffffff14; border: 2.5px solid var(--prim); border-radius: 14px 5px 12px 6px; padding: 6px 10px 8px; cursor: pointer; }
+  .call b { display: block; font: 400 22px/1.05 var(--title); color: var(--prim); margin-bottom: 2px; }
+  .call.can { background: #fbff8626; animation: nudge 1.6s ease-in-out infinite; }
+  .call:focus-visible { outline: 2px dashed var(--prim); outline-offset: 4px; }
+  @keyframes nudge { 50% { transform: translateY(-2px) rotate(-.6deg); } }
+  aside h2 { font: 400 25px/1 var(--title); margin: 0 0 8px; color: var(--chalk); }
+  #afford { font: 18px/1 var(--hand); color: var(--prim); }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  @media (max-width: 760px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up {
+    position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 16px/1.1 var(--hand); color: #ffffff99;
+    background: transparent; border: 2px solid #ffffff55; border-radius: 8px 3px 9px 4px; padding: 4px 7px 5px; cursor: pointer;
+  }
+  .up b { font-weight: 400; font-size: 18px; line-height: 1.1; color: #ffffffbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { border-color: var(--prim); background: #fbff861c; }
+  .up.can b { color: var(--chalk); }
+  .up.can em { color: var(--prim); }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up.odd { border-style: dashed; }
+  .up.odd b::before, .bought.odd::before { content: '✻ '; color: var(--pink); }
+  .up .tag { position: absolute; top: -10px; right: 4px; font: 15px/1 var(--hand); font-style: normal; color: var(--board); background: var(--pink); padding: 1px 6px 2px; border-radius: 6px 2px 6px 2px; transform: rotate(4deg); }
+  .up.new { animation: glint 1.1s ease-in-out 6; }
+  @keyframes glint { 50% { box-shadow: 0 0 0 3px #f6818188; transform: rotate(-1deg); } }
+  .up:focus-visible, .bought:focus-visible { outline: 2px dashed var(--prim); outline-offset: 2px; }
+  #tip {
+    position: fixed; z-index: 50; width: 280px; padding: 9px 12px 10px; pointer-events: none; font: 17px/1.25 var(--hand); color: var(--chalk);
+    background: var(--board); border: 5px solid var(--frame); border-radius: 4px; box-shadow: 0 0 0 2px var(--frame2), inset 0 0 24px #0005, 5px 7px 0 #0005;
+  }
+  #tip b { display: block; font: 400 22px/1.05 var(--title); color: var(--prim); margin-bottom: 4px; }
+  #tip .fx { display: block; margin-top: 6px; padding: 2px 7px 3px; color: var(--board); background: var(--mint); border-radius: 5px 2px 6px 2px; }
+  #tip i { display: block; margin-top: 7px; padding-top: 5px; border-top: 2px dashed #ffffff55; color: var(--peach); font-style: normal; }
+  #tip small { display: block; margin-top: 5px; font-size: 18px; color: var(--prim); }
+  #tip.inline { position: static; width: auto; margin-top: 10px; }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 400 20px/1 var(--title); color: var(--chalk); cursor: pointer; list-style: none; padding: 3px 2px; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: '›'; color: var(--prim); transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 2px dashed var(--prim); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 2px 2px; }
+  .bought { max-width: 100%; font: 16px/1.05 var(--hand); color: var(--chalk); background: transparent; border: 1.5px solid #ffffff66; border-radius: 7px 3px 7px 3px; padding: 3px 7px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { border-style: dashed; }
+  .bought:hover, .bought.on { background: #fbff8622; border-color: var(--prim); }
+
+  #ending { margin: 22px auto 0; max-width: 700px; color: var(--chalk); background: var(--board); border: 9px solid var(--frame); border-radius: 4px; box-shadow: 0 0 0 2px var(--frame2), inset 0 0 40px #0006, 6px 9px 0 #0004; padding: 18px 26px 22px; }
+  #ending .num { font: 400 17px/1 var(--title); color: var(--mint); letter-spacing: 1px; }
+  #ending h2 { font: 400 40px/1.05 var(--title); margin: 8px 0 10px; color: var(--prim); }
+  #ending p { margin: 9px 0; font-size: 19px; }
+  #ending .guide { margin: 14px 0; padding: 8px 14px 10px; border: 2.5px dashed var(--prim); border-radius: 12px 4px 10px 6px; color: var(--prim); font-size: 21px; }
+  #ending .guide b { display: block; font: 400 18px/1 var(--title); color: var(--mint); margin-bottom: 4px; }
+  #shareBtn, #againBtn { font: 400 22px/1 var(--title); color: var(--board); background: var(--prim); border: 2.5px solid var(--chalk); border-radius: 14px 5px 12px 6px; padding: 8px 18px 9px; margin: 12px 8px 0 0; cursor: pointer; }
+  #againBtn { background: transparent; color: var(--chalk); }
+  #shareBtn:focus-visible, #againBtn:focus-visible { outline: 2px dashed var(--prim); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .call.can, .log.fresh span { animation: none; } .meter i, #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/soundfonts": "/shared/lib/@strudel/soundfonts@1.3.0/index.mjs",
+  "roughjs": "/shared/lib/roughjs@4.6.6/rough.esm.js"
+} }
+</script>
+<script src="/shared/daily.js" data-day="29" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Pomp and Compost</h1>
+    <p>the palace kitchen garden · audio guide, stops 9 to 14a</p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="board">
+        <div class="hud">
+          <div class="res" title="Soil, from the compost heap. The head gardener takes it as payment."><span id="soil">0</span> <small>soil</small><span class="rate" id="rate"></span></div>
+          <div class="goal" title="The attic: forty trunks of royal socks, two centuries deep. Mr Ormsby is emptying them out of the windows, one sock at a time."><span id="trunkTxt">Trunk 1 of 40</span><div class="meter"><i id="attic"></i></div><span id="atticPct">0%</span></div>
+          <div class="sub" id="sub"></div>
+        </div>
+        <canvas id="stage" tabindex="0" aria-label="The palace kitchen garden, drawn in chalk. Socks fall from the attic windows. Move the trumpet left and right under them to catch them in its bell: drag, or point with the mouse, or use the arrow keys."></canvas>
+        <div class="book"><h3 id="bookHead">Household Book</h3><div id="cat"></div></div>
+        <p class="log" id="log" aria-live="polite"></p>
+      </div>
+    </main>
+    <aside id="side">
+      <div class="col">
+        <div id="calls"></div>
+        <h2>The Gardener’s Shed <span id="afford"></span></h2>
+        <div id="shop"></div>
+        <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      </div>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" hidden>
+    <div class="num">AUDIO GUIDE · STOP 14a</div>
+    <h2>The Compost Heap</h2>
+    <div id="story"></div>
+    <button id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import rough from 'roughjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const fmt = E.fmt;
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DEBUG = location.search.includes('debug');
+const C = { board: '#0b5e65', board2: '#0b8a8f', deep: '#3e3546', frame: '#966c6c', chalk: '#ffffff', brass: '#fbb954', prim: '#fbff86',
+  sky: '#8fd3ff', blue: '#4d9be6', pink: '#f68181', peach: '#fca790', lilac: '#eaaded', leaf: '#91db69', green: '#1ebc73', mint: '#8ff8e2',
+  red: '#e83b3b', rose: '#c32454', sand: '#e3c896', mush: '#ab947a', rust: '#cd683d', violet: '#a884f3', plum: '#905ea9', grey: '#625565' };
+
+// ---------- State ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:29:save';
+let raw = null;
+try { raw = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+const S = E.load(raw);
+const save = () => { S.savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound: G mixolydian, the soundtrack's key (G A B C D E F; the F natural is the colour) ----------
+const A = createAudio({ sfxTrim: 1, musicTrim: 1 });
+const LV = {};
+let gainNow = 1;
+const T = o => A.tone({ ...o, vol: o.vol * gainNow });
+const N = (kind, o = {}) => A.noiseHit(kind, { ...o, vol: (o.vol ?? 0.25) * gainNow });
+const notes = scale('mixolydian', 67);   // G4 A B C D E F
+const rl = {};
+const limit = (k, ms) => { const t = performance.now(); if (t - (rl[k] || 0) < ms && !DEBUG) return false; rl[k] = t; return true; };
+let combo = 0;
+const sfx = {
+  // A sock into the bell: a soft brassy blip that climbs the scale while you keep catching.
+  catch() { const d = [0, 1, 2, 3, 4, 5, 6, 7][combo % 8]; T({ type: 'triangle', freq: notes(d), dur: 0.07, vol: 0.13, cutoff: 1800, glide: 1.02 }); T({ type: 'sine', freq: notes(d + 7), dur: 0.05, vol: 0.04, at: A.now + 0.02 }); },
+  // An umbrella catches one on its own: higher, smaller.
+  brolly() { if (!limit('brolly', 250)) return; T({ type: 'pluck', freq: notes(9), dur: 0.06, vol: 0.08, cutoff: 3000 }); },
+  // The heap turns a sock into soil: a soft low tock, now and then.
+  soil() { if (!limit('soil', 900)) return; T({ type: 'pluck', freq: notes(-3), dur: 0.08, vol: 0.09, cutoff: 1200 }); },
+  // A new kind for the Household Book.
+  fresh() { [0, 2, 4, 7].forEach((d, i) => T({ type: 'bell', freq: notes(d + 7), dur: 0.22, vol: 0.07, at: A.now + i * 0.08 })); },
+  // A pair, reunited: two notes a third apart.
+  pair() { T({ type: 'keys', freq: notes(2), dur: 0.25, vol: 0.08 }); T({ type: 'keys', freq: notes(4), dur: 0.25, vol: 0.07 }); T({ type: 'bell', freq: notes(9), dur: 0.2, vol: 0.05, at: A.now + 0.08 }); },
+  // A sock pegged on the line to wait.
+  peg() { N('hat', { vol: 0.07, dur: 0.03 }); T({ type: 'pluck', freq: notes(5), dur: 0.05, vol: 0.06, cutoff: 2400 }); },
+  // The oldest sock sent back up to the attic.
+  bump() { N('whoosh', { vol: 0.05, dur: 0.4 }); T({ type: 'sine', freq: notes(2), dur: 0.2, vol: 0.05, glide: 1.5 }); },
+  // A sock lands on the path and a tourist pockets it.
+  miss() { if (!limit('miss', 200)) return; T({ type: 'triangle', freq: notes(4), dur: 0.08, vol: 0.08, cutoff: 1400 }); T({ type: 'triangle', freq: notes(1), dur: 0.12, vol: 0.08, cutoff: 1400, at: A.now + 0.1 }); },
+  // The velvet rope saves one.
+  rope() { N('kick', { vol: 0.05 }); T({ type: 'sine', freq: notes(0), dur: 0.18, vol: 0.06, glide: 2 }); },
+  buy() { [0, 2, 4, 6, 7].forEach((d, i) => T({ type: 'pluck', freq: notes(d + 7), dur: 0.09, vol: 0.1, at: A.now + i * 0.055, cutoff: 3200 })); },
+  unlock() { T({ type: 'bell', freq: notes(11), dur: 0.25, vol: 0.08 }); T({ type: 'bell', freq: notes(14), dur: 0.35, vol: 0.07, at: A.now + 0.12 }); },
+  deny() { T({ type: 'triangle', freq: notes(-4), dur: 0.08, vol: 0.1 }); },
+  // A trunk empty: a little fanfare, pomp in four notes.
+  trunk() { [0, 4, 7, 9].forEach((d, i) => T({ type: 'sawtooth', freq: notes(d), dur: i === 3 ? 0.3 : 0.09, vol: 0.05, cutoff: 1600, at: A.now + i * 0.11 })); },
+  // Rule Two: a drum roll, then F major to G (the mixolydian flat seven, home).
+  rule() {
+    const t0 = A.now;
+    for (let i = 0; i < 10; i++) N('snare', { vol: 0.03 + i * 0.006, at: t0 + i * 0.06 });
+    [[-1, 1, 3], [0, 2, 4]].forEach((ch, k) => ch.forEach(d => T({ type: 'sawtooth', freq: notes(d + 7), dur: 0.5, vol: 0.03, cutoff: 1700, at: t0 + 0.7 + k * 0.5 })));
+    T({ type: 'bell', freq: notes(14), dur: 0.6, vol: 0.06, at: t0 + 1.25 });
+  },
+  // The King's trunk opens.
+  showdown() { const t0 = A.now; [0, 0, 4, 7, 6, 7].forEach((d, i) => T({ type: 'sawtooth', freq: notes(d + 7), dur: 0.12, vol: 0.05, cutoff: 2000, at: t0 + i * 0.12 })); N('whoosh', { vol: 0.06, dur: 1.2, at: t0 + 0.5 }); },
+  // The will, fluttering.
+  will() { N('whoosh', { vol: 0.05, dur: 1.4 }); T({ type: 'bell', freq: notes(4), dur: 0.6, vol: 0.06, at: A.now + 0.3 }); },
+  // The end: a slow cadence, F to G, and the guide's chime.
+  finale() {
+    const t0 = A.now;
+    [[-1, 1, 3, 5], [0, 2, 4, 7]].forEach((ch, k) => ch.forEach(d => T({ type: 'keys', freq: notes(d + 7), dur: 1, vol: 0.05, at: t0 + k * 0.9 })));
+    [7, 9, 11, 14].forEach((d, i) => T({ type: 'bell', freq: notes(d + 7), dur: 0.6, vol: 0.05, at: t0 + 2 + i * 0.16 }));
+  },
+};
+for (const [name, f] of Object.entries(sfx)) sfx[name] = (...a) => { gainNow = LV[name] ?? 1; try { f(...a); } finally { gainNow = 1; } };
+if (DEBUG) window.__game = { A, sfx, long: ['rule', 'showdown', 'finale', 'will'], S: () => S, E };
+
+// ---------- Music ----------
+let music = null, soundtrack = null;
+const phaseKey = () => S.ended ? 'end' : S.phase === 3 ? 'showdown' : S.phase === 2 ? 'pairs' : 'catalogue';
+function song() { return (soundtrack ??= createSoundtrack(music.strudel))(phaseKey()); }
+createMusic(A, { packs: ['vcsl'], soundfonts: true, song }).then(m => { music = m; music.update(); if (DEBUG) window.__game.music = m; }).catch(e => console.warn('music', e));
+const refreshMusic = () => { if (music) music.update(); };
+
+// ---------- Chalk ----------
+// Every colour is a stick of chalk: a pattern with the board showing through. Lines wobble a little, the same
+// way every frame (seeded), and get a faint dusty second pass.
+const W = 720, H = 560;
+const cv = $('stage');
+let g = cv.getContext('2d');
+const PATS = new WeakMap();
+let noiseSeed = 1;
+const nrand = () => ((noiseSeed = (noiseSeed * 16807) % 2147483647) / 2147483647);
+function chalk(col) {
+  let m = PATS.get(g); if (!m) PATS.set(g, m = {});
+  if (m[col]) return m[col];
+  const c = document.createElement('canvas'); c.width = c.height = 96;
+  const q = c.getContext('2d'); q.fillStyle = col; q.fillRect(0, 0, 96, 96);
+  const img = q.getImageData(0, 0, 96, 96), d = img.data;
+  for (let i = 0; i < d.length; i += 4) { const r = nrand(); d[i + 3] = r < 0.2 ? 0 : r < 0.42 ? 110 : 235; }
+  q.putImageData(img, 0, 0);
+  return (m[col] = g.createPattern(c, 'repeat'));
+}
+let seedN = 0;
+const hash = (a, b = 0) => { let h = (a * 374761393 + b * 668265263) | 0; h = (h ^ (h >>> 13)) * 1274126177; h ^= h >>> 16; return (h >>> 0) / 4294967296; };
+const seed = k => { seedN = k * 101; };
+const J = (a = 0.8) => (hash(seedN++, 3) - 0.5) * 2 * a;
+function stroke(col, w) { g.strokeStyle = chalk(col); g.lineWidth = w; g.lineCap = 'round'; g.lineJoin = 'round'; }
+function line(pts, col = C.chalk, w = 2.4, j = 0.7) {
+  const p = pts.map(([x, y]) => [x + J(j), y + J(j)]);
+  stroke(col, w); g.beginPath(); p.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.stroke();
+  g.globalAlpha *= 0.3; stroke(col, w * 1.9); g.beginPath(); p.forEach(([x, y], i) => i ? g.lineTo(x + 0.6, y + 0.5) : g.moveTo(x + 0.6, y + 0.5)); g.stroke(); g.globalAlpha /= 0.3;
+}
+function curve(pts, col = C.chalk, w = 2.4, j = 0.6) {
+  const p = pts.map(([x, y]) => [x + J(j), y + J(j)]);
+  stroke(col, w); g.beginPath(); g.moveTo(p[0][0], p[0][1]);
+  for (let i = 1; i < p.length - 1; i++) g.quadraticCurveTo(p[i][0], p[i][1], (p[i][0] + p[i + 1][0]) / 2, (p[i][1] + p[i + 1][1]) / 2);
+  g.lineTo(p.at(-1)[0], p.at(-1)[1]); g.stroke();
+}
+function oval(x, y, rx, ry, col = C.chalk, w = 2.2, { fill = null, fa = 0.45, a0 = 0, a1 = Math.PI * 2, j = 0.5 } = {}) {
+  const n = Math.max(10, Math.round((rx + ry) / 3));
+  const pts = [];
+  for (let i = 0; i <= n; i++) { const a = a0 + (a1 - a0) * i / n; pts.push([x + Math.cos(a) * (rx + J(j)), y + Math.sin(a) * (ry + J(j))]); }
+  if (fill) { g.globalAlpha *= fa; g.fillStyle = chalk(fill); g.beginPath(); pts.forEach(([px, py], i) => i ? g.lineTo(px, py) : g.moveTo(px, py)); g.fill(); g.globalAlpha /= fa; }
+  if (col) line(pts, col, w, 0.2);
+}
+function fill(pts, col, a = 0.5) {
+  g.globalAlpha *= a; g.fillStyle = chalk(col); g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); g.fill(); g.globalAlpha /= a;
+}
+function box(x, y, w, h, col = C.chalk, lw = 2.2, f = null, fa = 0.45) {
+  if (f) fill([[x, y], [x + w, y], [x + w, y + h], [x, y + h]], f, fa);
+  line([[x, y], [x + w, y], [x + w, y + h], [x, y + h], [x, y - 1]], col, lw);
+}
+function write(text, x, y, size = 18, col = C.chalk, align = 'center', font = 'Gochi Hand', rot = 0) {
+  g.save(); g.translate(x, y); if (rot) g.rotate(rot);
+  g.font = `${size}px '${font}', 'Comic Sans MS', cursive`; g.textAlign = align; g.textBaseline = 'middle';
+  g.fillStyle = chalk(col); g.fillText(text, 0, 0); g.restore();
+}
+// Hatch a shape with chalk strokes (shading).
+function hatch(pts, col, gap = 5, a = 0.5, w = 1.4) {
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  g.save(); g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); g.clip();
+  g.globalAlpha *= a; stroke(col, w); g.beginPath();
+  for (let k = x0 - (y1 - y0); k < x1; k += gap) { g.moveTo(k + J(1), y1 + J(1)); g.lineTo(k + (y1 - y0) + J(1), y0 + J(1)); }
+  g.stroke(); g.restore();
+}
+
+// ---------- The scene ----------
+const WX = [305, 410, 200, 515];            // attic windows, in the order they open (Ormsby's first)
+const WY = 78;                              // where socks leave the window
+const BELL_Y = 388;                         // the trumpet's bell, where catches happen
+const UMB_Y = 446;                          // the umbrellas' rims
+const PATH_Y = 500;                         // where a missed sock lands
+const UX = [274, 400, 484, 190, 358, 232, 526, 316, 442];
+const TMIN = 168, TMAX = 552;
+const LINE = { x0: 586, x1: 708, rows: [318, 366] };
+const HEAP = { x: 12, y: 372, cols: 4, cw: 33, rh: 30 };
+let tx = 300, target = 300, clock = 0;
+const socks = [];      // in the air: { kind, x, y, vx, vy, ph, counted, sd, will }
+const fliers = [];     // caught by an umbrella, flying to the heap or the line
+const floats = [];
+let flash = 0, ruleBanner = 0, eyes = 0;
+const vis = id => S.ended ? E.max(E.BY_ID[id]) : E.lv(S, id);
+const has = id => S.ended || !!S.one[id];
+
+// A sock, drawn at the origin, toe to the right. Scale 1 is about 22 px tall.
+function drawSock(kind, x, y, rot = 0, sc = 1, { glow = false, ghost = false } = {}) {
+  const k = E.KINDS[E.KIND[kind]];
+  const s = sc * (k.pat === 'stocking' ? 1.35 : k.pat === 'lace' ? 0.75 : 1);
+  g.save(); g.translate(x, y); g.rotate(rot); g.scale(s, s);
+  seed(E.KIND[kind] + 40);
+  const shape = [[-5, -12], [5, -12], [5, 3], [7, 6], [12, 7], [15, 10], [12, 13], [-1, 13], [-5, 9]];
+  if (glow) { g.globalAlpha *= 0.35; oval(3, 0, 17, 17, null, 0, { fill: C.prim, fa: 0.6 }); g.globalAlpha /= 0.35; }
+  if (ghost) { line([...shape, shape[0]], '#ffffff', 1.4, 0.4); g.restore(); return; }
+  fill(shape, k.col, 0.85);
+  const alt = k.alt;
+  if (k.pat === 'hoops') for (const yy of [-6, 0]) line([[-5, yy], [5, yy]], alt, 2.4, 0.3);
+  if (k.pat === 'tweed') for (let i = 0; i < 7; i++) oval(-3 + (i * 7) % 9, -9 + i * 3, 0.8, 0.8, alt, 1.3);
+  if (k.pat === 'argyle') { line([[-5, -6], [0, -10], [5, -6], [0, -2], [-5, -6]], alt, 1.4, 0.2); line([[-5, 2], [0, -2], [5, 2], [0, 6], [-5, 2]], alt, 1.4, 0.2); }
+  if (k.pat === 'snow') { line([[-3, -4], [3, 2]], alt, 1.2, 0.1); line([[3, -4], [-3, 2]], alt, 1.2, 0.1); line([[0, -5], [0, 3]], alt, 1.2, 0.1); }
+  if (k.pat === 'lace') for (let i = 0; i < 5; i++) oval(-3 + i * 1.6, -11 + (i % 2) * 2, 1, 1, alt, 1);
+  if (k.pat === 'toes') for (let i = 0; i < 5; i++) oval(13.5 - i * 0.2, 7.5 + i * 1.3, 1.6, 1, alt, 1.2);
+  if (k.pat === 'hole') oval(1, 9, 2.6, 2.2, null, 0, { fill: C.board, fa: 1 });
+  if (k.pat === 'message') write('HELP', 0, -3, 6, alt, 'center', 'Gochi Hand', -Math.PI / 2);
+  if (k.pat === 'gold') { line([[-2, -4], [-2, 0]], '#ffffff', 1.2, 0.1); line([[-4, -2], [0, -2]], '#ffffff', 1.2, 0.1); line([[2, 4], [5, 4]], C.brass, 1.2, 0.1); }
+  if (k.pat === 'fluffy') for (let i = 0; i < 6; i++) oval(-5 + (i % 2) * 10, -10 + i * 4, 1.3, 1.3, alt, 1.2);
+  const cuff = k.pat === 'stocking' || k.pat === 'gold' ? '#ffffff' : alt;
+  fill([[-6, -15], [6, -15], [6, -11], [-6, -11]], cuff, 0.9);
+  if (k.pat === 'gold') for (const xx of [-3, 1, 4]) oval(xx, -13, 0.6, 0.6, C.deep, 1);
+  line([...shape, shape[0]], '#ffffff', 1.3, 0.3);
+  g.restore();
+}
+
+// The trumpet, tipped up so its bell faces the sky. x, y is the middle of the bell's rim; the bell widens with the
+// bell level (taped-on cones, one chalk band each). The body runs down and to the left: bell tube, slide, leadpipe,
+// three valves, and a mouthpiece, all in brass chalk.
+function drawTrumpet(x, y, { bw = E.bellWidth(S), happy = 0, tape = vis('bell'), glass = has('glass'), sc = 1 } = {}) {
+  g.save(); g.translate(x, y); g.scale(sc, sc);
+  seed(7);
+  // A shadow on the lawn.
+  oval(-26, 98, 40, 5, null, 0, { fill: '#000000', fa: 0.18 });
+  g.save(); g.rotate(-Math.PI / 2 + 0.3);
+  const r = bw / 2, L = 22 + r * 0.45;
+  const tube = (pts, w = 4.2) => { curve(pts, C.brass, w, 0.3); curve(pts.map(([a, b]) => [a, b - 1.2]), C.prim, 1.1, 0.2); };
+  // Bell tube to the rear bow, the slide back, and the leadpipe out to the mouthpiece.
+  tube([[-L, 0], [-L - 40, 0], [-L - 66, 0]]);
+  curve([[-L - 66, 0], [-L - 73, 6], [-L - 66, 13]], C.brass, 4.2, 0.3);
+  tube([[-L - 66, 13], [-L - 30, 13], [-L + 2, 13]]);
+  curve([[-L + 2, 13], [-L + 8, 19], [-L + 2, 25]], C.brass, 4, 0.3);
+  tube([[-L + 2, 25], [-L - 40, 25], [-L - 84, 25]], 3.6);
+  oval(-L - 88, 25, 3, 5, C.prim, 2, { fill: C.brass, fa: 0.8 });
+  // Three valves with their finger buttons.
+  for (const vx of [-L - 22, -L - 32, -L - 42]) {
+    fill([[vx - 3.5, -4], [vx + 3.5, -4], [vx + 3.5, 30], [vx - 3.5, 30]], C.brass, 0.85);
+    line([[vx - 3.5, -4], [vx - 3.5, 30]], C.prim, 1.3, 0.2); line([[vx + 3.5, -4], [vx + 3.5, 30]], C.prim, 1.3, 0.2);
+    line([[vx, -4], [vx, -11]], C.prim, 1.6, 0.2); oval(vx, -12.5, 3.2, 1.8, C.prim, 1.6, { fill: '#ffffff', fa: 0.6 });
+  }
+  // The bell's flare, rim at the origin.
+  const top = [[0, -r], [-L * 0.3, -r * 0.42], [-L * 0.65, -r * 0.14], [-L, -2.5]];
+  const bot = top.map(([a, b]) => [a, -b]).reverse();
+  fill([...top, ...bot], C.brass, 0.8);
+  curve(top, C.prim, 2.4, 0.3); curve(bot.slice().reverse(), C.prim, 2.4, 0.3);
+  for (let i = 0; i < tape; i++) { const xx = -2 - i * 1.9, rr = r * (1 - (i * 1.9) / (L * 0.5)) - 2; if (rr > 4) line([[xx, -rr], [xx, rr]], '#ffffff', 1.1, 0.4); }
+  oval(0, 0, 5, r, C.prim, 2.6, { fill: C.deep, fa: 0.85 });
+  // A small, dignified face on the flare.
+  const ex = -L * 0.38;
+  if (happy > 0) { curve([[ex + 1, -6], [ex - 2, -4], [ex + 1, -2]], C.deep, 1.8, 0.2); curve([[ex + 1, 2], [ex - 2, 4], [ex + 1, 6]], C.deep, 1.8, 0.2); }
+  else { oval(ex, -4, 1.7, 1.5, null, 0, { fill: C.deep, fa: 1 }); oval(ex, 4, 1.7, 1.5, null, 0, { fill: C.deep, fa: 1 }); }
+  curve([[ex - 7, -3], [ex - 8.5, 0], [ex - 7, 3]], C.deep, 1.5, 0.2);
+  g.restore();
+  // The magnifying glass, propped on the lawn beside it.
+  if (glass) { line([[34, 96], [44, 78]], C.mush, 2.4); oval(47, 71, 8, 8, C.sky, 2.2, { fill: C.sky, fa: 0.22 }); }
+  g.restore();
+}
+
+// Mr Ormsby, Keeper of the Household Rules, in his window: bald dome, spectacles, collar, a sock at arm's length.
+function drawOrmsby(x, y, { holding = null, arm = 0, wait = false, tea = false } = {}) {
+  g.save(); g.translate(x, y); seed(11);
+  fill([[-14, 22], [-12, 6], [12, 6], [14, 22]], C.grey, 0.9);
+  line([[-12, 22], [-11, 7], [-4, 4], [4, 4], [11, 7], [12, 22]], C.chalk, 2);
+  line([[-3, 5], [0, 12], [3, 5]], C.chalk, 1.6);
+  oval(0, -6, 9, 10, C.chalk, 2.2, { fill: C.sand, fa: 0.55 });
+  oval(-3.5, -6, 2.6, 2.2, C.chalk, 1.3); oval(3.5, -6, 2.6, 2.2, C.chalk, 1.3);
+  curve([[-5, -1], [0, 1], [5, -1]], C.chalk, 2, 0.2);
+  line([[-9, -9], [-10, -2]], C.mush, 1.5); line([[9, -9], [10, -2]], C.mush, 1.5);
+  if (wait) { line([[12, 10], [22, 2], [25, -8]], C.chalk, 2); write('…', 26, -16, 18, C.prim); }
+  else { line([[12, 10], [22, 8 - arm * 6], [30, 6 - arm * 10]], C.chalk, 2); if (holding) drawSock(holding, 33, 10 - arm * 10, 0.3, 0.8); }
+  g.restore();
+}
+function drawFootman(x, y, i, arm = 0) {
+  g.save(); g.translate(x, y); seed(20 + i);
+  fill([[-11, 22], [-10, 7], [10, 7], [11, 22]], C.rose, 0.85);
+  line([[-10, 22], [-9, 8], [9, 8], [10, 22]], C.chalk, 1.8);
+  oval(0, -4, 8, 9, C.chalk, 2, { fill: C.peach, fa: 0.5 });
+  for (const [cx, cy] of [[-8, -6], [8, -6], [-7, 1], [7, 1], [0, -12]]) oval(cx, cy, 3, 3, C.chalk, 1.4, { fill: '#ffffff', fa: 0.6 });
+  oval(-3, -4, 0.9, 0.9, C.deep, 1.2); oval(3, -4, 0.9, 0.9, C.deep, 1.2);
+  line([[10, 12], [18, 9 - arm * 6]], C.chalk, 1.8);
+  g.restore();
+}
+function tourist(x, y, i, { walk = 0, bend = 0, sockIn = null, camera = false, face = 1 } = {}) {
+  const cols = [C.sky, C.peach, C.leaf, C.lilac, C.prim, C.pink];
+  g.save(); g.translate(x, y); g.scale(face, 1); seed(60 + i);
+  const leg = Math.sin(walk) * 4;
+  line([[-2, 0], [-2 - leg, 14]], C.chalk, 2); line([[2, 0], [2 + leg, 14]], C.chalk, 2);
+  g.save(); g.rotate(bend * 0.5);
+  fill([[-7, 0], [-6, -18], [6, -18], [7, 0]], cols[i % cols.length], 0.7);
+  line([[-7, 0], [-6, -18], [6, -18], [7, 0], [-7, 0]], C.chalk, 1.6);
+  oval(0, -25, 6, 6.5, C.chalk, 1.8, { fill: C.sand, fa: 0.4 });
+  // The audio guide's headphones.
+  curve([[-6, -25], [-6, -33], [0, -35], [6, -33], [6, -25]], C.deep, 1.8, 0.2); oval(-6.5, -25, 2, 3, null, 0, { fill: C.deep, fa: 1 }); oval(6.5, -25, 2, 3, null, 0, { fill: C.deep, fa: 1 });
+  if (camera) { box(5, -24, 7, 5, C.chalk, 1.4, C.grey, 0.8); }
+  else line([[6, -14], [10, -4 + bend * 8]], C.chalk, 1.6);
+  if (sockIn) drawSock(sockIn, 11, -2, 1.2, 0.6);
+  g.restore();
+  g.restore();
+}
+function umbrella(x, y, n, socksIn = 0) {
+  g.save(); g.translate(x, y); seed(80 + n);
+  const sway = reduced ? 0 : Math.sin(clock * 1.3 + n) * 0.04;
+  g.rotate(sway);
+  line([[0, 0], [0, 34]], C.chalk, 2); curve([[0, 34], [0, 40], [5, 41], [7, 37]], C.chalk, 2);
+  const rim = [];
+  for (let i = 0; i <= 8; i++) rim.push([-22 + i * 5.5, (i % 2 ? 3 : 0)]);
+  const bowl = [[-22, 0], [-18, 10], [-9, 17], [0, 19], [9, 17], [18, 10], [22, 0]];
+  fill([...rim, ...bowl.slice().reverse()], C.deep, 0.9);
+  curve(bowl, C.chalk, 2.2); line(rim, C.chalk, 1.8);
+  for (const xx of [-11, 0, 11]) line([[xx, 1], [xx * 0.5, 17]], '#ffffff', 1, 0.3);
+  for (let i = 0; i < Math.min(3, socksIn); i++) drawSock(E.KINDS[(n + i * 5) % 12].id, -10 + i * 9, -3, -0.4 + i * 0.4, 0.55);
+  g.restore();
+}
+function gnome(x, y) {
+  g.save(); g.translate(x, y); seed(90);
+  fill([[-9, 0], [-7, -16], [7, -16], [9, 0]], C.blue, 0.75); line([[-9, 0], [-7, -16], [7, -16], [9, 0], [-9, 0]], C.chalk, 1.8);
+  oval(0, -21, 6, 5.5, C.chalk, 1.6, { fill: C.peach, fa: 0.6 });
+  fill([[-6, -20], [6, -20], [3, -9], [-3, -9]], '#ffffff', 0.85);
+  if (SPR.crown) g.drawImage(SPR.crown, -9, -42, 18, 18);
+  else line([[-6, -26], [-6, -33], [-3, -29], [0, -34], [3, -29], [6, -33], [6, -26], [-6, -26]], C.prim, 1.8);
+  g.restore();
+}
+function post14a(x, y, playing = false) {
+  g.save(); g.translate(x, y); seed(95);
+  line([[0, 0], [0, -40]], C.mush, 2.6);
+  box(-14, -62, 28, 22, C.chalk, 2, playing ? C.leaf : C.deep, 0.8);
+  write('14a', 0, -51, 15, playing ? C.deep : C.prim);
+  if (playing) write('▶', 20, -51, 12, C.leaf); else write('…', 20, -54, 14, '#ffffff');
+  g.restore();
+}
+function portrait(x, y) {
+  g.save(); g.translate(x, y); seed(97);
+  box(-26, -32, 52, 64, C.brass, 3, C.deep, 0.85); box(-21, -27, 42, 54, C.prim, 1.2);
+  oval(0, -8, 8, 9, C.chalk, 1.6, { fill: C.sand, fa: 0.5 });
+  line([[-6, -16], [-6, -22], [-3, -18], [0, -23], [3, -18], [6, -22], [6, -16]], C.prim, 1.4);
+  fill([[-14, 25], [-11, 4], [11, 4], [14, 25]], C.rose, 0.7);
+  // He is holding a trumpet.
+  line([[6, 10], [16, 2]], C.brass, 2.2); oval(17, 0, 3.5, 2, C.prim, 1.4);
+  write('H.R. the T.', 0, 38, 11, C.prim);
+  g.restore();
+}
+function crest(x, y) {
+  g.save(); g.translate(x, y); seed(99);
+  const sh = [[-15, -16], [15, -16], [15, 2], [0, 14], [-15, 2]];
+  fill(sh, C.prim, 0.25); line([...sh, sh[0]], C.prim, 1.8);
+  if (SPR.crown) g.drawImage(SPR.crown, -8, -15, 16, 16); else write('♛', 0, -6, 13, C.prim);
+  write('BY APPOINTMENT', 0, 22, 10, C.prim);
+  g.restore();
+}
+function sign(x, y) {
+  g.save(); g.translate(x, y); seed(98);
+  line([[0, 0], [0, -24]], C.mush, 2.4);
+  box(-44, -52, 88, 30, C.chalk, 1.8, C.deep, 0.85);
+  write('THE GIFT SHOP DOES', 0, -44, 10.5, C.chalk); write('NOT SELL SOCKS.', 0, -35, 10.5, C.chalk); write('please return yours', 0, -27, 9.5, C.peach);
+  g.restore();
+}
+
+// The static layer: the palace wall, the windows, the lawn, the beds, the heap's bins, the props. Redrawn when
+// anything on it changes.
+const bg = document.createElement('canvas');
+let bgSig = '';
+function bgSignature() {
+  return [S.phase, S.ended, E.windows(S), vis('bins'), vis('pegs'), vis('labels'), has('gnome'), has('post'), has('portrait'), has('crest'), has('sign'), has('rope'), Math.floor(E.atticFrac(S) * 30), S.bookIn].join('|');
+}
+function drawBg() {
+  const scaleK = bg.width / W;
+  const keep = g; g = bg.getContext('2d');
+  g.setTransform(scaleK, 0, 0, scaleK, 0, 0);
+  g.fillStyle = C.board; g.fillRect(0, 0, W, H);
+  // Rubbed-out chalk, from earlier lessons.
+  noiseSeed = 7;
+  for (let i = 0; i < 9; i++) { g.globalAlpha = 0.025 + nrand() * 0.03; g.fillStyle = '#ffffff'; g.beginPath(); g.ellipse(nrand() * W, nrand() * H, 50 + nrand() * 90, 6 + nrand() * 10, (nrand() - 0.5) * 0.4, 0, 7); g.fill(); }
+  g.globalAlpha = 1;
+  seed(1);
+  // The roof and the attic.
+  line([[40, 112], [80, 30], [640, 30], [680, 112]], C.chalk, 2.6);
+  line([[118, 30], [118, 8], [138, 8], [138, 30]], C.chalk, 2.2); line([[582, 30], [582, 8], [602, 8], [602, 30]], C.chalk, 2.2);
+  for (let x = 100; x < 640; x += 26) for (let y = 44; y < 110; y += 16) line([[x + (y % 32 ? 13 : 0), y], [x + 18 + (y % 32 ? 13 : 0), y]], '#ffffff', 1, 0.6);
+  g.globalAlpha = 0.25; hatch([[40, 112], [80, 30], [640, 30], [680, 112]], C.chalk, 9, 0.6, 1); g.globalAlpha = 1;
+  const open = E.windows(S);
+  WX.forEach((wx, i) => {
+    const isOpen = i < open || S.ended;
+    box(wx - 28, 46, 56, 56, C.chalk, 2.4, isOpen ? C.deep : C.board2, isOpen ? 0.95 : 0.5);
+    line([[wx - 32, 38], [wx, 26], [wx + 32, 38]], C.chalk, 2.2);
+    if (!isOpen) { line([[wx, 46], [wx, 102]], C.chalk, 1.6); line([[wx - 28, 74], [wx + 28, 74]], C.chalk, 1.6); }
+    if (vis('labels') > i * 1.5 && S.phase >= 2) write('MATCHING', wx, 110, 10, C.mint);
+  });
+  // The palace wall and its tall windows.
+  line([[24, 112], [696, 112]], C.chalk, 2.6);
+  for (let x = 40; x < 690; x += 30) for (let y = 126; y < 256; y += 14) line([[x + (y % 28 ? 15 : 0), y], [x + 12 + (y % 28 ? 15 : 0), y]], C.mush, 1, 0.5);
+  for (const wx of [180, 300, 420, 540]) { box(wx - 20, 130, 40, 58, C.chalk, 1.8, C.board2, 0.6); line([[wx, 130], [wx, 188]], C.chalk, 1.2); line([[wx - 20, 159], [wx + 20, 159]], C.chalk, 1.2); }
+  // The kitchen garden.
+  line([[0, 262], [W, 262]], C.chalk, 2.4);
+  g.globalAlpha = 0.18; hatch([[0, 262], [W, 262], [W, 490], [0, 490]], C.leaf, 11, 1, 1.2); g.globalAlpha = 1;
+  // The beds bloom as the attic empties: the compost goes on them.
+  const blooms = S.ended ? 30 : Math.floor(E.atticFrac(S) * 30);
+  for (let i = 0; i < 30; i++) {
+    const fx = 20 + i * 23 + (i % 3) * 4, fy = 280 + (i % 2) * 4;
+    line([[fx, fy], [fx + J(2), fy - 12]], C.leaf, 1.6);
+    if (i < blooms) { const col = [C.pink, C.prim, C.lilac, C.peach, C.sky][i % 5]; for (let p = 0; p < 5; p++) oval(fx + Math.cos(p * 1.26) * 3.2, fy - 13 + Math.sin(p * 1.26) * 3.2, 2.2, 2.2, null, 0, { fill: col, fa: 0.9 }); oval(fx, fy - 13, 1.4, 1.4, null, 0, { fill: C.prim, fa: 1 }); }
+    else oval(fx, fy - 13, 1.6, 2.2, C.leaf, 1.2);
+  }
+  // The path, where the tour walks.
+  line([[0, 492], [W, 492]], C.sand, 2); line([[0, 548], [W, 548]], C.sand, 2);
+  for (let x = 8; x < W; x += 24) oval(x + J(4), 520 + J(10), 2.5, 1.5, C.sand, 1.2);
+  if (has('rope')) {
+    for (let x = 150; x <= 570; x += 70) { line([[x, 486], [x, 462]], C.brass, 2.6); oval(x, 460, 3, 3, C.prim, 1.6); }
+    for (let x = 150; x < 570; x += 70) curve([[x, 464], [x + 35, 476], [x + 70, 464]], C.red, 3);
+  }
+  // The heap's bins: one slatted bin to start, more as you build them.
+  const bins = 1 + vis('bins');
+  for (let b = 0; b < bins; b++) {
+    const bx = HEAP.x + (b % HEAP.cols) * HEAP.cw, by = 456 - Math.floor(b / HEAP.cols) * HEAP.rh;
+    box(bx, by, HEAP.cw - 3, 28, C.mush, 1.8);
+    for (let s = 1; s < 4; s++) line([[bx, by + s * 7], [bx + HEAP.cw - 3, by + s * 7]], C.mush, 1, 0.3);
+  }
+  write('the heap', HEAP.x + 64, 498, 14, C.mush);
+  if (has('crest')) crest(60, 322);
+  if (has('portrait')) portrait(78, 186);
+  if (has('gnome')) gnome(150, 486);
+  if (has('post')) post14a(150, 544, S.ended);
+  if (has('sign')) sign(640, 470);
+  // Rule Two's washing line.
+  if (S.phase >= 2 || S.ended) {
+    line([[LINE.x0 - 6, 400], [LINE.x0 - 6, 306]], C.mush, 2.6); line([[LINE.x1, 400], [LINE.x1, 306]], C.mush, 2.6);
+    for (const ry of LINE.rows) curve([[LINE.x0 - 6, ry], [(LINE.x0 + LINE.x1) / 2, ry + 5], [LINE.x1, ry]], C.chalk, 1.4);
+    write('RULE TWO', (LINE.x0 + LINE.x1) / 2, 298, 13, C.mint, 'center', 'Fredericka the Great');
+  }
+  g = keep;
+}
+// The washing line's pegs: where slot i hangs.
+const slotsPerRow = () => Math.ceil(E.lineCap(S) / 2);
+function slotPos(i) {
+  const per = slotsPerRow(), row = Math.floor(i / per), col = i % per;
+  const span = LINE.x1 - LINE.x0 - 10;
+  return [LINE.x0 + 4 + (per > 1 ? col * span / (per - 1) : span / 2), LINE.rows[row] + 4];
+}
+
+// ---------- Tourists ----------
+const tour = [];
+for (let i = 0; i < 5; i++) tour.push({ x: 30 + i * 140, dir: i % 2 ? -1 : 1, v: 14 + i * 3, walk: i, i, task: null, sock: null, bend: 0 });
+
+// ---------- Floats ----------
+function float(text, x, y, color = C.prim, size = 18) { floats.push({ text, x, y, t: 0, color, size }); if (floats.length > 30) floats.shift(); }
+
+// ---------- Layout ----------
+function layout() {
+  const r = cv.getBoundingClientRect();
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const w = Math.max(320, Math.round(r.width * dpr));
+  if (cv.width !== w) { cv.width = w; cv.height = Math.round(w * H / W); bg.width = cv.width; bg.height = cv.height; bgSig = ''; }
+}
+
+// ---------- Drawing ----------
+let held = null;   // the sock at Ormsby's window, about to go
+function render() {
+  const k = cv.width / W;
+  const sig = bgSignature();
+  if (sig !== bgSig) { bgSig = sig; drawBg(); }
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.drawImage(bg, 0, 0);
+  g.setTransform(k, 0, 0, k, 0, 0);
+  // Who's in the attic windows.
+  const open = S.ended ? 0 : E.windows(S);
+  const foot = S.ended ? 0 : S.lv.footman;
+  const waiting = waitingRoom();
+  for (let i = 0; i < Math.min(open, 4); i++) {
+    const wx = WX[i];
+    if (i === 0) {
+      if (S.phase === 3 && S.sd) drawTrunk(wx, 70);
+      else drawOrmsby(wx - 6, 70, { holding: waiting ? null : held, arm: dropPulse[0] || 0, wait: waiting });
+    } else drawFootman(wx - 4, 72, i, dropPulse[i] || 0);
+  }
+  if (S.ended) drawOrmsby(WX[0] - 6, 70, { wait: false, arm: 0 });
+  // Extra footmen, peeping over the sills.
+  for (let f = 0; f < Math.max(0, foot - open + 1) && f < 8; f++) { const wx = WX[f % open]; oval(wx - 18 + (f >> 2) * 30, 99, 5, 4, C.chalk, 1.4, { fill: '#ffffff', fa: 0.5 }); }
+  // The heap: socks mounded in the bins, worms working.
+  drawHeap();
+  // The washing line.
+  if (S.phase >= 2 && !S.ended) {
+    const cap = E.lineCap(S);
+    for (let i = 0; i < cap; i++) { const [px, py] = slotPos(i); line([[px, py - 6], [px, py - 1]], C.sand, 1.6, 0.2); }
+    S.line.forEach((kind, i) => { const [px, py] = slotPos(i); drawSock(kind, px, py + 10, Math.sin(clock * 2 + i) * 0.05, 0.8); });
+  }
+  if (S.ended) for (let i = 0; i < 12; i++) { const [px, py] = [LINE.x0 + 6 + (i % 6) * 20, LINE.rows[i < 6 ? 0 : 1] + 14]; drawSock(E.KINDS[i].id, px, py, 0, 0.75); }
+  // Umbrellas.
+  const nU = vis('umbrella');
+  for (let i = 0; i < nU; i++) umbrella(UX[i], UMB_Y, i, umbFill[i] || 0);
+  // Tourists on the path.
+  for (const p of tour) tourist(p.x, 530, p.i, { walk: p.walk, bend: p.bend, sockIn: p.sock, camera: has('gnome') && p.i === 2, face: p.dir });
+  // Falling socks.
+  for (const s of socks) {
+    if (s.will) drawWill(s.x, s.y, s.ph);
+    else drawSock(s.kind, s.x, s.y, Math.sin(s.ph) * 0.5, 1, { glow: S.phase === 1 && has('glass') && !S.cat[s.kind] });
+  }
+  for (const f of fliers) drawSock(f.kind, f.x, f.y, f.t * 6, 0.8);
+  // The trumpet.
+  if (!S.ended) drawTrumpet(tx, BELL_Y, { happy: eyes });
+  else drawTrumpet(330, BELL_Y, { happy: 1, bw: E.bellWidth({ lv: { bell: 8 } }), tape: 8, glass: true });
+  // Ormsby waits for room.
+  if (waiting && !S.ended && S.phase < 3) write('room in the heap, please', WX[0], 128, 14, C.peach);
+  else if (E.holdingForBook(S) && !S.ended) write('the Book first, please', WX[0], 128, 14, C.peach);
+  if (!S.started && !S.ended) { box(200, 300, 320, 64, C.prim, 2.4, C.deep, 0.85); write('Press the board to begin.', 360, 320, 22, C.prim); write('Then keep the trumpet under the falling socks.', 360, 346, 16, C.chalk); }
+  if (S.ended) { write('Stop 14a: recorded.', 360, 230, 26, C.prim, 'center', 'Fredericka the Great'); }
+  if (ruleBanner > 0) {
+    g.globalAlpha = Math.min(1, ruleBanner);
+    box(160, 196, 400, 74, C.mint, 3, C.deep, 0.92);
+    write('RULE TWO', 360, 222, 26, C.mint, 'center', 'Fredericka the Great');
+    write('What the Crown has paired, let no one part.', 360, 252, 18, C.chalk);
+    g.globalAlpha = 1;
+  }
+  for (const f of floats) { g.globalAlpha = Math.max(0, 1 - f.t / 1.4); write(f.text, f.x, f.y - f.t * 24, f.size, f.color); }
+  g.globalAlpha = 1;
+  if (flash > 0) { g.globalAlpha = flash * 0.3; g.fillStyle = '#ffffff'; g.fillRect(0, 0, W, H); g.globalAlpha = 1; }
+}
+function drawHeap() {
+  const cap = E.heapCap(S), bins = 1 + vis('bins');
+  const frac = S.ended ? 0.5 : Math.min(1, S.heap / cap);
+  let fullBins = frac * bins;
+  for (let b = 0; b < bins; b++) {
+    const f = Math.max(0, Math.min(1, fullBins - b));
+    if (f <= 0) break;
+    const bx = HEAP.x + (b % HEAP.cols) * HEAP.cw, by = 456 - Math.floor(b / HEAP.cols) * HEAP.rh;
+    const top = by + 28 - 26 * f;
+    seed(200 + b);
+    fill([[bx + 2, by + 27], [bx + 2, top + 3], [bx + 8, top], [bx + 16, top + 2], [bx + 24, top - 1], [bx + 28, top + 3], [bx + 28, by + 27]], C.rust, 0.65);
+    const kinds = [3, 7, 1, 10, 5, 0, 8, 2];
+    if (f > 0.5) drawSock(E.KINDS[kinds[b % 8]].id, bx + 14, top + 4, 1.2 + b, 0.5);
+  }
+  // The worms: one squiggle each, working.
+  const worms = Math.min(22, vis('worms'));
+  for (let i = 0; i < worms; i++) {
+    const b = i % bins, bx = HEAP.x + (b % HEAP.cols) * HEAP.cw + 6 + (i * 7) % 18, by = 456 - Math.floor(b / HEAP.cols) * HEAP.rh + 18 - (i % 3) * 5;
+    const w = reduced ? 0 : Math.sin(clock * 3 + i) * 1.5;
+    seed(300 + i);
+    curve([[bx - 4, by], [bx - 2, by - 2 + w], [bx, by], [bx + 2, by + 2 - w], [bx + 4, by]], C.pink, 2, 0.2);
+  }
+}
+function drawTrunk(x, y) {
+  g.save(); g.translate(x, y); seed(400);
+  const tip = Math.min(1, (S.sd?.pairs || 0) / 12);
+  g.rotate(0.3 + tip * 0.4);
+  box(-24, -10, 48, 26, C.brass, 2.4, C.rust, 0.8);
+  line([[-24, -2], [24, -2]], C.prim, 1.6);
+  oval(0, 4, 3, 3, C.prim, 1.6);
+  g.restore();
+  drawOrmsby(x - 30, y + 2, { wait: false, arm: 0.5 });
+}
+function drawWill(x, y, ph) {
+  g.save(); g.translate(x, y); g.rotate(Math.sin(ph) * 0.4);
+  if (SPR.will) g.drawImage(SPR.will, -18, -18, 36, 36);
+  else { box(-14, -10, 28, 20, C.chalk, 2, C.sand, 0.7); }
+  g.restore();
+}
+
+// ---------- Playing ----------
+const dropPulse = [0, 0, 0, 0];
+const umbFill = [];
+let dropT = 0, sdT = 0, nextWin = 0;
+const waitingRoom = () => S.phase < 3 && !E.room(S, socks.filter(s => !s.sd && !s.will).length);
+function spawn(kind, { counted = true, sd = false, will = false } = {}) {
+  const open = will ? 1 : S.phase === 3 ? 4 : E.windows(S);
+  const w = will ? 0 : nextWin++ % open;
+  const wx = WX[w] + (will ? 0 : (Math.random() - 0.5) * 34);
+  const slow = S.phase === 1 && has('glass') && !S.cat[kind] ? 0.75 : 1;
+  const vy = will ? 34 : (64 + Math.random() * 16) * (S.phase === 3 ? 1.25 : 1) * slow;
+  socks.push({ kind, x: wx, y: WY + 10, vx: (Math.random() - 0.5) * 10, vy, ph: Math.random() * 6, counted, sd, will, x0: wx });
+  dropPulse[w] = 1;
+  if (S.phase !== 3) held = E.pickKind(S);
+}
+function pickTourist(x) {
+  let best = null, d = 1e9;
+  for (const p of tour) if (!p.task && Math.abs(p.x - x) < d) { d = Math.abs(p.x - x); best = p; }
+  return best;
+}
+// A sock reaches the bell, an umbrella or the path.
+function land(s) {
+  const bw = E.bellWidth(S) / 2 + 6;
+  if (s.y >= BELL_Y && s.prevY < BELL_Y && Math.abs(s.x - tx) <= bw) return caughtByBell(s), true;
+  if (!s.will && s.y >= UMB_Y && s.prevY < UMB_Y) {
+    for (let i = 0; i < vis('umbrella'); i++) if (Math.abs(s.x - UX[i]) <= 22) { caughtByUmbrella(s, i); return true; }
+  }
+  if (s.y >= PATH_Y) { missedIt(s); return true; }
+  return false;
+}
+function caughtByBell(s) {
+  eyes = 0.5; combo++;
+  if (s.will) { willCaught(); return; }
+  sfx.catch();
+  // The sock tips out of the bell and over to the heap (or, after Rule Two, the line). Just for the eye.
+  if (S.phase < 3) { const dest = S.phase === 1 ? [HEAP.x + 60, 430] : [LINE.x0 + 40, 330]; fliers.push({ kind: s.kind, x: tx, y: BELL_Y - 6, x0: tx, y0: BELL_Y - 6, x1: dest[0], y1: dest[1], t: 0, look: true }); }
+  resolve(s, tx, BELL_Y - 10);
+}
+let brollyN = 0;
+function caughtByUmbrella(s, i) {
+  sfx.brolly();
+  if (++brollyN % 40 === 0) say('GUIDE', `The upside-down brollies have caught ${brollyN} socks between them since you arrived. They pass each one on with a small, wet dignity.`);
+  umbFill[i] = (umbFill[i] || 0) + 1;
+  const dest = S.phase === 1 ? [HEAP.x + 60, 420] : [LINE.x0 + 40, 330];
+  fliers.push({ kind: s.kind, x: UX[i], y: UMB_Y - 4, x0: UX[i], y0: UMB_Y - 4, x1: dest[0], y1: dest[1], t: 0, s, umb: i });
+}
+function resolve(s, x, y) {
+  if (S.phase === 3) { showdownCatch(s, x, y); return; }
+  const r = E.caught(S, s.kind);
+  const k = E.KINDS[E.KIND[s.kind]];
+  if (S.phase === 1) {
+    if (r.fresh) { sfx.fresh(); float('new for the Book!', x, y - 10, C.prim, 18); catalogueLine(s.kind); renderCat(); }
+  } else {
+    if (r.pair) { sfx.pair(); float('a pair!', x, y - 10, C.mint, 20); if (r.fresh) { say('GUIDE', `${k.name}, reunited with its partner after two hundred years in separate trunks. Into the heap they go, together, as Rule Two requires.`, 'w'); renderCat(); } }
+    else if (r.line) { sfx.peg(); }
+    if (r.bumped) { sfx.bump(); float('↑ back to the attic', LINE.x0 + 40, 300, C.peach, 14); }
+  }
+  after(false);
+}
+function missedIt(s) {
+  combo = 0;
+  if (s.will) { say('GUIDE', 'The will lands on the path. A tourist picks it up, reads the first line, and hands it back up to Mr Ormsby with a look of great alarm.', 'o'); s.y = WY + 10; s.vy = 30; return; }
+  if (S.phase === 3) { float('thrown back!', s.x, PATH_Y - 20, C.peach, 15); S.sd.q.push(s.kind); return; }
+  const r = E.missed(S, s.counted);
+  if (r === 'rope') { sfx.rope(); float('↑ back to the attic', s.x, PATH_Y - 30, C.sand, 14); return; }
+  sfx.miss();
+  const p = pickTourist(s.x);
+  if (p) { p.task = { x: s.x, kind: s.kind }; }
+  float('a souvenir', s.x, PATH_Y - 26, C.peach, 15);
+  if (S.souvenirs === 1) say('GUIDE', 'A sock lands among the tour, and a visitor pockets it. That sock has now left the palace. That is a breach of Rule One. The audio guide will not be naming the visitor. It is the one in the blue.', 'o');
+  else if (S.souvenirs % 25 === 0) say('GUIDE', `${S.souvenirs} socks have now left the palace as souvenirs. Mr Ormsby keeps a list. It is in alphabetical order, by sock.`, 'o');
+}
+function catalogueLine(kind) {
+  const i = E.KIND[kind], k = E.KINDS[i];
+  say('GUIDE', `Stop ${9 + Math.floor(i / 4)}, item ${i + 1}. ${k.name}. ${k.line}`);
+  if (E.catalogued(S) === E.KINDS.length) setTimeout(() => say('ORMSBY', 'The Household Book is complete, all twelve kinds. Mr Ormsby would like it handed in. He has a feeling about page two.', 'o'), 2600);
+}
+
+// ---------- Rule Two, the showdown, the will ----------
+function handIn() {
+  if (!E.handIn(S)) return;
+  sfx.rule(); ruleBanner = 4.5; flash = 0.5;
+  say('ORMSBY', 'Mr Ormsby reads the Household Book, every page, and then turns to the back, to Rule Two (1702): “What the Crown has paired, let no one part.” From now on socks are composted in pairs, or not at all. The odd ones wait on the line.', 'o');
+  setTimeout(() => say('GUIDE', 'Stop 13. The washing line. Hang each sock here until its partner comes down, then compost them together. When the line is full, the oldest sock goes back up to the attic to think about it.'), 9000);
+  for (const s of socks) s.counted = true;
+  after(true); refreshMusic();
+}
+function knock() {
+  if (!E.startShowdown(S)) return;
+  socks.length = 0; fliers.length = 0;
+  S.sd.air = [];
+  sfx.showdown(); flash = 0.6;
+  say('ORMSBY', 'Mr Ormsby unlocks the last trunk in the attic: King Humphrey’s own. “If it is all to be composted,” he says, “then so is this.” He tips it out of the window. All of it.', 'o');
+  after(true); refreshMusic();
+}
+function showdownCatch(s, x, y) {
+  sfx.catch();
+  const i = S.line.indexOf(s.kind);
+  if (i >= 0) { S.line.splice(i, 1); S.sd.pairs++; sfx.pair(); float(`${S.sd.pairs} of 12`, x, y - 10, C.mint, 20); }
+  else { S.line.push(s.kind); sfx.peg(); }
+  if (S.sd.pairs >= E.SHOWDOWN_PAIRS && !S.sd.will) {
+    S.sd.will = 1; S.line = [];
+    setTimeout(() => { sfx.will(); spawn(null, { will: true }); say('GUIDE', 'The trunk is empty. Something else comes out of the window after the last pair, slowly, the way paper does. It is King Humphrey’s will. Please catch it. It has been through a lot.'); }, 1500);
+  }
+  after(false);
+}
+function willCaught() {
+  S.sd.will = 2;
+  sfx.pair(); flash = 0.4;
+  float('the will', tx, BELL_Y - 20, C.prim, 20);
+  say('GUIDE', 'The trumpet catches the will in its bell. It does not read it. Trumpets don’t. It goes in the heap with the King’s socks, which is where, under Rule One, everything ends up.');
+  save();
+  setTimeout(() => end(false), 3200);
+}
+
+// ---------- The log ----------
+const LABEL = { GUIDE: 'AUDIO GUIDE', ORMSBY: 'MR ORMSBY', RULE: 'RULE ONE', AWAY: 'WHILE YOU WERE OUT' };
+function say(who, text, cls = '') {
+  const el = $('log');
+  el.innerHTML = '';
+  const b = document.createElement('b'); b.textContent = LABEL[who] || who; if (cls) b.className = cls;
+  const sp = document.createElement('span'); sp.textContent = text;
+  el.append(b, sp);
+  el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
+}
+
+// ---------- HUD ----------
+let lastTrunk = E.trunk(S).emptied;
+function hud() {
+  $('soil').textContent = fmt(S.soil);
+  const cr = E.compostRate(S);
+  $('rate').textContent = S.ended ? 'the heap, at rest' : `compost ${E.fmtRate(cr * 60)} socks/min`;
+  const tr = E.trunk(S);
+  if (S.phase === 3 || S.ended) { $('trunkTxt').textContent = S.ended ? 'The attic is empty' : `King Humphrey’s trunk: ${S.sd?.pairs || 0} of 12 pairs`; $('attic').style.width = S.ended ? '100%' : `${(S.sd?.pairs || 0) / 12 * 100}%`; $('atticPct').textContent = S.ended ? '✓' : ''; }
+  else {
+    $('trunkTxt').textContent = tr.done ? 'All forty trunks, empty' : E.holdingForBook(S) ? `Trunk ${E.BOOK_TRUNK + 1} waits for the Book` : `Trunk ${tr.n} of 40 · ${tr.left} socks left in it`;
+    $('attic').style.width = `${E.atticFrac(S) * 100}%`;
+    $('atticPct').textContent = `${Math.floor(E.atticFrac(S) * 100)}%`;
+  }
+  const sub = [];
+  if (!S.ended && S.phase < 3) {
+    const cap = E.heapCap(S);
+    const full = waitingRoom();
+    sub.push(`heap <b>${Math.ceil(S.heap)}/${cap}</b>${full ? ' <span class="warn">(full: Ormsby waits)</span>' : ''}`);
+    sub.push(`Ormsby drops <b>${E.fmtRate(E.dropRate(S) * 60)}</b> a minute`);
+    if (S.phase === 2) sub.push(`line <b>${S.line.length}/${E.lineCap(S)}</b>`);
+    if (S.lv.umbrella) sub.push(`brollies catch <b>${Math.round(E.umbrellaShare(S) * 100)}%</b> of misses`);
+  }
+  if (S.souvenirs) sub.push(`<span class="warn">lost to souvenirs: ${S.souvenirs}</span>`);
+  $('sub').innerHTML = sub.join(' · ');
+  $('bookHead').textContent = S.phase >= 2 || S.ended ? `Pairs ${E.pairedCount(S)}/12` : `Household Book ${E.catalogued(S)}/12`;
+}
+
+// ---------- The Household Book ----------
+const catEls = [];
+function renderCat() {
+  const el = $('cat');
+  if (!catEls.length) for (let i = 0; i < 12; i++) { const c = document.createElement('canvas'); c.width = c.height = 64; c.title = '?'; el.append(c); catEls.push(c); }
+  const keep = g;
+  E.KINDS.forEach((k, i) => {
+    const c = catEls[i]; g = c.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, 64, 64);
+    g.setTransform(2, 0, 0, 2, 0, 0);
+    const got = S.ended || S.cat[k.id];
+    if (got) drawSock(k.id, 14, 17, 0, 0.95); else { drawSock(k.id, 14, 17, 0, 0.95, { ghost: true }); write('?', 16, 16, 13, '#ffffff'); }
+    if ((S.phase >= 2 || S.ended) && (S.paired[k.id] || S.ended)) drawSock(k.id, 21, 19, 0.25, 0.8);
+    c.title = got ? `${k.name}${S.paired[k.id] ? ' (paired)' : ''}` : 'Not yet in the Book';
+    c.setAttribute('aria-label', c.title);
+  });
+  g = keep;
+}
+
+// ---------- Calls: the Book, the attic door ----------
+let callSig = '';
+function renderCalls() {
+  const el = $('calls');
+  const book = E.bookReady(S) && !S.ended, door = E.atticEmpty(S) && !S.ended;
+  const sig = `${book}|${door}`;
+  if (sig === callSig) return;
+  callSig = sig; el.innerHTML = '';
+  if (book) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'call can'; b.id = 'bookBtn';
+    b.innerHTML = '<b>Hand in the Household Book</b><span>all twelve kinds, to Mr Ormsby</span>';
+    wireTip(b, () => ({ id: 'book', name: 'Hand in the Household Book', desc: 'Every kind of royal sock, catalogued. Mr Ormsby needs the Book before he’ll open trunk 17. He will read all of it, including the back.', fx: 'Changes the rules: from now on, only pairs may be composted. Odd socks wait on a washing line for their partner. Everything you’ve built stays.', foot: 'no charge' }), handIn);
+    el.append(b);
+  } else if (door) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'call can'; b.id = 'doorBtn';
+    b.innerHTML = '<b>Knock on the attic door</b><span>forty trunks empty. One left.</span>';
+    wireTip(b, () => ({ id: 'door', name: 'Knock on the attic door', desc: 'Forty trunks, empty. There is one more in the attic, and Mr Ormsby has the only key: King Humphrey’s own trunk.', fx: 'The showdown: a pair of every kind, all at once, out of every window. Catch and pair all twelve. Socks you miss are thrown back up.', foot: 'ends the game' }), knock);
+    el.append(b);
+  }
+}
+
+// ---------- Shop ----------
+const shop = $('shop');
+const newUntil = {};
+let shopSig = '';
+const clone = () => JSON.parse(JSON.stringify(S));
+function renderShop() {
+  const closed = S.ended || S.phase >= 3;
+  const fresh = closed ? [] : E.reveal(S);
+  const all = closed ? [] : E.items(S).sort((a, b) => E.cost(S, a.id) - E.cost(S, b.id));
+  for (const id of fresh) { if (S.started) sfx.unlock(); newUntil[id] = performance.now() + 9000; }
+  const sig = all.map(i => `${i.id}:${E.cost(S, i.id)}:${E.lv(S, i.id)}`).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    for (const it of all) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (it.kind === 'odd' ? ' odd' : '');
+      b.dataset.id = it.id; b.dataset.cost = E.cost(S, it.id);
+      b.innerHTML = '<b></b><em></em>';
+      b.querySelector('b').textContent = it.name;
+      b.querySelector('em').textContent = `${E.cost(S, it.id)} soil${it.kind === 'lv' ? ` · ${S.lv[it.id]}/${E.max(it)}` : ''}`;
+      b.setAttribute('aria-describedby', 'tip');
+      b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, upTip(it.id)); });
+      b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+      b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, upTip(it.id)); });
+      b.addEventListener('blur', hideTip);
+      b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+      b.addEventListener('click', () => {
+        if (b.dataset.touch && tipFor !== it.id) { showTip(b, upTip(it.id)); return; }
+        if (b.getAttribute('aria-disabled') !== 'true') doBuy(it.id); else sfx.deny();
+      });
+      shop.append(b);
+    }
+  }
+  const now = performance.now();
+  let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = S.soil >= Number(b.dataset.cost);
+    n += can ? 1 : 0;
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  document.querySelector('aside h2').hidden = !all.length;
+  renderShelf();
+  document.querySelector('.col').hidden = !all.length && !$('calls').children.length && shelfEl.hidden;
+}
+// What a purchase changes, now → after.
+function effect(id) {
+  const it = E.BY_ID[id], T = clone();
+  if (it.kind === 'odd') return 'Changes nothing in the numbers. Goes in the picture, for good.';
+  T.soil = Infinity; E.buy(T, id);
+  const pm = x => E.fmtRate(x * 60);
+  if (id === 'worms') return `Compost: ${pm(E.compostRate(S))} → ${pm(E.compostRate(T))} socks a minute`;
+  if (id === 'footman') return `Ormsby drops ${pm(E.dropRate(S))} → ${pm(E.dropRate(T))} socks a minute${E.windows(T) > E.windows(S) ? `, from ${E.windows(T)} windows` : ''}`;
+  if (id === 'bell') return `Bell: ${E.bellWidth(S)} → ${E.bellWidth(T)} chalk-widths across`;
+  if (id === 'bins') return `The heap holds ${E.heapCap(S)} → ${E.heapCap(T)} socks`;
+  if (id === 'umbrella') return `Umbrellas catch ${Math.round(E.umbrellaShare(S) * 100)}% → ${Math.round(E.umbrellaShare(T) * 100)}% of the socks you miss (and keep catching while you’re away)`;
+  if (id === 'glass') return 'New kinds glow and fall at ¾ speed until they’re in the Book';
+  if (id === 'rope') return 'Missed socks lost to souvenirs: all of them → half (the rest go back up)';
+  if (id === 'pegs') return `The line holds ${E.lineCap(S)} → ${E.lineCap(T)} odd socks`;
+  if (id === 'labels') { const a = 0.3 + 0.07 * S.lv.labels, b = 0.3 + 0.07 * T.lv.labels; return `Socks that match one on the line: ${Math.round(a * 100)}% → ${Math.round(b * 100)}%`; }
+  return '';
+}
+let tipFor = null;
+function upTip(id) {
+  const it = E.BY_ID[id];
+  const lvl = it.kind === 'lv' ? ` · level ${S.lv[id]} of ${E.max(it)}` : '';
+  return { id, name: it.name, desc: it.desc, fx: effect(id), joke: it.kind === 'odd' ? it.joke : '', foot: `${E.cost(S, id)} soil${lvl}` };
+}
+function showTip(b, it) {
+  if (!it) return;
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><span class="fx"></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('.fx').textContent = it.fx || '';
+  tip.querySelector('.fx').hidden = !it.fx;
+  tip.querySelector('i').textContent = it.joke || '';
+  tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || '';
+  tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  const inSide = !!b.closest('#side');
+  if (inSide && r.left > t.width + 24 && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 14}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - t.width - 8, r.left))}px`;
+    tip.style.top = `${r.bottom + 8 + t.height < innerHeight ? r.bottom + 8 : Math.max(8, r.top - t.height - 8)}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+let tipMoved = 0;
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .call, .bought')) hideTip(); });
+const explained = new Set();
+function wireTip(b, info, act) {
+  b.setAttribute('aria-describedby', 'tip');
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, info()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, info()); });
+  b.addEventListener('blur', hideTip);
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  b.addEventListener('click', () => {
+    if (b.dataset.touch && !explained.has(b.id)) { explained.add(b.id); showTip(b, info()); return; }
+    hideTip(true); act();
+  });
+}
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!S.boughtOpen === shelfEl.open) return;
+  S.boughtOpen = shelfEl.open; save();
+});
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(i => i.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (it.kind === 'odd' ? ' odd' : '');
+    b.textContent = it.name; b.dataset.id = it.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, { id: 'bought:' + it.id, name: it.name, desc: it.desc, joke: it.joke, foot: it.kind === 'odd' ? 'for the picture' : 'bought', inline: true }); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + it.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+const LEVEL_LINES = {
+  worms: { 1: 0, 5: 'Five worms. They have organised themselves into a committee. The committee eats socks.', 10: 'Ten worms. The heap is audibly busier. The audio guide asks you not to put your ear to it.', 20: 'Twenty worms. They have been granted a Royal Warrant of their own, by nobody, informally.' },
+  footman: { 1: 0, 4: 'A fourth footman. The attic now has a rota, a tea break and a grievance procedure.', 8: 'Eight footmen in the attic. From the lawn, the windows look like an advent calendar of disapproval.' },
+  bell: { 1: 0, 5: 'The bell is now wider than the trumpet is tall. Tourists have started dropping coins in it. They go in the heap.' },
+  bins: { 1: 0, 6: 'Seven bins. The heap is now the second-largest building in the kitchen garden, after the greenhouse, which is jealous.' },
+  umbrella: { 1: 0, 4: 'Four umbrellas upside down on the lawn. Visitors assume it is modern art. The audio guide does not correct them.' },
+  pegs: { 1: 0, 5: 'More pegs. The line now holds enough odd socks to be a small, sad orchestra.' },
+  labels: { 1: 0, 4: 'Every trunk is labelled now. Ormsby has started labelling the footmen.' },
+};
+function doBuy(id) {
+  const it = E.BY_ID[id];
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  delete newUntil[id];
+  hideTip();
+  sfx.buy();
+  if (it.kind === 'lv') {
+    const l = LEVEL_LINES[id]?.[S.lv[id]];
+    if (l === 0) say('GUIDE', it.joke); else if (l) say('GUIDE', l);
+  } else say(id === 'crest' || id === 'post' ? 'GUIDE' : 'GUIDE', it.joke);
+  float('+', 360, 300, C.prim, 26);
+  after(true);
+}
+function after(full = true) {
+  if (full) save();
+  hud(); renderShop(); renderCalls();
+  const tr = E.trunk(S).emptied;
+  if (tr > lastTrunk && S.phase < 3) {
+    sfx.trunk();
+    const t = TRUNK_LINES[tr];
+    say('GUIDE', t || `Trunk ${tr} of forty, empty. Mr Ormsby ticks it off in the ledger, with a ruler.`);
+    bgSig = '';
+  }
+  lastTrunk = tr;
+}
+const TRUNK_LINES = {
+  1: 'Trunk one, empty. It contained socks, and a note in King Humphrey’s hand: “Do NOT throw these out.” Nobody has. Rule One.',
+  3: 'Trunk three, empty. Note the flower beds below the wall. Compost has that effect. So, the gardeners say, do socks.',
+  5: 'Trunk five, empty. The attic floor has stopped creaking quite so loudly. Mr Ormsby has noticed. He will not say so.',
+  8: 'Trunk eight. Inside the lid someone has chalked a tally of socks up to 1,400, then given up and written “lots”.',
+  12: 'Trunk twelve, empty. The beds along the wall are in flower. The head gardener has asked what is in the compost. Nobody has told her.',
+  16: 'Trunk sixteen, empty: the Regency socks. Mr Ormsby will open no more until the Household Book is complete. It is not personal. It is Rule Three.',
+  20: 'Trunk twenty, empty. Halfway. Somewhere in the attic, the sound of a floorboard settling, with relief.',
+  25: 'Trunk twenty-five. A family of moths has been evicted. They have been given compost as a goodwill gesture.',
+  30: 'Trunk thirty, empty. You can see the far wall of the attic now. There is a door in it. Mr Ormsby has the key.',
+  35: 'Trunk thirty-five. Five to go. The footmen have started humming. Mr Ormsby has asked them to hum in pairs.',
+  39: 'Trunk thirty-nine. One more trunk of ordinary socks, and then, says Mr Ormsby, there is the matter of the King’s.',
+};
+
+// ---------- Ticking ----------
+let soilAcc = 0, saveT = 0;
+function step(dt) {
+  if (S.ended) return;
+  const got = E.tick(S, dt);
+  soilAcc += got;
+  if (soilAcc >= 1) { soilAcc -= 1; sfx.soil(); }
+  // Ormsby and the footmen drop socks, when the heap has room.
+  if (S.phase < 3) {
+    if (!E.atticEmpty(S) && S.started) {
+      dropT += dt * E.dropRate(S);
+      if (dropT >= 1) {
+        if (waitingRoom()) dropT = 1;
+        else {
+          dropT -= 1;
+          const kind = held || E.pickKind(S);
+          const counted = E.dropped(S);
+          spawn(kind, { counted });
+        }
+      }
+    }
+  } else if (S.sd && !S.sd.will) {
+    sdT += dt;
+    if (sdT > 1.05 && S.sd.q.length) { sdT = 0; const kind = S.sd.q.shift(); spawn(kind, { sd: true }); }
+  }
+  for (let i = 0; i < 4; i++) dropPulse[i] = Math.max(0, dropPulse[i] - dt * 2.5);
+  // Falling.
+  for (let i = socks.length - 1; i >= 0; i--) {
+    const s = socks[i];
+    s.prevY = s.y; s.ph += dt * (s.will ? 2 : 3);
+    s.y += s.vy * dt;
+    s.x = s.x0 + Math.sin(s.ph) * (s.will ? 30 : 8) + s.vx * (s.y - WY) / 80;
+    if (land(s)) { if (!(s.will && S.sd?.will === 1 && s.y < WY + 20)) socks.splice(i, 1); }
+  }
+  // Umbrella socks flying on to the heap or the line.
+  for (let i = fliers.length - 1; i >= 0; i--) {
+    const f = fliers[i]; f.t += dt / 0.7;
+    f.x = f.x0 + (f.x1 - f.x0) * f.t; f.y = f.y0 + (f.y1 - f.y0) * f.t - Math.sin(f.t * Math.PI) * 60;
+    if (f.t >= 1) { fliers.splice(i, 1); if (f.look) continue; umbFill[f.umb] = Math.max(0, (umbFill[f.umb] || 1) - 1); resolve(f.s, f.x1, f.y1); }
+  }
+  // The tour wanders along the path; one goes after a missed sock and pockets it.
+  for (const p of tour) {
+    if (p.task) {
+      const d = p.task.x - p.x; p.dir = Math.sign(d) || 1;
+      p.x += Math.sign(d) * Math.min(Math.abs(d), 60 * dt); p.walk += dt * 9;
+      if (Math.abs(d) < 2) { p.bend = 1; p.sock = p.task.kind; p.task = null; p.hold = 3; }
+    } else {
+      p.bend = Math.max(0, p.bend - dt * 2);
+      if (p.hold > 0) { p.hold -= dt; if (p.hold <= 0) p.sock = null; }
+      p.x += p.dir * p.v * dt; p.walk += dt * 5;
+      if (p.x > W + 20) p.x = -20; if (p.x < -20) p.x = W + 20;
+    }
+  }
+  // The trumpet follows the pointer.
+  const sp = 900 * dt;
+  tx += Math.max(-sp, Math.min(sp, target - tx));
+  tx = Math.max(TMIN, Math.min(TMAX, tx));
+  eyes = Math.max(0, eyes - dt);
+  for (const f of floats) f.t += dt;
+  while (floats.length && floats[0].t > 1.4) floats.shift();
+  flash = Math.max(0, flash - dt * 1.5); ruleBanner = Math.max(0, ruleBanner - dt);
+  saveT += dt;
+  if (saveT > 4) { saveT = 0; if (S.phase === 3 && S.sd) S.sd.air = socks.filter(s => s.sd).map(s => s.kind); save(); hud(); renderShop(); renderCalls(); }
+  else if (Math.floor(clock * 4) !== Math.floor((clock - dt) * 4)) { hud(); renderShop(); }
+}
+
+// ---------- Input ----------
+function toScene(e) { const r = cv.getBoundingClientRect(); return (e.clientX - r.left) / r.width * W; }
+function start() {
+  if (S.started || S.ended) return;
+  S.started = true; save();
+  say('GUIDE', 'Stop 9. The kitchen garden. Mr Ormsby is emptying the attic out of the window. Keep the trumpet under the socks: every one you catch goes in the heap, and stays in the palace.');
+}
+cv.addEventListener('pointerdown', e => { start(); target = toScene(e); cv.setPointerCapture?.(e.pointerId); });
+cv.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' || e.buttons) target = toScene(e); });
+let keyDir = 0;
+cv.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { start(); keyDir = e.key === 'ArrowLeft' ? -1 : 1; e.preventDefault(); }
+});
+cv.addEventListener('keyup', e => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') keyDir = 0; });
+setInterval(() => { if (keyDir) target = Math.max(TMIN, Math.min(TMAX, tx + keyDir * 40)); }, 30);
+
+// ---------- The end ----------
+function end(resumed) {
+  if (S.ended && !resumed) return;
+  S.ended = true; S.phase = Math.max(S.phase, 3); save();
+  hideTip(true);
+  socks.length = 0; fliers.length = 0;
+  const story = [
+    'The attic is empty. Forty trunks of royal socks, two centuries deep, and the last of them King Humphrey’s own, have gone into the heap behind the kitchen garden, and from the heap onto the beds, which have never looked better.',
+    'Under Rule One, not one of them left the palace. Mr Ormsby has checked. He checked twice, in pairs.',
+    'The King’s will went into the heap with his socks. The trumpet never read it. It would only have said what the will says, which is that King Humphrey left his kingdom to “my trumpet, which never once let me down.” Nobody had checked. Now nobody can.',
+    'The trumpet is back on its stand by the heap. It has been given, at last, its own stop on the audio guide.',
+  ];
+  $('story').innerHTML = '';
+  for (const p of story) { const el = document.createElement('p'); el.textContent = p; $('story').append(el); }
+  const gd = document.createElement('div'); gd.className = 'guide';
+  gd.innerHTML = '<b>▶ STOP 14a · THE COMPOST HEAP</b><span></span>';
+  gd.querySelector('span').textContent = '“The trumpet beside the heap is, according to a will that no longer exists, the King. Please don’t tell it. It’s busy.”';
+  $('story').append(gd);
+  if (S.souvenirs) { const p = document.createElement('p'); p.textContent = `Lost to the gift shop, as souvenirs: ${S.souvenirs} sock${S.souvenirs === 1 ? '' : 's'}. Mr Ormsby has their descriptions.`; $('story').append(p); }
+  $('ending').hidden = false;
+  renderShop(); renderCalls(); hud(); renderCat(); refreshMusic();
+  if (resumed) say('GUIDE', 'Stop 14a. The compost heap. Please do not lean on it. The trumpet beside it is busy.');
+  if (!resumed) {
+    sfx.finale();
+    $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+    const tm = `⏱ ${Math.floor(S.t / 3600) ? Math.floor(S.t / 3600) + 'h' : ''}${String(Math.floor(S.t % 3600 / 60)).padStart(Math.floor(S.t / 3600) ? 2 : 1, '0')}m`;
+    if (window.DailyGame) DailyGame.finish({ lines: [tm, '🧦 40 trunks of royal socks, composted', `🎁 ${S.souvenirs} lost to the gift shop`, '📜 one will, unread, in the heap'] });
+  }
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Loop ----------
+let last = performance.now();
+let hiddenAt = 0;
+function frame(now) {
+  const dt = Math.max(0, Math.min(0.1, (now - last) / 1000)); last = now;
+  if (!document.hidden) { step(dt); clock += dt; }
+  render();
+  requestAnimationFrame(frame);
+}
+// Away in another tab: nobody's under the window, so Ormsby only drops what the umbrellas can catch (the same
+// rule as being away from the game), credited when you come back.
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { hiddenAt = Date.now(); save(); return; }
+  if (!hiddenAt) return;
+  const secs = (Date.now() - hiddenAt) / 1000; hiddenAt = 0; last = performance.now();
+  welcomeBack(secs);
+});
+function welcomeBack(secs) {
+  if (S.ended) return;
+  const off = E.offline(S, secs);
+  if (off) {
+    const mins = Math.round(off.secs / 60);
+    say('AWAY', `${mins >= 120 ? 'Two hours and more' : mins + ' minutes'} away. ${S.lv.umbrella ? `The umbrellas caught ${fmt(off.socks)} sock${off.socks === 1 ? '' : 's'} while you were out, at a gentle pace, and` : 'Nobody was under the windows, so Mr Ormsby waited, but'} the heap kept rotting: +${fmt(off.soil)} soil.`, 'w');
+  } else if (secs > 2) E.tick(S, secs);
+  after(true); bgSig = '';
+}
+addEventListener('pagehide', save);
+addEventListener('resize', layout);
+
+// ---------- Sprites: icons redrawn in chalk ----------
+const SPR = {};
+function chalkify(c) {
+  const q = c.getContext('2d'), img = q.getImageData(0, 0, c.width, c.height), d = img.data;
+  noiseSeed = 99;
+  for (let i = 3; i < d.length; i += 4) if (d[i]) { const r = nrand(); d[i] = r < 0.2 ? 0 : r < 0.4 ? d[i] * 0.45 : d[i]; }
+  q.putImageData(img, 0, 0);
+  return c;
+}
+async function chalkSprite(name, file, size, col, opts = {}) {
+  try {
+    const svg = await Sprites.loadSvg(`./art/${file}`);
+    SPR[name] = chalkify(Sprites.roughen(rough, Sprites.recolor(svg, col), size, { roughness: 1.2, bowing: 1, stroke: col, strokeWidth: 2.2, fill: 'none', ...opts }));
+    Sprites.register(`${name} (chalk)`, SPR[name]);
+  } catch (e) { console.warn('sprite', name, e); }
+}
+const spritesReady = Promise.all([
+  chalkSprite('crown', 'tabler--crown.svg', 48, C.prim, { fill: C.brass, fillStyle: 'hachure', hachureGap: 4 }),
+  chalkSprite('will', 'lucide--scroll-text.svg', 72, C.chalk, { fill: C.sand, fillStyle: 'hachure', hachureGap: 5 }),
+]).then(() => { bgSig = ''; });
+function sheet() {
+  const reg = (name, w, h, f, s = 2) => {
+    const c = Sprites.canvas(w * s, h * s), q = c.getContext('2d');
+    q.fillStyle = C.board; q.fillRect(0, 0, c.width, c.height);
+    const keep = g; g = q; q.setTransform(s, 0, 0, s, 0, 0); f(); g = keep;
+    Sprites.register(name, c);
+  };
+  const keep = JSON.stringify(S);
+  const restore = () => { const o = JSON.parse(keep); for (const k of Object.keys(o)) S[k] = o[k]; };
+  reg('the trumpet, plain', 90, 120, () => drawTrumpet(45, 14, { bw: 46, tape: 0, glass: false }));
+  reg('the trumpet, widest bell, glass, happy', 140, 120, () => drawTrumpet(70, 14, { bw: 110, tape: 8, glass: true, happy: 1 }));
+  reg('the twelve royal socks', 300, 50, () => E.KINDS.forEach((k, i) => drawSock(k.id, 14 + i * 24, 24, 0, 1)));
+  reg('Mr Ormsby, a footman, Ormsby waiting', 150, 60, () => { drawOrmsby(25, 30, { holding: 'argyle', arm: 0.5 }); drawFootman(80, 30, 1, 0.5); drawOrmsby(120, 30, { wait: true }); });
+  reg('the tour, with audio guides', 150, 60, () => { for (let i = 0; i < 4; i++) tourist(20 + i * 36, 44, i, { walk: i, camera: i === 2, sockIn: i === 3 ? 'football' : null }); });
+  reg('an umbrella, upside down, with socks', 60, 60, () => umbrella(30, 20, 0, 3));
+  reg('gnome, Stop 14a, crest, sign, portrait', 330, 110, () => { gnome(20, 90); post14a(60, 100); post14a(95, 100, true); crest(140, 50); sign(210, 90); portrait(290, 50); });
+  reg('the will', 60, 60, () => drawWill(30, 30, 0));
+  restore();
+  reg('the garden with everything bought', 720, 560, () => {
+    S.phase = 2; S.dropped = E.ATTIC_TOTAL * 0.8; S.heap = 30; S.line = ['argyle', 'toe', 'coronation', 'bed', 'holey'];
+    for (const it of E.ITEMS) { if (it.kind === 'lv') S.lv[it.id] = E.max(it); else S.one[it.id] = true; }
+    const kb = bg.width, kh = bg.height; bg.width = 720; bg.height = 560; drawBg(); g.drawImage(bg, 0, 0); bg.width = kb; bg.height = kh; bgSig = '';
+    drawHeap(); for (let i = 0; i < 10; i++) umbrella(UX[i], UMB_Y, i, 1);
+    S.line.forEach((kind, i) => { const [px, py] = slotPos(i); drawSock(kind, px, py + 10, 0, 0.8); });
+    for (let i = 0; i < 4; i++) i ? drawFootman(WX[i] - 4, 72, i) : drawOrmsby(WX[0] - 6, 70, { holding: 'skating' });
+    drawTrumpet(300, BELL_Y, { bw: E.bellWidth(S) });
+    for (const p of tour) tourist(p.x, 530, p.i, { camera: p.i === 2 });
+  }, 1);
+  restore();
+}
+
+// ---------- Start ----------
+layout();
+renderCat();
+if (DEBUG) Object.assign(window.__game, { end, handIn, knock, E, socks, aim: x => { target = x; }, tx: () => tx });
+const away = S.savedAt ? (Date.now() - S.savedAt) / 1000 : 0;
+if (S.ended) end(true);
+else if (!S.started) say('GUIDE', 'Welcome to the kitchen garden. Rule One of the palace household (1702): nothing belonging to the Crown shall ever leave the palace. Above you, the attic, full to the rafters with two centuries of royal socks. Beside the heap, a trumpet. Press anywhere on the board to begin.');
+else {
+  if (S.phase === 3 && S.sd) { S.sd.q = [...(S.sd.air || []), ...S.sd.q]; S.sd.air = []; if (S.sd.will === 1) spawn(null, { will: true }); }
+  const off = away > 60 ? E.offline(S, away) : null;
+  if (off) say('AWAY', `${Math.round(off.secs / 60) >= 120 ? 'Two hours and more' : Math.round(off.secs / 60) + ' minutes'} away. ${S.lv.umbrella ? `The umbrellas caught ${fmt(off.socks)} sock${off.socks === 1 ? '' : 's'} at a gentle pace while you were out, and` : 'Nobody was under the windows, so Mr Ormsby waited, but'} the heap kept rotting: +${fmt(off.soil)} soil.`, 'w');
+  else say('GUIDE', S.phase === 3 ? 'King Humphrey’s trunk, still pouring. Please resume catching.' : 'Welcome back to the kitchen garden. Mr Ormsby has kept your place.');
+}
+held = S.phase < 3 ? E.pickKind(S) : null;
+save();
+hud(); renderShop(); renderCalls();
+document.fonts?.ready.then(() => { layout(); bgSig = ''; renderCat(); });
+spritesReady.then(() => { if (Sprites.sheetRequested()) { sheet(); Sprites.showSheet({ zoom: 1 }); } });
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
