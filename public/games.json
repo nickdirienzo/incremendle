@@ -1103,5 +1103,50 @@
     "tone": "museum audio guide",
     "context": "none",
     "palette": "resurrect-32"
+  },
+  {
+    "n": 30,
+    "slug": "every-cloud",
+    "date": "2026-11-21",
+    "title": "Every Cloud",
+    "tagline": "Every cloud has a silver lining, they say. None of the clouds over the hut on the hill has one, so the cook paints them on from a basket up Houston, the runner bean they talk to, and you scratch through to see what's inside.",
+    "emoji": "🧑‍🍳☁️",
+    "scale": "hundreds",
+    "minutes": "25–40",
+    "seed": 109818337,
+    "subject": {
+      "text": "a cook who talks to plants",
+      "emoji": "🧑‍🍳",
+      "name": "cook",
+      "subgroup": "person-role",
+      "trait": "{} who talks to plants"
+    },
+    "verb": "painting",
+    "object": "clouds",
+    "interaction": "scratch to reveal",
+    "arc": {
+      "drive": "curiosity",
+      "obstacle": "physics",
+      "turn": "the helper was the hero",
+      "initial": "H"
+    },
+    "length": "mini (10–60 min)",
+    "structure": [
+      "challenges: replay under a handicap for a reward"
+    ],
+    "twist": "gambling or loot drops",
+    "ending": "an ending reached by holding back",
+    "look": "isometric diorama",
+    "music": {
+      "style": "ambient pads",
+      "scale": "phrygian"
+    },
+    "tone": "mission control",
+    "context": {
+      "kind": "calendar",
+      "nod": "the night sky (moon phase, meteor shower, solstice)",
+      "topic": "a waxing gibbous moon (87%) on 21 November 2026, three nights before the Full Beaver Moon"
+    },
+    "palette": "indecision"
   }
 ]

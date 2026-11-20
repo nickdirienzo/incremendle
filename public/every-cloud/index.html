@@ -1,0 +1,1472 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Every Cloud · Incremendle</title>
+<meta name="description" content="Every cloud has a silver lining, they say. None of these do, so the cook paints them on, and you scratch through to see what's inside. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Every Cloud">
+<meta property="og:description" content="Every cloud has a silver lining, they say. None of the clouds over the hut on the hill has one, so the cook paints them on from a basket up Houston, the runner bean they talk to, and you scratch through to see what's inside.">
+<meta property="og:url" content="https://incremendle.com/every-cloud/">
+<meta property="og:image" content="https://incremendle.com/every-cloud/og.png?v=a2543304">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Every Cloud: Every cloud has a silver lining, they say. None of the clouds over the hut on the hill has one, so the cook paints them on from a basket up Houston, the runner bean they talk to, and you scratch through to see what's inside.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/chakra-petch/font.css">
+<link rel="stylesheet" href="/shared/fonts/space-mono/font.css">
+<style>
+  /* A little isometric diorama of a hilltop at night, in Indecision: night (#2c1b2e, #2f2b5c, #4b3b9c), moonlit
+     cloud (#9c656c, #d1b48c, #57253b), silver lining (#8fcccb, #fff4e0), rain and deep cloud (#457cd6, #449489,
+     #285763), the garden (#6d8c32, #b4ba47), scarlet bean flowers (#e34262, #94353d), pumpkin (#d46e33), gold (#f2b63d). */
+  :root {
+    --ink: #2c1b2e; --navy: #2f2b5c; --violet: #4b3b9c; --blue: #457cd6; --mint: #8fcccb; --teal: #449489; --deep: #285763;
+    --cream: #fff4e0; --gold: #f2b63d; --orange: #d46e33; --red: #e34262; --wine: #94353d; --plum: #57253b; --mauve: #9c656c;
+    --tan: #d1b48c; --olive: #b4ba47; --green: #6d8c32;
+    --head: 'Chakra Petch', system-ui, sans-serif; --mono: 'Space Mono', ui-monospace, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--ink); color: var(--cream); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 14px/1.4 var(--mono);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(10px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image: radial-gradient(ellipse at 70% -20%, #4b3b9c88 0%, transparent 55%);
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 0 0 6px; }
+  h1 { font: 700 34px/1.05 var(--head); margin: 0; color: var(--cream); letter-spacing: .5px; }
+  h1 span { color: var(--mint); }
+  header p { margin: 0; font: 13px/1.2 var(--mono); color: var(--mauve); text-transform: uppercase; letter-spacing: 1px; }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } h1 { font-size: 28px; } }
+  main { min-width: 0; }
+
+  .panel { background: var(--navy); border: 2px solid var(--violet); border-radius: 6px; box-shadow: 0 4px 0 var(--ink), 0 4px 0 2px var(--violet); }
+  .play { padding: 8px 10px 8px; }
+  .hud { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 16px; align-items: center; margin-bottom: 6px; }
+  .res { font: 700 28px/1 var(--head); color: var(--mint); white-space: nowrap; }
+  .res small { font: 400 14px/1 var(--mono); color: var(--cream); }
+  .res .rate { display: block; font: 12px/1.2 var(--mono); color: var(--tan); margin-top: 3px; }
+  .goal { display: flex; align-items: center; gap: 8px; min-width: 0; font: 600 15px/1 var(--head); color: var(--cream); }
+  .goal span { white-space: nowrap; }
+  .meter { position: relative; flex: 1; min-width: 50px; height: 12px; background: var(--ink); border: 2px solid var(--violet); border-radius: 3px; overflow: hidden; }
+  .meter i { position: absolute; inset: 0 auto 0 0; width: 0; transition: width .4s; background: repeating-linear-gradient(90deg, var(--green) 0 8px, var(--olive) 8px 10px); }
+  .sub { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0 14px; font: 12px/1.5 var(--mono); color: #fff4e0bb; min-height: 18px; }
+  .sub b { font-weight: 700; color: var(--gold); }
+  @media (max-width: 520px) { .hud { grid-template-columns: 1fr; } }
+
+  canvas#stage { display: block; width: 100%; max-width: calc((100vh - 250px) * 720 / 660); min-width: min(100%, 480px); margin: 0 auto; aspect-ratio: 720 / 660; touch-action: none; cursor: crosshair; -webkit-tap-highlight-color: transparent; user-select: none; border-radius: 4px; }
+  canvas#stage:focus-visible { outline: 2px dashed var(--mint); outline-offset: 3px; }
+  .log { margin: 6px 0 0; min-height: 3em; font: 13px/1.45 var(--mono); color: var(--cream); border-top: 1px dashed #8fcccb55; padding: 6px 2px 0; }
+  .log b { font: 700 11px/1 var(--head); letter-spacing: 1px; color: var(--ink); background: var(--gold); padding: 2px 6px 2px; margin-right: 8px; border-radius: 2px; }
+  .log b.h { background: var(--olive); }
+  .log b.l { background: var(--mint); }
+  .log b.w { background: var(--tan); }
+  .log.fresh span { animation: tx .7s steps(8); }
+  @keyframes tx { from { opacity: .2; } }
+
+  aside { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; scrollbar-width: thin; padding: 2px 4px 8px 2px; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  .col { padding: 10px 10px 8px; }
+  #calls { display: grid; gap: 7px; margin-bottom: 10px; }
+  #calls:empty { display: none; }
+  .call { position: relative; text-align: left; font: 12px/1.3 var(--mono); color: var(--cream); background: var(--ink); border: 2px solid var(--violet); border-radius: 4px; padding: 6px 9px 7px; cursor: pointer; }
+  .call b { display: block; font: 700 16px/1.1 var(--head); color: var(--cream); margin-bottom: 1px; }
+  .call.can { border-color: var(--mint); }
+  .call.can b { color: var(--mint); }
+  .call.go { border-color: var(--gold); animation: nudge 1.6s ease-in-out infinite; }
+  .call.go b { color: var(--gold); }
+  .call[aria-disabled="true"] { cursor: default; opacity: .75; }
+  .call:focus-visible { outline: 2px dashed var(--mint); outline-offset: 3px; }
+  @keyframes nudge { 50% { box-shadow: 0 0 0 3px #f2b63d55; } }
+  aside h2 { font: 700 17px/1 var(--head); margin: 0 0 8px; color: var(--cream); text-transform: uppercase; letter-spacing: 1px; }
+  #afford { font: 12px/1 var(--mono); color: var(--gold); text-transform: none; letter-spacing: 0; }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  @media (max-width: 760px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up {
+    position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 12px/1.2 var(--mono); color: #fff4e088;
+    background: var(--ink); border: 2px solid #4b3b9c; border-radius: 4px; padding: 4px 7px 5px; cursor: pointer;
+  }
+  .up b { font: 600 14px/1.15 var(--head); color: #fff4e0aa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { border-color: var(--mint); }
+  .up.can b { color: var(--cream); }
+  .up.can em { color: var(--mint); }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up.odd { border-style: dashed; }
+  .up.odd b::before, .bought.odd::before { content: '✦ '; color: var(--red); }
+  .up .tag { position: absolute; top: -8px; right: 4px; font: 700 10px/1 var(--head); font-style: normal; letter-spacing: 1px; color: var(--ink); background: var(--gold); padding: 2px 5px; border-radius: 2px; }
+  .up.new { animation: glint 1.1s ease-in-out 6; }
+  @keyframes glint { 50% { box-shadow: 0 0 0 3px #f2b63d88; } }
+  .up:focus-visible, .bought:focus-visible { outline: 2px dashed var(--mint); outline-offset: 2px; }
+  #tip {
+    position: fixed; z-index: 50; width: 270px; padding: 9px 12px 10px; pointer-events: none; font: 12px/1.45 var(--mono); color: var(--cream);
+    background: var(--ink); border: 2px solid var(--mint); border-radius: 4px; box-shadow: 4px 5px 0 #0008;
+  }
+  #tip b { display: block; font: 700 17px/1.1 var(--head); color: var(--mint); margin-bottom: 4px; }
+  #tip .fx { display: block; margin-top: 6px; padding: 3px 7px; color: var(--ink); background: var(--mint); border-radius: 2px; }
+  #tip i { display: block; margin-top: 7px; padding-top: 5px; border-top: 1px dashed #8fcccb66; color: var(--tan); font-style: normal; }
+  #tip small { display: block; margin-top: 5px; font: 700 13px/1 var(--head); color: var(--gold); }
+  #tip.inline { position: static; width: auto; margin-top: 10px; }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 700 14px/1 var(--head); color: var(--cream); cursor: pointer; list-style: none; padding: 3px 2px; text-transform: uppercase; letter-spacing: 1px; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: '▸'; color: var(--mint); transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 2px dashed var(--mint); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 2px 2px; }
+  .bought { max-width: 100%; font: 600 12px/1.1 var(--head); color: var(--cream); background: var(--ink); border: 1.5px solid var(--violet); border-radius: 3px; padding: 3px 7px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { border-style: dashed; }
+  .bought:hover, .bought.on { border-color: var(--mint); }
+
+  #ending { margin: 22px auto 0; max-width: 700px; padding: 18px 24px 22px; }
+  #ending .num { font: 700 12px/1 var(--head); color: var(--mint); letter-spacing: 2px; }
+  #ending h2 { font: 700 34px/1.05 var(--head); margin: 8px 0 10px; color: var(--cream); }
+  #ending p { margin: 9px 0; font-size: 14px; }
+  #ending .radio { margin: 14px 0; padding: 8px 14px 10px; border: 2px solid var(--olive); border-radius: 4px; color: var(--olive); font: 700 18px/1.3 var(--head); }
+  #ending .radio b { display: block; font: 700 11px/1 var(--head); letter-spacing: 2px; color: var(--cream); margin-bottom: 5px; }
+  #shareBtn, #againBtn { font: 700 16px/1 var(--head); color: var(--ink); background: var(--mint); border: 2px solid var(--cream); border-radius: 4px; padding: 9px 18px; margin: 12px 8px 0 0; cursor: pointer; }
+  #againBtn { background: transparent; color: var(--cream); }
+  #shareBtn:focus-visible, #againBtn:focus-visible { outline: 2px dashed var(--mint); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .call.go, .log.fresh span { animation: none; } .meter i, #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="30" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Every <span>Cloud</span></h1>
+    <p>hut on the hill · night shift · comms open</p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="panel play">
+        <div class="hud">
+          <div class="res" title="Rain, in the butts by the hut. It waters Houston and grows the garden."><span id="rain">0</span> <small>L rain</small><span class="rate" id="rate"></span></div>
+          <div class="goal" title="Houston, the runner bean. The higher she grows, the higher the clouds the cook can reach. The Big One sits at 600 m."><span id="hTxt">Houston 0 m</span><div class="meter"><i id="hBar"></i></div><span id="hPct">600 m</span></div>
+          <div class="sub" id="sub"></div>
+        </div>
+        <canvas id="stage" tabindex="0" aria-label="A hilltop hut at night, with a runner bean called Houston growing up into the clouds. The cook paints silver linings on the clouds in reach. Press and drag across a lined cloud to scratch the lining off and release what's inside. Keyboard: space scratches the nearest lined cloud."></canvas>
+        <p class="log" id="log" aria-live="polite"></p>
+      </div>
+    </main>
+    <aside id="side">
+      <div class="col panel">
+        <div id="calls"></div>
+        <h2>Requisitions <span id="afford"></span></h2>
+        <div id="shop"></div>
+        <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      </div>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" class="panel" hidden>
+    <div class="num">MISSION LOG · FINAL ENTRY</div>
+    <h2>We Have a View</h2>
+    <div id="story"></div>
+    <button id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const fmt = E.fmt;
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DEBUG = location.search.includes('debug');
+const C = { ink: '#2c1b2e', navy: '#2f2b5c', violet: '#4b3b9c', blue: '#457cd6', mint: '#8fcccb', teal: '#449489', deep: '#285763',
+  cream: '#fff4e0', gold: '#f2b63d', orange: '#d46e33', red: '#e34262', wine: '#94353d', plum: '#57253b', mauve: '#9c656c',
+  tan: '#d1b48c', olive: '#b4ba47', green: '#6d8c32' };
+
+// ---------- State ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:30:save';
+let raw = null;
+try { raw = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+const S = E.load(raw);
+const save = () => { S.savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound: D phrygian, the soundtrack's key (D Eb F G A Bb C; the Eb is the colour) ----------
+const A = createAudio({ sfxTrim: 4, musicTrim: 5.6 });
+// Per-effect levels, from npm run mix (each effect peaking near -10 dBFS).
+const LV = { paint: 3, tea: 2.6, win: 0.4, unlock: 1.5, deny: 1.4, go: 1.6, big: 2, finale: 1.1 };
+let gainNow = 1;
+const T = o => A.tone({ ...o, vol: o.vol * gainNow });
+const N = (kind, o = {}) => A.noiseHit(kind, { ...o, vol: (o.vol ?? 0.25) * gainNow });
+const notes = scale('phrygian', 62);   // D4 Eb F G A Bb C
+const rl = {};
+const limit = (k, ms) => { const t = performance.now(); if (t - (rl[k] || 0) < ms && !DEBUG) return false; rl[k] = t; return true; };
+const sfx = {
+  // Scratching the lining: a soft papery hiss, and a glassy note that climbs as the cloud clears.
+  scratch(frac = 0) {
+    if (!limit('scratch', 90)) return;
+    N('shaker', { vol: 0.05, dur: 0.06 });
+    if (limit('scratchNote', 260)) T({ type: 'pluck', freq: notes(Math.floor(frac * 7) + 7), dur: 0.05, vol: 0.05, cutoff: 3600 });
+  },
+  // A clean release: D F A, and a drip.
+  release() { [0, 2, 4].forEach((d, i) => T({ type: 'bell', freq: notes(d + 7), dur: 0.18, vol: 0.07, at: A.now + i * 0.06 })); T({ type: 'sine', freq: notes(11), dur: 0.08, vol: 0.06, glide: 0.5, at: A.now + 0.2 }); },
+  // Houston releases one on her own: smaller, lower, further off.
+  hers() { if (!limit('hers', 400)) return; T({ type: 'pluck', freq: notes(4), dur: 0.08, vol: 0.07, cutoff: 2400 }); T({ type: 'sine', freq: notes(9), dur: 0.06, vol: 0.04, glide: 0.5, at: A.now + 0.09 }); },
+  // Hail: a clatter on the roof, then a bright chime.
+  hail() { const t0 = A.now; for (let i = 0; i < 7; i++) N('hat', { vol: 0.12, dur: 0.03, at: t0 + i * 0.045 + Math.random() * 0.02 }); [7, 9, 11, 14].forEach((d, i) => T({ type: 'bell', freq: notes(d + 7), dur: 0.2, vol: 0.06, at: t0 + 0.3 + i * 0.07 })); },
+  // A lost thing: four notes leaning on the Eb.
+  find() { [0, 1, 4, 7].forEach((d, i) => T({ type: 'bell', freq: notes(d + 7), dur: 0.3, vol: 0.07, at: A.now + i * 0.13 })); },
+  // The cook's brush.
+  paint() { if (!limit('paint', 600)) return; N('whoosh', { vol: 0.03, dur: 0.35 }); },
+  // Watering Houston: a glug and a leafy rustle.
+  water() { T({ type: 'sine', freq: notes(2), dur: 0.12, vol: 0.1, glide: 0.7 }); T({ type: 'sine', freq: notes(0), dur: 0.12, vol: 0.08, glide: 0.7, at: A.now + 0.1 }); N('shaker', { vol: 0.06, dur: 0.2, at: A.now + 0.2 }); T({ type: 'pluck', freq: notes(11), dur: 0.1, vol: 0.06, at: A.now + 0.26 }); },
+  buy() { [0, 2, 4, 6, 7].forEach((d, i) => T({ type: 'pluck', freq: notes(d + 7), dur: 0.09, vol: 0.09, at: A.now + i * 0.05, cutoff: 3400 })); },
+  unlock() { T({ type: 'bell', freq: notes(11), dur: 0.25, vol: 0.07 }); T({ type: 'bell', freq: notes(14), dur: 0.35, vol: 0.06, at: A.now + 0.12 }); },
+  deny() { T({ type: 'triangle', freq: notes(-3), dur: 0.08, vol: 0.09 }); },
+  tea() { T({ type: 'sine', freq: notes(14), dur: 0.3, vol: 0.04, glide: 1.06 }); },
+  // Mission control: three countdown beeps and a go.
+  go() { const t0 = A.now; [0, 0, 0].forEach((d, i) => T({ type: 'sine', freq: notes(7), dur: 0.08, vol: 0.08, at: t0 + i * 0.35 })); T({ type: 'sine', freq: notes(11), dur: 0.3, vol: 0.09, at: t0 + 1.05 }); },
+  win() { const t0 = A.now; [0, 2, 4, 7, 9, 11, 14].forEach((d, i) => T({ type: 'pluck', freq: notes(d + 7), dur: 0.12, vol: 0.08, at: t0 + i * 0.07 })); [[0, 4, 7]].forEach(ch => ch.forEach(d => T({ type: 'keys', freq: notes(d + 7), dur: 0.8, vol: 0.05, at: t0 + 0.55 }))); },
+  fail() { [4, 2, 1, 0].forEach((d, i) => T({ type: 'triangle', freq: notes(d + 7), dur: 0.14, vol: 0.07, cutoff: 1800, at: A.now + i * 0.12 })); },
+  // The hold: a soft low pulse, each second.
+  tick() { T({ type: 'sine', freq: notes(-7), dur: 0.09, vol: 0.12 }); },
+  // The Big One rolls in.
+  big() { const t0 = A.now; N('whoosh', { vol: 0.06, dur: 1.6, at: t0 }); [[1, 3, 5], [0, 2, 4]].forEach((ch, k) => ch.forEach(d => T({ type: 'pad', freq: notes(d), dur: 1.1, vol: 0.03, attack: 0.3, at: t0 + 0.4 + k * 1.1 }))); },
+  // The end: Eb to D (the phrygian cadence), and the stars.
+  finale() {
+    const t0 = A.now;
+    [[1, 3, 5, 8], [0, 2, 4, 7]].forEach((ch, k) => ch.forEach(d => T({ type: 'pad', freq: notes(d), dur: 1.4, vol: 0.035, attack: 0.25, at: t0 + k * 1.4 })));
+    [7, 9, 11, 14, 16].forEach((d, i) => T({ type: 'bell', freq: notes(d + 7), dur: 0.5, vol: 0.05, at: t0 + 2.6 + i * 0.18 }));
+  },
+};
+for (const [name, f] of Object.entries(sfx)) sfx[name] = (...a) => { gainNow = LV[name] ?? 1; try { f(...a); } finally { gainNow = 1; } };
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'big', 'win', 'go'], S: () => S, E };
+
+// ---------- Music ----------
+let music = null, soundtrack = null;
+let M = null;            // the mission in progress (not saved: a reload stands it down)
+const phaseKey = () => S.ended ? 'end' : S.hold != null ? 'hold' : M ? 'mission' : 'sky';
+function song() { return (soundtrack ??= createSoundtrack(music.strudel))(phaseKey()); }
+createMusic(A, { song }).then(m => { music = m; music.update(); if (DEBUG) window.__game.music = m; }).catch(e => console.warn('music', e));
+const refreshMusic = () => { if (music) music.update(); };
+
+// ---------- Canvas, geometry ----------
+const W = 720, H = 660;
+const cv = $('stage');
+let g = cv.getContext('2d');
+let clock = 0;
+// The diorama: a slab of hilltop in isometric. u runs to the lower right, v to the lower left.
+const ISO = { cx: 360, cy: 548, hw: 196, hh: 98, side: 30 };
+const iso = (u, v, z = 0) => [ISO.cx + (u - v) * ISO.hw, ISO.cy - ISO.hh + (u + v) * ISO.hh - z];
+// Houston's height on screen: a diorama, not to scale.
+const ALT_Y = [[0, 404], [150, 318], [300, 240], [450, 165], [600, 108]];
+function yOfAlt(a) {
+  for (let i = 1; i < ALT_Y.length; i++) if (a <= ALT_Y[i][0]) { const [a0, y0] = ALT_Y[i - 1], [a1, y1] = ALT_Y[i]; return y0 + (y1 - y0) * (a - a0) / (a1 - a0); }
+  return ALT_Y[ALT_Y.length - 1][1];
+}
+const LAYER_Y = [362, 283, 205, 130];
+const BIG = { x: 165, y: 12, w: 430, h: 80 };
+const BASE = (() => { const [x, y] = iso(0.65, 0.6, 9); return { x, y }; })();
+let topY = S.ended ? 26 : yOfAlt(E.height(S));
+const vis = id => S.ended || (E.BY_ID[id].kind === 'lv' ? S.lv[id] > 0 : !!S.one[id]);
+const lvl = id => S.ended ? E.BY_ID[id].max || 1 : (E.BY_ID[id].kind === 'lv' ? S.lv[id] : (S.one[id] ? 1 : 0));
+const won = id => S.ended || !!S.won[id];
+const found = id => S.ended || !!S.finds[id];
+const stalkX = y => BASE.x + Math.sin(y * 0.045 + clock * 0.5) * 3;
+
+// Seeded noise, for stars and dents.
+let seedN = 1;
+const srand = () => { seedN = (seedN * 16807) % 2147483647; return seedN / 2147483647; };
+const STARS = []; seedN = 7; for (let i = 0; i < 70; i++) STARS.push([srand() * W, srand() * 400, srand() < 0.15 ? 1.6 : 0.9, srand() * 6]);
+const DENTS = []; seedN = 11; for (let i = 0; i < 40; i++) DENTS.push([0.05 + srand() * 0.9, 0.1 + srand() * 0.8]);
+
+// ---------- Drawing helpers ----------
+function poly(pts, fill, stroke = C.ink, lw = 1.2) {
+  g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath();
+  if (fill) { g.fillStyle = fill; g.fill(); }
+  if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw; g.lineJoin = 'round'; g.stroke(); }
+}
+function isoBox(u, v, du, dv, z, h, top, left, right) {
+  const p = (a, b, zz) => iso(a, b, zz);
+  poly([p(u, v + dv, z + h), p(u + du, v + dv, z + h), p(u + du, v + dv, z), p(u, v + dv, z)], left);
+  poly([p(u + du, v, z + h), p(u + du, v + dv, z + h), p(u + du, v + dv, z), p(u + du, v, z)], right);
+  poly([p(u, v, z + h), p(u + du, v, z + h), p(u + du, v + dv, z + h), p(u, v + dv, z + h)], top);
+}
+function circle(x, y, r, fill, stroke = null, lw = 1.2) { g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); if (fill) { g.fillStyle = fill; g.fill(); } if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw; g.stroke(); } }
+function line(pts, col, w = 1.5) { g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round'; g.lineJoin = 'round'; g.stroke(); }
+function text(s, x, y, size = 14, col = C.cream, align = 'center', font = 'Chakra Petch', weight = 700) {
+  g.font = `${weight} ${size}px '${font}', system-ui, sans-serif`; g.textAlign = align; g.textBaseline = 'middle'; g.fillStyle = col; g.fillText(s, x, y);
+}
+
+// ---------- Sky ----------
+function drawSky() {
+  const gr = g.createLinearGradient(0, 0, 0, 470);
+  gr.addColorStop(0, C.ink); gr.addColorStop(0.55, C.navy); gr.addColorStop(1, C.violet);
+  g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  for (const [x, y, r, ph] of STARS) { g.globalAlpha = 0.45 + 0.35 * Math.sin(clock * 0.8 + ph); circle(x, y, r, C.cream); }
+  g.globalAlpha = 1;
+  drawMoon(650, 58, S.ended ? 26 : 20);
+  // The altimeter, down the right edge.
+  g.globalAlpha = 0.55;
+  for (let a = 100; a <= 600; a += 100) { const y = yOfAlt(a); line([[W - 14, y], [W - 4, y]], C.mint, 1); text(`${a}`, W - 18, y, 10, C.mint, 'right', 'Space Mono', 400); }
+  g.globalAlpha = 1;
+  // Layer names, on the left: lit if in reach.
+  E.LAYERS.forEach((L, i) => {
+    const inReach = E.height(S) >= L.reach || S.ended;
+    g.globalAlpha = inReach ? 0.55 : 0.25;
+    text(L.short.toUpperCase(), 8, LAYER_Y[i] - 34, 9, inReach ? C.mint : C.mauve, 'left', 'Space Mono', 400);
+  });
+  g.globalAlpha = 1;
+}
+// A waxing gibbous moon, 87% lit (the night of 21 November), lit on the right.
+function drawMoon(x, y, r) {
+  const glow = g.createRadialGradient(x, y, r * 0.5, x, y, r * 3.2);
+  glow.addColorStop(0, '#fff4e033'); glow.addColorStop(1, '#fff4e000');
+  g.fillStyle = glow; g.fillRect(x - r * 3.3, y - r * 3.3, r * 6.6, r * 6.6);
+  circle(x, y, r, C.cream);
+  const k = 0.87, rx = r * (2 * k - 1);
+  g.beginPath(); g.arc(x, y, r, Math.PI / 2, Math.PI * 1.5); g.ellipse(x, y, rx, r, 0, Math.PI * 1.5, Math.PI / 2, true); g.closePath();
+  g.fillStyle = '#4b3b9ccc'; g.fill();
+  circle(x + r * 0.3, y - r * 0.25, r * 0.16, '#d1b48c66'); circle(x + r * 0.05, y + r * 0.35, r * 0.12, '#d1b48c66');
+}
+
+// ---------- The diorama ----------
+function drawSlab() {
+  const { side } = ISO;
+  const L = iso(0, 1), R = iso(1, 0), B = iso(1, 1), Tp = iso(0, 0);
+  // Sides: turf, soil, rock.
+  poly([L, B, [B[0], B[1] + side], [L[0], L[1] + side]], C.plum);
+  poly([B, R, [R[0], R[1] + side], [B[0], B[1] + side]], C.ink);
+  poly([L, B, [B[0], B[1] + 7], [L[0], L[1] + 7]], C.green, null);
+  poly([B, R, [R[0], R[1] + 7], [B[0], B[1] + 7]], '#4f6a26', null);
+  g.globalAlpha = 0.5; line([[L[0], L[1] + 18], [B[0], B[1] + 18]], C.wine, 2); line([[B[0], B[1] + 18], [R[0], R[1] + 18]], C.plum, 2); g.globalAlpha = 1;
+  // The top: grass, with a checker of lighter turf.
+  poly([Tp, R, B, L], C.green);
+  for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) if ((i + j) % 2 === 0) poly([iso(i / 8, j / 8), iso((i + 1) / 8, j / 8), iso((i + 1) / 8, (j + 1) / 8), iso(i / 8, (j + 1) / 8)], '#7a9a36', null);
+  poly([Tp, R, B, L], null, C.ink, 1.5);
+  // The path from the door to Houston's bed.
+  for (let i = 0; i < 5; i++) { const [x, y] = iso(0.5 + i * 0.035, 0.3 + i * 0.065); g.beginPath(); g.ellipse(x, y, 7, 3.5, 0, 0, Math.PI * 2); g.fillStyle = C.tan; g.fill(); }
+}
+function drawHut() {
+  const u = 0.1, v = 0.1, du = 0.34, dv = 0.28, h = 46;
+  isoBox(u, v, du, dv, 0, h, C.tan, C.mauve, C.plum);
+  // Window on the left wall, with a sill.
+  const w0 = iso(u + 0.1, v + dv, 16), w1 = iso(u + 0.2, v + dv, 16), w2 = iso(u + 0.2, v + dv, 34), w3 = iso(u + 0.1, v + dv, 34);
+  poly([w0, w1, w2, w3], S.ended || S.hold != null ? C.gold : '#f2b63dcc');
+  line([[(w0[0] + w1[0]) / 2, (w0[1] + w1[1]) / 2], [(w2[0] + w3[0]) / 2, (w2[1] + w3[1]) / 2]], C.ink, 1.2);
+  poly([iso(u + 0.09, v + dv + 0.02, 16), iso(u + 0.21, v + dv + 0.02, 16), iso(u + 0.21, v + dv, 14), iso(u + 0.09, v + dv, 14)], C.tan);
+  // Door on the right wall.
+  const d = [iso(u + du, v + 0.1, 0), iso(u + du, v + 0.19, 0), iso(u + du, v + 0.19, 32), iso(u + du, v + 0.1, 32)];
+  poly(d, C.wine);
+  circle(...iso(u + du, v + 0.175, 16), 1.4, C.gold);
+  if (vis('patch')) { const [x, y] = iso(u + du, v + 0.145, 25); g.beginPath(); g.ellipse(x, y, 6, 7, -0.45, 0, Math.PI * 2); g.fillStyle = C.navy; g.fill(); g.strokeStyle = C.gold; g.lineWidth = 1.5; g.stroke(); circle(x - 1, y + 1, 2.2, C.cream); circle(x + 2, y - 2, 1.2, C.olive); }
+  // Roof: back slope, front slope, gable.
+  const e = 0.025, rh = 30;
+  const pf0 = iso(u - e, v + dv + e, h), pf1 = iso(u + du + e, v + dv + e, h), r0 = iso(u - e, v + dv / 2, h + rh), r1 = iso(u + du + e, v + dv / 2, h + rh);
+  const pb0 = iso(u - e, v - e, h), pb1 = iso(u + du + e, v - e, h);
+  poly([pb0, pb1, r1, r0], C.wine);
+  poly([pf0, pf1, r1, r0], C.red);
+  poly([iso(u + du, v + dv, h), iso(u + du, v, h), iso(u + du, v + dv / 2, h + rh)], C.mauve);
+  // Hail dents in the front slope.
+  const nd = Math.min(DENTS.length, S.ended ? Math.max(S.dents, 12) : S.dents);
+  for (let i = 0; i < nd; i++) {
+    const [a, b] = DENTS[i];
+    const x = pf0[0] + (pf1[0] - pf0[0]) * a + (r0[0] - pf0[0]) * b, y = pf0[1] + (pf1[1] - pf0[1]) * a + (r0[1] - pf0[1]) * b;
+    g.beginPath(); g.ellipse(x, y, 2.6, 1.6, -0.45, 0, Math.PI * 2); g.fillStyle = C.wine; g.fill();
+    g.beginPath(); g.ellipse(x + 0.6, y + 0.5, 1.4, 0.8, -0.45, 0, Math.PI * 2); g.fillStyle = '#ff7a90'; g.fill();
+  }
+  // The chimney, and the cockerel on the ridge.
+  isoBox(u + 0.05, v + 0.06, 0.05, 0.05, h + 12, 28, C.mauve, C.wine, C.plum);
+  if (vis('kettle') && !reduced) for (let i = 0; i < 3; i++) { const [x, y] = iso(u + 0.075, v + 0.085, h + 42); const t = (clock * 0.5 + i / 3) % 1; g.globalAlpha = 0.5 * (1 - t); circle(x + Math.sin(t * 6) * 3, y - t * 26, 3 + t * 5, C.cream); g.globalAlpha = 1; }
+  if (found('cockerel')) drawCockerel(...iso(u + du * 0.7, v + dv / 2, h + rh));
+  if (found('balloon')) { const [x, y] = iso(u + 0.075, v + 0.085, h + 40); const by = y - 34 + Math.sin(clock * 1.6) * 3; line([[x, y], [x + 4, by + 9]], C.cream, 0.8); g.beginPath(); g.ellipse(x + 4, by, 7, 9, 0, 0, Math.PI * 2); g.fillStyle = C.red; g.fill(); g.strokeStyle = C.ink; g.lineWidth = 1; g.stroke(); circle(x + 2, by - 3, 1.8, '#ff9fb0'); }
+  // The gutter.
+  line([pf1, iso(u + du + e + 0.01, v + dv + e, h - 4)], C.ink, 2);
+  // Radio on the sill.
+  if (vis('radio')) { const [x, y] = iso(u + 0.13, v + dv + 0.015, 16); g.fillStyle = C.orange; g.fillRect(x - 6, y - 9, 12, 8); g.strokeStyle = C.ink; g.lineWidth = 1; g.strokeRect(x - 6, y - 9, 12, 8); circle(x - 2, y - 5, 2, C.tan); line([[x + 4, y - 9], [x + 9, y - 19]], C.ink, 0.8); if (!reduced && Math.sin(clock * 3) > 0.3) text('♪', x + 12, y - 16, 9, C.mint); }
+  if (found('rock')) { const [x, y] = iso(u + 0.17, v + dv + 0.015, 16); g.globalAlpha = 0.5 + 0.3 * Math.sin(clock * 2); circle(x, y - 3, 7, '#f2b63d55'); g.globalAlpha = 1; circle(x, y - 3, 3.4, C.violet, C.ink, 1); circle(x - 1, y - 4, 1, C.gold); }
+}
+function drawCockerel(x, y) {
+  line([[x, y], [x, y - 14]], C.ink, 1.5);
+  const a = Math.sin(clock * 0.7) * 0.9;
+  g.save(); g.translate(x, y - 16); g.scale(Math.cos(a) || 0.1, 1);
+  poly([[-7, 0], [-2, -5], [3, -6], [5, -9], [7, -5], [5, -1], [8, 2], [-5, 2]], C.gold, C.ink, 1);
+  g.restore();
+  line([[x - 6, y - 10], [x + 6, y - 10]], C.ink, 1);
+}
+
+// Garden things, by place.
+function drawGarden() {
+  // Loofah trellis on the left of the hut wall, with loofahs.
+  if (vis('loofah')) {
+    const n = lvl('loofah');
+    const a = iso(0.11, 0.39, 0), b = iso(0.11, 0.39, 52), c = iso(0.2, 0.39, 52), d = iso(0.2, 0.39, 0);
+    for (let i = 0; i <= 3; i++) line([[a[0] + (d[0] - a[0]) * i / 3, a[1] + (d[1] - a[1]) * i / 3], [b[0] + (c[0] - b[0]) * i / 3, b[1] + (c[1] - b[1]) * i / 3]], C.tan, 1.2);
+    for (let j = 1; j <= 3; j++) line([[a[0], a[1] - j * 15], [d[0], d[1] - j * 15]], C.tan, 1.2);
+    for (let i = 0; i < 9; i++) { const t = i / 8; circle(a[0] + (d[0] - a[0]) * t + Math.sin(i) * 3, a[1] + (d[1] - a[1]) * t - 8 - (i * 17 % 40), 3.5, i % 2 ? C.green : C.olive); }
+    for (let i = 0; i < n; i++) { const t = 0.2 + i * 0.3; const x = a[0] + (d[0] - a[0]) * t, y = a[1] + (d[1] - a[1]) * t - 18 - i * 6; g.beginPath(); g.ellipse(x, y, 3, 8, 0.1, 0, Math.PI * 2); g.fillStyle = C.olive; g.fill(); g.strokeStyle = C.ink; g.lineWidth = 1; g.stroke(); }
+  }
+  // Water bucket and pumpkin butts along the hut's right side, under the gutter.
+  const [bx, by] = iso(0.49, 0.38, 0);
+  poly([[bx - 7, by - 12], [bx + 7, by - 12], [bx + 5, by], [bx - 5, by]], C.deep); g.beginPath(); g.ellipse(bx, by - 12, 7, 2.5, 0, 0, Math.PI * 2); g.fillStyle = C.blue; g.fill(); g.stroke();
+  if (won('evap') && !lvl('butt')) { g.beginPath(); g.ellipse(bx, by - 13, 7.5, 3, 0, 0, Math.PI * 2); g.fillStyle = C.mauve; g.fill(); g.stroke(); circle(bx, by - 15, 1.5, C.ink); }
+  for (let i = 0; i < lvl('butt'); i++) {
+    const [x, y] = iso(...[[0.5, 0.03], [0.5, 0.095], [0.575, 0.03], [0.575, 0.095]][i], 0);
+    g.beginPath(); g.ellipse(x, y - 8, 12, 9, 0, 0, Math.PI * 2); g.fillStyle = C.orange; g.fill(); g.strokeStyle = C.ink; g.lineWidth = 1.2; g.stroke();
+    line([[x - 5, y - 15], [x - 6, y - 2]], C.wine, 1); line([[x + 5, y - 15], [x + 6, y - 2]], C.wine, 1);
+    if (won('evap')) { g.beginPath(); g.ellipse(x, y - 16, 9, 3.4, 0, 0, Math.PI * 2); g.fillStyle = C.mauve; g.fill(); g.stroke(); circle(x, y - 18, 1.6, C.ink); }
+    else { g.beginPath(); g.ellipse(x, y - 15, 6, 2.2, 0, 0, Math.PI * 2); g.fillStyle = C.blue; g.fill(); }
+  }
+  // Bamboo at the back corner: a clump per brush level.
+  for (let i = 0; i < lvl('brush'); i++) {
+    const [x, y] = iso(0.78 + i * 0.05, 0.08 + i * 0.04, 0);
+    for (let k = 0; k < 3; k++) { const xx = x + k * 4 - 4, hh = 70 + k * 12 - i * 6; line([[xx, y], [xx + 2, y - hh]], C.olive, 2.5); for (let j = 1; j < 4; j++) line([[xx - 1, y - hh * j / 4], [xx + 3, y - hh * j / 4]], C.green, 1); line([[xx + 2, y - hh], [xx + 10, y - hh + 4]], C.green, 2); }
+  }
+  // Windsock on its pole at the right corner.
+  if (won('wind')) {
+    const [x, y] = iso(0.93, 0.4, 0);
+    line([[x, y], [x, y - 64]], C.tan, 2);
+    const f = Math.sin(clock * 4) * 3;
+    poly([[x, y - 64], [x + 26, y - 60 + f], [x + 26, y - 53 + f], [x, y - 52]], C.orange, C.ink, 1);
+    line([[x + 9, y - 62 + f * 0.3], [x + 9, y - 53 + f * 0.3]], C.cream, 3);
+  }
+  // The fence post at the front-left corner, and the glove waving on it.
+  { const [x, y] = iso(0.04, 0.9, 0); g.fillStyle = C.tan; g.fillRect(x - 3, y - 26, 6, 26); g.strokeStyle = C.ink; g.lineWidth = 1; g.strokeRect(x - 3, y - 26, 6, 26);
+    if (found('glove')) { g.save(); g.translate(x, y - 27); g.rotate(Math.sin(clock * 2.2) * 0.35); poly([[-5, 0], [5, 0], [6, -9], [4, -15], [2, -9], [1, -16], [-1, -9], [-3, -15], [-4, -8], [-7, -11], [-6, -4]], C.blue, C.ink, 1); g.restore(); } }
+  // Sunflower at the front, turned to whatever is shiniest.
+  if (vis('sunflower')) {
+    const [x, y] = iso(0.3, 0.74, 0);
+    line([[x, y], [x + 2, y - 58]], C.green, 3);
+    poly([[x, y - 22], [x - 12, y - 30], [x - 2, y - 28]], C.green, C.ink, 1);
+    const tgt = shiny(); const ang = Math.atan2(tgt[1] - (y - 60), tgt[0] - x);
+    g.save(); g.translate(x + 2, y - 60); g.rotate(ang + Math.PI / 2);
+    for (let i = 0; i < 12; i++) { g.save(); g.rotate(i * Math.PI / 6); g.beginPath(); g.ellipse(0, -10, 3.2, 6, 0, 0, Math.PI * 2); g.fillStyle = C.gold; g.fill(); g.restore(); }
+    circle(0, 0, 6.5, C.plum, C.ink, 1); g.restore();
+  }
+  // Gnome in a helmet, with a fishing rod.
+  if (vis('gnome')) {
+    const [x, y] = iso(0.84, 0.72, 0);
+    poly([[x - 6, y], [x + 6, y], [x + 4, y - 12], [x - 4, y - 12]], C.blue);
+    circle(x, y - 15, 4, C.tan); poly([[x - 4, y - 17], [x + 4, y - 17], [x, y - 30]], C.red, C.ink, 1);
+    g.beginPath(); g.ellipse(x, y - 13, 6, 7, 0, 0, Math.PI * 2); g.fillStyle = '#d0f0ff22'; g.fill(); g.strokeStyle = C.cream; g.lineWidth = 1.2; g.stroke();
+    circle(x, y - 12, 2.5, C.cream);
+    line([[x + 5, y - 8], [x + 24, y - 34]], C.tan, 1); line([[x + 24, y - 34], [x + 26, y - 14]], C.cream, 0.6);
+  }
+  // Houston's bed.
+  isoBox(0.59, 0.53, 0.13, 0.13, 0, 9, '#5a3a2e', C.wine, C.plum);
+}
+// Where the sunflower looks: a hail cloud if there is one, else the moon.
+function shiny() {
+  const h = clouds.find(c => c.state === 'lined' && c.prize?.hail);
+  return h ? [h.x + h.w / 2, h.y + h.h / 2] : [650, 58];
+}
+
+// ---------- Houston ----------
+function drawHouston(ty, { tendrilsOut = true } = {}) {
+  const by = BASE.y;
+  // The cane: lengths of bamboo, lashed.
+  for (let y = by; y > ty + 6; y -= 34) { const y1 = Math.max(ty + 6, y - 34); line([[BASE.x - 2, y], [BASE.x - 2, y1]], C.tan, 3); line([[BASE.x - 5, y1 + 2], [BASE.x + 1, y1 + 2]], C.mauve, 1.6); }
+  // The vine, twining round it.
+  const pts = [];
+  for (let y = by; y >= ty; y -= 3) pts.push([stalkX(y) + Math.sin(y * 0.16) * 4.5, y]);
+  line(pts, C.ink, 4.4); line(pts, C.green, 2.6);
+  // Leaves, flowers, pods.
+  let k = 0;
+  for (let y = by - 12; y > ty + 10; y -= 19, k++) {
+    const side = k % 2 ? 1 : -1, x = stalkX(y) + side * 2, s = 1 - Math.max(0, (by - y) / 2400);
+    leaf(x, y, side, s * (k % 3 === 0 ? 1.1 : 0.9));
+    if (k % 3 === 1) { circle(x - side * 6, y - 3, 2.6, C.red); circle(x - side * 9, y, 2.2, C.red); circle(x - side * 6, y + 3, 2, C.wine); }
+    if (k % 5 === 3) line([[x - side * 3, y + 2], [x - side * 6, y + 18]], C.olive, 2.6);
+  }
+  // Her tendrils, curled on the stalk while they wait for a cloud: one per level.
+  const nt = S.ended ? 6 : S.lv.tendril;
+  for (let i = 0; i < nt; i++) {
+    const y = by - 40 - (by - ty - 60) * (i + 0.5) / Math.max(1, nt), x = stalkX(y), sd = i % 2 ? 1 : -1;
+    g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + sd * 10, y - 6, x + sd * 12, y - 12);
+    g.arc(x + sd * 9, y - 12, 3, 0, Math.PI * 1.5, sd < 0); g.strokeStyle = C.olive; g.lineWidth = 1.4; g.stroke();
+  }
+  // The growing tip.
+  const tx = stalkX(ty);
+  line([[tx, ty + 4], [tx + 3, ty - 4], [tx + 7, ty - 5], [tx + 8, ty - 1], [tx + 5, ty]], C.green, 2);
+  leaf(tx - 2, ty + 6, -1, 0.8);
+  if (vis('hat')) drawHat(tx + 2, ty - 6);
+  if (found('kite')) drawKite(tx, ty);
+}
+function leaf(x, y, side, s = 1) {
+  g.save(); g.translate(x, y); g.scale(side * s, s);
+  g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(6, -10, 16, -6); g.quadraticCurveTo(13, 3, 0, 0); g.fillStyle = C.green; g.fill(); g.strokeStyle = C.ink; g.lineWidth = 0.9; g.stroke();
+  g.beginPath(); g.moveTo(2, -1); g.quadraticCurveTo(8, -6, 14, -5); g.strokeStyle = C.olive; g.lineWidth = 0.8; g.stroke();
+  g.restore();
+}
+function drawHat(x, y) {
+  g.fillStyle = C.cream; g.strokeStyle = C.ink; g.lineWidth = 1;
+  g.fillRect(x - 5, y - 2, 10, 5); g.strokeRect(x - 5, y - 2, 10, 5);
+  circle(x - 4, y - 5, 4, C.cream, C.ink, 1); circle(x + 4, y - 5, 4, C.cream, C.ink, 1); circle(x, y - 8, 5, C.cream, C.ink, 1);
+  g.fillStyle = C.cream; g.fillRect(x - 4.4, y - 5, 8.8, 4);
+}
+function drawKite(x, y) {
+  const kx = x + 54 + Math.sin(clock * 0.9) * 8, ky = y - 26 + Math.cos(clock * 1.2) * 5;
+  g.beginPath(); g.moveTo(x + 2, y + 4); g.quadraticCurveTo(x + 30, y + 10, kx, ky + 12); g.strokeStyle = '#fff4e0aa'; g.lineWidth = 0.7; g.stroke();
+  poly([[kx, ky - 12], [kx + 9, ky], [kx, ky + 12], [kx - 9, ky]], C.red, C.ink, 1);
+  line([[kx, ky - 12], [kx, ky + 12]], C.wine, 0.8); line([[kx - 9, ky], [kx + 9, ky]], C.wine, 0.8);
+  line([[kx, ky + 12], [kx - 4, ky + 20], [kx + 2, ky + 26], [kx - 2, ky + 33]], C.gold, 1);
+}
+
+// ---------- The cook ----------
+function drawCook(x, y, { look = 0, torch = won('dark'), up = false, s = 1.45 } = {}) {
+  g.save(); g.translate(x, y); g.scale(s, s); g.translate(-x, -y);
+  poly([[x - 5, y], [x + 5, y], [x + 4, y - 13], [x - 4, y - 13]], C.cream);  // apron
+  circle(x, y - 17, 4.5, C.tan, C.ink, 1);
+  poly([[x - 5, y - 18], [x + 5, y - 18], [x + 4, y - 23], [x - 4, y - 23]], C.red, C.ink, 1);  // headscarf
+  if (up) { circle(x + 1, y - 18, 0.9, C.ink); }
+  else circle(x + 1.6 * look, y - 16.5, 0.9, C.ink);
+  if (torch) { circle(x + 3, y - 21, 1.8, C.gold); }
+  g.restore();
+}
+function drawBasket(x, y, painting) {
+  g.save(); g.translate(x, y); g.scale(1.45, 1.45); g.translate(-x, -y);
+  line([[x + 4, y - 30], [stalkX(y - 30) - 2, y - 32]], C.tan, 1);
+  line([[x - 9, y - 10], [x + 4, y - 30]], C.tan, 0.8); line([[x + 9, y - 10], [x + 4, y - 30]], C.tan, 0.8);
+  drawCook(x, y - 4, { look: painting ? (painting.x + painting.w / 2 > x ? 1 : -1) : 0, s: 1 });
+  poly([[x - 10, y - 10], [x + 10, y - 10], [x + 8, y + 2], [x - 8, y + 2]], C.tan);
+  line([[x - 9, y - 6], [x + 9, y - 6]], C.mauve, 1); line([[x - 8, y - 2], [x + 8, y - 2]], C.mauve, 1);
+  g.restore();
+  if (painting) {
+    const px = painting.x + painting.w * Math.min(0.95, painting.paint + 0.05), py = painting.y + painting.h * 0.82;
+    line([[x + 4, y - 17], [px, py]], C.olive, 2);
+    circle(px, py, 3.4, C.mint, C.ink, 0.8);
+  }
+  if (won('dark') && !S.ended) { g.globalAlpha = 0.12; g.beginPath(); g.moveTo(x + 3, y - 25); g.lineTo(x + 80, y - 70); g.lineTo(x + 70, y - 30); g.closePath(); g.fillStyle = C.gold; g.fill(); g.globalAlpha = 1; }
+}
+
+// ---------- Clouds ----------
+// A cloud: puffs over a flat base, in its own local box. A lining is a canvas over it, scratched away cell by cell.
+const CELL = 8;
+const clouds = [];
+let cloudId = 0;
+const DIMS = [[126, 62], [150, 52], [124, 48], [112, 42]];
+function makeCloud(L, { kind = 'sky', x = null, y = null, painted = false, dim = false } = {}) {
+  const [w0, h0] = kind === 'big' ? [BIG.w, BIG.h] : kind === 'tea' ? [46, 24] : DIMS[L];
+  const w = Math.round(w0 * (kind === 'sky' ? 0.92 + Math.random() * 0.16 : 1)), h = h0;
+  const n = Math.max(3, Math.round(w / 26)), puffs = [], yb = h * 0.92;
+  for (let i = 0; i < n; i++) {
+    const t = i / (n - 1), mid = 1 - Math.abs(t - 0.5) * 1.4;
+    const r = h * (0.26 + 0.24 * mid + (kind === 'big' ? 0.12 * Math.sin(i * 2.1) : Math.random() * 0.08));
+    puffs.push([w * (0.1 + 0.8 * t), yb - r * 0.75, r]);
+  }
+  const c = { id: ++cloudId, L, kind, w, h, yb, puffs, dim,
+    x: x ?? -w - 10, y: y ?? (LAYER_Y[L] ?? 40) - h / 2 + (Math.random() - 0.5) * 26,
+    speed: (W + w + 20) / (kind === 'big' ? 6 : 24) * (1 + L * 0.05), born: clock, state: dim ? 'dim' : 'raw', paint: 0, coat: null, fade: 0 };
+  // Scratch grid.
+  c.cols = Math.ceil(w / CELL); c.rows = Math.ceil(h / CELL);
+  c.inside = new Uint8Array(c.cols * c.rows); c.clear = new Uint8Array(c.cols * c.rows); c.n = 0; c.cleared = 0;
+  for (let j = 0; j < c.rows; j++) for (let i = 0; i < c.cols; i++) {
+    const px = i * CELL + CELL / 2, py = j * CELL + CELL / 2;
+    if (py <= yb && puffs.some(([x0, y0, r]) => (px - x0) ** 2 + (py - y0) ** 2 <= r * r)) { c.inside[j * c.cols + i] = 1; c.n++; }
+  }
+  if (painted) { lineIt(c); c.paint = 1; c.state = 'lined'; }
+  clouds.push(c);
+  return c;
+}
+function cloudPath(q, c, ox = 0, oy = 0, s = 1) {
+  q.beginPath();
+  for (const [x, y, r] of c.puffs) { q.moveTo(ox + (x + r) * s, oy + y * s); q.arc(ox + x * s, oy + y * s, r * s, 0, Math.PI * 2); }
+}
+// The lining: silver (mint and cream) with a sheen, and a bright edge (the silver lining proper).
+function lineIt(c) {
+  if (!c.prize) c.prize = c.kind === 'big' ? { L: 3, rain: 0, hail: true, find: null } : c.kind === 'tea' ? { L: 0, rain: 1, hail: false, find: null, tea: true } : E.roll(S, c.L, Math.random, clouds.filter(o => o.prize?.find && o.state !== 'gone').map(o => o.prize.find));
+  const k = 2, cc = document.createElement('canvas'); cc.width = (c.w + 8) * k; cc.height = (c.h + 8) * k;
+  const q = cc.getContext('2d'); q.scale(k, k); q.translate(4, 4);
+  q.save(); q.beginPath(); q.rect(-4, -4, c.w + 8, c.yb + 4); q.clip();
+  cloudPath(q, c); q.strokeStyle = C.cream; q.lineWidth = 4.4; q.stroke(); q.fillStyle = C.mint; q.fill();
+  q.save(); cloudPath(q, c); q.clip();
+  q.strokeStyle = '#fff4e055'; q.lineWidth = 5;
+  for (let x = -c.h; x < c.w + c.h; x += 14) { q.beginPath(); q.moveTo(x, c.h); q.lineTo(x + c.h, 0); q.stroke(); }
+  q.fillStyle = '#28576333'; q.fillRect(0, c.yb - 9, c.w, 9);
+  q.fillStyle = C.cream;
+  for (let i = 0; i < c.w / 12; i++) { const x = (i * 37) % c.w, y = (i * 23) % c.h; q.fillRect(x, y, 1.5, 1.5); }
+  q.restore();
+  q.restore();
+  q.strokeStyle = C.cream; q.lineWidth = 2; q.beginPath(); q.moveTo(c.puffs[0][0], c.yb); q.lineTo(c.puffs[c.puffs.length - 1][0], c.yb); q.stroke();
+  // A tiny "?" in the middle, like a scratch card.
+  q.font = "700 13px 'Chakra Petch', sans-serif"; q.textAlign = 'center'; q.textBaseline = 'middle'; q.fillStyle = C.deep; q.globalAlpha = 0.5;
+  q.fillText(c.kind === 'big' ? '? ? ?' : c.kind === 'tea' ? 'T' : '?', c.w / 2, c.yb * 0.6); q.globalAlpha = 1;
+  c.coat = cc; c.coatQ = q;
+}
+function drawCloudBody(c, alpha = 1) {
+  const x = c.x, y = c.y;
+  g.save(); g.globalAlpha = alpha;
+  g.beginPath(); g.rect(x - 4, y - 4, c.w + 8, c.yb + 4); g.clip();
+  const far = c.state === 'dim';
+  // Shadow side, body, moonlit top.
+  cloudPath(g, c, x + 3, y + 3); g.fillStyle = far ? C.navy : C.plum; g.fill();
+  cloudPath(g, c, x, y); g.strokeStyle = C.ink; g.lineWidth = 2.6; g.stroke();
+  g.fillStyle = far ? C.violet : C.mauve; g.fill();
+  g.save(); cloudPath(g, c, x, y); g.clip();
+  for (const [px, py, r] of c.puffs) circle(x + px + r * 0.25, y + py - r * 0.3, r * 0.72, far ? '#5a4aa8' : C.tan);
+  g.restore();
+  g.restore();
+}
+// What's behind the lining: the inside of the cloud, full of rain, and the prize.
+function drawInside(c, alpha = 1) {
+  const x = c.x, y = c.y;
+  g.save(); g.globalAlpha = alpha;
+  g.beginPath(); g.rect(x - 4, y - 4, c.w + 8, c.yb + 4); g.clip();
+  cloudPath(g, c, x, y); g.strokeStyle = C.ink; g.lineWidth = 2.6; g.stroke(); g.fillStyle = c.kind === 'big' && S.ended ? C.cream : C.deep; g.fill();
+  g.save(); cloudPath(g, c, x, y); g.clip();
+  if (!(c.kind === 'big' && S.ended)) {
+    for (let i = 0; i < c.w / 9; i++) { const dx = (i * 29) % c.w, dy = (i * 17 + clock * 30) % c.h; g.fillStyle = i % 3 ? C.blue : C.mint; g.fillRect(x + dx, y + dy, 1.6, 4); }
+    if (c.prize?.hail) for (let i = 0; i < 9; i++) circle(x + c.w * (0.15 + 0.7 * ((i * 0.37) % 1)), y + c.h * (0.3 + 0.5 * ((i * 0.61) % 1)), 3, C.cream, C.mint, 1);
+  }
+  g.restore();
+  g.restore();
+  if (c.prize && c.kind !== 'big') {
+    const lab = c.prize.tea ? 'tea' : c.prize.hail ? `HAIL ${c.prize.rain} L` : `${c.prize.rain} L`;
+    g.globalAlpha = alpha; text(lab, x + c.w / 2, y + c.yb * 0.58, c.prize.hail ? 15 : 14, c.prize.hail ? C.gold : C.cream);
+    if (c.prize.find) drawFindIcon(c.prize.find, x + c.w / 2, y + c.yb * 0.58 - 16);
+    g.globalAlpha = 1;
+  }
+}
+function drawFindIcon(id, x, y) {
+  if (id === 'kite') poly([[x, y - 7], [x + 5, y], [x, y + 7], [x - 5, y]], C.red, C.ink, 1);
+  else if (id === 'glove') poly([[x - 4, y + 5], [x + 4, y + 5], [x + 5, y - 2], [x + 2, y - 7], [x, y - 2], [x - 2, y - 7], [x - 5, y - 1]], C.blue, C.ink, 1);
+  else if (id === 'plane') poly([[x - 8, y], [x + 8, y - 4], [x - 2, y + 4]], C.cream, C.ink, 1);
+  else if (id === 'balloon') { g.beginPath(); g.ellipse(x, y - 2, 5, 6.5, 0, 0, Math.PI * 2); g.fillStyle = C.red; g.fill(); g.strokeStyle = C.ink; g.stroke(); }
+  else if (id === 'cockerel') poly([[-7, 0], [-2, -5], [3, -6], [5, -9], [7, -5], [5, -1], [8, 2], [-5, 2]].map(([a, b]) => [x + a, y + b]), C.gold, C.ink, 1);
+  else if (id === 'rock') { circle(x, y, 7, '#f2b63d44'); circle(x, y, 4, C.violet, C.ink, 1); }
+}
+function drawCoat(c) {
+  if (!c.coat) return;
+  const k = 2, sw = (c.w + 8) * (c.state === 'painting' ? c.paint : 1);
+  g.drawImage(c.coat, 0, 0, sw * k, (c.h + 8) * k, c.x - 4, c.y - 4, sw, c.h + 8);
+  // Hail glints through the lining, if you can see it (the head-torch, or the Big One).
+  if ((won('dark') || c.kind === 'big') && c.prize?.hail && c.state === 'lined' && !reduced) {
+    for (let i = 0; i < (c.kind === 'big' ? 10 : 3); i++) {
+      const t = clock * 2 + i * 1.7, a = Math.max(0, Math.sin(t));
+      g.globalAlpha = a; const px = c.x + c.w * (0.2 + 0.6 * ((i * 0.41) % 1)), py = c.y + c.yb * (0.3 + 0.5 * ((i * 0.73) % 1));
+      line([[px - 4, py], [px + 4, py]], C.cream, 1.2); line([[px, py - 4], [px, py + 4]], C.cream, 1.2); g.globalAlpha = 1;
+    }
+  }
+}
+function drawCloud(c) {
+  if (c.state === 'dim') { drawCloudBody(c, 0.55); return; }
+  let a = 1;
+  if (c.evap) a = Math.max(0, 1 - Math.max(0, clock - c.born - 2.5) / 3.5);
+  if (c.state === 'gone') { if (c.kind !== 'big') a *= Math.max(0, 1 - c.fade / 1.3); drawInside(c, a); return; }
+  if (c.state === 'raw') { drawCloudBody(c, a); return; }
+  if (c.state === 'painting') { drawCloudBody(c, a); g.globalAlpha = a; drawCoat(c); g.globalAlpha = 1; return; }
+  drawInside(c, a); g.globalAlpha = a; drawCoat(c); g.globalAlpha = 1;
+}
+const inReach = c => c.kind !== 'sky' || E.height(S) >= E.LAYERS[c.L].reach;
+
+// Scratching: erase a stroke from the lining and mark the cells it covered.
+function scratchSeg(c, x0, y0, x1, y1, r, who = 'me') {
+  const lx0 = x0 - c.x, ly0 = y0 - c.y, lx1 = x1 - c.x, ly1 = y1 - c.y;
+  const q = c.coatQ;
+  q.save(); q.globalCompositeOperation = 'destination-out'; q.lineCap = 'round'; q.lineWidth = r * 2;
+  q.beginPath(); q.moveTo(lx0, ly0); q.lineTo(lx1, ly1 + 0.01); q.stroke(); q.restore();
+  const dx = lx1 - lx0, dy = ly1 - ly0, L2 = dx * dx + dy * dy || 1;
+  const i0 = Math.max(0, Math.floor((Math.min(lx0, lx1) - r) / CELL)), i1 = Math.min(c.cols - 1, Math.floor((Math.max(lx0, lx1) + r) / CELL));
+  const j0 = Math.max(0, Math.floor((Math.min(ly0, ly1) - r) / CELL)), j1 = Math.min(c.rows - 1, Math.floor((Math.max(ly0, ly1) + r) / CELL));
+  let hit = 0;
+  for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
+    const k = j * c.cols + i; if (!c.inside[k] || c.clear[k]) continue;
+    const px = i * CELL + CELL / 2, py = j * CELL + CELL / 2;
+    const t = Math.max(0, Math.min(1, ((px - lx0) * dx + (py - ly0) * dy) / L2));
+    if ((px - lx0 - t * dx) ** 2 + (py - ly0 - t * dy) ** 2 <= (r * 0.95) ** 2) { c.clear[k] = 1; c.cleared++; hit++; }
+  }
+  return hit;
+}
+const frac = c => c.cleared / Math.max(1, c.n);
+const RELEASE_AT = 0.65;
+function hitTest(c, x, y, pad = 0) { return x >= c.x - pad && x <= c.x + c.w + pad && y >= c.y - pad && y <= c.y + c.yb + pad; }
+
+// ---------- Particles, floats ----------
+const drops = [], floats = [];
+function rainFrom(c, n = 26) { for (let i = 0; i < (reduced ? n / 3 : n); i++) drops.push({ x: c.x + c.w * (0.1 + 0.8 * Math.random()), y: c.y + c.yb, v: 160 + Math.random() * 120, hail: c.prize?.hail && i % 3 === 0, life: 0 }); }
+function float(t, x, y, color = C.cream, size = 16) { floats.push({ t, x, y, color, size, age: 0 }); if (floats.length > 24) floats.shift(); }
+
+// ---------- Releases ----------
+let lastRelease = [];
+function releaseCloud(c, who) {
+  if (c.state !== 'lined') return;
+  c.state = 'gone'; c.fade = 0;
+  const p = c.prize;
+  if (p.tea) { S.rain += 1; S.total += 1; float('+1 L (tea)', c.x + c.w / 2, c.y, C.tan, 13); sfx.tea(); return; }
+  E.collect(S, p, who);
+  lastRelease.push([clock, p.rain]);
+  rainFrom(c, p.hail ? 40 : 24);
+  float(`+${p.rain} L`, c.x + c.w / 2, c.y + 4, p.hail ? C.gold : C.mint, p.hail ? 22 : 17);
+  if (M) M.got++;
+  if (p.hail) { sfx.hail(); say('LOG', pick(HAIL_LINES).replace('#', p.rain) + ` Roof dents: ${S.dents}.`, 'l'); }
+  else if (who === 'her') sfx.hers(); else sfx.release();
+  if (p.find) {
+    sfx.find(); float(E.FIND[p.find].name, c.x + c.w / 2, c.y - 16, C.gold, 15);
+    say('LOG', `Lost and found: ${E.FIND[p.find].line}`, 'l');
+  } else if (!p.hail) talkAbout(who, c);
+  after(false);
+}
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const HAIL_LINES = ['Hail. # litres and a lot of clatter. Clean release, very loud.', 'Hail on the roof: # litres. The roof has a new dent. Kitchen is calling it a feature.', 'Jackpot: hail, # litres. Houston ducked. Beans can duck, it turns out.'];
+let nMine = 0, nHers = 0;
+function talkAbout(who, c) {
+  if (who === 'her') {
+    nHers++;
+    if (S.hers === 1) say('LOG', 'Houston has released a cloud by herself. Unprompted. Logged as initiative.', 'l');
+    else if (nHers % 9 === 0) say('HOUSTON', pick(['(rustles)', '(a tendril curls, satisfied)', '(leans toward the radio)', '(rustles, at length)']), 'h');
+    return;
+  }
+  nMine++;
+  if (S.mine === 1) say('KITCHEN', `Clean release, Houston. ${c.prize.rain} litres of rain. That’s what was in it. Rain. Fascinating. Again.`);
+  else if (S.mine === 3) say('KITCHEN', 'A lined tin releases clean. A lined cloud releases rain. The rain goes in the butt, the butt waters you, you grow, I reach higher. Sound plan, Houston?');
+  else if (S.mine === 4) say('HOUSTON', '(rustles)', 'h');
+  else if (nMine % 7 === 0) say('KITCHEN', pick(CHATTER));
+}
+const CHATTER = [
+  'Kitchen to Houston: still rain. Every one. You’d think one would have soup in it.',
+  'Kitchen to Houston: lining holding, release clean, rain in the butt. Copy?',
+  'Houston, I am beginning to think clouds are mostly weather.',
+  'Kitchen to Houston: there’s a bigger one up there, over the hill. There always is. Keep growing.',
+  'Houston, you are doing very well. I want you to know that. Plants should be told.',
+  'Kitchen to Houston: the moon is at eighty-seven percent and climbing. Three nights to full. Not that it’s a race.',
+  'Houston, do you ever wonder what’s at the top of a cloud? I do. Professionally.',
+  'Kitchen to Houston: release confirmed. That one smelled of somewhere else.',
+];
+
+// ---------- The log ----------
+const LABEL = { KITCHEN: 'KITCHEN', HOUSTON: 'HOUSTON', LOG: 'LOG', AWAY: 'AWAY' };
+function say(who, s, cls = '') {
+  const el = $('log');
+  el.innerHTML = '';
+  const b = document.createElement('b'); b.textContent = LABEL[who] || who; if (cls) b.className = cls;
+  const sp = document.createElement('span'); sp.textContent = s;
+  el.append(b, sp);
+  el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
+}
+
+// ---------- HUD ----------
+function hud() {
+  $('rain').textContent = fmt(S.ended ? Math.max(S.rain, S.total) : S.rain);
+  const now = clock;
+  lastRelease = lastRelease.filter(([t]) => now - t < 60);
+  const per = lastRelease.reduce((a, [, r]) => a + r, 0) * 60 / Math.max(20, Math.min(60, now - (lastRelease[0]?.[0] ?? now) + 4));
+  const tm = E.tendrilPerMin(S);
+  $('rate').textContent = S.ended ? 'butts full' : `≈ ${E.fmtRate(per)} L/min${tm ? ` · tendrils ${E.fmtRate(tm)} clouds/min` : ''}`;
+  const h = S.ended ? 600 : E.height(S);
+  $('hTxt').textContent = `Houston ${h} m`;
+  $('hBar').style.width = `${h / E.BIG_ONE * 100}%`;
+  $('hPct').textContent = S.ended ? 'above it' : h >= E.BIG_ONE ? 'the Big One' : 'Big One 600 m';
+  const sub = [];
+  if (!S.ended) {
+    const L = E.reachLayer(S);
+    sub.push(`reach <b>${E.LAYERS[L].short}</b> (≈${Math.round(E.avgRain(S, L))} L)`);
+    sub.push(`hail <b>${Math.round(E.hailChance(S) * 100)}%</b>`);
+    sub.push(`finds <b>${E.findsHave(S)}/6</b>`);
+    if (S.dents) sub.push(`roof dents <b>${S.dents}</b>`);
+    if (S.hers) sub.push(`Houston’s releases <b>${S.hers}</b>`);
+  }
+  $('sub').innerHTML = sub.join(' · ');
+}
+
+// ---------- Calls: water, missions, the Big One ----------
+let callSig = '';
+function renderCalls() {
+  const el = $('calls');
+  const showWater = !S.ended && S.hold == null && S.total > 0 && S.lv.water < E.WATER_MAX;
+  const ms = S.ended || S.hold != null ? [] : E.missionsOpen(S);
+  const big = !S.ended && S.hold == null && S.lv.water >= E.WATER_MAX && bigCloud()?.state === 'lined';
+  const wc = E.cost(S, 'water');
+  const sig = `${showWater}|${wc}|${ms.map(m => m.id).join()}|${big}|${!!M}|${bigCloud()?.state}`;
+  if (sig !== callSig) {
+    callSig = sig; el.innerHTML = '';
+    if (big) {
+      const b = mk('bigBtn', 'go', '<b>Go for the Big One</b><span>final mission · hold back</span>');
+      wireTip(b, () => ({ id: 'big', name: 'Final mission: the Big One', desc: 'The tall cloud that has always sat over the hill. Kitchen has lined it, all of it. Houston is at 600 m, right under it.', fx: `Do not scratch it. Scratching rains it out and pushes Houston back. The countdown (${E.HOLD_SECS} s) only runs while nobody is scratching anything.`, foot: 'ends the game' }), startHold);
+      el.append(b);
+    }
+    if (showWater) {
+      const b = mk('waterBtn', '', '<b>Water Houston</b><span></span>');
+      b.querySelector('span').textContent = `+${E.STEP_M} m · ${wc} L`;
+      b.dataset.cost = wc;
+      wireTip(b, waterTip, () => doBuy('water'), true);
+      el.append(b);
+    }
+    for (const m of ms) {
+      const b = mk('m-' + m.id, 'go', '<b></b><span></span>');
+      b.querySelector('b').textContent = `Mission: ${m.name}`;
+      b.querySelector('span').textContent = `${m.secs} s · release ${m.need} · reward: ${m.reward}`;
+      wireTip(b, () => ({ id: 'm-' + m.id, name: `Mission: ${m.name}`, desc: m.desc, fx: `Reward: ${m.reward}. ${m.rewardFx}.`, foot: 'free · try as often as you like' }), () => startMission(m.id));
+      el.append(b);
+    }
+  }
+  const w = $('waterBtn');
+  if (w) { const can = S.rain >= wc; w.classList.toggle('can', can); w.setAttribute('aria-disabled', String(!can)); }
+  for (const b of el.querySelectorAll('[id^="m-"]')) b.setAttribute('aria-disabled', String(!!M));
+}
+function mk(id, cls, html) { const b = document.createElement('button'); b.type = 'button'; b.id = id; b.className = 'call ' + cls; b.innerHTML = html; return b; }
+function waterTip() {
+  const h = E.height(S), h2 = h + E.STEP_M;
+  const next = E.LAYERS.find(L => L.reach > h && L.reach <= h2);
+  const nm = E.MISSIONS.find(m => m.at > h && m.at <= h2);
+  const nu = E.ITEMS.filter(it => it.at > h && it.at <= h2);
+  let fx = `Houston: ${h} m → ${h2} m`;
+  if (next) fx += `. Brings ${next.short} into reach (${next.rain[0]}–${next.rain[1]} L a cloud, before bonuses)`;
+  if (h2 >= E.BIG_ONE) fx += '. That’s 600 m: the Big One';
+  if (nm) fx += `. Opens Mission: ${nm.name}`;
+  if (nu.length) fx += `. New requisition${nu.length > 1 ? 's' : ''} at that height`;
+  return { id: 'water', name: 'Water Houston', desc: 'A can of rain from the butts, at the roots. Runner beans grow fast. This one grows very fast, and listens.', fx, foot: `${E.cost(S, 'water')} L · ${S.lv.water}/${E.WATER_MAX}` };
+}
+
+// ---------- Shop ----------
+const shop = $('shop');
+const newUntil = {};
+let shopSig = '';
+const clone = () => JSON.parse(JSON.stringify(S));
+function renderShop() {
+  const closed = S.ended || S.hold != null || !S.total;
+  const fresh = closed ? [] : E.reveal(S);
+  const all = closed ? [] : E.items(S).sort((a, b) => E.cost(S, a.id) - E.cost(S, b.id));
+  for (const id of fresh) { if (S.started) sfx.unlock(); newUntil[id] = performance.now() + 9000; }
+  const sig = all.map(i => `${i.id}:${E.cost(S, i.id)}:${E.lv(S, i.id)}`).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    for (const it of all) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (it.kind === 'odd' ? ' odd' : '');
+      b.dataset.id = it.id; b.dataset.cost = E.cost(S, it.id);
+      b.innerHTML = '<b></b><em></em>';
+      b.querySelector('b').textContent = it.name;
+      b.querySelector('em').textContent = `${E.cost(S, it.id)} L${it.kind === 'lv' ? ` · ${S.lv[it.id]}/${E.max(it)}` : ''}`;
+      b.setAttribute('aria-describedby', 'tip');
+      b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, upTip(it.id)); });
+      b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+      b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, upTip(it.id)); });
+      b.addEventListener('blur', hideTip);
+      b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+      b.addEventListener('click', () => {
+        if (b.dataset.touch && tipFor !== it.id) { showTip(b, upTip(it.id)); return; }
+        if (b.getAttribute('aria-disabled') !== 'true') doBuy(it.id); else sfx.deny();
+      });
+      shop.append(b);
+    }
+  }
+  const now = performance.now();
+  let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = S.rain >= Number(b.dataset.cost);
+    n += can ? 1 : 0;
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'NEW'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  const water = $('waterBtn') && S.rain >= E.cost(S, 'water') ? 1 : 0;
+  $('afford').textContent = n + water ? `· ${n + water} affordable` : '';
+  document.querySelector('aside h2').hidden = !all.length;
+  renderShelf();
+  document.querySelector('.col').hidden = !all.length && !$('calls').children.length && shelfEl.hidden;
+}
+// What a purchase changes, now → after.
+function effect(id) {
+  const it = E.BY_ID[id], T2 = clone();
+  if (it.kind === 'odd') return id === 'kettle' ? 'A tiny lined cloud from the chimney, now and then: 1 L, of tea. Otherwise only the picture.' : 'Changes nothing in the numbers. Goes in the picture, for good.';
+  T2.rain = Infinity; E.buy(T2, id);
+  const L = E.reachLayer(S);
+  if (id === 'loofah') return `Scrub width: ${E.radius(S) * 2} → ${E.radius(T2) * 2} px a stroke`;
+  if (id === 'butt') return `Rain a release: ×${E.rainMult(S).toFixed(2)} → ×${E.rainMult(T2).toFixed(2)} (≈${Math.round(E.avgRain(S, L))} → ${Math.round(E.avgRain(T2, L))} L from ${E.LAYERS[L].short})`;
+  if (id === 'tendril') return `Houston releases ${E.fmtRate(E.tendrilPerMin(S))} → ${E.fmtRate(E.tendrilPerMin(T2))} lined clouds a minute by herself (with ${S.lv.tendril} → ${T2.lv.tendril} tendrils)`;
+  if (id === 'brush') return `Lining a cloud: ${E.paintSecs(S)} s → ${E.paintSecs(T2)} s`;
+  if (id === 'sunflower') return `Hail chance: ${Math.round(E.hailChance(S) * 100)}% → ${Math.round(E.hailChance(T2) * 100)}%, and the sunflower turns to face it`;
+  return '';
+}
+let tipFor = null;
+function upTip(id) {
+  const it = E.BY_ID[id];
+  const l = it.kind === 'lv' ? ` · level ${S.lv[id]} of ${E.max(it)}` : '';
+  return { id, name: it.name, desc: it.desc, fx: effect(id), joke: it.kind === 'odd' ? it.joke : '', foot: `${E.cost(S, id)} L${l}` };
+}
+function showTip(b, it) {
+  if (!it) return;
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><span class="fx"></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('.fx').textContent = it.fx || '';
+  tip.querySelector('.fx').hidden = !it.fx;
+  tip.querySelector('i').textContent = it.joke || '';
+  tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || '';
+  tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== $('bought')) $('bought').after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  const inSide = !!b.closest('#side');
+  if (inSide && r.left > t.width + 24 && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 14}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - t.width - 8, r.left))}px`;
+    tip.style.top = `${r.bottom + 8 + t.height < innerHeight ? r.bottom + 8 : Math.max(8, r.top - t.height - 8)}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+let tipMoved = 0;
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .call, .bought')) hideTip(); });
+const explained = new Set();
+// repeat: a button pressed again and again (watering) explains on the first touch only, then just works.
+function wireTip(b, info, act, repeat = false) {
+  b.setAttribute('aria-describedby', 'tip');
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, info()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, info()); });
+  b.addEventListener('blur', hideTip);
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  b.addEventListener('click', () => {
+    if (b.dataset.touch && !explained.has(b.id)) { explained.add(b.id); showTip(b, info()); return; }
+    if (b.getAttribute('aria-disabled') === 'true') { sfx.deny(); return; }
+    if (!repeat) hideTip(true);
+    act();
+    if (repeat && tipFor === b.id && !b.dataset.touch) { const nb = $(b.id); if (nb) showTip(nb, info()); }
+  });
+}
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!S.boughtOpen === shelfEl.open) return;
+  S.boughtOpen = shelfEl.open; save();
+});
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(i => i.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (it.kind === 'odd' ? ' odd' : '');
+    b.textContent = it.name; b.dataset.id = it.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, { id: 'bought:' + it.id, name: it.name, desc: it.desc, joke: it.joke, foot: it.kind === 'odd' ? 'for the picture' : 'bought', inline: true }); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + it.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+const LEVEL_LINES = {
+  loofah: { 2: 'Second loofah. Wider stripe. The clouds have started to look nervous, which is projection, but still.', 3: 'Third loofah. Kitchen can now take the lining off a cumulus in one sweep. Houston rustled. Applause, probably.' },
+  butt: { 2: 'Second pumpkin on station. Between them they hold more rain than the kitchen has ever needed for anything.', 4: 'Four pumpkins in a row under the gutter. From the road it looks like a very organised Halloween.' },
+  tendril: { 2: 'Two tendrils. Each has its own cloud. Neither was told which. They just know.', 4: 'Four tendrils. Houston is releasing clouds faster than Kitchen can describe them. Kitchen is describing them anyway.', 6: 'Six tendrils. Kitchen has stopped counting what Houston does on her own. Kitchen should not have stopped counting.' },
+  brush: { 2: 'Longer bamboo. The brush now reaches clouds that are, strictly, in the next parish.', 3: 'Bamboo the length of a bus. Kitchen lines a cloud in under a second. The clouds have no time to object.' },
+};
+const WATER_LINES = {
+  1: 'Houston: 20 m. Taller than the hut. She took that well.',
+  5: 'Houston: 100 m. Taller than anything on the hill. Kitchen is in a basket on a rope. This is fine.',
+  8: 'Stratocumulus in reach. Flatter clouds, wider linings, more rain. Houston leans into the wind like she means it.',
+  15: 'Altocumulus in reach. Halfway up. The air is thin and smells of ice. Kitchen has brought a flask.',
+  23: 'Cirrocumulus in reach. Little ripples of cloud, very high and very cold. The Big One is right above them.',
+  29: 'Houston: 580 m. One more can. The Big One is close enough to touch. Kitchen has not touched it.',
+};
+function doBuy(id) {
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  delete newUntil[id];
+  if (id === 'water') {
+    sfx.water();
+    const l = WATER_LINES[S.lv.water];
+    if (l) say('LOG', l, 'l');
+    else if (S.lv.water % 4 === 0) say('KITCHEN', `Water on the roots. Houston: ${E.height(S)} m and climbing. Good girl. Good bean.`);
+    float(`+${E.STEP_M} m`, BASE.x + 26, topY + 10, C.olive, 15);
+    if (S.lv.water >= E.WATER_MAX) arriveBig();
+  } else {
+    const it = E.BY_ID[id];
+    hideTip();
+    sfx.buy();
+    if (it.kind === 'lv') { const l = LEVEL_LINES[id]?.[S.lv[id]]; say('LOG', S.lv[id] === 1 ? it.joke : l || it.joke, 'l'); }
+    else say('LOG', it.joke, 'l');
+    if (id === 'tendril') syncTendrils();
+  }
+  after(true);
+}
+function after(full = true) {
+  if (full) save();
+  hud(); renderCalls(); renderShop();
+}
+
+// ---------- Missions ----------
+function startMission(id) {
+  if (M || S.hold != null) return;
+  const m = E.MISSION[id];
+  M = { id, t: -1.5, got: 0, need: m.need, secs: m.secs, next: 0 };
+  for (const c of clouds) if (c.kind === 'sky') { c.speed *= 4; c.leaving = true; }
+  sfx.go();
+  say('LOG', `Mission ${m.name}: go. ${m.desc} Houston is standing by.`, 'l');
+  refreshMusic(); after(false);
+}
+function stepMission(dt) {
+  const m = E.MISSION[M.id];
+  M.t += dt;
+  if (M.t >= 0) {
+    M.next -= dt;
+    if (M.next <= 0 && M.t < M.secs - 2) {
+      M.next = 2.4;
+      const L = E.reachLayer(S);
+      const c = makeCloud(L, { kind: 'mission', painted: true });
+      if (M.id === 'wind') c.speed *= 3;
+      if (M.id === 'evap') { c.x = 30 + Math.random() * (W - 220); c.y = LAYER_Y[Math.floor(Math.random() * 4)] - c.h / 2; c.speed = 4; c.evap = true; c.born = clock; }
+    }
+  }
+  if (M.got >= M.need) return finishMission(true);
+  if (M.t >= M.secs) return finishMission(false);
+}
+function finishMission(ok) {
+  const m = E.MISSION[M.id];
+  if (ok) { S.won[m.id] = true; sfx.win(); say('LOG', `Mission ${m.name}: success, ${M.got} of ${M.need}. ${m.line}`, 'l'); }
+  else { sfx.fail(); say('LOG', `Mission ${m.name}: ${M.got} of ${M.need}. Abort. Physics wins this round. Try again when ready.`, 'l'); }
+  for (const c of clouds) if (c.kind === 'mission') { c.leaving = true; c.speed = Math.max(c.speed, 120); }
+  M = null;
+  refreshMusic(); after(true);
+}
+
+// ---------- The Big One, and the hold ----------
+const bigCloud = () => clouds.find(c => c.kind === 'big');
+function arriveBig(instant = false) {
+  if (bigCloud()) return;
+  const c = makeCloud(3, { kind: 'big', x: instant ? BIG.x : W + 10, y: BIG.y, painted: instant });
+  c.speed = 0; c.target = BIG.x;
+  if (!instant) { sfx.big(); say('LOG', 'Houston: 600 m. The Big One is moving in over the hill, the cloud that has always been there. Kitchen is lining it. All of it.', 'l'); }
+}
+function startHold() {
+  if (S.hold != null) return;
+  const c = bigCloud(); if (!c || c.state !== 'lined') return;
+  S.hold = E.HOLD_SECS; S.held = 0; save();
+  sfx.go();
+  say('LOG', 'Final mission: the Big One. Do not scratch. Repeat: do not scratch. Kitchen is coming down. Houston, you’re on your own.', 'l');
+  refreshMusic(); after(true);
+}
+let lastScratch = -9, lastBigHit = -9, holdTick = 0, climb = null;
+function stepHold(dt) {
+  S.held += dt;
+  const resisting = clock - lastScratch > 0.6;
+  if (resisting && S.hold > 0) {
+    S.hold = Math.max(0, S.hold - dt);
+    holdTick += dt; if (holdTick >= 1) { holdTick = 0; sfx.tick(); }
+    const s = Math.ceil(S.hold);
+    if (s !== stepHold.last) { stepHold.last = s; const l = HOLD_LINES[s]; if (l) say(l[0], l[1], l[0] === 'HOUSTON' ? 'h' : l[0] === 'LOG' ? 'l' : ''); }
+  }
+  if (S.hold <= 0 && !climb) { climb = { t: 0 }; say('HOUSTON', '(climbs)', 'h'); }
+}
+const HOLD_LINES = {
+  35: ['KITCHEN', 'Holding. Hands in apron pockets. Houston is climbing on her own.'],
+  28: ['LOG', 'Houston’s tendrils have curled in. She isn’t scratching either. She knows.'],
+  20: ['KITCHEN', 'That one is glinting. That’s hail. That’s a lot of hail. Holding.'],
+  12: ['KITCHEN', 'Houston, I can’t see your top any more. That’s good. That means you’re in.'],
+  5: ['LOG', 'T-minus five. Kitchen is not breathing, which is a lot of not scratching.'],
+};
+
+// ---------- Tendrils ----------
+const tendrils = [];
+function syncTendrils() { while (tendrils.length < S.lv.tendril) tendrils.push({ c: null, acc: 0, hy: 0 }); }
+function stepTendrils(dt) {
+  if (M || S.hold != null || S.ended) { for (const t of tendrils) t.c = null; return; }
+  const per = E.tendrilPerMin(S) / Math.max(1, S.lv.tendril) / 60;  // clouds a second, each
+  for (const t of tendrils) {
+    if (!t.c || t.c.state !== 'lined' || !clouds.includes(t.c)) {
+      t.c = clouds.filter(c => c.state === 'lined' && c.kind === 'sky' && !c.leaving && inReach(c) && c.x + c.w < W - 30 && !tendrils.some(o => o.c === c) && c !== playerCloud).sort((a, b) => a.x - b.x)[0] || null;
+      t.acc = 0;
+      if (!t.c) continue;
+    }
+    const c = t.c;
+    t.acc += dt * per * c.n * RELEASE_AT;
+    while (t.acc >= 1 && c.state === 'lined') {
+      t.acc -= 1;
+      // Dab out one uncovered cell.
+      const left = []; for (let k = 0; k < c.inside.length; k++) if (c.inside[k] && !c.clear[k]) left.push(k);
+      if (!left.length) break;
+      const k = left[Math.floor(Math.random() * left.length)], px = c.x + (k % c.cols) * CELL + CELL / 2, py = c.y + Math.floor(k / c.cols) * CELL + CELL / 2;
+      { const a = Math.random() * Math.PI; scratchSeg(c, px - Math.cos(a) * 7, py - Math.sin(a) * 4, px + Math.cos(a) * 7, py + Math.sin(a) * 4, 5, 'her'); }
+      if (frac(c) >= RELEASE_AT) { releaseCloud(c, 'her'); t.c = null; }
+    }
+  }
+}
+function drawTendrils() {
+  for (const t of tendrils) {
+    if (!t.c) continue;
+    const c = t.c, ex = c.x + c.w * 0.5, ey = c.y + c.yb - 4;
+    const sy = Math.max(topY + 10, Math.min(BASE.y - 30, ey + 30)), sx = stalkX(sy);
+    const mx = (sx + ex) / 2 + Math.sin(clock * 2 + c.id) * 10, my = Math.min(sy, ey) + 20;
+    g.beginPath(); g.moveTo(sx, sy); g.quadraticCurveTo(mx, my, ex, ey); g.strokeStyle = C.ink; g.lineWidth = 3; g.stroke(); g.strokeStyle = C.olive; g.lineWidth = 1.6; g.stroke();
+    // A little curl at the end, working.
+    const a = clock * 6 + c.id;
+    g.beginPath(); g.arc(ex + Math.cos(a) * 3, ey + Math.sin(a) * 2, 3, 0, Math.PI * 1.6); g.stroke();
+  }
+}
+
+// ---------- The sky's weather ----------
+let spawnT = 0.5, dimT = 3, teaT = 8, planeT = 30, plane = null, paintTarget = null;
+function stepSky(dt) {
+  if (!M && S.hold == null) {
+    spawnT -= dt;
+    if (spawnT <= 0) { spawnT = E.spawnSecs(S); makeCloud(E.pickLayer(S)); }
+  }
+  dimT -= dt;
+  if (dimT <= 0) {
+    dimT = 6 + Math.random() * 4;
+    const top = E.reachLayer(S);
+    if (top < 3) makeCloud(top + 1 + Math.floor(Math.random() * (3 - top)), { dim: true });
+  }
+  if (S.one.kettle && S.hold == null) {
+    teaT -= dt;
+    if (teaT <= 0) { teaT = 22; const [x, y] = iso(0.175, 0.185, 100); const c = makeCloud(0, { kind: 'tea', x: x - 23, y: y - 30, painted: true }); c.speed = 3; c.rise = 6; c.born = clock; }
+  }
+  // The cook lines the oldest cloud in reach that has time left to cross.
+  if (S.hold == null && !(paintTarget && paintTarget.state === 'painting')) {
+    paintTarget = clouds.find(c => c.state === 'raw' && c.kind === 'sky' && !c.leaving && inReach(c) && c.x > -c.w * 0.3 && c.x + c.w < W - 100) || null;
+    if (paintTarget) { paintTarget.state = 'painting'; paintTarget.paint = 0; lineIt(paintTarget); sfx.paint(); }
+  }
+  if (paintTarget && paintTarget.state === 'painting') {
+    paintTarget.paint += dt / E.paintSecs(S);
+    if (paintTarget.paint >= 1) { paintTarget.paint = 1; paintTarget.state = 'lined'; paintTarget = null; }
+  }
+  // The Big One rolls in, and the cook lines it.
+  const big = bigCloud();
+  if (big) {
+    if (big.x > big.target) big.x = Math.max(big.target, big.x - 90 * dt);
+    else if (big.state === 'raw' && S.hold == null) { big.state = 'painting'; big.paint = 0; lineIt(big); paintTarget = big; sfx.paint(); }
+    if (big.state === 'painting') { big.paint += dt / 4; if (big.paint >= 1) { big.paint = 1; big.state = 'lined'; paintTarget = null; say('KITCHEN', 'The Big One is lined. Every inch. It’s the biggest lining I’ve ever done, Houston. I could see hail in it.'); after(false); } }
+  }
+  // Move.
+  for (const c of clouds) {
+    if (c.kind === 'big') continue;
+    if (c.state === 'gone') { c.fade += dt; c.y -= dt * 8; continue; }
+    c.x += c.speed * dt;
+    if (c.rise) c.y -= c.rise * dt;
+  }
+  for (let i = clouds.length - 1; i >= 0; i--) {
+    const c = clouds[i];
+    const out = c.x > W + 20 || (c.state === 'gone' && c.fade > 1.3) || (c.evap && clock - c.born > 6) || (c.kind === 'tea' && clock - c.born > 12);
+    if (out) { if (c === paintTarget) paintTarget = null; clouds.splice(i, 1); }
+  }
+  // The paper plane relaunches itself now and then.
+  if (found('plane')) {
+    planeT -= dt;
+    if (!plane && planeT <= 0) { const [x, y] = iso(0.44, 0.38, 46); plane = { x, y, t: 0 }; planeT = 25 + Math.random() * 15; }
+    if (plane) { plane.t += dt; plane.x += 70 * dt; plane.y = plane.y - 25 * dt + Math.sin(plane.t * 3) * 0.8; if (plane.x > W + 20) plane = null; }
+  }
+  // Rain.
+  for (const d of drops) { d.y += d.v * dt; d.life += dt; }
+  for (let i = drops.length - 1; i >= 0; i--) if (drops[i].y > 480 || drops[i].life > 3) drops.splice(i, 1);
+  for (const f of floats) { f.age += dt; f.y -= 18 * dt; }
+  for (let i = floats.length - 1; i >= 0; i--) if (floats[i].age > 1.6) floats.splice(i, 1);
+}
+
+// ---------- Input: scratching ----------
+let pointer = null, lastPt = null, playerCloud = null, pointerPos = [W / 2, 260];
+function toScene(e) { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * W, (e.clientY - r.top) / r.height * H]; }
+function start() {
+  if (S.started || S.ended) return;
+  S.started = true; save();
+  say('KITCHEN', 'Kitchen to Houston. Lining’s on that one. Scratch it through, and let’s see what’s inside a cloud.');
+}
+function scratchAt(x0, y0, x1, y1) {
+  if (S.ended || climb) return;
+  const r = E.radius(S);
+  let any = false;
+  for (const c of clouds) {
+    if (c.state !== 'lined' || !inReach(c)) continue;
+    if (!hitTest(c, Math.min(x0, x1), Math.min(y0, y1), r + Math.abs(x1 - x0)) && !hitTest(c, x1, y1, r)) continue;
+    const hit = scratchSeg(c, x0, y0, x1, y1, r);
+    if (!hit) continue;
+    any = true;
+    if (c.kind === 'big') { bigHit(c); continue; }
+    playerCloud = c;
+    sfx.scratch(frac(c));
+    if (frac(c) >= RELEASE_AT) releaseCloud(c, 'me');
+  }
+  if (any) lastScratch = clock;
+}
+// Scratching the Big One: it rains a little, and Houston slips back.
+function bigHit(c) {
+  sfx.scratch(0.2);
+  if (clock - lastBigHit < 0.5) return;
+  lastBigHit = clock;
+  // The lining is thick: it heals over most of what you scratch.
+  if (frac(c) > 0.3) { c.clear.fill(0); c.cleared = 0; lineIt(c); }
+  const r = Math.round(15 * E.rainMult(S));
+  S.rain += r; S.total += r;
+  rainFrom(c, 14); float(`+${r} L`, pointerPos[0], pointerPos[1], C.mint, 16);
+  if (S.hold != null) {
+    S.hold = Math.min(E.HOLD_SECS, S.hold + 3);
+    say('LOG', pick(['Contact with the Big One. It rains a little. Houston slips back. Hold.', 'That’s a scratch. +3 seconds. Kitchen, hands in pockets.', 'It rains. It’s lovely rain. Houston has slipped back a bit. Hold.']), 'l');
+  }
+  after(false);
+}
+cv.addEventListener('pointerdown', e => {
+  start();
+  pointer = e.pointerId; lastPt = toScene(e); pointerPos = lastPt;
+  cv.setPointerCapture?.(e.pointerId);
+  scratchAt(lastPt[0] - 1, lastPt[1], lastPt[0] + 1, lastPt[1]);
+});
+cv.addEventListener('pointermove', e => {
+  const p = toScene(e); pointerPos = p;
+  if (pointer !== e.pointerId || !lastPt) return;
+  scratchAt(lastPt[0], lastPt[1], p[0], p[1]);
+  lastPt = p;
+});
+const up = e => { if (pointer === e.pointerId) { pointer = null; lastPt = null; } };
+cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+// Keyboard: space or enter scratches the nearest lined cloud, one stroke across it.
+let kbRow = 0;
+cv.addEventListener('keydown', e => {
+  if (e.key !== ' ' && e.key !== 'Enter') return;
+  e.preventDefault(); start();
+  const c = clouds.filter(c => c.state === 'lined' && inReach(c) && c.kind !== 'big').sort((a, b) => b.x - a.x)[0];
+  if (!c) return;
+  kbRow = (kbRow + 1) % 3;
+  const y = c.y + c.yb * (0.3 + kbRow * 0.25);
+  scratchAt(c.x, y, c.x + c.w, y);
+});
+
+// ---------- Rendering ----------
+function layout() {
+  const r = cv.getBoundingClientRect();
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const w = Math.max(360, Math.round(r.width * dpr));
+  if (cv.width !== w) { cv.width = w; cv.height = Math.round(w * H / W); }
+}
+function render() {
+  const k = cv.width / W;
+  g.setTransform(k, 0, 0, k, 0, 0);
+  drawSky();
+  for (const c of clouds) if (c.state === 'dim') drawCloud(c);
+  drawSlab();
+  drawHut();
+  drawGarden();
+  // Houston, and her top: during the hold she climbs; at the end she's out above the Big One.
+  const big = bigCloud();
+  let want = S.ended ? 26 : yOfAlt(E.height(S));
+  if (S.hold != null && !S.ended) want = 108 - 40 * (1 - S.hold / E.HOLD_SECS);
+  if (climb) want = 70 - 44 * Math.min(1, climb.t / 4);
+  topY += (want - topY) * Math.min(1, 0.08);
+  drawHouston(topY);
+  for (const c of clouds) if (c.state !== 'dim' && c.kind !== 'big') drawCloud(c);
+  if (big) drawCloud(big);
+  if (S.ended) drawTopOut();
+  drawTendrils();
+  // The cook: in the basket, painting; on the ground for the hold and the end.
+  if (S.hold != null || S.ended) { const [x, y] = iso(0.52, 0.34, 0); drawCook(x, y, { up: true, torch: won('dark') }); }
+  else drawBasket(stalkX(topY + 40) - 20, topY + 40, paintTarget && paintTarget.state === 'painting' ? paintTarget : null);
+  if (plane) { g.save(); g.translate(plane.x, plane.y); g.rotate(-0.2); poly([[-8, 0], [8, -3], [-2, 4]], C.cream, C.ink, 1); g.restore(); }
+  else if (found('plane')) { const [x, y] = iso(0.44, 0.38, 46); poly([[x - 7, y - 2], [x + 7, y - 5], [x - 1, y + 1]], C.cream, C.ink, 1); }
+  for (const d of drops) { if (d.hail) circle(d.x, d.y, 2, C.cream); else line([[d.x, d.y], [d.x - 1, d.y + 6]], C.mint, 1.3); }
+  for (const f of floats) { g.globalAlpha = Math.max(0, 1 - f.age / 1.6); text(f.t, f.x, f.y, f.size, f.color); g.globalAlpha = 1; }
+  // Missions: the moonless dark, and the clock.
+  if (M) {
+    if (M.id === 'dark') {
+      g.save(); g.beginPath(); g.rect(0, 0, W, H); g.arc(pointerPos[0], pointerPos[1], 82, 0, Math.PI * 2, true); g.fillStyle = '#0d080fee'; g.fill('evenodd'); g.restore();
+      const gr = g.createRadialGradient(pointerPos[0], pointerPos[1], 50, pointerPos[0], pointerPos[1], 84); gr.addColorStop(0, '#0000'); gr.addColorStop(1, '#0d080fee');
+      g.fillStyle = gr; g.beginPath(); g.arc(pointerPos[0], pointerPos[1], 84, 0, Math.PI * 2); g.fill();
+    }
+    const left = Math.max(0, M.secs - Math.max(0, M.t));
+    g.fillStyle = '#2c1b2ecc'; g.fillRect(W / 2 - 150, 10, 300, 30);
+    text(M.t < 0 ? `MISSION ${E.MISSION[M.id].name.toUpperCase()} · STAND BY` : `${E.MISSION[M.id].name.toUpperCase()} · T-${Math.ceil(left)} · ${M.got}/${M.need}`, W / 2, 25, 15, M.t < 0 ? C.gold : C.mint);
+  }
+  if (S.hold != null && !S.ended && !climb) {
+    g.fillStyle = '#2c1b2ecc'; g.fillRect(W / 2 - 110, 112, 220, 30);
+    const paused = clock - lastScratch <= 0.6;
+    text(paused ? `HOLD · T-${Math.ceil(S.hold)} · PAUSED` : `HOLD · T-${Math.ceil(S.hold)}`, W / 2, 127, 16, paused ? C.red : C.gold);
+  }
+  if (S.ended) {
+    const tx = stalkX(topY) + 18, ty = topY + 4;
+    g.fillStyle = C.cream; g.strokeStyle = C.ink; g.lineWidth = 1.2;
+    g.beginPath(); g.roundRect?.(tx + 6, ty - 16, 150, 24, 4); g.fill(); g.stroke();
+    poly([[tx + 10, ty + 4], [tx, ty + 8], [tx + 16, ty + 6]], C.cream, null);
+    text('We have a view.', tx + 81, ty - 4, 14, C.ink);
+  }
+}
+// The end: Houston's top, out above the Big One in the moonlight.
+function drawTopOut() {
+  const tx = stalkX(topY);
+  const pts = []; for (let y = 80; y >= topY; y -= 3) pts.push([stalkX(y) + Math.sin(y * 0.16) * 4.5, y]);
+  line(pts, C.ink, 4.4); line(pts, C.green, 2.6);
+  leaf(tx, topY + 26, 1, 1); leaf(tx, topY + 14, -1, 0.9);
+  circle(tx - 6, topY + 22, 2.6, C.red); circle(tx - 9, topY + 25, 2.2, C.red);
+  if (vis('hat')) drawHat(tx + 2, topY - 6);
+  if (found('kite')) drawKite(tx, topY);
+}
+
+// ---------- Ticking ----------
+let saveT = 0, climbDone = false;
+function step(dt) {
+  clock += dt;
+  if (S.ended) { stepSky(dt); return; }
+  if (S.started) S.t += dt;
+  if (M) stepMission(dt);
+  if (S.hold != null) stepHold(dt);
+  if (climb) {
+    climb.t += dt;
+    const big = bigCloud();
+    if (big && climb.t > 2.5 && big.coatQ) { big.coatQ.save(); big.coatQ.globalCompositeOperation = 'destination-out'; big.coatQ.fillStyle = '#000'; big.coatQ.globalAlpha = 0.08; big.coatQ.fillRect(-4, -4, big.w + 8, big.h + 8); big.coatQ.restore(); }
+    if (climb.t > 6 && !climbDone) { climbDone = true; end(false); }
+  }
+  stepSky(dt);
+  stepTendrils(dt);
+  saveT += dt;
+  if (saveT > 4) { saveT = 0; save(); hud(); renderCalls(); renderShop(); }
+}
+
+// ---------- The end ----------
+function end(resumed) {
+  if (S.ended && !resumed) return;
+  S.ended = true; S.hold = null; save();
+  hideTip(true); M = null;
+  tendrils.length = 0;
+  const big = bigCloud() || (arriveBig(true), bigCloud());
+  big.x = BIG.x; big.state = 'gone'; big.fade = 0;
+  topY = 26;
+  const total = S.mine + S.hers;
+  const story = [
+    'The Big One has sat over the hill since before the hut was built. Nobody ever lined it. Tonight it was lined, every inch, and then nobody scratched it: Kitchen held, and Houston climbed in alone.',
+    'What is inside a cloud, it turns out, is mostly more cloud: cold and grey and wet, like the inside of a steamer. Then the top. And above the top, the whole night, the hill like a crumb below, and the moon, three nights from full.',
+    `Over the night, Kitchen released ${total ? S.mine : 'a great many'} clouds. Houston released ${total ? S.hers : 'a good many more than anyone was counting'} on her own, with tendrils nobody taught her to use, and the last and biggest one without touching it at all.`,
+  ];
+  $('story').innerHTML = '';
+  for (const p of story) { const el = document.createElement('p'); el.textContent = p; $('story').append(el); }
+  const rd = document.createElement('div'); rd.className = 'radio';
+  rd.innerHTML = '<b>INCOMING · HOUSTON</b><span>“Kitchen, this is Houston. We have a view.”</span>';
+  $('story').append(rd);
+  const last = document.createElement('p');
+  last.textContent = 'It is the first thing she has ever said. The cook, who has talked to her every day, says nothing at all for quite a long time, and listens.';
+  $('story').append(last);
+  $('ending').hidden = false;
+  after(!resumed); refreshMusic();
+  if (resumed) say('HOUSTON', 'Kitchen, this is Houston. Still here. Still a view.', 'h');
+  else {
+    sfx.finale();
+    say('HOUSTON', 'Kitchen, this is Houston. We have a view.', 'h');
+    $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+    const m = Math.max(1, Math.round(S.t / 60));
+    if (window.DailyGame) DailyGame.finish({ lines: [`⏱ ${m}m`, `☁️ ${total} linings scratched (🌱 ${S.hers} by Houston)`, `🧊 ${S.dents} hail dent${S.dents === 1 ? '' : 's'} in the roof`, `🤫 held back for ${Math.round(S.held)}s`] });
+  }
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Loop ----------
+let last = performance.now(), hiddenAt = 0;
+function frame(now) {
+  const dt = Math.max(0, Math.min(0.2, (now - last) / 1000)); last = now;
+  if (!document.hidden) step(dt);
+  render();
+  requestAnimationFrame(frame);
+}
+// Away in another tab: the cook is off the radio, but Houston's tendrils keep at it, at half pace.
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { hiddenAt = Date.now(); save(); return; }
+  if (!hiddenAt) return;
+  const secs = (Date.now() - hiddenAt) / 1000; hiddenAt = 0; last = performance.now();
+  welcomeBack(secs);
+});
+function welcomeBack(secs) {
+  if (S.ended || secs < 20 || !S.lv.tendril || M || S.hold != null) return;
+  const mins = Math.min(15, secs / 60);
+  const n = Math.floor(E.tendrilPerMin(S) * mins * 0.5);
+  if (!n) return;
+  let rain = 0;
+  for (let i = 0; i < n; i++) { const p = E.roll(S, E.pickLayer(S)); p.find = null; E.collect(S, p, 'her'); rain += p.rain; }
+  say('AWAY', `${Math.round(secs / 60)} min off the radio${secs > 900 ? ' (Houston logs a quarter of an hour at most)' : ''}. Houston kept at it, at half pace: ${n} cloud${n === 1 ? '' : 's'}, +${fmt(rain)} L.`, 'w');
+  after(true);
+}
+addEventListener('pagehide', save);
+addEventListener('resize', layout);
+
+// ---------- Sprite sheet: everything is drawn live, so the sheet draws each piece ----------
+function sheet() {
+  const reg = (name, w, h, f, s = 2) => {
+    const c = Sprites.canvas(w * s, h * s), q = c.getContext('2d');
+    q.fillStyle = C.navy; q.fillRect(0, 0, c.width, c.height);
+    const keep = g; g = q; q.setTransform(s, 0, 0, s, 0, 0); try { f(); } finally { g = keep; }
+    Sprites.register(name, c);
+  };
+  const keep = JSON.stringify(S), keepClouds = clouds.slice();
+  const restore = () => { const o = JSON.parse(keep); for (const k of Object.keys(o)) S[k] = o[k]; clouds.length = 0; clouds.push(...keepClouds); };
+  reg('the cook, in the basket', 60, 60, () => drawBasket(30, 45, null));
+  reg('the cook, on the ground with the head-torch', 30, 40, () => drawCook(15, 35, { up: true, torch: true }));
+  reg('Houston, top, with hat and kite', 120, 80, () => { S.one.hat = true; S.finds.kite = true; drawTopOutAt(40, 40); });
+  reg('the moon, 87%', 60, 60, () => drawMoon(30, 30, 20));
+  reg('the six finds', 180, 30, () => E.FINDS.forEach((f, i) => drawFindIcon(f.id, 15 + i * 30, 15)));
+  reg('a cockerel weathervane, a kite', 80, 60, () => { drawCockerel(20, 50); drawKite(10, 40); });
+  reg('chef’s hat', 24, 24, () => drawHat(12, 16));
+  const mkC = (L, st) => { const c = makeCloud(L, { x: 4, y: 4, painted: st !== 'raw' }); clouds.pop(); c.speed = 0; if (st === 'half') { c.prize = { L, rain: 12, hail: false, find: null }; scratchSeg(c, 4, 24, 4 + c.w, 24, 16); } if (st === 'hail') { c.prize = { L, rain: 60, hail: true, find: null }; scratchSeg(c, 4, 30, 4 + c.w, 30, 18); } return c; };
+  reg('a cloud: unlined, lined, half scratched, hail', 640, 80, () => { const a = mkC(0, 'raw'); drawCloud(a); const b = mkC(1, 'lined'); b.x = 150; drawCloud(b); const c = mkC(0, 'half'); c.x = 320; drawCloud(c); const d = mkC(2, 'hail'); d.x = 480; drawCloud(d); }, 1.5);
+  reg('the hilltop with everything bought', 720, 660, () => {
+    for (const it of E.ITEMS) { if (it.kind === 'lv') S.lv[it.id] = it.max; else S.one[it.id] = true; }
+    for (const f of E.FINDS) S.finds[f.id] = true;
+    for (const m of E.MISSIONS) S.won[m.id] = true;
+    S.lv.water = 26; S.dents = 14;
+    const kt = topY; topY = yOfAlt(E.height(S));
+    drawSky(); drawSlab(); drawHut(); drawGarden(); drawHouston(topY); drawBasket(stalkX(topY + 40) - 20, topY + 40, null);
+    topY = kt;
+  }, 1);
+  restore();
+}
+function drawTopOutAt(x, y) { const k = BASE.x; BASE.x = x; const kt = topY; topY = y; drawHat(stalkX(y) + 2, y - 6); drawKite(stalkX(y), y); leaf(stalkX(y), y + 20, 1, 1); BASE.x = k; topY = kt; }
+
+// ---------- Start ----------
+layout();
+syncTendrils();
+if (DEBUG) Object.assign(window.__game, { end, E, clouds, startMission, startHold, arriveBig, scratchAt });
+const away = S.savedAt ? (Date.now() - S.savedAt) / 1000 : 0;
+if (S.ended) end(true);
+else {
+  if (S.lv.water >= E.WATER_MAX) arriveBig(true);
+  // The first cloud of the night is already over the hut, lined.
+  const first = makeCloud(0, { x: 150, painted: true }); first.y = LAYER_Y[0] - first.h / 2;
+  makeCloud(0, { x: -40 });
+  if (!S.started) say('LOG', 'The hut on the hill, 21:40. Moon: waxing, 87%. Wind: light. Every cloud has a silver lining, they say. None of these do, so Kitchen has painted one on. Press and drag across it to scratch the lining off.', 'l');
+  else if (S.hold != null) say('LOG', `Final mission resumes. Hold. T-${Math.ceil(S.hold)}. Do not scratch.`, 'l');
+  else if (away > 60 && S.lv.tendril) welcomeBack(away);
+  else say('KITCHEN', `Kitchen back on the radio. Houston at ${E.height(S)} m. Lining the next one.`);
+}
+// npm run mix measures the mission music with a save carrying {"__mission": id} (?debug only).
+if (DEBUG && raw?.__mission && !S.ended) { delete S.__mission; startMission(raw.__mission); }
+save();
+hud(); renderCalls(); renderShop();
+document.fonts?.ready.then(layout);
+if (Sprites.sheetRequested()) { sheet(); Sprites.showSheet({ zoom: 1 }); }
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

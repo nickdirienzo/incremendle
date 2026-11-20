@@ -2574,5 +2574,38 @@
   "t": 3300,
   "savedAt": 0,
   "ended": false
+ },
+ "every-cloud": {
+  "started": true,
+  "t": 900,
+  "rain": 186,
+  "total": 3100,
+  "lv": {
+   "water": 16,
+   "loofah": 3,
+   "butt": 2,
+   "tendril": 3,
+   "brush": 1
+  },
+  "one": {
+   "sunflower": true,
+   "hat": true,
+   "radio": true,
+   "kettle": true
+  },
+  "won": {
+   "wind": true,
+   "evap": true
+  },
+  "finds": {
+   "kite": true,
+   "glove": true,
+   "plane": true,
+   "balloon": true
+  },
+  "pity": {},
+  "mine": 140,
+  "hers": 44,
+  "dents": 8
  }
 }
