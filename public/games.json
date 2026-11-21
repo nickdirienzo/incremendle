@@ -1148,5 +1148,46 @@
       "topic": "a waxing gibbous moon (87%) on 21 November 2026, three nights before the Full Beaver Moon"
     },
     "palette": "indecision"
+  },
+  {
+    "n": 31,
+    "slug": "burning-ambition",
+    "date": "2026-11-22",
+    "title": "Burning Ambition",
+    "tagline": "Moths go to a flame, not to wool. So Purl, a very nervous ball of it, prints one enormous candle as a decoy for Gordon on the windowsill, and sells every ring, one typed word at a time, all the way to a billion.",
+    "emoji": "🧶🕯️",
+    "scale": "billions",
+    "minutes": "20–35",
+    "seed": 2857696965,
+    "subject": {
+      "text": "a nervous yarn",
+      "emoji": "🧶",
+      "name": "yarn",
+      "subgroup": "arts & crafts",
+      "trait": "nervous {}"
+    },
+    "verb": "printing",
+    "object": "candles",
+    "interaction": "type words",
+    "arc": {
+      "drive": "money",
+      "obstacle": "their own clumsiness",
+      "turn": "it turns out someone asked for it",
+      "initial": "G"
+    },
+    "length": "mini (10–60 min)",
+    "structure": [
+      "one long build that eats everything you make"
+    ],
+    "twist": "random events",
+    "ending": "an epilogue that keeps playing itself as the credits roll",
+    "look": "blueprint",
+    "music": {
+      "style": "kalimba folk",
+      "scale": "major blues"
+    },
+    "tone": "self-help guru",
+    "context": "none",
+    "palette": "sheltzy32"
   }
 ]

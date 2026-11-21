@@ -1,0 +1,1162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Burning Ambition · Incremendle</title>
+<meta name="description" content="A nervous ball of wool prints one enormous candle, ring by ring, and sells every ring. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Burning Ambition">
+<meta property="og:description" content="Moths go to a flame, not to wool. So Purl, a very nervous ball of it, prints one enormous candle as a decoy for Gordon on the windowsill, and sells every ring, one typed word at a time, all the way to a billion.">
+<meta property="og:url" content="https://incremendle.com/burning-ambition/">
+<meta property="og:image" content="https://incremendle.com/burning-ambition/og.png?v=3db04ab1">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Burning Ambition: Moths go to a flame, not to wool. So Purl, a very nervous ball of it, prints one enormous candle as a decoy for Gordon on the windowsill, and sells every ring, one typed word at a time, all the way to a billion.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/saira-stencil-one/font.css">
+<link rel="stylesheet" href="/shared/fonts/overpass-mono/font.css">
+<link rel="stylesheet" href="/shared/fonts/nanum-pen-script/font.css">
+<style>
+  /* A blueprint, in Sheltzy32: blueprint blue paper (#3953c0) on a navy desk (#222a5c), grid and lines in sky
+     (#5e96dd, #9cd8fc), linework in paper white (#cce2e1, #ffffff); red-pencil markups (#ff94b3, #c34b91, #bd1f3f);
+     wax and Gordon in cream and honey (#ffdba5, #ffda70, #f4b03c); the flame at the end (#ec614a, #ffa468, #fff6ae). */
+  :root {
+    --navy: #222a5c; --blue: #3953c0; --sky: #5e96dd; --pale: #9cd8fc; --paper: #cce2e1; --white: #ffffff;
+    --pink: #ff94b3; --rose: #c34b91; --red: #bd1f3f; --cream: #ffdba5; --honey: #ffda70; --amber: #f4b03c;
+    --flame: #ec614a; --peach: #ffa468; --butter: #fff6ae; --deep: #38002c; --mint: #8cffde;
+    --head: 'Saira Stencil One', system-ui, sans-serif; --mono: 'Overpass Mono', ui-monospace, monospace; --pen: 'Nanum Pen Script', cursive;
+    color-scheme: dark;
+  }
+  html, body { background: var(--navy); color: var(--paper); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 13px/1.4 var(--mono);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(8px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image: linear-gradient(#5e96dd14 1px, transparent 1px), linear-gradient(90deg, #5e96dd14 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 0 0 6px; }
+  h1 { font: 400 32px/1.05 var(--head); margin: 0; color: var(--white); letter-spacing: 1px; }
+  h1 span { color: var(--honey); }
+  header p { margin: 0; font: 600 11px/1.2 var(--mono); color: var(--pale); text-transform: uppercase; letter-spacing: 2px; }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } h1 { font-size: 27px; } }
+  main { min-width: 0; }
+
+  .sheet { background: var(--blue); border: 2px solid var(--paper); outline: 1px solid var(--paper); outline-offset: 3px; box-shadow: 0 0 0 7px var(--navy), 0 0 0 8px #9cd8fc55; }
+  .play { padding: 7px 10px 8px; }
+  .hud { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 16px; align-items: center; margin-bottom: 5px; }
+  .res { font: 400 27px/1 var(--head); color: var(--white); white-space: nowrap; }
+  .res small { font: 600 12px/1 var(--mono); color: var(--pale); }
+  .goal { display: flex; align-items: center; gap: 8px; min-width: 0; font: 700 12px/1 var(--mono); color: var(--paper); }
+  .goal span { white-space: nowrap; }
+  .meter { position: relative; flex: 1; min-width: 50px; height: 12px; border: 1.5px solid var(--paper); overflow: hidden; }
+  .meter i { position: absolute; inset: 0 auto 0 0; width: 0; transition: width .4s; background: repeating-linear-gradient(135deg, var(--honey) 0 4px, var(--amber) 4px 7px); }
+  .meter b { position: absolute; top: -1px; bottom: -1px; width: 1px; background: #cce2e155; }
+  .sub { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0 14px; font: 11.5px/1.5 var(--mono); color: #cce2e1cc; min-height: 34px; align-content: flex-start; }
+  .sub b { font-weight: 700; color: var(--honey); }
+  .sub .ev { color: var(--pink); font-weight: 700; }
+  @media (max-width: 520px) { .hud { grid-template-columns: 1fr; } }
+
+  canvas#stage { display: block; width: 100%; max-width: calc((100vh - 400px) * 720 / 440); min-width: min(100%, 460px); margin: 0 auto; aspect-ratio: 720 / 440; touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+  #slip { position: relative; margin: 6px auto 0; max-width: 720px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 12px; align-items: center; background: var(--paper); color: var(--navy); padding: 5px 12px 6px; border: 1.5px solid var(--white); box-shadow: 3px 3px 0 var(--navy); cursor: text; }
+  #slip .tag { font: 700 10px/1.2 var(--mono); letter-spacing: 1px; text-transform: uppercase; color: var(--blue); white-space: nowrap; }
+  #slip .tag b { display: block; font: 400 15px/1 var(--head); color: var(--navy); letter-spacing: .5px; }
+  #word { font: 700 23px/1.25 var(--mono); letter-spacing: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 29px; }
+  #word span { color: #22205c55; }
+  #word span.done { color: var(--navy); }
+  #word span.cur { color: var(--navy); box-shadow: inset 0 -3px 0 var(--red); animation: caret 1s steps(2) infinite; }
+  #word span.sp { color: #22205c33; }
+  @keyframes caret { 50% { box-shadow: inset 0 -3px 0 transparent; } }
+  #slip.affirm { background: var(--cream); }
+  #slip.affirm .tag { color: var(--rose); }
+  #slip.final { background: var(--butter); }
+  #slip.shake { animation: shake .22s; }
+  @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+  #slip .blot { position: absolute; right: 8px; top: 4px; font: 400 18px/1 var(--pen); color: var(--red); transform: rotate(-6deg); }
+  @media (max-width: 520px) { #word { font-size: 19px; letter-spacing: 1px; } #slip { grid-template-columns: 1fr; } }
+  #keys { margin: 6px auto 0; max-width: 560px; display: grid; gap: 4px; user-select: none; touch-action: manipulation; }
+  #keys div { display: flex; gap: 4px; justify-content: center; }
+  #keys button { flex: 1 1 0; max-width: 46px; min-width: 0; height: 30px; padding: 0; font: 700 14px/1 var(--mono); color: var(--paper); background: var(--navy); border: 1.5px solid var(--pale); border-radius: 3px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  #keys button.next { border-color: var(--honey); color: var(--honey); }
+  #keys button.hit { background: var(--paper); color: var(--navy); }
+  #keys button:focus-visible { outline: 2px dashed var(--honey); outline-offset: 2px; }
+  @media (max-width: 520px) { #keys button { height: 40px; font-size: 15px; } #keys { gap: 5px; } #keys div { gap: 3px; } }
+  .log { margin: 6px 0 0; min-height: 2.9em; font: 12.5px/1.45 var(--mono); color: var(--paper); border-top: 1px dashed #cce2e166; padding: 5px 2px 0; }
+  .log b { font: 400 12px/1 var(--head); letter-spacing: 1px; color: var(--navy); background: var(--paper); padding: 2px 6px 1px; margin-right: 8px; }
+  .log b.g { background: var(--cream); }
+  .log b.p { background: var(--pink); }
+  .log b.t { background: var(--honey); }
+  .log.fresh span { animation: tx .6s steps(6); }
+  @keyframes tx { from { opacity: .2; } }
+
+  aside { position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow: auto; scrollbar-width: thin; padding: 9px 8px 8px 9px; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  .col { padding: 9px 10px 8px; }
+  aside h2 { font: 400 17px/1 var(--head); margin: 0 0 8px; color: var(--white); letter-spacing: 1px; }
+  #afford { font: 600 11px/1 var(--mono); color: var(--honey); letter-spacing: 0; }
+  #shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  @media (max-width: 760px) and (min-width: 520px) { #shop { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up {
+    position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 11.5px/1.2 var(--mono); color: #cce2e188;
+    background: transparent; border: 1.5px dashed #cce2e166; padding: 4px 7px 5px; cursor: pointer;
+  }
+  .up b { font: 700 12.5px/1.2 var(--mono); color: #cce2e1aa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { border: 1.5px solid var(--paper); background: #222a5c55; }
+  .up.can b { color: var(--white); }
+  .up.can em { color: var(--honey); }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up.odd b::before, .bought.odd::before { content: '✎ '; color: var(--pink); }
+  .up .tag { position: absolute; top: -8px; right: 4px; font: 400 11px/1 var(--head); font-style: normal; letter-spacing: 1px; color: var(--navy); background: var(--pink); padding: 2px 5px 1px; transform: rotate(3deg); }
+  .up.new { animation: glint 1.1s ease-in-out 6; }
+  @keyframes glint { 50% { box-shadow: 0 0 0 3px #ff94b399; } }
+  .up:focus-visible, .bought:focus-visible { outline: 2px dashed var(--honey); outline-offset: 2px; }
+  #tip {
+    position: fixed; z-index: 50; width: 270px; padding: 9px 12px 10px; pointer-events: none; font: 12px/1.45 var(--mono); color: var(--paper);
+    background: var(--blue); border: 1.5px solid var(--paper); outline: 1px solid var(--paper); outline-offset: 2px; box-shadow: 6px 7px 0 #0006;
+    background-image: linear-gradient(#5e96dd33 1px, transparent 1px), linear-gradient(90deg, #5e96dd33 1px, transparent 1px); background-size: 12px 12px;
+  }
+  #tip b { display: block; font: 400 18px/1.1 var(--head); color: var(--white); margin-bottom: 4px; letter-spacing: .5px; }
+  #tip .fx { display: block; margin-top: 6px; padding: 3px 7px; color: var(--navy); background: var(--honey); font-weight: 700; }
+  #tip i { display: block; margin-top: 7px; padding-top: 5px; border-top: 1px dashed #cce2e166; color: var(--pink); font: 400 19px/1.05 var(--pen); }
+  #tip small { display: block; margin-top: 5px; font: 700 12px/1 var(--mono); color: var(--honey); }
+  #tip.inline { position: static; width: auto; margin-top: 10px; }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 400 14px/1 var(--head); color: var(--white); cursor: pointer; list-style: none; padding: 3px 2px; letter-spacing: 1px; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: '▸'; color: var(--honey); transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 2px dashed var(--honey); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 2px 2px; }
+  .bought { max-width: 100%; font: 600 11.5px/1.1 var(--mono); color: var(--paper); background: transparent; border: 1.5px solid #cce2e188; padding: 3px 7px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { border-style: dashed; }
+  .bought:hover, .bought.on { border-color: var(--honey); }
+
+  #ending { margin: 22px auto 0; max-width: 720px; padding: 16px 24px 20px; }
+  #ending .num { font: 700 11px/1 var(--mono); color: var(--pale); letter-spacing: 3px; }
+  #ending h2 { font: 400 34px/1.05 var(--head); margin: 8px 0 10px; color: var(--white); }
+  #ending p { margin: 9px 0; font-size: 13.5px; }
+  #ending .note { margin: 14px 0; padding: 8px 14px 10px; background: var(--butter); color: var(--navy); font: 400 30px/1.05 var(--pen); transform: rotate(-1deg); box-shadow: 3px 3px 0 var(--navy); }
+  #ending .note small { display: block; font: 700 10px/1.3 var(--mono); letter-spacing: 2px; color: var(--blue); }
+  #shareBtn, #againBtn { font: 400 17px/1 var(--head); letter-spacing: 1px; color: var(--navy); background: var(--honey); border: 1.5px solid var(--white); padding: 9px 18px 8px; margin: 12px 8px 0 0; cursor: pointer; }
+  #againBtn { background: transparent; color: var(--paper); }
+  #shareBtn:focus-visible, #againBtn:focus-visible { outline: 2px dashed var(--honey); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .log.fresh span, #word span.cur, #slip.shake { animation: none; } .meter i, #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/soundfonts": "/shared/lib/@strudel/soundfonts@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="31" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Burning <span>Ambition</span></h1>
+    <p>project: the big candle · drawn by purl · sheet 1 of 1</p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="sheet play">
+        <div class="hud">
+          <div class="res" title="The biscuit tin: what Purl has to spend. Every ring sold pays into it."><span id="tin">$0</span> <small>in the tin</small></div>
+          <div class="goal" title="The candle is worth whatever people have paid to be on it. Purl's goal, from Tape 1: one billion dollars."><span id="vTxt">Candle $0</span><div class="meter" id="meter"><i id="vBar"></i></div><span>$1 billion</span></div>
+          <div class="sub" id="sub"></div>
+        </div>
+        <canvas id="stage" aria-label="A blueprint of Purl's workshop and the Big Candle. Detail A shows Purl, a nervous ball of wool, at the candle printer, with Gordon the moth on the windowsill. Detail B shows the typing pool. The elevation shows the candle rising ring by ring through the house."></canvas>
+        <div id="slip" aria-live="polite"><div class="tag" id="slipTag"></div><div id="word" aria-label="Type this"></div></div>
+        <div id="keys" aria-label="Keyboard"></div>
+        <p class="log" id="log" aria-live="polite"></p>
+      </div>
+    </main>
+    <aside id="side">
+      <div class="col sheet" id="col">
+        <h2>Upgrades <span id="afford"></span></h2>
+        <div id="shop"></div>
+        <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      </div>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" class="sheet" hidden>
+    <div class="num">AS BUILT · FINAL SHEET</div>
+    <h2>Lit.</h2>
+    <div id="story"></div>
+    <button id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import { createSoundtrack } from './music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DEBUG = location.search.includes('debug');
+const C = { navy: '#222a5c', blue: '#3953c0', sky: '#5e96dd', pale: '#9cd8fc', paper: '#cce2e1', white: '#ffffff',
+  pink: '#ff94b3', rose: '#c34b91', red: '#bd1f3f', cream: '#ffdba5', honey: '#ffda70', amber: '#f4b03c', flame: '#ec614a',
+  peach: '#ffa468', butter: '#fff6ae', deep: '#38002c', plum: '#663b93', violet: '#8b72de', mint: '#8cffde', teal: '#45b8b3',
+  green: '#46c657', leaf: '#c9ec85', wood: '#a36d3e', bark: '#683c34', tan: '#ccac68', steel: '#566a89', mist: '#8babbf' };
+
+// ---------- State ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:31:save';
+let raw = null;
+try { raw = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+const S = E.load(raw);
+if (!Array.isArray(S.mine)) S.mine = [];
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound: G major blues (G A Bb B D E), the soundtrack's scale ----------
+const A = createAudio({ sfxTrim: 1, musicTrim: 1 });
+// Per-effect levels, from npm run mix (each effect peaking near -10 dBFS).
+const LV = {};
+let gainNow = 1;
+const T = o => A.tone({ ...o, vol: o.vol * gainNow });
+const N = (kind, o = {}) => A.noiseHit(kind, { ...o, vol: (o.vol ?? 0.25) * gainNow });
+const notes = scale('major blues', 67);   // G4 A4 Bb4 B4 D5 E5
+const rl = {};
+const limit = (k, ms) => { const t = performance.now(); if (t - (rl[k] || 0) < ms && !DEBUG) return false; rl[k] = t; return true; };
+const sfx = {
+  // A typed letter: a kalimba tine, climbing the scale along the word.
+  key(i = 0) { T({ type: 'pluck', freq: notes(i % 9), dur: 0.07, vol: 0.09, cutoff: 3800 }); },
+  // A fumble: a dull thunk and a wax splat.
+  fumble() { T({ type: 'triangle', freq: notes(-5), dur: 0.07, vol: 0.12, cutoff: 900 }); N('snare', { vol: 0.05, dur: 0.06 }); },
+  // The spectacles catch it: two quick tuts.
+  caught() { T({ type: 'sine', freq: notes(8), dur: 0.04, vol: 0.06 }); T({ type: 'sine', freq: notes(7), dur: 0.05, vol: 0.06, at: A.now + 0.08 }); },
+  // A ring sold: G B D, and the blue note on top.
+  ring() { [0, 3, 4, 8].forEach((d, i) => T({ type: 'bell', freq: notes(d + 3), dur: 0.16, vol: 0.06, at: A.now + i * 0.055 })); },
+  wonky() { [4, 2, 1].forEach((d, i) => T({ type: 'pluck', freq: notes(d), dur: 0.1, vol: 0.08, cutoff: 2000, at: A.now + i * 0.07 })); },
+  // The typing pool finishes a ring: a soft far-off tick.
+  pool() { if (!limit('pool', 700)) return; T({ type: 'pluck', freq: notes(6 + Math.floor(Math.random() * 3)), dur: 0.05, vol: 0.035, cutoff: 2600 }); },
+  buy() { [0, 1, 2, 3, 4, 6].forEach((d, i) => T({ type: 'pluck', freq: notes(d + 3), dur: 0.09, vol: 0.08, at: A.now + i * 0.05, cutoff: 3400 })); },
+  unlock() { T({ type: 'bell', freq: notes(9), dur: 0.25, vol: 0.06 }); T({ type: 'bell', freq: notes(11), dur: 0.35, vol: 0.05, at: A.now + 0.12 }); },
+  deny() { T({ type: 'triangle', freq: notes(-4), dur: 0.08, vol: 0.09 }); },
+  // Gordon: a flutter of wings, and Purl's nervous two notes.
+  gordon() { const t0 = A.now; for (let i = 0; i < 9; i++) N('shaker', { vol: 0.05, dur: 0.035, at: t0 + i * 0.045 }); T({ type: 'sine', freq: notes(3), dur: 0.12, vol: 0.06, at: t0 + 0.45 }); T({ type: 'sine', freq: notes(2), dur: 0.2, vol: 0.06, at: t0 + 0.6 }); },
+  // A Breakthrough: a run up the scale.
+  breakthrough() { [0, 1, 2, 3, 4, 5, 6, 7, 9].forEach((d, i) => T({ type: 'pluck', freq: notes(d), dur: 0.1, vol: 0.07, at: A.now + i * 0.045 })); T({ type: 'keys', freq: notes(6), dur: 0.6, vol: 0.05, at: A.now + 0.45 }); },
+  // Power cut: everything winds down. And back.
+  cut() { T({ type: 'sawtooth', freq: notes(0), dur: 0.7, vol: 0.04, glide: 0.25, cutoff: 900 }); N('kick', { vol: 0.12, at: A.now + 0.6 }); },
+  restore() { T({ type: 'triangle', freq: notes(-6), dur: 0.5, vol: 0.06, glide: 4, cutoff: 1800 }); T({ type: 'bell', freq: notes(6), dur: 0.2, vol: 0.05, at: A.now + 0.5 }); },
+  // A new section of the build.
+  section() { const t0 = A.now; [0, 3, 4].forEach(d => T({ type: 'pad', freq: notes(d - 6), dur: 1, vol: 0.03, attack: 0.15, at: t0 })); [0, 2, 3, 4, 6, 9].forEach((d, i) => T({ type: 'bell', freq: notes(d + 3), dur: 0.2, vol: 0.05, at: t0 + 0.2 + i * 0.09 })); },
+  // The end: a match, a whoosh, the flame, and every tine at once.
+  finale() {
+    const t0 = A.now;
+    N('whoosh', { vol: 0.08, dur: 0.9, at: t0 });
+    [[0, 3, 4, 6], [-1, 2, 4, 7], [0, 3, 4, 9]].forEach((ch, k) => ch.forEach(d => T({ type: 'pad', freq: notes(d - 3), dur: 1.2, vol: 0.03, attack: 0.25, at: t0 + 0.6 + k * 1.2 })));
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12].forEach((d, i) => T({ type: 'pluck', freq: notes(d), dur: 0.2, vol: 0.06, at: t0 + 0.7 + i * 0.11 }));
+  },
+};
+for (const [name, f] of Object.entries(sfx)) sfx[name] = (...a) => { gainNow = LV[name] ?? 1; try { f(...a); } finally { gainNow = 1; } };
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'section', 'breakthrough'], S: () => S, E };
+
+// ---------- Music ----------
+let music = null, soundtrack = null;
+const phaseKey = () => S.ended ? 'end' : S.cutT > 0 ? 'dark' : E.SECTIONS[E.section(S)].music;
+function song() { return (soundtrack ??= createSoundtrack(music.strudel))(phaseKey()); }
+createMusic(A, { soundfonts: true, packs: ['vcsl'], song }).then(m => { music = m; music.update(); if (DEBUG) window.__game.music = m; }).catch(e => console.warn('music', e));
+let lastPhase = phaseKey();
+const refreshMusic = () => { const k = phaseKey(); if (k !== lastPhase) { lastPhase = k; if (music) music.update(); } };
+
+// ---------- Log ----------
+const logEl = $('log');
+function say(tag, text, cls = '') {
+  logEl.innerHTML = `<b class="${cls}"></b><span></span>`;
+  logEl.querySelector('b').textContent = tag;
+  logEl.querySelector('span').textContent = text;
+  logEl.classList.remove('fresh'); void logEl.offsetWidth; logEl.classList.add('fresh');
+  S.lastLog = [tag, text, cls];
+}
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const RING_LINES = [
+  'Ring sold. Feel that? That\'s momentum. Also wax.',
+  'Another ring. Every ring is a rung, and every rung is a ring.',
+  'Sold. You didn\'t just print a word. You printed a legacy, at a very fair price.',
+  'A customer cried a little. That\'s the brand.',
+  'Up she goes. Purl tries not to think about how flammable the whole project is.',
+  'Ring done. Breathe in through the nose. Out through the wick.',
+];
+const WONKY_LINES = [
+  'A fumble, set in wax. The ring sells for half. Remember: a typo is just a word on its own journey.',
+  'Wonky ring. Purl apologises to the customer, the candle, and the keyboard.',
+  'There\'s a blob in that one. Half price. "Character," says Tape 1. "Charge for character." Not yet.',
+  'Purl\'s paws shook. The wax remembers. Half price, and a lesson.',
+];
+const POOL_LINES = [
+  'The Needles finish a ring on their own: #. Click click.',
+  'The typing pool sends one up: #. Nobody fumbled. Nobody ever fumbles in the typing pool.',
+  'Another ring from the pool: #. Purl pretends it typed that one.',
+  'Ring from the pool: #. Passive income, says the tape. Purl writes it down twice.',
+];
+
+// ---------- Orders ----------
+function nextOrder() {
+  S.pos = 0; S.miss = 0; S.caught = false;
+  if (S.final) { S.order = { w: E.FINAL, kind: 'final' }; }
+  else if (S.affirm) { S.order = { w: E.AFFIRMATIONS[S.nextAff % E.AFFIRMATIONS.length], kind: 'affirm' }; S.nextAff++; S.affirm = false; }
+  else {
+    let w; do { w = E.pickOrder(S); } while (S.order && w === S.order.w);
+    S.order = { w, kind: 'order' };
+  }
+  skipSpaces();
+  renderSlip();
+}
+function skipSpaces() { while (S.order && S.order.w[S.pos] === ' ') S.pos++; }
+const mult = () => (S.cutT > 0 ? E.CUT_MULT : 1) * (S.breakT > 0 ? E.breakMult(S) : 1);
+let pressFx = 0, shakeT = 0;
+function type(ch) {
+  if (S.ended || !S.order) return;
+  if (!S.started) { S.started = true; }
+  const w = S.order.w, want = w[S.pos];
+  if (ch === want) {
+    S.pos++; skipSpaces();
+    sfx.key(S.pos); pressFx = 1;
+    if (S.pos >= w.length) finishRing(); else renderSlip();
+  } else {
+    if (E.lv(S, 'spec') && !S.caught) { S.caught = true; sfx.caught(); if (!S.seenCatch) { S.seenCatch = true; say('SPECS', 'Caught! The spectacles stop the first fumble on every ring before the wax sets. Breathe. Try that letter again.', 't'); } }
+    else { S.miss++; S.fumbles++; sfx.fumble(); blots.push({ t: 0 }); if (S.miss === 1 && !S.seenFumble) { S.seenFumble = true; say('OOPS', 'A fumble! The wax sets around it: this ring will sell for half. Type the right letter to carry on. You are learning. That is what this is.', 'p'); } }
+    $('slip').classList.remove('shake'); void $('slip').offsetWidth; $('slip').classList.add('shake');
+    renderSlip();
+  }
+}
+function finishRing() {
+  const o = S.order;
+  if (o.kind === 'final') { end(false); return; }
+  const wonky = S.miss > 0, m = mult();
+  const pay = E.printRing(S, o.w, { wonky, mult: m });
+  rise(o.w, pay, wonky);
+  if (o.kind === 'order' && S.mine.length < 120 && !S.mine.includes(o.w)) S.mine.push(o.w);
+  if (o.kind === 'affirm') {
+    S.breakT = E.breakSecs(S); sfx.breakthrough();
+    say('BREAKTHROUGH', `"${o.w}." Purl means it. ×${E.breakMult(S)} on every ring for ${E.breakSecs(S)} seconds, the typing pool's too. Gordon flutters off, unbothered.`, 'g');
+  } else if (wonky) { sfx.wonky(); say('WONKY', pick(WONKY_LINES), 'p'); }
+  else { sfx.ring(); if (Math.random() < 0.35) say('SOLD', pick(RING_LINES)); }
+  if (S.rings === 1) say('SOLD', `Ring one: ${o.w}, ${E.money(pay)}. The first ring of the Big Candle. Every word you type from now on goes on top. The higher the ring, the more it's worth.`, 't');
+  afterRings();
+  nextOrder();
+  save();
+}
+let lastSection = E.section(S);
+function afterRings() {
+  const s = E.section(S);
+  if (s !== lastSection) {
+    lastSection = s;
+    const sec = E.SECTIONS[s];
+    sfx.section();
+    say(sec.name.toUpperCase(), SECTION_LINES[sec.id] || '', 't');
+    refreshMusic();
+  }
+  if (S.value >= E.GOAL && !S.final) {
+    S.final = true;
+    say('$1,000,000,000', 'A billion dollars. The tape goes quiet. The blueprint has one line left: WICK + LIGHTING, per ORDER #1. Order #1 is the faded slip on the spike. Purl filed it as junk mail on the first day. It has been there all along.', 't');
+    sfx.section();
+  }
+}
+const SECTION_LINES = {
+  shaft: 'Section B: the Shaft. The candle has reached the ceiling, so Purl has made a hole in the ceiling. Never let a ceiling tell you where your ceiling is. Orders are getting more personal.',
+  roof: 'Section C: Through the Roof. Literally. The neighbours have noticed, and they have things they want to say, in wax, at height.',
+  town: 'Section D: Above the Town. You can see it from the bypass. People are ordering rings they want strangers to read.',
+  spire: 'Section E: Spire Height. Level with the church. The vicar has asked for a ring. The vicar\'s ring is an affirmation. Everybody\'s is, up here.',
+  crown: 'Section F: the Crown. Planes go round it. The tape says the last stretch is the hardest. The tape has never printed a candle.',
+};
+
+// ---------- Input: the keyboard ----------
+const ROWS = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
+const keysEl = $('keys');
+const keyBtn = {};
+for (const row of ROWS) {
+  const d = document.createElement('div');
+  for (const ch of row) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = ch; b.dataset.k = ch; b.setAttribute('aria-label', ch);
+    b.addEventListener('pointerdown', e => { e.preventDefault(); type(ch); flash(ch); });
+    b.addEventListener('click', e => { if (e.detail === 0) { type(ch); flash(ch); } });
+    keyBtn[ch] = b; d.append(b);
+  }
+  keysEl.append(d);
+}
+function flash(ch) { const b = keyBtn[ch]; if (!b) return; b.classList.add('hit'); setTimeout(() => b.classList.remove('hit'), 90); }
+addEventListener('keydown', e => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.target.closest && e.target.closest('input, textarea, select, [contenteditable], .di-modal, dialog')) return;
+  const ch = e.key.length === 1 ? e.key.toUpperCase() : '';
+  if (ch >= 'A' && ch <= 'Z') { e.preventDefault(); type(ch); flash(ch); }
+});
+
+// ---------- The slip ----------
+const slip = $('slip'), wordEl = $('word'), slipTag = $('slipTag');
+function renderSlip() {
+  const o = S.order;
+  if (!o) return;
+  slip.classList.toggle('affirm', o.kind === 'affirm');
+  slip.classList.toggle('final', o.kind === 'final');
+  const tag = o.kind === 'final' ? ['ORDER #1 · −G.', 'the faded one'] : o.kind === 'affirm' ? ['AFFIRMATION', 'Gordon is here'] : [`ORDER · RING ${S.rings + 1}`, `${E.short(E.letterPrice(S) * E.SIGNED)} a letter`];
+  slipTag.innerHTML = '<b></b><span></span>';
+  slipTag.querySelector('b').textContent = tag[1];
+  slipTag.querySelector('span').textContent = tag[0];
+  wordEl.replaceChildren(...[...o.w].map((ch, i) => {
+    const s = document.createElement('span');
+    s.textContent = ch === ' ' ? '·' : ch;
+    s.className = ch === ' ' ? 'sp' : i < S.pos ? 'done' : i === S.pos ? 'cur' : '';
+    return s;
+  }));
+  let blot = slip.querySelector('.blot');
+  if (S.miss > 0) { if (!blot) { blot = document.createElement('span'); blot.className = 'blot'; slip.append(blot); } blot.textContent = 'wonky ½'; }
+  else if (blot) blot.remove();
+  const next = o.w[S.pos];
+  for (const [k, b] of Object.entries(keyBtn)) b.classList.toggle('next', k === next);
+}
+
+// ---------- HUD ----------
+const fmtRate = n => n >= 1e6 ? E.short(n) : E.money(n);
+function renderHud() {
+  if (S.ended) {
+    $('tin').textContent = 'LIT'; $('tin').nextElementSibling.textContent = 'and burning';
+    $('vTxt').textContent = `Candle ${E.short(Math.max(S.value, E.GOAL))}`; $('vBar').style.width = '100%';
+    $('sub').innerHTML = `${S.rings.toLocaleString('en-US')} rings · <b>${E.heightM(S).toFixed(1)} m</b> · burning down ring by ring · Gordon: circling`;
+    return;
+  }
+  $('tin').textContent = E.money(S.tin);
+  $('vTxt').textContent = `Candle ${E.short(S.value)}`;
+  // A log scale: every power of ten is a notch.
+  const f = S.value <= 1 ? 0 : Math.min(1, Math.log10(S.value) / 9);
+  $('vBar').style.width = `${(f * 100).toFixed(1)}%`;
+  const pr = E.letterPrice(S), hr = E.helperRate(S), m = mult();
+  const bits = [`Top ring <b>${fmtRate(pr * E.SIGNED)}</b>/letter typed by you`];
+  if (hr > 0) bits.push(`Typing pool <b>${hr.toFixed(hr < 10 ? 2 : 1)}</b> letters/s ≈ <b>${fmtRate(hr * pr * m)}</b>/s`);
+  bits.push(`<b>${E.heightM(S).toFixed(E.heightM(S) < 10 ? 2 : 1)} m</b> · ${S.rings.toLocaleString('en-US')} rings`);
+  if (S.cutT > 0) bits.push(`<span class="ev">POWER CUT ×${E.CUT_MULT} · ${Math.ceil(S.cutT)} s</span>`);
+  if (S.breakT > 0) bits.push(`<span class="ev">BREAKTHROUGH ×${E.breakMult(S)} · ${Math.ceil(S.breakT)} s</span>`);
+  $('sub').innerHTML = bits.join(' · ');
+}
+// Notches at each power of ten on the meter.
+for (let i = 1; i < 9; i++) { const n = document.createElement('b'); n.style.left = `${(i / 9 * 100).toFixed(2)}%`; $('meter').append(n); }
+
+// ---------- Shop ----------
+const shop = $('shop');
+const newUntil = {};
+let shopSig = '';
+const clone = () => JSON.parse(JSON.stringify(S));
+function renderShop() {
+  const closed = S.ended || S.final;
+  const fresh = closed ? [] : E.reveal(S);
+  const all = closed ? [] : E.visible(S).sort((a, b) => E.cost(S, a.id) - E.cost(S, b.id));
+  for (const id of fresh) { if (S.started) sfx.unlock(); newUntil[id] = performance.now() + 9000; }
+  const sig = all.map(i => `${i.id}:${E.cost(S, i.id)}:${E.lv(S, i.id)}`).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    for (const it of all) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (it.kind === 'odd' ? ' odd' : '');
+      b.dataset.id = it.id; b.dataset.cost = E.cost(S, it.id);
+      b.innerHTML = '<b></b><em></em>';
+      b.querySelector('b').textContent = it.name;
+      b.querySelector('em').textContent = `${E.short(E.cost(S, it.id))}${it.kind === 'lv' ? ` · ${E.lv(S, it.id)}/${E.max(it)}` : ''}`;
+      b.setAttribute('aria-describedby', 'tip');
+      b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, upTip(it.id)); });
+      b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+      b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, upTip(it.id)); });
+      b.addEventListener('blur', hideTip);
+      b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+      b.addEventListener('click', () => {
+        if (b.dataset.touch && tipFor !== it.id) { showTip(b, upTip(it.id)); return; }
+        if (b.getAttribute('aria-disabled') !== 'true') doBuy(it.id); else sfx.deny();
+      });
+      shop.append(b);
+    }
+  }
+  const now = performance.now();
+  let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = S.tin >= Number(b.dataset.cost);
+    n += can ? 1 : 0;
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > now;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  document.querySelector('aside h2').hidden = !all.length;
+  renderShelf();
+  $('col').hidden = !all.length && shelfEl.hidden;
+}
+function effect(id) {
+  const it = E.BY_ID[id], T2 = clone();
+  if (it.kind === 'odd') return 'Changes nothing in the numbers. Goes in the picture, for good.';
+  T2.tin = Infinity; E.buy(T2, id);
+  const pr = E.letterPrice(S), pr2 = E.letterPrice(T2);
+  const hr = E.helperRate(S), hr2 = E.helperRate(T2);
+  if (['needles', 'wheel', 'loom', 'telegraph', 'tape4'].includes(id))
+    return `Typing pool: ${hr.toFixed(2)} → ${hr2.toFixed(2)} letters/s (≈ ${fmtRate(hr * pr)} → ${fmtRate(hr2 * pr)} a second at today's top ring)`;
+  if (id === 'finish') return `${E.FINISHES[E.lv(S, 'finish')]} → ${E.FINISHES[E.lv(T2, 'finish')]}: a typed letter ${fmtRate(pr * E.SIGNED)} → ${fmtRate(pr2 * E.SIGNED)}, a pool letter ${fmtRate(pr)} → ${fmtRate(pr2)}`;
+  if (id === 'tape2') return `A typed letter: ${fmtRate(pr * E.SIGNED)} → ${fmtRate(pr2 * E.SIGNED)}; a pool letter ${fmtRate(pr)} → ${fmtRate(pr2)}`;
+  if (id === 'spec') return 'Fumbles caught on each ring: 0 → 1 (the ring stays whole: full price)';
+  if (id === 'tape3') return `Breakthrough: ×${E.breakMult(S)} for ${E.breakSecs(S)} s → ×${E.breakMult(T2)} for ${E.breakSecs(T2)} s`;
+  return '';
+}
+let tipFor = null;
+function upTip(id) {
+  const it = E.BY_ID[id];
+  const l = it.kind === 'lv' ? ` · level ${E.lv(S, id)} of ${E.max(it)}` : '';
+  return { id, name: it.name, desc: it.desc, fx: effect(id), joke: it.kind === 'odd' ? it.joke : '', foot: `${E.money(E.cost(S, id))}${l}` };
+}
+function showTip(b, it) {
+  if (!it) return;
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<b></b><span></span><span class="fx"></span><i></i><small></small>';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('span').textContent = it.desc;
+  tip.querySelector('.fx').textContent = it.fx || '';
+  tip.querySelector('.fx').hidden = !it.fx;
+  tip.querySelector('i').textContent = it.joke || '';
+  tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || '';
+  tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== shelfEl) shelfEl.after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  if (b.closest('#side') && r.left > t.width + 24 && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 14}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - t.width - 8, r.left))}px`;
+    tip.style.top = `${r.bottom + 8 + t.height < innerHeight ? r.bottom + 8 : Math.max(8, r.top - t.height - 8)}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+let tipMoved = 0;
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .bought')) hideTip(); });
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!S.boughtOpen === shelfEl.open) return;
+  S.boughtOpen = shelfEl.open; save();
+});
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(i => i.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (it.kind === 'odd' ? ' odd' : '');
+    b.textContent = it.name; b.dataset.id = it.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, { id: 'bought:' + it.id, name: it.name, desc: it.desc, joke: it.joke, foot: it.kind === 'odd' ? 'for the picture' : 'bought', inline: true }); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + it.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+const LEVEL_LINES = {
+  needles: { 1: 'The Needles start. Click, click, click. They don\'t fumble. They have never once been nervous. Purl finds this inspiring and also annoying.', 4: 'Four pairs of Needles. A typing pool. Purl calls it "the team" and does a little speech.', 8: 'Eight pairs of Needles. The clicking has a rhythm now. Purl taps along, nervously.', 12: 'A dozen pairs of Needles. Purl has run out of desk. The Needles have not run out of click.' },
+  wheel: { 1: 'The spinning wheel turns, and orders come out. Purl doesn\'t ask how. Purl was once spun on a wheel like this one. It doesn\'t talk about it.', 5: 'Five spinning wheels. The workshop hums like a beehive with opinions.', 10: 'Ten spinning wheels. The floorboards have started to spin a little too.' },
+  loom: { 1: 'The Jacquard loom chunters into life. Punch cards in, rings out. The first programmable machine, programmed at last to do something important.', 5: 'Five looms. The punch cards come in sacks now. A few of them have little moth-shaped holes.', 10: 'Ten looms. Purl has written a mission statement for them. They punched holes in it.' },
+  telegraph: { 1: 'A telegraph key on the windowsill. Orders arrive from three counties away. DOT DOT DASH. STOP.', 4: 'Four telegraph keys. The whole country wants a ring. STOP. Some want two. STOP.', 8: 'Eight telegraph keys, chattering all night. Purl dreams in Morse. STOP.' },
+  finish: { 1: 'Scented wax: lavender and abundance. Twice the price. "Smell that? That\'s the smell of value."', 2: 'Glitter in the wax. It gets everywhere. Value gets everywhere, says the tape.', 3: 'Marbled rings. Every one unique, like a snowflake, or a mistake you meant.', 4: 'Gilt-edged. The rings shine from the bypass.', 5: 'Gold leaf. Purl handles it with tweezers and holds its breath.', 6: 'Starlight wax. Nobody knows what is in it. It costs a lot, so it\'s working.', 7: 'Moonbeam wax. The top of the candle glows a bit even unlit. Gordon stares at it for hours.' },
+};
+function doBuy(id) {
+  const it = E.BY_ID[id];
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  sfx.buy(); hideTip(true);
+  const l = E.lv(S, id);
+  if (it.kind === 'lv') say(it.name.toUpperCase(), (LEVEL_LINES[id] || {})[l] || `${it.name}, level ${l}. ${it.joke}`, 't');
+  else say(it.kind === 'odd' ? 'FOR THE PICTURE' : 'BOUGHT', it.joke, it.kind === 'odd' ? 'p' : 't');
+  if (id === 'trap') gordonSpot = 'trap';
+  renderShop(); renderHud(); save();
+}
+
+// ---------- The clock ----------
+let gordon = null;       // Gordon's visit: { t } (seconds into the flutter)
+let gordonSpot = E.lv(S, 'trap') ? 'trap' : 'sill';
+let poolText = 0;
+const risers = [];       // floating "+$" over the candle
+const blots = [];
+function rise(w, pay, wonky) { risers.push({ w, pay, wonky, t: 0 }); if (risers.length > 6) risers.shift(); }
+function tick(dt) {
+  if (S.ended) return;
+  if (S.started) S.time += dt;
+  const m = mult();
+  const done = E.helpersTick(S, dt, m);
+  if (done.length) {
+    sfx.pool();
+    poolText += done.length;
+    if (poolText >= 6 && Math.random() < 0.05) { poolText = 0; say('POOL', pick(POOL_LINES).replace('#', done[done.length - 1].w), ''); }
+    afterRings();
+  }
+  if (S.cutT > 0) { S.cutT -= dt; if (S.cutT <= 0) { S.cutT = 0; sfx.restore(); say('LIGHTS ON', 'The power\'s back. The town goes back to its lamps. The candle\'s still the tallest thing for miles. Onwards.', ''); refreshMusic(); } }
+  if (S.breakT > 0) S.breakT = Math.max(0, S.breakT - dt);
+  if (S.started && !document.hidden && !S.final) {
+    if (S.time >= S.nextGordon) {
+      S.nextGordon = S.time + 70 + Math.random() * 40; S.gordons++;
+      S.affirm = true; gordon = { t: 0 }; sfx.gordon();
+      say('GORDON', S.gordons === 1 ? 'Gordon flutters down from the windowsill! Purl freezes. The tape says: when fear comes, affirm. Type the affirmation on the next slip, and mean it: a Breakthrough follows.' : pick(GORDON_LINES), 'g');
+      if (S.order && S.order.kind === 'order' && S.pos === 0) nextOrder();
+    }
+    if (S.value > 2000 && S.time >= S.nextCut) {
+      S.nextCut = S.time + 150 + Math.random() * 70; S.cuts++;
+      S.cutT = E.CUT_SECS; sfx.cut(); refreshMusic();
+      say('POWER CUT', `The power's out across town. Everyone needs a light, and there's only one candle. Every ring is ×${E.CUT_MULT} until the lights come back.`, 'p');
+    }
+  }
+}
+const GORDON_LINES = [
+  'Gordon is back on the sill, looking at Purl. Or past Purl. Hard to say with moths. Affirm.',
+  'A flutter by the window. Gordon. Purl\'s fibres stand on end. Next slip: an affirmation.',
+  'Gordon lands on the desk, two inches from Purl, and looks up at the candle. Breathe. Affirm.',
+  'Gordon circles the top of the candle twice and settles back down. Purl is shaking. Affirm it out.',
+];
+
+// ---------- Drawing ----------
+const cv = $('stage'), ctx = cv.getContext('2d');
+const W = 720, H = 440;
+function fit() {
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  cv.width = W * dpr; cv.height = H * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+fit();
+addEventListener('resize', fit);
+
+// Sprites: Iconify shapes, redrawn as blueprint linework (an outline and a section hatch).
+const SPR = {};
+function edges(src, color, px = 1.4) {
+  const c = Sprites.canvas(src.width + 4, src.height + 4), x = c.getContext('2d');
+  const sil = Sprites.silhouette(src, color);
+  for (let a = 0; a < 8; a++) x.drawImage(sil, 2 + Math.cos(a * Math.PI / 4) * px, 2 + Math.sin(a * Math.PI / 4) * px);
+  x.globalCompositeOperation = 'destination-out'; x.drawImage(src, 2, 2);
+  x.globalCompositeOperation = 'source-over';
+  // Section hatch inside the shape.
+  const h = Sprites.canvas(c.width, c.height), hx = h.getContext('2d');
+  hx.strokeStyle = color; hx.globalAlpha = 0.45; hx.lineWidth = 1;
+  for (let i = -c.height; i < c.width; i += 4) { hx.beginPath(); hx.moveTo(i, c.height); hx.lineTo(i + c.height, 0); hx.stroke(); }
+  hx.globalCompositeOperation = 'destination-in'; hx.drawImage(src, 2, 2);
+  x.drawImage(h, 0, 0);
+  return c;
+}
+async function makeSprites() {
+  const load = async (name, file, size, color = C.paper) => {
+    try {
+      const svg = Sprites.recolor(await Sprites.loadSvg(`./art/${file}`), '#ffffff');
+      const src = await Sprites.svgToCanvas(svg, size);
+      SPR[name] = Sprites.register(name, edges(src, color));
+    } catch (e) { console.warn('sprite', name, e); }
+  };
+  await Promise.all([
+    load('spinning wheel', 'game-icons--spinning-wheel.svg', 44),
+    load('cassette', 'streamline-flex--tape-cassette-record.svg', 22, C.honey),
+  ]);
+  // Hand-drawn: Purl, Gordon and the rest live in the draw functions; register stills of them for the sheet.
+  const still = (name, w, h, f) => { const c = Sprites.canvas(w, h), x = c.getContext('2d'); x.fillStyle = C.blue; x.fillRect(0, 0, w, h); f(x); Sprites.register(name, c); };
+  still('Purl', 80, 80, x => drawPurl(x, 40, 44, 26, { t: 0 }));
+  still('Purl with everything', 80, 90, x => drawPurl(x, 40, 54, 26, { t: 0, spec: true, hat: true }));
+  still('Gordon', 70, 50, x => drawGordon(x, 35, 25, 1.6, 0));
+  still('loom', 40, 34, x => drawLoom(x, 2, 2, 1));
+  still('telegraph', 36, 30, x => drawTelegraph(x, 2, 2, 1));
+  still('needles', 24, 22, x => drawNeedles(x, 4, 2, 0));
+  still('wheel', 30, 28, x => drawWheel(x, 2, 2, 0));
+  still('the blueprint, everything bought', 720, 440, x => { const keep = S.lv; S.lv = { needles: 12, wheel: 10, loom: 10, telegraph: 8, spec: 1, tape2: 1, tape3: 1, tape4: 1, board: 1, poster: 1, trap: 1, hat: 1, finish: 7 }; const r = S.rings; S.rings = Math.max(r, 900); drawAll(x, 1); S.lv = keep; S.rings = r; });
+  if (Sprites.sheetRequested()) Sprites.showSheet();
+}
+
+let T0 = performance.now(), now = 0;
+const line = (x, w = 1.2, col = C.paper) => { x.strokeStyle = col; x.lineWidth = w; };
+
+function drawPaper(x, warm) {
+  if (warm) { const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, C.navy); g.addColorStop(0.6, C.plum); g.addColorStop(1, C.rose); x.fillStyle = g; } else x.fillStyle = C.blue;
+  x.fillRect(0, 0, W, H);
+  x.lineWidth = 1;
+  for (let gx = 0; gx <= W; gx += 20) { x.strokeStyle = gx % 100 ? '#5e96dd40' : '#5e96dd80'; x.beginPath(); x.moveTo(gx + .5, 0); x.lineTo(gx + .5, H); x.stroke(); }
+  for (let gy = 0; gy <= H; gy += 20) { x.strokeStyle = gy % 100 ? '#5e96dd40' : '#5e96dd80'; x.beginPath(); x.moveTo(0, gy + .5); x.lineTo(W, gy + .5); x.stroke(); }
+}
+function label(x, text, tx, ty, { size = 10, col = C.paper, align = 'left', font = 'mono', weight = 600 } = {}) {
+  x.fillStyle = col; x.textAlign = align; x.textBaseline = 'alphabetic';
+  x.font = font === 'pen' ? `${size * 1.5}px 'Nanum Pen Script', cursive` : font === 'head' ? `${size}px 'Saira Stencil One', sans-serif` : `${weight} ${size}px 'Overpass Mono', monospace`;
+  x.fillText(text, tx, ty);
+}
+function box(x, x0, y0, w, h, title) {
+  line(x, 1.5); x.strokeRect(x0 + .5, y0 + .5, w, h);
+  x.fillStyle = C.blue; x.fillRect(x0 + 6, y0 - 6, x.measureText(title).width + 30, 12);
+  label(x, title, x0 + 10, y0 + 4, { size: 9.5, col: C.white, weight: 700 });
+}
+
+// Purl: a ball of wool, wound in bands, with a loose end. Nervous.
+function drawPurl(x, cx, cy, r, { t = 0, spec = false, hat = false, scared = 0 } = {}) {
+  const j = scared && !reduced ? Math.sin(t * 60) * 1.3 * scared : 0;
+  cx += j;
+  x.save();
+  x.fillStyle = '#cce2e122'; x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.fill();
+  line(x, 1.6, C.white); x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.stroke();
+  x.save(); x.beginPath(); x.arc(cx, cy, r - 1, 0, Math.PI * 2); x.clip();
+  line(x, 1, C.paper);
+  for (let i = -3; i <= 3; i++) { x.beginPath(); x.ellipse(cx + i * r * 0.28, cy, r * 0.22, r * 1.05, 0.5, 0, Math.PI * 2); x.stroke(); }
+  for (let i = -2; i <= 2; i++) { x.beginPath(); x.ellipse(cx, cy + i * r * 0.36, r * 1.1, r * 0.2, -0.35, 0, Math.PI * 2); x.stroke(); }
+  x.restore();
+  // The loose end.
+  line(x, 1.3, C.white); x.beginPath(); x.moveTo(cx + r * 0.7, cy + r * 0.7);
+  x.bezierCurveTo(cx + r * 1.3, cy + r * 1.1, cx + r * 0.6, cy + r * 1.5, cx + r * 1.4, cy + r * 1.55); x.stroke();
+  // Face: a little patch of plain wool.
+  x.fillStyle = C.blue; x.beginPath(); x.ellipse(cx - r * 0.05, cy + r * 0.05, r * 0.55, r * 0.42, 0, 0, Math.PI * 2); x.fill();
+  line(x, 1, C.paper); x.stroke();
+  const blink = (t % 4) < 0.12;
+  x.fillStyle = C.white;
+  if (blink) { line(x, 1.4, C.white); x.beginPath(); x.moveTo(cx - r * .3, cy); x.lineTo(cx - r * .14, cy); x.moveTo(cx + r * .06, cy); x.lineTo(cx + r * .22, cy); x.stroke(); }
+  else { x.beginPath(); x.arc(cx - r * .22, cy - r * .02, r * .075 * (scared ? 1.4 : 1), 0, 7); x.arc(cx + r * .14, cy - r * .02, r * .075 * (scared ? 1.4 : 1), 0, 7); x.fill(); }
+  // A wobbly, worried mouth.
+  line(x, 1.2, C.white); x.beginPath();
+  for (let k = 0; k <= 6; k++) { const px = cx - r * .2 + k * r * .06, py = cy + r * .2 + Math.sin(k * 1.9 + t * (scared ? 20 : 2)) * r * .03; k ? x.lineTo(px, py) : x.moveTo(px, py); }
+  x.stroke();
+  if (spec) { line(x, 1.2, C.honey); x.beginPath(); x.arc(cx - r * .22, cy - r * .02, r * .17, 0, Math.PI * 2); x.moveTo(cx + r * .31, cy - r * .02); x.arc(cx + r * .14, cy - r * .02, r * .17, 0, Math.PI * 2); x.moveTo(cx - r * .05, cy - r * .04); x.lineTo(cx - r * .03, cy - r * .04); x.stroke(); }
+  if (hat) {
+    x.fillStyle = C.honey; x.beginPath(); x.ellipse(cx, cy - r * .78, r * .78, r * .14, 0, 0, Math.PI * 2); x.fill();
+    x.beginPath(); x.arc(cx, cy - r * .8, r * .56, Math.PI, 0); x.fill();
+    line(x, 1, C.navy); x.beginPath(); x.moveTo(cx, cy - r * 1.34); x.lineTo(cx, cy - r * .86); x.stroke();
+    x.fillStyle = C.butter; x.beginPath(); x.arc(cx, cy - r * 1.02, r * .1, 0, 7); x.fill();
+  }
+  if (scared) { x.fillStyle = C.pale; x.beginPath(); x.ellipse(cx + r * .62, cy - r * .5, r * .07, r * .12, 0, 0, Math.PI * 2); x.fill(); }
+  x.restore();
+}
+// Gordon: a clothes moth in cream, the only thing on the sheet that isn't drawn in blueprint lines.
+function drawGordon(x, cx, cy, s = 1, t = 0, flap = 0.3) {
+  x.save(); x.translate(cx, cy); x.scale(s, s);
+  const f = 0.6 + (reduced ? 0 : Math.sin(t * 25) * flap);
+  x.fillStyle = C.cream; x.strokeStyle = C.tan; x.lineWidth = 0.8;
+  for (const side of [-1, 1]) {
+    x.save(); x.scale(side, 1);
+    x.beginPath(); x.moveTo(1, -2); x.quadraticCurveTo(10 * f + 4, -12, 14 * f + 3, -4); x.quadraticCurveTo(10 * f, 1, 1, 0); x.fill(); x.stroke();
+    x.beginPath(); x.moveTo(1, 0); x.quadraticCurveTo(9 * f + 3, 3, 10 * f + 2, 7); x.quadraticCurveTo(5, 6, 1, 2); x.fill(); x.stroke();
+    x.restore();
+  }
+  x.fillStyle = C.tan; x.beginPath(); x.ellipse(0, 0, 2.2, 5.5, 0, 0, Math.PI * 2); x.fill();
+  x.strokeStyle = C.cream; x.lineWidth = 0.9;
+  x.beginPath(); x.moveTo(-1, -5); x.quadraticCurveTo(-4, -10, -6, -11); x.moveTo(1, -5); x.quadraticCurveTo(4, -10, 6, -11); x.stroke();
+  x.fillStyle = C.navy; x.beginPath(); x.arc(-1, -4, .7, 0, 7); x.arc(1, -4, .7, 0, 7); x.fill();
+  x.restore();
+}
+function drawNeedles(x, x0, y0, k) {
+  const peck = Math.sin(k * 14) > 0.5 ? 2 : 0;
+  line(x, 1.6, C.paper); x.beginPath(); x.moveTo(x0, y0 + peck); x.lineTo(x0 + 9, y0 + 16); x.moveTo(x0 + 14, y0); x.lineTo(x0 + 6, y0 + 16 - peck); x.stroke();
+  x.fillStyle = C.honey; x.beginPath(); x.arc(x0, y0 + peck, 2, 0, 7); x.arc(x0 + 14, y0, 2, 0, 7); x.fill();
+  x.fillStyle = C.paper; x.fillRect(x0 + 1, y0 + 17, 12, 2);
+}
+function drawWheel(x, x0, y0, k) {
+  const r = 9, cx = x0 + 11, cy = y0 + 10;
+  line(x, 1.2, C.paper); x.beginPath(); x.arc(cx, cy, r, 0, 7); x.stroke();
+  x.beginPath(); for (let i = 0; i < 6; i++) { const a = k * 3 + i * Math.PI / 3; x.moveTo(cx, cy); x.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r); } x.stroke();
+  x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx - 6, cy + 14); x.moveTo(cx, cy); x.lineTo(cx + 7, cy + 14); x.moveTo(cx + 9, cy); x.lineTo(cx + 18, cy - 6); x.stroke();
+  x.fillStyle = C.honey; x.beginPath(); x.arc(cx + 18, cy - 6, 2, 0, 7); x.fill();
+}
+function drawLoom(x, x0, y0, k) {
+  line(x, 1.1); x.strokeRect(x0 + 2, y0 + 6, 30, 20); x.beginPath();
+  for (let i = 0; i < 6; i++) { x.moveTo(x0 + 6 + i * 4.5, y0 + 6); x.lineTo(x0 + 6 + i * 4.5, y0 + 26); }
+  x.moveTo(x0 + 2, y0 + 16 + Math.sin(k * 6) * 3); x.lineTo(x0 + 32, y0 + 16 + Math.sin(k * 6) * 3); x.stroke();
+  x.fillStyle = C.honey; x.fillRect(x0 + 8, y0, 14, 6);
+  x.fillStyle = C.blue; for (let i = 0; i < 4; i++) x.fillRect(x0 + 10 + i * 3, y0 + 2, 1.5, 1.5);
+  x.beginPath(); line(x, 1.1); x.moveTo(x0 + 4, y0 + 26); x.lineTo(x0 + 2, y0 + 31); x.moveTo(x0 + 30, y0 + 26); x.lineTo(x0 + 32, y0 + 31); x.stroke();
+}
+function drawTelegraph(x, x0, y0, k) {
+  line(x, 1.1); x.strokeRect(x0 + 2, y0 + 18, 28, 7);
+  const dip = Math.sin(k * 14) > 0.4 ? 2 : 0;
+  x.beginPath(); x.moveTo(x0 + 6, y0 + 16 + dip); x.lineTo(x0 + 24, y0 + 12 + dip); x.stroke();
+  x.fillStyle = C.paper; x.beginPath(); x.arc(x0 + 25, y0 + 11 + dip, 2.6, 0, 7); x.fill();
+  x.beginPath(); x.moveTo(x0 + 16, y0 + 18); x.lineTo(x0 + 16, y0 + 14 + dip); x.stroke();
+  line(x, 0.8, C.pale); x.beginPath(); x.moveTo(x0 + 30, y0 + 21); x.quadraticCurveTo(x0 + 34, y0 + 10, x0 + 33, y0); x.stroke();
+}
+
+// ---------- Detail A: the workshop ----------
+function drawWorkshop(x, t, all) {
+  const has = id => all || E.lv(S, id) > 0;
+  const X0 = 10, Y0 = 12, Wd = 292, Hd = 262, floor = Y0 + 240;
+  box(x, X0, Y0, Wd, Hd, 'DETAIL A · WORKSHOP · 1:10');
+  x.save(); x.beginPath(); x.rect(X0 + 1, Y0 + 1, Wd - 1, Hd - 1); x.clip();
+  // Floor, with a section hatch under it.
+  line(x, 1.5); x.beginPath(); x.moveTo(X0, floor); x.lineTo(X0 + Wd, floor); x.stroke();
+  line(x, 1, '#cce2e166'); for (let i = X0; i < X0 + Wd; i += 7) { x.beginPath(); x.moveTo(i, floor + 10); x.lineTo(i + 8, floor + 2); x.stroke(); }
+  // The window and its sill.
+  const darkOut = S.cutT > 0;
+  x.fillStyle = darkOut ? C.navy : '#9cd8fc33'; x.fillRect(X0 + 16, Y0 + 30, 64, 74);
+  line(x, 1.4); x.strokeRect(X0 + 16.5, Y0 + 30.5, 64, 74); x.beginPath(); x.moveTo(X0 + 48.5, Y0 + 30); x.lineTo(X0 + 48.5, Y0 + 104); x.moveTo(X0 + 16, Y0 + 67.5); x.lineTo(X0 + 80, Y0 + 67.5); x.stroke();
+  x.fillStyle = C.paper; x.fillRect(X0 + 10, Y0 + 104, 76, 4);
+  if (darkOut) label(x, 'no lights', X0 + 48, Y0 + 90, { size: 8, col: C.pink, align: 'center', font: 'pen' });
+  // Telegraph keys on the sill.
+  for (let i = 0; i < Math.min(all ? 8 : E.lv(S, 'telegraph'), 2); i++) drawTelegraph(x, X0 + 14 + i * 30, Y0 + 78, t + i);
+  // The vision board: the Big Candle, finished and lit, with a tiny moth pencilled in the corner.
+  if (has('board')) {
+    const bx = X0 + 98, by = Y0 + 26;
+    x.fillStyle = C.tan; x.fillRect(bx, by, 66, 50); line(x, 1.2, C.bark); x.strokeRect(bx + .5, by + .5, 66, 50);
+    x.fillStyle = C.white; x.fillRect(bx + 8, by + 6, 30, 38);
+    line(x, 1, C.navy); x.strokeRect(bx + 19, by + 18, 8, 22);
+    x.fillStyle = C.flame; x.beginPath(); x.ellipse(bx + 23, by + 13, 2.5, 4.5, 0, 0, 7); x.fill();
+    label(x, '$1B', bx + 32, by + 42, { size: 6, col: C.navy, weight: 700 });
+    drawGordon(x, bx + 34, by + 11, 0.28, 0, 0);
+    x.fillStyle = C.pink; x.fillRect(bx + 44, by + 8, 16, 12); x.fillStyle = C.butter; x.fillRect(bx + 42, by + 26, 18, 14);
+    label(x, 'THINK', bx + 51, by + 33, { size: 5, col: C.navy, align: 'center', weight: 700 }); label(x, 'TALL', bx + 51, by + 38, { size: 5, col: C.navy, align: 'center', weight: 700 });
+    x.fillStyle = C.red; for (const [px, py] of [[bx + 23, by + 7], [bx + 52, by + 9], [bx + 51, by + 27]]) { x.beginPath(); x.arc(px, py, 1.5, 0, 7); x.fill(); }
+  } else { line(x, 1, '#cce2e155'); x.setLineDash([3, 3]); x.strokeRect(X0 + 98.5, Y0 + 26.5, 66, 50); x.setLineDash([]); label(x, 'board?', X0 + 131, Y0 + 55, { size: 8, col: '#cce2e177', align: 'center', font: 'pen' }); }
+  // The motivational poster: HANG IN THERE. It's a kitten, on a ball of yarn.
+  if (has('poster')) {
+    const px = X0 + 180, py = Y0 + 22;
+    x.fillStyle = C.navy; x.fillRect(px, py, 50, 64); line(x, 2, C.wood); x.strokeRect(px, py, 50, 64);
+    line(x, 1, C.paper); x.beginPath(); x.moveTo(px + 25, py + 4); x.lineTo(px + 25, py + 16); x.stroke();
+    x.fillStyle = C.tan; x.beginPath(); x.arc(px + 25, py + 22, 7, 0, 7); x.fill();
+    x.beginPath(); x.moveTo(px + 19, py + 18); x.lineTo(px + 20, py + 12); x.lineTo(px + 23, py + 16); x.moveTo(px + 31, py + 18); x.lineTo(px + 30, py + 12); x.lineTo(px + 27, py + 16); x.fill();
+    x.fillStyle = C.navy; x.beginPath(); x.arc(px + 22.5, py + 22, 1, 0, 7); x.arc(px + 27.5, py + 22, 1, 0, 7); x.fill();
+    x.fillStyle = C.pink; x.beginPath(); x.arc(px + 25, py + 39, 7, 0, 7); x.fill(); line(x, .8, C.rose); x.beginPath(); x.arc(px + 25, py + 39, 4, 0, 4); x.stroke();
+    label(x, 'HANG IN', px + 25, py + 54, { size: 6.5, col: C.white, align: 'center', weight: 700 }); label(x, 'THERE', px + 25, py + 61, { size: 6.5, col: C.white, align: 'center', weight: 700 });
+  }
+  // The first spinning wheel stands in the workshop corner.
+  if (has('wheel') && SPR['spinning wheel']) x.drawImage(SPR['spinning wheel'], X0 + 196, floor - 50, 48, 48);
+  // The candle base, coming in from the right (see the elevation).
+  const cx0 = X0 + 254;
+  x.fillStyle = waxFill(x, all); x.fillRect(cx0, Y0, 40, floor - Y0);
+  line(x, 1.3); x.beginPath(); x.moveTo(cx0 + .5, Y0); x.lineTo(cx0 + .5, floor); x.stroke();
+  line(x, .8, '#cce2e199'); const rp = 5; const n = Math.min(S.rings, Math.floor((floor - Y0) / rp));
+  for (let i = 1; i <= n; i++) { x.beginPath(); x.moveTo(cx0, floor - i * rp + .5); x.lineTo(cx0 + 40, floor - i * rp + .5); x.stroke(); }
+  if (!S.rings) label(x, 'ring 1 →', cx0 - 4, floor - 6, { size: 9, col: C.pink, align: 'right', font: 'pen' });
+  label(x, 'BIG CANDLE', cx0 + 20, Y0 + 14, { size: 7, col: C.white, align: 'center', weight: 700 }); label(x, '(SEE ELEV.)', cx0 + 20, Y0 + 22, { size: 6.5, col: C.paper, align: 'center' });
+  // The printer: a gantry over the candle base, its nozzle on the top ring (in this view, the base).
+  const hx = cx0 - 28, hy = floor - 102;
+  line(x, 1.4); x.strokeRect(hx, hy, 30, 16); x.beginPath(); x.moveTo(hx + 30, hy + 8); x.lineTo(cx0 + 20, hy + 8); x.lineTo(cx0 + 20, hy + 14); x.stroke();
+  x.fillStyle = pressFx > 0.05 ? C.honey : C.paper; x.beginPath(); x.moveTo(cx0 + 16, hy + 14); x.lineTo(cx0 + 24, hy + 14); x.lineTo(cx0 + 20, hy + 20); x.fill();
+  label(x, 'PRINTER', hx + 15, hy + 11, { size: 6.5, col: C.white, align: 'center', weight: 700 });
+  line(x, 1.2); x.beginPath(); x.moveTo(hx + 4, hy + 16); x.lineTo(hx + 4, floor - 52); x.stroke();
+  // The desk.
+  const dx = X0 + 92, dy = floor - 52;
+  line(x, 1.5); x.beginPath(); x.moveTo(dx, dy); x.lineTo(dx + 128, dy); x.moveTo(dx + 6, dy); x.lineTo(dx + 6, floor); x.moveTo(dx + 122, dy); x.lineTo(dx + 122, floor); x.stroke();
+  // The keyboard on the desk.
+  x.fillStyle = '#cce2e133'; x.fillRect(dx + 46, dy - 6, 40, 6); line(x, 1); x.strokeRect(dx + 46.5, dy - 5.5, 40, 6);
+  x.fillStyle = C.paper; for (let i = 0; i < 8; i++) x.fillRect(dx + 49 + i * 4.6, dy - 4 + (pressFx > 0.3 && i === Math.floor(t * 13) % 8 ? 1 : 0), 3, 2);
+  // The tape deck and the cassettes: Tape 1 always, the rest as bought.
+  line(x, 1.2); x.strokeRect(dx + 92.5, dy - 13.5, 24, 13); x.beginPath(); x.arc(dx + 99, dy - 7, 2.5, 0, 7); x.arc(dx + 110, dy - 7, 2.5, 0, 7); x.stroke();
+  label(x, 'TAPE 1', dx + 104, dy - 16, { size: 6, col: C.paper, align: 'center' });
+  const tapes = ['tape2', 'tape3', 'tape4'].filter(has);
+  tapes.forEach((id, i) => { if (SPR.cassette) x.drawImage(SPR.cassette, dx + 4 + i * 2, dy - 15 - i * 11, 20, 18); else { x.fillStyle = C.honey; x.fillRect(dx + 4, dy - 12 - i * 9, 18, 8); } });
+  // The order spike, with the faded slip at the bottom since the first day.
+  const sx = dx + 30;
+  line(x, 1.3); x.beginPath(); x.moveTo(sx, dy); x.lineTo(sx, dy - 34); x.stroke();
+  x.save(); x.translate(sx, dy - 8); x.rotate(-0.12);
+  x.fillStyle = S.final ? C.butter : '#cce2e166'; x.fillRect(-10, -10, 20, 14);
+  label(x, S.final ? '1 BIG' : '1 B?G', 0, -3, { size: 5.5, col: C.navy, align: 'center', weight: 700 }); label(x, S.final ? 'LIGHT −G' : 'L??HT', 0, 2.5, { size: 5.5, col: C.navy, align: 'center', weight: 700 });
+  x.restore();
+  for (let i = 0; i < Math.min(5, Math.floor(S.rings / 20)); i++) { x.save(); x.translate(sx, dy - 14 - i * 4); x.rotate(0.15 * ((i % 2) * 2 - 1)); x.fillStyle = C.white; x.fillRect(-9, -4, 18, 7); x.restore(); }
+  // Purl, at the keyboard.
+  const near = gordon ? Math.max(0, 1 - Math.abs(gordon.t - 3) / 3) : 0;
+  drawPurl(x, dx + 64, dy - 30, 22, { t, spec: has('spec'), hat: has('hat'), scared: near });
+  if (has('hat')) { x.fillStyle = '#fff6ae22'; x.beginPath(); x.moveTo(dx + 64, dy - 53); x.lineTo(dx + 140, dy - 110); x.lineTo(dx + 150, dy - 80); x.fill(); }
+  // The moth trap, with its sign. Gordon uses it as a bench.
+  if (has('trap')) {
+    const tx = X0 + 22, ty = floor - 24;
+    line(x, 1.3); x.strokeRect(tx + .5, ty + .5, 44, 24); x.beginPath(); for (let i = 1; i < 6; i++) { x.moveTo(tx + i * 7.3, ty); x.lineTo(tx + i * 7.3, ty + 24); } x.stroke();
+    x.fillStyle = C.violet; x.beginPath(); x.arc(tx + 22, ty + 14, 4, 0, 7); x.fill();
+    x.fillStyle = C.white; x.fillRect(tx + 4, ty - 15, 38, 11); label(x, 'NOT FOR', tx + 23, ty - 9, { size: 5, col: C.red, align: 'center', weight: 700 }); label(x, 'GORDON', tx + 23, ty - 5, { size: 5, col: C.red, align: 'center', weight: 700 });
+    line(x, 1); x.beginPath(); x.moveTo(tx + 23, ty - 4); x.lineTo(tx + 23, ty); x.stroke();
+  }
+  // Gordon: on the sill (or the trap), or fluttering about.
+  let gx = gordonSpot === 'trap' || (all && has('trap')) ? X0 + 46 : X0 + 50, gy = gordonSpot === 'trap' || (all && has('trap')) ? floor - 45 : Y0 + 98;
+  if (gordon) {
+    const k = reduced ? 0.25 : gordon.t / 6, a = k * Math.PI * 2;
+    gx += Math.sin(a) * 70 + Math.sin(a * 3) * 10; gy += -Math.sin(k * Math.PI) * 60 + Math.cos(a * 2) * 8;
+    drawGordon(x, gx, gy, 1, t, 0.4);
+  } else drawGordon(x, gx, gy, 1.25, t, 0.04);
+  // Fumble blots fly off the keyboard.
+  for (const b of blots) { x.fillStyle = C.red; x.globalAlpha = Math.max(0, 1 - b.t); x.beginPath(); x.arc(dx + 66 + b.t * 30, dy - 10 - b.t * 26 + b.t * b.t * 40, 3, 0, 7); x.fill(); x.globalAlpha = 1; }
+  x.restore();
+}
+// The candle's wax, by finish.
+function waxFill(x, all) {
+  const f = all ? 7 : E.lv(S, 'finish');
+  return ['#cce2e122', '#c34b9133', '#ff94b333', '#8b72de44', '#ffda7033', '#f4b03c4d', '#9cd8fc55', '#fff6ae55'][f];
+}
+
+// ---------- Detail B: the typing pool ----------
+function drawPool(x, t, all) {
+  const X0 = 10, Y0 = 288, Wd = 292, Hd = 140;
+  box(x, X0, Y0, Wd, Hd, 'DETAIL B · TYPING POOL');
+  const L = id => all ? E.BY_ID[id].max : E.lv(S, id);
+  let y = Y0 + 14;
+  const rows = [['needles', 'NEEDLES', 18, 15], ['wheel', 'WHEELS', 26, 23], ['loom', 'LOOMS', 26, 24], ['telegraph', 'TELEGRAPH', 32, 22]];
+  let any = false;
+  for (const [id, name, step, hgt] of rows) {
+    const n = L(id); if (!n) continue; any = true;
+    label(x, `${name} ×${n}`, X0 + 8, y + 9, { size: 7.5, col: C.white, weight: 700 });
+    for (let i = 0; i < n; i++) {
+      const px = X0 + 70 + (i % Math.floor(215 / step)) * step, py = y;
+      if (id === 'needles') drawNeedles(x, px, py - 2, t + i * 0.31);
+      else if (id === 'wheel') drawWheel(x, px - 2, py - 3, t + i * 0.5);
+      else if (id === 'loom') drawLoom(x, px - 2, py - 4, t + i * 0.37);
+      else drawTelegraph(x, px - 2, py - 6, t * 1.1 + i * 0.7);
+    }
+    y += hgt + 8;
+  }
+  if (!any) { label(x, 'nobody yet.', X0 + Wd / 2, Y0 + 62, { size: 12, col: C.pink, align: 'center', font: 'pen' }); label(x, 'purl types alone.', X0 + Wd / 2, Y0 + 84, { size: 12, col: C.pink, align: 'center', font: 'pen' }); }
+}
+
+// ---------- The elevation: the house in section, the candle, the town ----------
+let viewH = 9, flameAt = null;
+function drawElevation(x, t, { all = false, burn = 0, lit = false } = {}) {
+  const X0 = 312, Y0 = 12, Wd = 398, Hd = 416, ground = Y0 + Hd - 26;
+  box(x, X0, Y0, Wd, Hd, 'ELEVATION · THE BIG CANDLE');
+  x.save(); x.beginPath(); x.rect(X0 + 1, Y0 + 1, Wd - 1, Hd - 1); x.clip();
+  const rings = all ? Math.max(S.rings, 900) : S.rings;
+  const hFull = rings * E.RING_CM / 100;
+  const h = hFull * (1 - burn);
+  const want = Math.max(9, hFull * 1.25 + 1.5);
+  viewH += (want - viewH) * (all ? 1 : 0.06);
+  const k = (ground - Y0 - 30) / viewH;                  // px per metre
+  const cxm = X0 + 150;                                   // the candle's centre line
+  const M = m => cxm + m * k;                             // metres to x
+  const Yh = m => ground - m * k;                         // metres to y
+  const cut = S.cutT > 0 && !lit;
+  // Ground.
+  line(x, 1.6); x.beginPath(); x.moveTo(X0, ground); x.lineTo(X0 + Wd, ground); x.stroke();
+  line(x, 1, '#cce2e166'); for (let i = X0; i < X0 + Wd; i += 7) { x.beginPath(); x.moveTo(i, ground + 10); x.lineTo(i + 8, ground + 2); x.stroke(); }
+  // The town: houses and trees either side, a church with a 35 m spire.
+  const win = (wx, wy, s) => { x.fillStyle = cut ? C.navy : lit ? C.honey : '#9cd8fcaa'; x.fillRect(wx, wy, s, s); };
+  for (let m = -150; m <= 220; m += 11) {
+    if (m > -9 && m < 9) continue;
+    if (m > 20 && m < 34) continue;
+    const hw = 3.2 + ((m * 7) % 3 + 3) % 3 * 0.4, hh = 5 + ((m * 13) % 4 + 4) % 4 * 0.8;
+    const x0 = M(m - hw), x1 = M(m + hw);
+    if (x1 < X0 || x0 > X0 + Wd) continue;
+    if ((Math.abs(m) / 11) % 3 === 2) {   // a tree
+      line(x, 1, C.paper); x.beginPath(); x.moveTo(M(m), ground); x.lineTo(M(m), Yh(4)); x.stroke();
+      x.beginPath(); x.arc(M(m), Yh(6.5), Math.max(2, 3 * k), 0, 7); x.stroke();
+      continue;
+    }
+    line(x, 1, C.paper); x.beginPath(); x.moveTo(x0, ground); x.lineTo(x0, Yh(hh)); x.lineTo((x0 + x1) / 2, Yh(hh + 3)); x.lineTo(x1, Yh(hh)); x.lineTo(x1, ground); x.stroke();
+    if (k > 2.2) { const s = Math.max(1.5, k * 0.9); win(M(m - 1.5) - s / 2, Yh(hh * .6), s); win(M(m + 1.5) - s / 2, Yh(hh * .6), s); }
+  }
+  // The church.
+  { const cm = 27, x0 = M(cm - 5), x1 = M(cm + 5);
+    line(x, 1.2); x.beginPath(); x.moveTo(x0, ground); x.lineTo(x0, Yh(9)); x.lineTo(M(cm), Yh(13)); x.lineTo(x1, Yh(9)); x.lineTo(x1, ground); x.stroke();
+    const tx = M(cm + 3);
+    x.beginPath(); x.moveTo(tx - 2 * k, ground); x.lineTo(tx - 2 * k, Yh(18)); x.lineTo(tx, Yh(35)); x.lineTo(tx + 2 * k, Yh(18)); x.lineTo(tx + 2 * k, ground); x.stroke();
+    x.beginPath(); x.moveTo(tx, Yh(35)); x.lineTo(tx, Yh(37)); x.moveTo(tx - 0.8 * k, Yh(36.2)); x.lineTo(tx + 0.8 * k, Yh(36.2)); x.stroke();
+    if (k > 3) label(x, 'ST. GILES', tx, ground - 4, { size: 7, col: C.paper, align: 'center' }); }
+  // Purl's house, in section: two floors, a pitched roof, a chimney.
+  { const x0 = M(-7), x1 = M(7);
+    line(x, 1.6, C.white); x.beginPath(); x.moveTo(x0, ground); x.lineTo(x0, Yh(5.2)); x.lineTo(M(0), Yh(8.6)); x.lineTo(x1, Yh(5.2)); x.lineTo(x1, ground); x.stroke();
+    line(x, 1.2); x.beginPath(); x.moveTo(x0, Yh(2.5)); x.lineTo(x1, Yh(2.5)); x.moveTo(x0, Yh(5.2)); x.lineTo(x1, Yh(5.2)); x.stroke();
+    x.beginPath(); x.moveTo(M(3.6), Yh(7.1)); x.lineTo(M(3.6), Yh(9.4)); x.lineTo(M(5), Yh(9.4)); x.lineTo(M(5), Yh(6)); x.stroke();
+    if (k > 8) { label(x, 'WORKSHOP', M(-4.6), Yh(1.1), { size: 7.5, col: C.paper, align: 'center' }); label(x, 'BEDROOM', M(-4.6), Yh(3.7), { size: 7.5, col: C.paper, align: 'center' }); }
+    if (k > 2.2) { const s = Math.max(1.5, k * 0.9); win(M(-5.3), Yh(4.3), s); win(M(-5.3), Yh(1.6), s); win(M(4.2), Yh(4.3), s); }
+  }
+  // Power cut: the town goes dark. The candle doesn't.
+  if (cut) { x.fillStyle = '#222a5ca0'; x.fillRect(X0, Y0, Wd, Hd); }
+  // The candle.
+  const dia = Math.max(1.2, hFull / 12);
+  const cw = Math.max(5, dia * k), cxl = cxm - cw / 2, top = Yh(h);
+  if (rings > 0) {
+    if (lit) { const g = x.createLinearGradient(0, top, 0, ground); g.addColorStop(0, C.butter); g.addColorStop(1, C.cream); x.fillStyle = g; }
+    else x.fillStyle = waxFill(x, all);
+    x.fillRect(cxl, top, cw, ground - top);
+    line(x, 1.5, lit ? C.amber : C.white); x.strokeRect(cxl + .5, top + .5, cw, ground - top);
+    // Ring lines: every ring when there's room, else every nth.
+    const rpx = E.RING_CM / 100 * k; let every = 1; while (rpx * every < 3.2) every *= 2;
+    const shown = Math.floor(rings * (1 - burn));
+    line(x, .8, lit ? '#f4b03c88' : '#cce2e180'); x.beginPath();
+    for (let i = every; i < shown; i += every) { const yy = ground - i * rpx; x.moveTo(cxl, yy); x.lineTo(cxl + cw, yy); }
+    x.stroke();
+    // Wonky rings: red-pencil blobs, near the top where they show.
+    if (!lit && rpx > 1.2) { x.fillStyle = C.red; for (const r of S.recent) if (r.wonky) { const yy = ground - (r.n - .5) * rpx; if (yy > top) { x.beginPath(); x.arc(cxl + cw * 0.7, yy, Math.min(3, rpx), 0, 7); x.fill(); } } }
+    // Holes cut in the ceiling and the roof once the candle's through them.
+    if (h > 2.5) { x.fillStyle = C.blue; x.fillRect(cxl - 2, Yh(2.5) - 1, 2, 3); x.fillRect(cxl + cw, Yh(2.5) - 1, 2, 3); }
+    // The wick: TBD until the end.
+    line(x, 1.4, lit ? C.navy : C.white); x.beginPath(); x.moveTo(cxm, top); x.lineTo(cxm, top - Math.max(3, 0.25 * k)); x.stroke();
+    if (lit) { flameAt = [cxm, top - Math.max(3, 0.25 * k), Math.max(10, 0.9 * k)]; drawFlame(x, ...flameAt, t); }
+    else { label(x, S.final ? 'WICK + LIGHT: per ORDER #1' : 'WICK: TBD', cxm + cw / 2 + 6, top - 4, { size: 10, col: C.pink, font: 'pen' }); }
+    // Dimension line up the left of the candle.
+    if (!lit) {
+      const dx = cxl - 14;
+      line(x, 1, C.paper); x.beginPath(); x.moveTo(dx, ground); x.lineTo(dx, top); x.moveTo(dx - 4, ground); x.lineTo(dx + 4, ground); x.moveTo(dx - 4, top); x.lineTo(dx + 4, top); x.stroke();
+      x.save(); x.translate(dx - 4, (ground + top) / 2); x.rotate(-Math.PI / 2); label(x, `${h.toFixed(h < 10 ? 2 : 1)} m`, 0, 0, { size: 9, col: C.white, align: 'center', weight: 700 }); x.restore();
+    }
+    // Callouts: the newest rings, with their words, leader lines to the top.
+    if (!lit) {
+      const list = S.recent.slice(-6).reverse();
+      list.forEach((r, i) => {
+        const ly = Y0 + 34 + i * 15, lx = cxl + cw + 26;
+        const ry = ground - (r.n - .5) * rpx;
+        x.globalAlpha = 1 - i * 0.13;
+        line(x, .8, '#cce2e1aa'); x.beginPath(); x.moveTo(cxl + cw, Math.max(top, ry)); x.lineTo(lx - 4, ly - 3); x.stroke();
+        label(x, `#${r.n} ${r.w}`.slice(0, 30), lx, ly, { size: 8.5, col: r.wonky ? C.pink : r.who === 'help' ? C.pale : C.white, weight: r.who === 'help' ? 400 : 700 });
+        x.globalAlpha = 1;
+      });
+    }
+  }
+  // Risers: what a ring paid, floating up off the top.
+  for (const r of risers) {
+    x.globalAlpha = Math.max(0, 1 - r.t / 1.6);
+    label(x, `+${E.short(r.pay)}`, cxm - cw / 2 - 20, top - 10 - r.t * 26, { size: 11, col: r.wonky ? C.pink : C.honey, align: 'right', weight: 700 });
+    x.globalAlpha = 1;
+  }
+  // Gordon visits the top of the candle sometimes.
+  if (gordon && rings) { const a = gordon.t * 1.4; drawGordon(x, cxm + Math.cos(a) * (cw / 2 + 18), Math.max(Y0 + 30, top - 14 + Math.sin(a * 2) * 8), 0.8, t, 0.4); }
+  // Power cut: everything dims except the candle.
+  if (cut) label(x, `POWER CUT · town dark · ×${E.CUT_MULT}`, X0 + Wd - 10, Y0 + Hd - 8, { size: 13, col: C.pink, align: 'right', font: 'pen' });
+  // The title block.
+  if (!lit) {
+    const bx = X0 + Wd - 128, by = Y0 + Hd - 58;
+    if (!cut) { x.fillStyle = C.blue; x.fillRect(bx, by, 124, 52); line(x, 1); x.strokeRect(bx + .5, by + .5, 124, 52); x.beginPath(); x.moveTo(bx, by + 18); x.lineTo(bx + 124, by + 18); x.moveTo(bx, by + 35); x.lineTo(bx + 124, by + 35); x.stroke();
+      label(x, 'THE BIG CANDLE', bx + 6, by + 12, { size: 9, col: C.white, weight: 700 });
+      label(x, `SECTION ${'ABCDEF'[E.section(S)]}: ${E.SECTIONS[E.section(S)].name.toUpperCase()}`.slice(0, 26), bx + 6, by + 29, { size: 7.5, col: C.paper });
+      label(x, `SCALE 1:${Math.round(100 / k * 37.8 / 10) * 10} · BY PURL`, bx + 6, by + 46, { size: 7.5, col: C.paper }); }
+  }
+  x.restore();
+}
+function drawFlame(x, fx, fy, s, t) {
+  const fl = 1 + Math.sin(t * 9) * 0.06 + Math.sin(t * 23) * 0.04;
+  const g = x.createRadialGradient(fx, fy - s * .4, 1, fx, fy - s * .4, s * 3.2);
+  g.addColorStop(0, '#fff6ae99'); g.addColorStop(1, '#fff6ae00'); x.fillStyle = g; x.beginPath(); x.arc(fx, fy - s * .4, s * 3.2, 0, 7); x.fill();
+  for (const [c, kk] of [[C.flame, 1], [C.peach, .75], [C.butter, .45]]) {
+    x.fillStyle = c; x.beginPath(); x.moveTo(fx, fy - s * 1.5 * kk * fl); x.quadraticCurveTo(fx + s * .5 * kk, fy - s * .3 * kk, fx, fy + s * .05); x.quadraticCurveTo(fx - s * .5 * kk, fy - s * .3 * kk, fx, fy - s * 1.5 * kk * fl); x.fill();
+  }
+}
+
+// ---------- The epilogue: the candle burns down by itself while the credits roll ----------
+const EPI = 90;   // seconds for one burn-down
+function credits() {
+  const head = ['THE BIG CANDLE', '', 'Printed by', 'PURL', '', 'Light ordered by', 'GORDON', '(order #1, on the spike since day one)', '', 'Typing pool'];
+  const pool = [['needles', 'The Needles'], ['wheel', 'Spinning Wheels'], ['loom', 'Jacquard Looms'], ['telegraph', 'Telegraph Office']].filter(([id]) => E.lv(S, id)).map(([id, n]) => `${n} ×${E.lv(S, id)}`);
+  const words = ['', 'Words by our customers', ...(S.mine.length ? S.mine : ['GRETA', 'NANA']), '', 'Wise words', 'TAPE 1–4: THE FIRST BILLION', '', `${S.rings.toLocaleString('en-US')} rings`, `${E.heightM(S).toFixed(1)} m of candle`, `${S.wonky} wonky ones, still lovely`, '', 'Thank you for reading the whole candle.', '', ''];
+  return [...head, ...(pool.length ? pool : ['(Purl, alone)']), ...words];
+}
+function drawEpilogue(x, t) {
+  drawPaper(x, true);
+  const k = (t % EPI) / EPI;
+  drawElevation(x, t, { burn: k * 0.97, lit: true });
+  // Gordon, circling the flame, completely happy.
+  if (flameAt) { const [fx, fy, s] = flameAt, a = t * 2.2; drawGordon(x, fx + Math.cos(a) * s * 2.2, fy - s * .7 + Math.sin(a) * s * .8, 1.1, t, 0.45); }
+  // The credits roll up the left half.
+  const X0 = 10, Y0 = 12, Wd = 292, Hd = 416;
+  x.save(); x.fillStyle = '#1d1440'; x.fillRect(X0, Y0, Wd, Hd); line(x, 1.5, C.amber); x.strokeRect(X0 + .5, Y0 + .5, Wd, Hd);
+  x.beginPath(); x.rect(X0 + 2, Y0 + 2, Wd - 3, Hd - 3); x.clip();
+  const lines = credits(), lh = 17, total = lines.length * lh + Hd;
+  const off = ((t * 18) % total);
+  lines.forEach((s, i) => {
+    const y = Y0 + Hd - off + i * lh + 10;
+    if (y < Y0 - 10 || y > Y0 + Hd + 10) return;
+    const big = s === s.toUpperCase() && s.length && !/^\d/.test(s);
+    label(x, s, X0 + Wd / 2, y, { size: big ? 12 : 9.5, col: big ? C.butter : C.cream, align: 'center', weight: big ? 700 : 400 });
+  });
+  x.restore();
+}
+
+function drawAll(x, all = 0) {
+  drawPaper(x, false);
+  drawWorkshop(x, now, all);
+  drawPool(x, now, all);
+  drawElevation(x, now, { all: !!all });
+}
+function frame() {
+  const t = performance.now();
+  const dt = Math.min(0.1, (t - T0) / 1000); T0 = t; now += dt;
+  pressFx = Math.max(0, pressFx - dt * 4);
+  for (const r of risers) r.t += dt;
+  while (risers.length && risers[0].t > 1.6) risers.shift();
+  for (const b of blots) b.t += dt * 1.6;
+  while (blots.length && blots[0].t > 1) blots.shift();
+  if (gordon) { gordon.t += dt; if (gordon.t > 6) gordon = null; }
+  if (S.ended) drawEpilogue(ctx, now); else drawAll(ctx);
+  requestAnimationFrame(frame);
+}
+
+// ---------- The loop ----------
+let last = performance.now(), saveT = 0, uiT = 0;
+setInterval(() => {
+  const t = performance.now(); const dt = Math.min(60, (t - last) / 1000); last = t;
+  tick(dt);
+  saveT += dt; if (saveT > 3) { saveT = 0; save(); }
+  refreshMusic();
+  renderHud(); renderShop();
+}, 250);
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('pagehide', save);
+
+// ---------- The end ----------
+function end(resumed) {
+  if (!S.ended) {
+    S.ended = true;
+    if (!resumed) {
+      // The billion includes the final ring: Gordon's.
+      S.rings += 1; S.recent.push({ w: E.FINAL, who: 'you', n: S.rings });
+      sfx.finale();
+    }
+    save();
+  }
+  hideTip(true);
+  refreshMusic();
+  $('slip').hidden = true; $('keys').hidden = true; $('col').hidden = true;
+  renderHud();
+  say('LIT', 'BIG LIGHT. Purl gives one strand of itself for the wick, and strikes the match with its eyes shut. And Gordon comes. Not to the wool. To the light.', 'g');
+  const m = Math.floor(S.time / 60), s = Math.floor(S.time % 60);
+  $('story').innerHTML = `
+    <p>A billion dollars, and the blueprint had one line left: <b>WICK + LIGHTING, per ORDER #1.</b> Order #1 was the faded slip on the spike, the one Purl filed as junk mail on the very first day.</p>
+    <div class="note"><small>ORDER #1 · PRICE NO OBJECT</small>One big light, please. — G.</div>
+    <p>Gordon was never after the wool. Gordon is a moth. Gordon wanted a light, the biggest one there could be, and asked for it in the only handwriting a moth has. Every ring since was paid for by somebody else, and all of it was for Gordon.</p>
+    <p>Purl gave one strand of itself for the wick. It was terrifying. The tape would call it growth. It burns down now, ring by ring, every name and grudge and apology lit up one last time, while Gordon goes round and round the flame, completely happy. It will take a while. It keeps playing.</p>
+    <p>${S.rings.toLocaleString('en-US')} rings · ${E.heightM(S).toFixed(1)} m · ${S.wonky} wonky · ${S.gordons} affirmations · ${m}m ${String(s).padStart(2, '0')}s</p>`;
+  $('ending').hidden = false;
+  if (!resumed && window.DailyGame) {
+    DailyGame.finish({ lines: [`⏱ ${m}m${String(s).padStart(2, '0')}s`, `🕯️ $1B candle · ${S.rings.toLocaleString('en-US')} rings · ${E.heightM(S).toFixed(0)} m`, `🫠 ${S.wonky} wonky ring${S.wonky === 1 ? '' : 's'}`, '🦋 1 BIG LIGHT, for G.'] });
+  }
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Start ----------
+if (S.ended) {
+  // A finished save opens on the finished world: the whole candle, lit.
+  if (!S.rings) { S.rings = 2400; S.value = E.GOAL; S.lv = { needles: 12, wheel: 10, loom: 10, telegraph: 8, spec: 1, tape2: 1, tape3: 1, tape4: 1, board: 1, poster: 1, trap: 1, hat: 1, finish: 7 }; }
+  end(true);
+} else {
+  if (!S.order) nextOrder(); else renderSlip();
+  if (S.lastLog) say(...S.lastLog);
+  else say('TAPE 1', 'Hello, Purl. Every ring of your Big Candle is a ring somebody paid for. Type the order on the slip, and it goes on top. Breathe. You are ready. (Just start typing.)', 't');
+  E.reveal(S);
+}
+renderHud(); renderShop();
+makeSprites();
+requestAnimationFrame(frame);
+if (DEBUG) Object.assign(window.__game, { end, type, E, nextOrder, dbg: () => ({ viewH, now, rings: S.rings }) });
+</script>
+</body>
+</html>

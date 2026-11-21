@@ -2607,5 +2607,115 @@
   "mine": 140,
   "hers": 44,
   "dents": 8
+ },
+ "burning-ambition": {
+  "started": true,
+  "time": 560,
+  "tin": 2600000,
+  "value": 14000000,
+  "rings": 420,
+  "typed": 150,
+  "fumbles": 9,
+  "wonky": 6,
+  "helperRings": 270,
+  "helperAcc": 3,
+  "lv": {
+   "needles": 12,
+   "wheel": 9,
+   "loom": 2,
+   "spec": 1,
+   "board": 1,
+   "poster": 1,
+   "trap": 1,
+   "tape2": 1,
+   "tape3": 1,
+   "finish": 5
+  },
+  "seen": {
+   "needles": true,
+   "spec": true,
+   "finish": true,
+   "tape2": true,
+   "wheel": true,
+   "tape3": true,
+   "loom": true,
+   "board": true,
+   "poster": true,
+   "trap": true,
+   "hat": true
+  },
+  "order": {
+   "w": "CALL ME MAYBE DAVE",
+   "kind": "order"
+  },
+  "pos": 5,
+  "miss": 0,
+  "nextGordon": 9999,
+  "nextCut": 9999,
+  "gordons": 4,
+  "cuts": 1,
+  "recent": [
+   {
+    "w": "THE HEDGE IS MINE",
+    "who": "you",
+    "wonky": false,
+    "n": 413
+   },
+   {
+    "w": "BARRY WAS HERE",
+    "who": "help",
+    "wonky": false,
+    "n": 414
+   },
+   {
+    "w": "VOTE FOR PAM",
+    "who": "you",
+    "wonky": false,
+    "n": 415
+   },
+   {
+    "w": "WE SELL SHEDS",
+    "who": "you",
+    "wonky": false,
+    "n": 416
+   },
+   {
+    "w": "FIRST",
+    "who": "help",
+    "wonky": true,
+    "n": 417
+   },
+   {
+    "w": "VISIBLE FROM SPACE",
+    "who": "you",
+    "wonky": false,
+    "n": 418
+   },
+   {
+    "w": "TO MY CAT I LEAVE EVERYTHING",
+    "who": "you",
+    "wonky": false,
+    "n": 419
+   },
+   {
+    "w": "BARRY WAS HERE",
+    "who": "help",
+    "wonky": false,
+    "n": 420
+   }
+  ],
+  "mine": [
+   "GRETA",
+   "NANA",
+   "MARRY ME JO",
+   "SORRY ABOUT THE GERBIL",
+   "I WANT MY LADDER BACK",
+   "BARRY WAS HERE"
+  ],
+  "lastLog": [
+   "SECTION D",
+   "You can see it from the bypass. People are ordering rings they want strangers to read.",
+   "t"
+  ]
  }
 }

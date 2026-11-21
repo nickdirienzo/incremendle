@@ -1,0 +1,20 @@
+{
+  "game-icons--spinning-wheel.svg": {
+    "icon": "game-icons:spinning-wheel",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Caro Asercion",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/caro-asercion/spinning-wheel.html"
+  },
+  "streamline-flex--tape-cassette-record.svg": {
+    "icon": "streamline-flex:tape-cassette-record",
+    "set": "Flex free icons",
+    "setUrl": "https://github.com/webalys-hq/streamline-vectors",
+    "author": "Streamline",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "source": "https://icon-sets.iconify.design/streamline-flex/tape-cassette-record/"
+  }
+}
