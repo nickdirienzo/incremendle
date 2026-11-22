@@ -1189,5 +1189,47 @@
     "tone": "self-help guru",
     "context": "none",
     "palette": "sheltzy32"
+  },
+  {
+    "n": 32,
+    "slug": "light-lunch",
+    "date": "2026-11-23",
+    "title": "Light Lunch",
+    "tagline": "Flo, a clumsy seal, sat on the canteen's Igniter. Now Irene from Accounts bets the canteen can't serve 100,000 covers without it, so Flo lights every flaming Parmesan wheel with a hand-cranked magneto from 1958, one turn at a time.",
+    "emoji": "🦭🧀",
+    "scale": "thousands",
+    "minutes": "75–120",
+    "seed": 1319293479,
+    "subject": {
+      "text": "a clumsy seal",
+      "emoji": "🦭",
+      "name": "seal",
+      "subgroup": "animal-marine",
+      "trait": "clumsy {}"
+    },
+    "verb": "lighting",
+    "object": "cheese wheels",
+    "interaction": "turn a crank or dial",
+    "arc": {
+      "drive": "a bet",
+      "obstacle": "a broken machine",
+      "turn": "the small thing was the point",
+      "initial": "I"
+    },
+    "length": "short (1–3 hours)",
+    "structure": [
+      "straight line of upgrades",
+      "limited space to arrange (a grid, shelf or map)"
+    ],
+    "twist": "buildings boost each other (synergies)",
+    "ending": "a story reveal",
+    "look": "risograph print",
+    "music": {
+      "style": "jazzy walking bass",
+      "scale": "minor"
+    },
+    "tone": "corporate memo",
+    "context": "none",
+    "palette": "lava-gb"
   }
 ]

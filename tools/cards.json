@@ -2717,5 +2717,100 @@
    "You can see it from the bypass. People are ordering rings they want strangers to read.",
    "t"
   ]
+ },
+ "light-lunch": {
+  "started": true,
+  "firstLit": true,
+  "seenFizz": true,
+  "placedHint": true,
+  "time": 2460,
+  "turns": 1500,
+  "lit": 4200,
+  "covers": 31200,
+  "v": 9400,
+  "earned": 120000,
+  "irene": 6,
+  "lv": {
+   "annex": 4,
+   "menu": 2,
+   "crank": 2,
+   "sign": 1,
+   "grappa": 1,
+   "coaster": 1,
+   "paddles": 1,
+   "stamp": 1
+  },
+  "owned": {
+   "wheel": 21,
+   "pot": 14,
+   "intern": 8
+  },
+  "grid": {
+   "0,0": "wheel",
+   "1,0": "pot",
+   "2,0": "wheel",
+   "3,0": "intern",
+   "4,0": "wheel",
+   "0,1": "pot",
+   "1,1": "wheel",
+   "2,1": "pot",
+   "3,1": "wheel",
+   "4,1": "pot",
+   "0,2": "intern",
+   "1,2": "wheel",
+   "2,2": "intern",
+   "3,2": "wheel",
+   "4,2": "pot"
+  },
+  "stack": {
+   "0,0": 3,
+   "1,0": 2,
+   "2,0": 4,
+   "3,0": 2,
+   "4,0": 3,
+   "0,1": 2,
+   "1,1": 3,
+   "2,1": 3,
+   "3,1": 2,
+   "4,1": 1,
+   "0,2": 2,
+   "1,2": 4,
+   "2,2": 1,
+   "3,2": 3,
+   "4,2": 2
+  },
+  "fl": {
+   "0,0": 2.4,
+   "2,0": 2.8,
+   "4,0": 1.9,
+   "1,1": 0,
+   "3,1": 1.2,
+   "1,2": 1.9,
+   "3,2": 0
+  },
+  "it": {},
+  "hand": [],
+  "seen": [
+   "wheel",
+   "menu",
+   "annex",
+   "pot",
+   "sign",
+   "crank",
+   "grappa",
+   "intern",
+   "coaster",
+   "paddles",
+   "stamp",
+   "lanyard",
+   "fan",
+   "ball"
+  ],
+  "lastLog": [
+   "RE: INTERNS",
+   "11 wheels relit by interns. One of them asked if this counts toward their degree.",
+   ""
+  ],
+  "savedAt": 0
  }
 }

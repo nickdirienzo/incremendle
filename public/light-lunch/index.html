@@ -1,0 +1,1169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Light Lunch · Incremendle</title>
+<meta name="description" content="A clumsy seal lights cheese wheels with a hand-cranked magneto to win a bet with Accounts. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Light Lunch">
+<meta property="og:description" content="Flo, a clumsy seal, sat on the canteen's Igniter. Now Irene from Accounts bets the canteen can't serve 100,000 covers without it, so Flo lights every flaming Parmesan wheel with a hand-cranked magneto from 1958, one turn at a time.">
+<meta property="og:url" content="https://incremendle.com/light-lunch/">
+<meta property="og:image" content="https://incremendle.com/light-lunch/og.png?v=9916d3ce">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Light Lunch: Flo, a clumsy seal, sat on the canteen's Igniter. Now Irene from Accounts bets the canteen can't serve 100,000 covers without it, so Flo lights every flaming Parmesan wheel with a hand-cranked magneto from 1958, one turn at a time.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/bowlby-one/font.css">
+<link rel="stylesheet" href="/shared/fonts/courier-prime/font.css">
+<link rel="stylesheet" href="/shared/fonts/reenie-beanie/font.css">
+<style>
+  /* A risograph print in Lava-GB: salmon paper (#ff8e80) printed in three inks, fluorescent pink (#c53a9d),
+     purple (#4a2480) and navy (#051f39). Every ink sits a hair off the others, the way a riso drum does. */
+  :root {
+    --paper: #ff8e80; --pink: #c53a9d; --purple: #4a2480; --navy: #051f39;
+    --head: 'Bowlby One', system-ui, sans-serif; --type: 'Courier Prime', ui-monospace, monospace; --hand: 'Reenie Beanie', cursive;
+    color-scheme: light;
+  }
+  html, body { background: var(--paper); color: var(--navy); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 14px/1.4 var(--type);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(8px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image: radial-gradient(#c53a9d2e 1px, transparent 1.4px); background-size: 7px 7px;
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 0 0 6px; }
+  h1 { font: 400 34px/1 var(--head); margin: 0; color: var(--navy); text-shadow: 2px 1px 0 var(--pink); letter-spacing: .5px; }
+  header p { margin: 0; font: 700 11px/1.2 var(--type); color: var(--purple); text-transform: uppercase; letter-spacing: 2px; }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } h1 { font-size: 28px; } }
+  main { min-width: 0; }
+
+  .sheet { background: var(--paper); border: 2px solid var(--navy); box-shadow: 4px 3px 0 var(--purple); }
+  .play { padding: 7px 10px 8px; }
+  .hud { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 16px; align-items: center; margin-bottom: 5px; }
+  .res { font: 400 26px/1 var(--head); color: var(--navy); white-space: nowrap; }
+  .res small { font: 700 12px/1 var(--type); color: var(--purple); }
+  .goal { display: flex; align-items: center; gap: 8px; min-width: 0; font: 700 12px/1 var(--type); }
+  .goal span { white-space: nowrap; }
+  .meter { position: relative; flex: 1; min-width: 50px; height: 13px; border: 2px solid var(--navy); overflow: hidden; background: #ff8e80; }
+  .meter i { position: absolute; inset: 0 auto 0 0; width: 0; transition: width .4s; background: repeating-linear-gradient(90deg, var(--pink) 0 5px, #c53a9dbb 5px 7px); }
+  .meter b { position: absolute; top: 0; bottom: 0; width: 2px; background: #05203999; }
+  .sub { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0 14px; font: 12px/1.5 var(--type); color: var(--purple); min-height: 36px; align-content: flex-start; }
+  .sub b { font-weight: 700; color: var(--navy); }
+  @media (max-width: 520px) { .hud { grid-template-columns: 1fr; } }
+
+  .stagewrap { position: relative; }
+  canvas#stage { display: block; width: 100%; max-width: calc((100vh - 250px) * 760 / 470); min-width: min(100%, 460px); margin: 0 auto; aspect-ratio: 760 / 470; touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; cursor: grab; }
+  canvas#stage:focus-visible { outline: 3px dashed var(--pink); outline-offset: 2px; }
+  #hold { position: absolute; left: 66%; top: 4px; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; padding: 4px 6px 4px 10px; background: var(--navy); color: var(--paper); font: 700 12px/1.2 var(--type); box-shadow: 3px 3px 0 var(--pink); white-space: nowrap; max-width: calc(100% - 12px); }
+  #hold span { overflow: hidden; text-overflow: ellipsis; }
+  #hold button { font: 400 12px/1 var(--head); color: var(--navy); background: var(--paper); border: 0; padding: 5px 9px 4px; cursor: pointer; }
+  #hold button:focus-visible { outline: 2px dashed var(--pink); outline-offset: 2px; }
+  .log { margin: 6px 0 0; min-height: 2.9em; font: 13px/1.45 var(--type); color: var(--navy); border-top: 2px solid var(--navy); padding: 6px 2px 0; }
+  .log b { font: 400 11px/1 var(--head); letter-spacing: 1px; color: var(--paper); background: var(--navy); padding: 3px 6px 2px; margin-right: 8px; }
+  .log b.p { background: var(--pink); color: var(--navy); }
+  .log b.u { background: var(--purple); }
+  .log.fresh span { animation: tx .5s steps(5); }
+  @keyframes tx { from { opacity: .2; } }
+
+  aside { position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow: auto; scrollbar-width: thin; padding: 0 6px 8px 0; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  .col { padding: 9px 10px 8px; }
+  aside h2 { font: 400 17px/1 var(--head); margin: 0 0 8px; color: var(--navy); }
+  #afford { font: 700 11px/1 var(--type); color: var(--pink); letter-spacing: 0; }
+  .shead { font: 700 10px/1 var(--type); letter-spacing: 2px; text-transform: uppercase; color: var(--purple); margin: 10px 0 5px; }
+  .shead:first-child { margin-top: 0; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  @media (max-width: 760px) and (min-width: 520px) { .grid2 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up {
+    position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 12px/1.2 var(--type); color: #05203999;
+    background: transparent; border: 2px dashed #05203966; padding: 4px 7px 5px; cursor: pointer;
+  }
+  .up b { font: 700 12.5px/1.25 var(--type); color: #052039aa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { border: 2px solid var(--navy); background: #ffffff22; box-shadow: 2px 2px 0 var(--pink); }
+  .up.can b { color: var(--navy); }
+  .up.can em { color: var(--purple); font-weight: 700; }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up.odd b::before, .bought.odd::before { content: '✱ '; color: var(--pink); }
+  .up .tag { position: absolute; top: -9px; right: 4px; font: 400 10px/1 var(--head); font-style: normal; letter-spacing: 1px; color: var(--paper); background: var(--pink); padding: 2px 5px 1px; transform: rotate(3deg); }
+  .up.new { animation: glint 1.1s ease-in-out 6; }
+  @keyframes glint { 50% { box-shadow: 0 0 0 3px #c53a9d99; } }
+  .up:focus-visible, .bought:focus-visible { outline: 2px dashed var(--pink); outline-offset: 2px; }
+  #tip {
+    position: fixed; z-index: 50; width: 270px; padding: 9px 12px 10px; pointer-events: none; font: 12.5px/1.45 var(--type); color: var(--navy);
+    background: var(--paper); border: 2px solid var(--navy); box-shadow: 5px 5px 0 var(--purple);
+    background-image: radial-gradient(#c53a9d33 1px, transparent 1.4px); background-size: 6px 6px;
+  }
+  #tip .hd { display: block; font: 700 10px/1.3 var(--type); letter-spacing: 2px; color: var(--purple); border-bottom: 2px solid var(--navy); padding-bottom: 3px; margin-bottom: 5px; }
+  #tip b { display: block; font: 400 17px/1.1 var(--head); color: var(--navy); margin-bottom: 4px; }
+  #tip .fx { display: block; margin-top: 6px; padding: 3px 7px; color: var(--paper); background: var(--navy); font-weight: 700; }
+  #tip i { display: block; margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--navy); color: var(--purple); font-style: italic; }
+  #tip small { display: block; margin-top: 6px; font: 700 12px/1 var(--type); color: var(--pink); }
+  #tip.inline { position: static; width: auto; margin-top: 10px; }
+  #bought { margin: 12px 0 2px; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 400 14px/1 var(--head); color: var(--navy); cursor: pointer; list-style: none; padding: 3px 2px; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: '▸'; color: var(--pink); transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 2px dashed var(--pink); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 2px 2px; }
+  .bought { max-width: 100%; font: 700 11.5px/1.1 var(--type); color: var(--navy); background: transparent; border: 2px solid var(--navy); padding: 3px 7px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { border-style: dashed; }
+  .bought:hover, .bought.on { background: var(--navy); color: var(--paper); }
+
+  #ending { margin: 22px auto 0; max-width: 720px; padding: 16px 24px 20px; }
+  #ending .num { font: 700 11px/1.4 var(--type); color: var(--purple); letter-spacing: 3px; border-bottom: 2px solid var(--navy); padding-bottom: 6px; }
+  #ending h2 { font: 400 34px/1.05 var(--head); margin: 10px 0 10px; color: var(--navy); text-shadow: 2px 1px 0 var(--pink); }
+  #ending p { margin: 9px 0; font-size: 14px; }
+  #ending .note { margin: 14px 0; padding: 8px 14px 10px; background: #ffffff33; border: 2px solid var(--navy); font: 400 30px/1.05 var(--hand); transform: rotate(-1deg); box-shadow: 3px 3px 0 var(--pink); }
+  #ending .note small { display: block; font: 700 10px/1.3 var(--type); letter-spacing: 2px; color: var(--purple); }
+  #ending .note u { text-decoration: none; display: inline-block; width: .8em; height: .8em; border: 3px solid var(--purple); border-radius: 50%; vertical-align: -2px; margin: 0 1px; opacity: .8; }
+  #shareBtn, #againBtn { font: 400 16px/1 var(--head); color: var(--paper); background: var(--navy); border: 2px solid var(--navy); padding: 9px 18px 8px; margin: 12px 8px 0 0; cursor: pointer; box-shadow: 3px 3px 0 var(--pink); }
+  #againBtn { background: transparent; color: var(--navy); }
+  #shareBtn:focus-visible, #againBtn:focus-visible { outline: 2px dashed var(--pink); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .up.new, .log.fresh span { animation: none; } .meter i, #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/soundfonts": "/shared/lib/@strudel/soundfonts@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="32" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Light Lunch</h1>
+    <p>internal memo · staff canteen, floor 14 · re: the wager</p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="sheet play">
+        <div class="hud">
+          <div class="res" title="Lunch vouchers: what the canteen has to spend. Every cover served pays some in."><span id="vouch">0</span> <small>vouchers</small></div>
+          <div class="goal" title="Covers served since the bet. Irene's memo says 100,000."><span id="cTxt">0 covers</span><div class="meter" id="meter"><i id="cBar"></i></div><span>100,000</span></div>
+          <div class="sub" id="sub"></div>
+        </div>
+        <div class="stagewrap">
+          <canvas id="stage" tabindex="0" aria-label="The staff canteen. Flo, a seal in a chef's hat, turns the crank of an old spark magneto; sparks run down a wire to the cheese wheels on the canteen floor. Irene's bet memo is pinned to the corkboard and the broken Igniter 9000 sits in the corner. Drag in circles on the crank (or tap it, or press space) to light wheels. Drag a station on the floor to move it."></canvas>
+          <div id="hold" hidden><span id="holdTxt"></span><button id="bestBtn" type="button">Best spot</button></div>
+        </div>
+        <p class="log" id="log" aria-live="polite"></p>
+      </div>
+    </main>
+    <aside id="side">
+      <div class="col sheet" id="col">
+        <h2>Upgrades <span id="afford"></span></h2>
+        <div id="shop"></div>
+        <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      </div>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" class="sheet" hidden>
+    <div class="num">MEMO · FROM: I. (ACCOUNTS) · TO: FLO (CANTEEN) · RE: THE WAGER, SETTLED</div>
+    <h2>Something light.</h2>
+    <div id="story"></div>
+    <button id="shareBtn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import { grain } from '/shared/kit/fx.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DEBUG = location.search.includes('debug');
+const C = { paper: '#ff8e80', pink: '#c53a9d', purple: '#4a2480', navy: '#051f39' };
+
+// ---------- State ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:32:save';
+let raw = null;
+try { raw = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+const S = E.load(raw);
+const save = () => { S.savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound: D natural minor, the soundtrack's key ----------
+const A = createAudio({ sfxTrim: 1, musicTrim: 1 });
+// Per-effect levels, from npm run mix (each effect peaking near -10 dBFS).
+const LV = {};
+let gainNow = 1;
+const T = o => A.tone({ ...o, vol: o.vol * gainNow });
+const N = (kind, o = {}) => A.noiseHit(kind, { ...o, vol: (o.vol ?? 0.25) * gainNow });
+const notes = scale('minor', 62);   // D4 E4 F4 G4 A4 Bb4 C5
+const rl = {};
+const limit = (k, ms) => { const t = performance.now(); if (t - (rl[k] || 0) < ms && !DEBUG) return false; rl[k] = t; return true; };
+const sfx = {
+  // The crank's ratchet, a quarter turn at a time: four steps up the D minor triad.
+  click(q = 0) { T({ type: 'pluck', freq: notes([0, 2, 4, 7][q % 4] - 7), dur: 0.035, vol: 0.09, cutoff: 1800 }); N('hat', { vol: 0.03, dur: 0.02 }); },
+  // A spark lands and a wheel goes up: FWOOMP, a low D, and a bright note for the plate.
+  fwoomp(n = 1) {
+    if (!limit('fw', 90)) return;
+    N('whoosh', { vol: 0.1, dur: 0.28 });
+    T({ type: 'triangle', freq: notes(-7), dur: 0.16, vol: 0.1, glide: 1.5, cutoff: 900 });
+    T({ type: 'bell', freq: notes(4 + Math.min(6, n % 7)), dur: 0.12, vol: 0.05, at: A.now + 0.07 });
+  },
+  // A spark with nowhere to go: a little hiss.
+  fizzle() { if (!limit('fz', 300)) return; N('shaker', { vol: 0.04, dur: 0.12 }); T({ type: 'sine', freq: notes(9), dur: 0.05, vol: 0.025, glide: 0.6 }); },
+  // An intern relights a wheel: a far-off soft puff.
+  intern() { if (!limit('in', 350)) return; N('whoosh', { vol: 0.035, dur: 0.18 }); T({ type: 'pluck', freq: notes(2 + Math.floor(Math.random() * 5)), dur: 0.06, vol: 0.035, cutoff: 2200 }); },
+  // Covers tick in while you're not cranking: a soft vibes note now and then.
+  plates() { if (!limit('pl', 1400)) return; T({ type: 'bell', freq: notes(7 + [0, 2, 4][Math.floor(Math.random() * 3)]), dur: 0.2, vol: 0.03 }); },
+  // Putting a station down: a clunk on the floor.
+  place() { N('kick', { vol: 0.12 }); T({ type: 'triangle', freq: notes(-3), dur: 0.08, vol: 0.07, cutoff: 1200 }); },
+  buy() { [0, 2, 4, 6, 7].forEach((d, i) => T({ type: 'bell', freq: notes(d), dur: 0.12, vol: 0.06, at: A.now + i * 0.06 })); },
+  unlock() { T({ type: 'bell', freq: notes(9), dur: 0.25, vol: 0.06 }); T({ type: 'bell', freq: notes(11), dur: 0.35, vol: 0.05, at: A.now + 0.12 }); },
+  deny() { T({ type: 'triangle', freq: notes(-6), dur: 0.08, vol: 0.09, cutoff: 800 }); },
+  // A new annex: the wall comes down (a thump) and the room opens (a rising minor ninth).
+  annex() { const t0 = A.now; N('kick', { vol: 0.14, at: t0 }); N('snare', { vol: 0.05, at: t0 + 0.02 }); [0, 2, 4, 6, 8].forEach((d, i) => T({ type: 'keys', freq: notes(d), dur: 0.3, vol: 0.05, at: t0 + 0.12 + i * 0.08 })); },
+  // Irene pops in: two light taps of a mug on a desk.
+  mug() { T({ type: 'bell', freq: notes(11), dur: 0.05, vol: 0.04 }); T({ type: 'bell', freq: notes(11), dur: 0.05, vol: 0.03, at: A.now + 0.14 }); },
+  // The end: a held D minor ninth, the vibes walking up, and one small FWOOMP.
+  finale() {
+    const t0 = A.now;
+    [[0, 2, 4, 8], [-1, 3, 5, 7], [0, 2, 4, 9]].forEach((ch, k) => ch.forEach(d => T({ type: 'pad', freq: notes(d - 7), dur: 1.3, vol: 0.03, attack: 0.25, at: t0 + k * 1.3 })));
+    [0, 2, 4, 6, 7, 9, 11, 14].forEach((d, i) => T({ type: 'bell', freq: notes(d), dur: 0.25, vol: 0.05, at: t0 + 0.3 + i * 0.16 }));
+    N('whoosh', { vol: 0.06, dur: 0.3, at: t0 + 1.8 });
+  },
+};
+for (const [name, f] of Object.entries(sfx)) sfx[name] = (...a) => { gainNow = LV[name] ?? 1; try { f(...a); } finally { gainNow = 1; } };
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'annex'], S: () => S, E };
+
+// ---------- Music ----------
+const PHASES = ['lunch', 'service', 'rush', 'end'];
+let music = null, soundtrack = null, makeSoundtrack = null;
+const phaseKey = () => PHASES[E.phase(S)];
+function song() { return (soundtrack ??= makeSoundtrack(music.strudel))(phaseKey()); }
+import('./music.mjs').then(m => { makeSoundtrack = m.createSoundtrack; return createMusic(A, { soundfonts: true, packs: ['vcsl'], song }); })
+  .then(m => { music = m; music.update(); if (DEBUG) window.__game.music = m; }).catch(e => console.warn('music', e));
+let lastPhase = phaseKey();
+const refreshMusic = () => { const k = phaseKey(); if (k !== lastPhase) { lastPhase = k; if (music) music.update(); } };
+
+// ---------- Log ----------
+const logEl = $('log');
+function say(tag, text, cls = '') {
+  logEl.innerHTML = `<b class="${cls}"></b><span></span>`;
+  logEl.querySelector('b').textContent = tag;
+  logEl.querySelector('span').textContent = text;
+  logEl.classList.remove('fresh'); void logEl.offsetWidth; logEl.classList.add('fresh');
+  S.lastLog = [tag, text, cls];
+}
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const fmt = n => Math.floor(n).toLocaleString('en-US');
+const LIGHT_LINES = [
+  ['FYI', 'Wheel lit. Pasta in. Plates out. Please action.'],
+  ['MEMO', 'A wheel has been lit. This memo confirms that a wheel has been lit.'],
+  ['RE: FIRE', 'Facilities reminds all staff that the fire is intentional and on the menu.'],
+  ['FYI', 'Flo claps both flippers. The crank keeps going for a bit on its own, then doesn\'t.'],
+  ['PER MY LAST SPARK', 'As discussed, the wheel is lit. Going forward, more wheels.'],
+  ['MEMO', 'Covers are up. Morale is up. The smell of Parmesan is up two floors.'],
+];
+const FIZZ_LINES = [
+  ['NOTE', 'Sparks are fizzling (pfft): every wheel is still burning. Another wheel on the floor would use them. The column on the right has one.'],
+  ['FYI', 'All wheels are alight, so the sparks have nowhere to go. A new wheel would take them.'],
+];
+const IDLE_LINES = [
+  ['FYI', 'The interns relit # wheels while you weren\'t looking. Initiative has been noted.'],
+  ['MEMO', 'Interns on the floor are cranking unsupervised. # wheels relit. HR is thrilled.'],
+  ['RE: INTERNS', '# wheels relit by interns. One of them asked if this counts toward their degree.'],
+];
+const IRENE_LINES = [
+  'Irene from Accounts pops in "just to look", puts her mug down on a memo, and takes it away again. Another ring.',
+  'Irene drops by with her mug. She doesn\'t order. She sets the mug down on the corkboard ledge, smiles at the memo, and goes.',
+  'Irene from Accounts is seen on the stairs with her mug. She checks the corkboard, nods, and leaves a ring on a memo on the way out.',
+  'Irene sticks her head round the door. "Still going, then." She leaves a coffee ring on the specials board.',
+];
+
+// ---------- Canvas ----------
+const cv = $('stage'), ctx = cv.getContext('2d');
+const W = 760, H = 470;
+let dpr = 1;
+function fit() { dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = W * dpr; cv.height = H * dpr; }
+fit(); addEventListener('resize', fit);
+// The floor: tiles in canvas units.
+const GX = 268, GY = 80, TW = 79, TH = 96;
+const tileXY = k => { const [c, r] = E.at(k); return [GX + c * TW, GY + r * TH]; };
+const tileCenter = k => { const [x, y] = tileXY(k); return [x + TW / 2, y + TH / 2 + 8]; };
+const CRANK = { x: 172, y: 268, r: 38 };
+const MAXW = E.SIZES[E.SIZES.length - 1][0], MAXH = E.SIZES[E.SIZES.length - 1][1];
+// Which annex opens each tile.
+const opensAt = (c, r) => E.SIZES.findIndex(([w, h]) => c < w && r < h);
+
+// ---------- Riso helpers ----------
+// Halftone patterns, one per ink and density.
+const tones = {};
+function tone(color, d = 0.5, cell = 5) {
+  const id = color + d + cell;
+  if (!tones[id]) {
+    const c = Sprites.canvas(cell, cell), x = c.getContext('2d');
+    x.fillStyle = color; x.beginPath(); x.arc(cell / 2, cell / 2, Math.max(0.4, cell * 0.5 * Math.sqrt(d)), 0, Math.PI * 2); x.fill();
+    tones[id] = ctx.createPattern(c, 'repeat');
+  }
+  return tones[id];
+}
+// Draw a path filled in one ink and keyed in navy a hair off register.
+function ink(x, path, fill, { key = C.navy, lw = 2, off = 1.2, alpha = 1 } = {}) {
+  x.save(); x.globalAlpha = alpha;
+  if (fill) { x.fillStyle = fill; path(x); x.fill(); }
+  if (key) { x.translate(off, off * 0.6); x.strokeStyle = key; x.lineWidth = lw; x.lineJoin = 'round'; x.lineCap = 'round'; path(x); x.stroke(); }
+  x.restore();
+}
+const P = f => x => { x.beginPath(); f(x); };
+const rect = (x0, y0, w, h) => P(x => x.rect(x0, y0, w, h));
+const ell = (cx, cy, rx, ry) => P(x => x.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2));
+const rrect = (x0, y0, w, h, r) => P(x => x.roundRect(x0, y0, w, h, r));
+function text(x, s, px, py, { font = '700 11px "Courier Prime", monospace', color = C.navy, align = 'left', base = 'alphabetic', rot = 0 } = {}) {
+  x.save(); x.translate(px, py); if (rot) x.rotate(rot); x.font = font; x.fillStyle = color; x.textAlign = align; x.textBaseline = base; x.fillText(s, 0, 0); x.restore();
+}
+
+// ---------- Sprites (made once, registered for ?sprites) ----------
+const SP = {};
+function mk(name, w, h, draw) { const c = Sprites.canvas(w, h); draw(c.getContext('2d'), w, h); SP[name] = c; Sprites.register(name, c); return c; }
+// A cheese wheel (one of a stack), unlit.
+function drawWheel(x, cx, cy, rx = 25, ry = 8, hgt = 12) {
+  ink(x, P(p => { p.moveTo(cx - rx, cy); p.lineTo(cx - rx, cy + hgt); p.ellipse(cx, cy + hgt, rx, ry, 0, Math.PI, 0, true); p.lineTo(cx + rx, cy); }), tone(C.pink, 0.45, 4), { key: null });
+  ink(x, P(p => { p.moveTo(cx - rx, cy); p.lineTo(cx - rx, cy + hgt); p.ellipse(cx, cy + hgt, rx, ry, 0, Math.PI, 0, true); p.lineTo(cx + rx, cy); }), null);
+  ink(x, ell(cx, cy, rx, ry), C.paper);
+  ink(x, ell(cx, cy, rx * 0.62, ry * 0.58), tone(C.purple, 0.35, 3), { lw: 1.4 });
+  if (rx > 15) { x.save(); x.fillStyle = C.navy; x.font = '700 6px "Courier Prime", monospace'; x.textAlign = 'center'; x.fillText('PARMIGIANO', cx, cy + hgt + ry - 3); x.restore(); }
+}
+function drawTrolley(x, cx, by) {
+  ink(x, rect(cx - 30, by - 6, 60, 6), C.purple);
+  for (const dx of [-24, 24]) ink(x, ell(cx + dx, by + 3, 4, 4), C.navy, { key: null });
+}
+function drawPot(x, cx, by, paddles) {
+  ink(x, rrect(cx - 15, by - 26, 30, 24, 4), C.navy, { key: C.purple });
+  ink(x, rect(cx - 19, by - 28, 38, 5), C.purple);
+  ink(x, ell(cx, by - 28, 17, 4), tone(C.paper, 0.9, 3), { lw: 1.2 });
+  x.save(); x.strokeStyle = C.paper; x.lineWidth = 1.5;
+  for (let i = 0; i < 4; i++) { x.beginPath(); x.moveTo(cx - 9 + i * 6, by - 27); x.lineTo(cx - 7 + i * 6, by - 30); x.stroke(); }
+  x.restore();
+  if (paddles) { ink(x, P(p => { p.moveTo(cx + 5, by - 28); p.lineTo(cx + 14, by - 46); }), null, { lw: 3, key: C.navy }); ink(x, ell(cx + 15, by - 48, 3, 5), C.purple, { lw: 1.4 }); }
+}
+function drawIntern(x, cx, by, lanyard, phase = 0) {
+  // A little intern at a desk, turning a little crank.
+  ink(x, rect(cx - 13, by - 10, 26, 10), C.purple, { lw: 1.5 });
+  ink(x, rrect(cx - 7, by - 30, 14, 20, 4), C.purple, { lw: 1.5 });
+  ink(x, ell(cx, by - 36, 7, 7), C.paper, { lw: 1.5 });
+  x.fillStyle = C.navy; x.fillRect(cx - 3, by - 37, 1.6, 1.8); x.fillRect(cx + 2, by - 37, 1.6, 1.8);
+  ink(x, P(p => { p.moveTo(cx - 7, by - 44); p.quadraticCurveTo(cx, by - 48, cx + 7, by - 43); }), null, { lw: 2.5 });
+  if (lanyard) { ink(x, P(p => { p.moveTo(cx - 4, by - 30); p.lineTo(cx, by - 22); p.lineTo(cx + 4, by - 30); }), null, { key: C.pink, lw: 1.5, off: 0 }); ink(x, rect(cx - 2.5, by - 23, 5, 5), C.paper, { lw: 1, key: C.pink, off: 0 }); }
+  const a = phase, hx = cx + 12 + Math.cos(a) * 4, hy = by - 18 + Math.sin(a) * 4;
+  ink(x, ell(cx + 12, by - 18, 4, 4), null, { lw: 1.5 });
+  ink(x, P(p => { p.moveTo(cx + 12, by - 18); p.lineTo(hx, hy); }), null, { lw: 2 });
+}
+// Flo: a seal in a chef's toque, one flipper on the crank.
+function drawFlo(x, ox, oy, { clap = 0, ball = false, t = 0 } = {}) {
+  ink(x, P(p => { p.moveTo(ox + 10, oy + 120); p.bezierCurveTo(ox - 10, oy + 90, ox + 0, oy + 40, ox + 36, oy + 30); p.bezierCurveTo(ox + 66, oy + 22, ox + 82, oy + 52, ox + 78, oy + 86); p.bezierCurveTo(ox + 76, oy + 108, ox + 70, oy + 120, ox + 94, oy + 128); p.lineTo(ox + 10, oy + 128); p.closePath(); }), C.purple, { lw: 2.5 });
+  ink(x, P(p => { p.moveTo(ox + 26, oy + 125); p.bezierCurveTo(ox + 22, oy + 96, ox + 34, oy + 66, ox + 56, oy + 68); p.bezierCurveTo(ox + 66, oy + 80, ox + 62, oy + 108, ox + 72, oy + 125); p.closePath(); }), tone(C.paper, 0.55, 4), { key: null });
+  // head
+  ink(x, ell(ox + 54, oy + 30, 28, 24), C.purple, { lw: 2.5 });
+  ink(x, ell(ox + 66, oy + 38, 13, 9), tone(C.paper, 0.7, 3), { key: null });
+  x.fillStyle = C.navy;
+  x.beginPath(); x.arc(ox + 52, oy + 26, 4.2, 0, 7); x.fill(); x.beginPath(); x.arc(ox + 70, oy + 25, 4.2, 0, 7); x.fill();
+  x.fillStyle = C.paper; x.fillRect(ox + 53, oy + 24, 1.6, 1.6); x.fillRect(ox + 71, oy + 23, 1.6, 1.6);
+  x.fillStyle = C.navy; x.beginPath(); x.ellipse(ox + 67, oy + 35, 4, 2.6, 0, 0, 7); x.fill();
+  x.strokeStyle = C.navy; x.lineWidth = 1;
+  for (const s of [-1, 1]) for (let i = 0; i < 3; i++) { x.beginPath(); x.moveTo(ox + 67 + s * 6, oy + 38 + i * 2); x.lineTo(ox + 67 + s * 20, oy + 35 + i * 4); x.stroke(); }
+  // toque
+  ink(x, rect(ox + 36, oy + 4, 34, 9), C.paper, { lw: 2 });
+  ink(x, P(p => { p.moveTo(ox + 34, oy + 6); p.bezierCurveTo(ox + 18, oy - 4, ox + 30, oy - 24, ox + 44, oy - 16); p.bezierCurveTo(ox + 48, oy - 30, ox + 66, oy - 28, ox + 66, oy - 14); p.bezierCurveTo(ox + 82, oy - 22, ox + 88, oy - 2, ox + 72, oy + 6); p.closePath(); }), C.paper, { lw: 2 });
+  if (ball) {
+    const wob = Math.sin(t * 3) * 4;
+    ink(x, ell(ox + 62 + wob, oy - 40, 12, 12), C.paper, { lw: 2 });
+    x.save(); x.beginPath(); x.ellipse(ox + 62 + wob, oy - 40, 12, 12, 0, 0, 7); x.clip();
+    x.fillStyle = C.pink; x.fillRect(ox + 50 + wob, oy - 52, 8, 24); x.fillStyle = C.purple; x.fillRect(ox + 66 + wob, oy - 52, 8, 24); x.restore();
+  }
+  // the near flipper, raised to the crank (or clapping)
+  const fx = ox + 84 + clap * -6, fy = oy + 70 - clap * 18;
+  ink(x, P(p => { p.moveTo(ox + 64, oy + 78); p.quadraticCurveTo(ox + 80, oy + 72, fx + 12, fy - 2); p.quadraticCurveTo(fx + 14, fy + 10, fx, fy + 10); p.quadraticCurveTo(ox + 76, oy + 92, ox + 62, oy + 92); p.closePath(); }), C.purple, { lw: 2 });
+}
+function drawIrene(x, ox, oy) {
+  // Irene from Accounts: cardigan, glasses, a bun, a mug.
+  ink(x, P(p => { p.moveTo(ox, oy + 120); p.lineTo(ox + 6, oy + 54); p.quadraticCurveTo(ox + 26, oy + 42, ox + 46, oy + 54); p.lineTo(ox + 52, oy + 120); p.closePath(); }), C.pink, { lw: 2.2 });
+  ink(x, P(p => { p.moveTo(ox + 26, oy + 52); p.lineTo(ox + 26, oy + 118); }), null, { lw: 1.4 });
+  ink(x, ell(ox + 26, oy + 34, 15, 17), C.paper, { lw: 2.2 });
+  ink(x, ell(ox + 26, oy + 18, 9, 7), C.navy, { key: null });
+  ink(x, P(p => { p.moveTo(ox + 11, oy + 28); p.quadraticCurveTo(ox + 26, oy + 14, ox + 41, oy + 28); }), null, { lw: 4 });
+  ink(x, ell(ox + 20, oy + 35, 5, 4), null, { lw: 1.4 }); ink(x, ell(ox + 33, oy + 35, 5, 4), null, { lw: 1.4 });
+  ink(x, P(p => { p.moveTo(ox + 21, oy + 44); p.quadraticCurveTo(ox + 27, oy + 48, ox + 32, oy + 44); }), null, { lw: 1.4 });
+}
+function drawMug(x, cx, by) {
+  ink(x, rrect(cx - 8, by - 15, 16, 15, 2), C.paper, { lw: 1.8 });
+  ink(x, P(p => { p.arc(cx + 9, by - 8, 4.5, -Math.PI / 2, Math.PI / 2); }), null, { lw: 1.8 });
+  text(x, 'I', cx, by - 4, { font: '400 9px "Bowlby One", sans-serif', align: 'center', color: C.pink });
+}
+function ring(x, cx, cy, r = 9, a = 0.75) {
+  x.save(); x.globalAlpha = a; x.strokeStyle = C.purple; x.lineWidth = 2.6;
+  x.beginPath(); x.ellipse(cx, cy, r, r * 0.96, 0.3, 0.1, Math.PI * 1.92); x.stroke();
+  x.lineWidth = 1; x.beginPath(); x.ellipse(cx + 0.6, cy + 0.4, r - 2.4, r * 0.9 - 2.4, 0.3, 0, Math.PI * 2); x.stroke(); x.restore();
+}
+let fanSvg = null, mugSvg = null, stampSvg = null;
+async function makeSprites() {
+  mk('flo', 130, 170, x => drawFlo(x, 14, 38));
+  mk('flo-ball', 130, 190, x => drawFlo(x, 14, 58, { ball: true }));
+  mk('irene', 70, 130, x => drawIrene(x, 8, 6));
+  mk('wheel', 70, 44, x => drawWheel(x, 35, 12));
+  mk('trolley', 70, 80, x => { drawTrolley(x, 35, 70); for (let i = 0; i < 4; i++) drawWheel(x, 35, 50 - i * 13, 25, 8, 11); });
+  mk('pot', 60, 60, x => drawPot(x, 30, 54, true));
+  mk('intern', 50, 60, x => drawIntern(x, 22, 56, true));
+  mk('mug', 30, 22, x => drawMug(x, 13, 20));
+  mk('igniter', 120, 90, x => drawIgniter(x, 6, 6, { all: true }));
+  mk('tiny', 30, 24, x => drawWheel(x, 15, 9, 9, 3.4, 6));
+  try {
+    const [fan, mug, stamp] = await Promise.all(['mdi--fan.svg', 'solar--mug-bold.svg', 'mdi--stamper.svg'].map(n => Sprites.loadSvg(`./art/${n}`)));
+    fanSvg = await Sprites.svgToCanvas(Sprites.recolor(fan, C.navy), 44); Sprites.register('igniter fan (mdi:fan)', fanSvg);
+    mugSvg = await Sprites.svgToCanvas(Sprites.recolor(mug, C.purple), 28); Sprites.register('mug outline (solar)', mugSvg);
+    stampSvg = await Sprites.svgToCanvas(Sprites.recolor(stamp, C.navy), 30); Sprites.register('stamp (mdi:stamper)', stampSvg);
+  } catch (e) { console.warn('art', e); }
+  if (Sprites.sheetRequested()) Sprites.showSheet();
+}
+
+// ---------- The scene ----------
+function drawIgniter(x, ox, oy, { all = false } = {}) {
+  const flint = all || E.lv(S, 'crank') < 2, fly = all || E.lv(S, 'crank') < 3, fan = all || !E.lv(S, 'fan'), bel = all || !E.lv(S, 'bellows');
+  ink(x, rect(ox, oy + 12, 104, 70), tone(C.purple, 0.5, 4), { lw: 2.5 });
+  ink(x, P(p => { p.moveTo(ox, oy + 12); p.lineTo(ox + 40, oy + 12); p.lineTo(ox + 52, oy + 20); p.lineTo(ox + 62, oy + 12); p.lineTo(ox + 104, oy + 12); p.lineTo(ox + 98, oy); p.lineTo(ox + 6, oy); p.closePath(); }), C.purple, { lw: 2.5 });
+  ink(x, rect(ox + 6, oy + 20, 52, 26), C.paper, { lw: 1.5 });
+  text(x, 'IGNITER', ox + 10, oy + 31, { font: '400 9px "Bowlby One", sans-serif', color: C.navy });
+  text(x, '9000', ox + 10, oy + 42, { font: '400 10px "Bowlby One", sans-serif', color: C.pink });
+  // a seal-shaped dent on the lid
+  ink(x, P(p => { p.moveTo(ox + 40, oy + 12); p.quadraticCurveTo(ox + 52, oy + 26, ox + 62, oy + 12); }), null, { lw: 1.5, key: C.paper });
+  // parts, or the clean patch where each part used to be
+  const part = (on, fn, gx, gy, gw, gh) => on ? fn() : ink(x, rect(gx, gy, gw, gh), null, { key: C.paper, lw: 1, off: 0 });
+  part(fan, () => { ink(x, ell(ox + 78, oy + 40, 14, 14), C.navy, { lw: 2, key: C.paper, off: 0 }); for (let i = 0; i < 3; i++) ink(x, P(p => { p.moveTo(ox + 78, oy + 40); p.arc(ox + 78, oy + 40, 12, i * 2.1, i * 2.1 + 0.9); p.closePath(); }), C.purple, { key: null }); }, ox + 64, oy + 26, 28, 28);
+  part(bel, () => ink(x, P(p => { p.moveTo(ox + 10, oy + 74); p.lineTo(ox + 40, oy + 64); p.lineTo(ox + 40, oy + 78); p.closePath(); }), C.pink, { lw: 1.6 }), ox + 10, oy + 62, 30, 16);
+  part(flint, () => ink(x, rect(ox + 50, oy + 52, 8, 8), C.paper, { lw: 1.4 }), ox + 50, oy + 52, 8, 8);
+  part(fly, () => ink(x, ell(ox + 54, oy + 70, 8, 8), C.pink, { lw: 1.6 }), ox + 46, oy + 62, 16, 16);
+}
+
+// Spark animations, floating numbers, puffs.
+const sparks = [];   // { k, t, from: [x,y], by: 'crank'|'intern' }
+const floats = [];   // { x, y, s, t }
+const fizz = [];     // { t }
+let crankAngle = 0, crankVis = 0, clap = 0, now = 0;
+let carry = null, sel = null, selT = 0;
+
+function drawBoard(x) {
+  // The corkboard and the bet memo.
+  ink(x, rect(10, 8, 238, 142), tone(C.pink, 0.3, 5), { lw: 2.5 });
+  // older memos behind
+  ink(x, rect(18, 16, 70, 50), C.paper, { lw: 1.5 });
+  for (let i = 0; i < 5; i++) ink(x, rect(24, 24 + i * 7, 50 - (i % 2) * 14, 1.5), C.navy, { key: null, alpha: 0.6 });
+  if (E.lv(S, 'stamp')) text(x, 'APPROVED', 26, 60, { font: '400 9px "Bowlby One", sans-serif', color: C.pink, rot: -0.2 });
+  ink(x, rect(186, 20, 54, 60), C.paper, { lw: 1.5 });
+  text(x, 'MENU', 213, 32, { font: '400 9px "Bowlby One", sans-serif', align: 'center' });
+  const m = E.lv(S, 'menu');
+  ['rigatoni', '+ pepper', '+ pecorino', '+ truffle', '+ gold'].slice(0, m + 1).forEach((s, i) => text(x, s, 191, 42 + i * 8, { font: '700 7px "Courier Prime", monospace' }));
+  if (E.lv(S, 'stamp')) text(x, 'OK', 230, 76, { font: '400 8px "Bowlby One", sans-serif', color: C.pink, rot: -0.3 });
+  // the bet memo, pinned
+  x.save(); x.translate(92, 30); x.rotate(-0.025);
+  ink(x, rect(0, 0, 92, 108), C.paper, { lw: 2 });
+  text(x, 'MEMO', 6, 12, { font: '400 9px "Bowlby One", sans-serif' });
+  text(x, 'TO: Flo', 6, 22, { font: '700 7px "Courier Prime", monospace' });
+  text(x, 'RE: our wager', 6, 30, { font: '700 7px "Courier Prime", monospace' });
+  ink(x, rect(6, 34, 80, 1), C.navy, { key: null });
+  text(x, 'I bet you can\'t', 6, 44, { font: '400 13px "Reenie Beanie", cursive' });
+  text(x, 'serve', 6, 55, { font: '400 13px "Reenie Beanie", cursive' });
+  // "1" in ink, then five coffee rings and a drip that look a lot like 00,000
+  text(x, '1', 34, 76, { font: '400 26px "Reenie Beanie", cursive' });
+  [44, 54, 68, 78].forEach((rx, i) => ring(x, rx, 69, 4.6, 0.8));
+  ring(x, 88, 69, 4.6, 0.8);
+  x.fillStyle = C.purple; x.beginPath(); x.ellipse(61, 75, 1.4, 2.4, 0.4, 0, 7); x.fill();
+  text(x, 'covers', 6, 88, { font: '400 13px "Reenie Beanie", cursive' });
+  text(x, 'w/o that machine. -I.', 6, 100, { font: '400 12px "Reenie Beanie", cursive' });
+  ink(x, ell(46, 2, 3.5, 3.5), C.pink, { lw: 1 });
+  x.restore();
+  // Irene's visits leave rings on the board too.
+  const visits = Math.min(9, S.irene || 0);
+  for (let i = 0; i < visits; i++) ring(x, 22 + ((i * 53) % 62), 82 + ((i * 29) % 56), 8, 0.4);
+}
+
+function drawShelf(x) {
+  // The pass: a shelf along the top of the floor with the menu things and the silly things.
+  ink(x, rect(262, 60, 490, 9), C.purple, { lw: 2 });
+  const m = E.lv(S, 'menu');
+  // menu things
+  if (m >= 1) { ink(x, rrect(276, 30, 9, 30, 2), C.navy, { key: C.purple }); ink(x, ell(280, 29, 6, 3), C.pink, { lw: 1 }); }
+  if (m >= 2) { ink(x, P(p => { p.moveTo(292, 60); p.lineTo(292, 46); p.lineTo(310, 40); p.lineTo(310, 54); p.closePath(); }), C.paper, { lw: 1.6 }); text(x, 'PEC', 295, 55, { font: '700 6px "Courier Prime", monospace' }); }
+  if (m >= 3) { ink(x, ell(322, 54, 7, 6), tone(C.navy, 0.7, 2), { lw: 1.6 }); }
+  if (m >= 4) { ink(x, rect(334, 42, 14, 18), C.paper, { lw: 1.6 }); text(x, 'Au', 341, 55, { font: '400 7px "Bowlby One", sans-serif', align: 'center', color: C.pink }); }
+  if (E.lv(S, 'grappa')) { ink(x, P(p => { p.moveTo(360, 60); p.lineTo(360, 38); p.lineTo(364, 32); p.lineTo(364, 22); p.lineTo(368, 22); p.lineTo(368, 32); p.lineTo(372, 38); p.lineTo(372, 60); p.closePath(); }), tone(C.paper, 0.8, 2), { lw: 1.6 }); text(x, 'G', 366, 52, { font: '400 8px "Bowlby One", sans-serif', align: 'center', color: C.purple }); }
+  // the coaster (unused) and Irene's mug beside it, on a ring
+  if (E.lv(S, 'coaster')) {
+    ink(x, ell(400, 58, 11, 3), tone(C.pink, 0.7, 2), { lw: 1.4 });
+    ring(x, 424, 58, 7, 0.5);
+    if (mugSvg) x.drawImage(mugSvg, 410, 34, 28, 28); else drawMug(x, 424, 60);
+  }
+  if (E.lv(S, 'stamp')) { if (stampSvg) x.drawImage(stampSvg, 448, 32, 28, 28); else ink(x, rect(452, 40, 18, 20), C.navy); }
+  if (E.lv(S, 'tiny')) drawWheel(x, 500, 50, 9, 3.4, 6);
+  // labels
+  text(x, 'THE PASS', 740, 76, { font: '700 8px "Courier Prime", monospace', align: 'right', color: C.purple });
+}
+
+function drawFloor(x) {
+  const [w, h] = E.size(S);
+  // tiles that aren't the canteen yet: other rooms, hatched, labeled
+  const labeled = {};
+  for (let r = 0; r < MAXH; r++) for (let c = 0; c < MAXW; c++) {
+    const [tx, ty] = [GX + c * TW, GY + r * TH];
+    if (c < w && r < h) {
+      ink(x, rect(tx + 1, ty + 1, TW - 2, TH - 2), tone((c + r) % 2 ? C.pink : C.purple, (c + r) % 2 ? 0.22 : 0.12, 6), { key: null });
+    } else {
+      const lvl = opensAt(c, r);
+      x.save(); x.globalAlpha = lvl === E.lv(S, 'annex') + 1 ? 0.5 : 0.22;
+      x.strokeStyle = C.navy; x.lineWidth = 1;
+      x.beginPath(); for (let i = -TH; i < TW; i += 9) { x.moveTo(tx + i, ty + TH); x.lineTo(tx + i + TH, ty); } x.save(); x.beginPath(); x.rect(tx, ty, TW, TH); x.clip(); x.beginPath(); for (let i = -TH; i < TW; i += 9) { x.moveTo(tx + i, ty + TH); x.lineTo(tx + i + TH, ty); } x.stroke(); x.restore();
+      x.restore();
+      (labeled[lvl] ||= []).push([tx, ty]);
+    }
+  }
+  // the room names on the next and later annexes, and their landmark (the coat rack, the water cooler...)
+  for (const [lvl, list] of Object.entries(labeled)) {
+    const xs = list.map(p => p[0]), ys = list.map(p => p[1]);
+    const cx = (Math.min(...xs) + Math.max(...xs) + TW) / 2, cy = (Math.min(...ys) + Math.max(...ys) + TH) / 2;
+    const next = Number(lvl) === E.lv(S, 'annex') + 1;
+    if (!next) continue;
+    x.save(); x.globalAlpha = 0.85;
+    text(x, E.ROOMS[lvl].toUpperCase(), cx, cy, { font: '400 10px "Bowlby One", sans-serif', align: 'center', color: C.navy });
+    if (next) text(x, 'next annex', cx, cy + 12, { font: '700 9px "Courier Prime", monospace', align: 'center', color: C.purple });
+    x.restore();
+  }
+  // landmarks of annexed rooms, kept in their corner
+  const lm = E.lv(S, 'annex');
+  if (lm >= 1) { const x0 = GX + 2 * TW + TW - 14, y0 = GY + 6; ink(x, rect(x0, y0, 3, 60), C.navy, { key: null }); ink(x, P(p => { p.moveTo(x0 - 8, y0 + 6); p.lineTo(x0 + 11, y0 + 2); }), null, { lw: 2 }); ink(x, P(p => { p.moveTo(x0 - 6, y0 + 8); p.lineTo(x0 - 10, y0 + 26); p.lineTo(x0 + 2, y0 + 26); p.closePath(); }), C.pink, { lw: 1.2 }); }
+  if (lm >= 2) { const x0 = GX + 2 * TW + TW - 16, y0 = GY + 2 * TH + 10; ink(x, rect(x0, y0 + 14, 12, 26), C.paper, { lw: 1.4 }); ink(x, rrect(x0 - 1, y0, 14, 16, 4), tone(C.purple, 0.5, 2), { lw: 1.4 }); }
+  if (lm >= 3) { const x0 = GX + 3 * TW + TW - 30, y0 = GY + 4; ink(x, rect(x0, y0, 26, 14), C.paper, { lw: 1.4 }); ink(x, rect(x0 + 3, y0 + 2, 20, 4), C.navy, { key: null }); }
+  if (lm >= 4) { const x0 = GX + 4 * TW + 6, y0 = GY + 2 * TH + TH - 14; ink(x, rect(x0, y0, 30, 8), C.purple, { lw: 1.2 }); }
+  if (lm >= 5) { const x0 = GX + 4 * TW + TW - 30, y0 = GY + 3 * TH + TH - 16; ink(x, rect(x0, y0, 26, 10), C.navy, { lw: 1.2, key: C.pink }); }
+  if (lm >= 6) { const x0 = GX + 5 * TW + TW - 18, y0 = GY + 3 * TH + 30; ink(x, rrect(x0, y0 + 30, 14, 14, 2), C.purple, { lw: 1.2 }); ink(x, ell(x0 + 7, y0 + 22, 10, 12), tone(C.pink, 0.6, 3), { lw: 1.2 }); }
+  // grid lines of the canteen
+  x.save(); x.strokeStyle = C.navy; x.lineWidth = 1; x.globalAlpha = 0.35;
+  for (let c = 0; c <= w; c++) { x.beginPath(); x.moveTo(GX + c * TW, GY); x.lineTo(GX + c * TW, GY + h * TH); x.stroke(); }
+  for (let r = 0; r <= h; r++) { x.beginPath(); x.moveTo(GX, GY + r * TH); x.lineTo(GX + w * TW, GY + r * TH); x.stroke(); }
+  x.restore();
+  ink(x, rect(GX, GY, w * TW, h * TH), null, { lw: 2.5 });
+}
+
+function drawFlame(x, cx, by, f, n = 1) {
+  if (f <= 0) return;
+  const k = Math.min(1, f / E.burn(S)), hgt = (14 + 22 * k) * (0.85 + 0.15 * n);
+  const wob = i => Math.sin(now * 9 + i * 1.7 + cx) * 3;
+  const tongue = (dx, hh, w2) => P(p => { p.moveTo(cx + dx - w2, by); p.quadraticCurveTo(cx + dx - w2 * 0.6, by - hh * 0.6, cx + dx + wob(dx), by - hh); p.quadraticCurveTo(cx + dx + w2 * 0.6, by - hh * 0.6, cx + dx + w2, by); p.closePath(); });
+  ink(x, tongue(0, hgt, 16), C.purple, { key: null, alpha: 0.9 });
+  ink(x, tongue(-6, hgt * 0.7, 8), C.pink, { key: null });
+  ink(x, tongue(6, hgt * 0.8, 8), C.pink, { key: null });
+  ink(x, tongue(0, hgt * 0.45, 6), C.paper, { key: null });
+}
+
+function drawStations(x) {
+  const keys = Object.keys(S.grid).sort((a, b) => E.at(a)[1] - E.at(b)[1]);
+  for (const k of keys) {
+    const t = S.grid[k], n = E.stack(S, k), [tx, ty] = tileXY(k);
+    if (carry && carry.k === k && carry.moved) x.globalAlpha = 0.35;
+    if (t === 'wheel') {
+      const cx = tx + TW / 2, by = ty + TH - 14;
+      drawTrolley(x, cx, by + 6);
+      const step = n > 2 ? 10 : 13, rx = n > 2 ? 23 : 25;
+      for (let i = 0; i < n; i++) drawWheel(x, cx, by - 16 - i * step, rx, 7.5, step - 2);
+      drawFlame(x, cx, by - 16 - (n - 1) * step, S.fl[k] || 0, n);
+    } else if (t === 'pot') {
+      const spots = [[0, 0], [-18, -20], [18, -20], [0, -40]].slice(0, n);
+      for (const [dx, dy] of spots.slice().reverse()) drawPot(x, tx + TW / 2 + dx * (n > 1 ? 1 : 0), ty + TH - 8 + dy * 0.8, !!E.lv(S, 'paddles'));
+      // steam
+      x.save(); x.strokeStyle = C.paper; x.lineWidth = 2; x.globalAlpha *= 0.8;
+      for (let i = 0; i < 2; i++) { const sx = tx + TW / 2 - 6 + i * 12, sy = ty + 20 + Math.sin(now * 2 + i) * 3; x.beginPath(); x.moveTo(sx, sy + 14); x.quadraticCurveTo(sx - 5, sy + 7, sx, sy); x.quadraticCurveTo(sx + 5, sy - 7, sx, sy - 12); x.stroke(); }
+      x.restore();
+    } else if (t === 'intern') {
+      const spots = [[-14, 0], [14, 0], [-14, -38], [14, -38]].slice(0, n);
+      if (n === 1) spots[0] = [0, 0];
+      ink(x, rect(tx + 8, ty + TH - 20, TW - 16, 8), C.navy, { key: C.purple });
+      for (const [dx, dy] of spots.slice().reverse()) drawIntern(x, tx + TW / 2 + dx, ty + TH - 20 + dy, !!E.lv(S, 'lanyard'), now * 5 + dx);
+    }
+    if (n > 1) { ink(x, rect(tx + 4, ty + 4, 20, 14), C.navy, { key: null }); text(x, `×${n}`, tx + 14, ty + 15, { font: '400 9px "Bowlby One", sans-serif', align: 'center', color: C.paper }); }
+    x.globalAlpha = 1;
+  }
+}
+
+function drawHand(x) {
+  if (!S.hand.length || S.ended) return;
+  const type = S.hand[0];
+  let best = null, bestG = -1;
+  for (const k of E.tiles(S)) {
+    if (!E.fits(S, type, k)) continue;
+    const g = E.gain(S, type, k);
+    if (g > bestG) { bestG = g; best = k; }
+  }
+  for (const k of E.tiles(S)) {
+    if (!E.fits(S, type, k)) continue;
+    const [tx, ty] = tileXY(k), pulse = reduced ? 0.5 : 0.5 + 0.5 * Math.sin(now * 5);
+    x.save(); x.globalAlpha = 0.35 + 0.35 * pulse; x.strokeStyle = k === best ? C.pink : C.navy; x.lineWidth = k === best ? 4 : 2; x.setLineDash([6, 4]);
+    x.strokeRect(tx + 5, ty + 5, TW - 10, TH - 10); x.restore();
+    const g = E.gain(S, type, k);
+    text(x, `+${g.toFixed(g < 1 ? 2 : 1)}/s`, tx + TW / 2, ty + 18, { font: '700 10px "Courier Prime", monospace', align: 'center', color: k === best ? C.pink : C.navy });
+  }
+}
+
+function drawCrank(x) {
+  // the wire from the magneto to the floor
+  ink(x, P(p => { p.moveTo(CRANK.x + 44, CRANK.y + 14); p.bezierCurveTo(240, 300, 240, 250, GX, 250); }), null, { lw: 2.5 });
+  if (E.lv(S, 'bellows')) {
+    const puff = Math.max(0, Math.sin(now * 4)) * 4;
+    ink(x, P(p => { p.moveTo(226, 258 - puff); p.lineTo(252, 262); p.lineTo(226, 272 + puff); p.closePath(); }), C.pink, { lw: 1.8 });
+    text(x, 'BELLOWS', 239, 290, { font: '700 6px "Courier Prime", monospace', align: 'center' });
+  }
+  // the magneto: a box with a crank wheel
+  ink(x, rect(CRANK.x - 46, CRANK.y - 50, 92, 110), C.navy, { key: C.purple });
+  text(x, 'MAGNETO', CRANK.x, CRANK.y + 50, { font: '400 9px "Bowlby One", sans-serif', align: 'center', color: C.paper });
+  text(x, 'est. 1958', CRANK.x, CRANK.y - 38, { font: '700 7px "Courier Prime", monospace', align: 'center', color: C.pink });
+  if (E.lv(S, 'crank') >= 3) {
+    x.save(); x.translate(CRANK.x, CRANK.y); x.rotate(crankVis * 0.5);
+    ink(x, ell(0, 0, CRANK.r + 6, CRANK.r + 6), tone(C.pink, 0.6, 3), { lw: 2, key: C.paper });
+    for (let i = 0; i < 6; i++) { x.rotate(Math.PI / 3); ink(x, rect(-1.5, 0, 3, CRANK.r + 4), C.paper, { key: null }); }
+    x.restore();
+  }
+  ink(x, ell(CRANK.x, CRANK.y, CRANK.r, CRANK.r), C.purple, { lw: 2.5, key: C.paper });
+  if (E.lv(S, 'crank') >= 2) ink(x, rect(CRANK.x + 26, CRANK.y - 46, 10, 10), C.paper, { lw: 1.4 });
+  // the handle: longer once it's the mop handle
+  const len = E.lv(S, 'crank') >= 1 ? 50 : 32;
+  const hx = CRANK.x + Math.cos(crankVis) * len, hy = CRANK.y + Math.sin(crankVis) * len;
+  ink(x, P(p => { p.moveTo(CRANK.x, CRANK.y); p.lineTo(hx, hy); }), null, { key: E.lv(S, 'crank') >= 1 ? C.pink : C.paper, lw: 5, off: 0 });
+  ink(x, ell(hx, hy, 6, 6), C.pink, { lw: 1.8 });
+  ink(x, ell(CRANK.x, CRANK.y, 5, 5), C.paper, { lw: 1.5 });
+  // turn hint arrows until the first few turns
+  if (S.ended) clap = 0.6 + 0.4 * Math.abs(Math.sin(now * 4));
+  if (S.turns < 6 && !S.ended) {
+    const a0 = now * 2;
+    x.save(); x.strokeStyle = C.pink; x.lineWidth = 3; x.setLineDash([5, 6]);
+    x.beginPath(); x.arc(CRANK.x, CRANK.y, CRANK.r + 18, a0, a0 + 4.6); x.stroke(); x.restore();
+    text(x, 'turn me', CRANK.x, CRANK.y + 82, { font: '400 20px "Reenie Beanie", cursive', align: 'center', color: C.navy });
+  }
+  // Flo, one flipper on the handle
+  const fo = [CRANK.x - 148 + Math.cos(crankVis) * 6, CRANK.y - 60 + Math.sin(crankVis) * 4];
+  drawFlo(x, fo[0], fo[1], { clap, ball: !!E.lv(S, 'ball'), t: now });
+  // fizzles at the end of the wire
+  for (const f of fizz) { x.save(); x.globalAlpha = 1 - f.t; text(x, 'pfft', GX - 14, 240 - f.t * 20, { font: '400 18px "Reenie Beanie", cursive', align: 'center', color: C.purple }); x.restore(); }
+}
+
+function drawFan(x) {
+  if (!E.lv(S, 'fan')) return;
+  const fx = 214, fy = 418;
+  ink(x, rect(fx - 4, fy + 14, 8, 30), C.navy, { key: null });
+  ink(x, ell(fx, fy, 24, 24), tone(C.paper, 0.8, 3), { lw: 2 });
+  if (fanSvg) { x.save(); x.translate(fx, fy); x.rotate(now * 12); x.drawImage(fanSvg, -20, -20, 40, 40); x.restore(); }
+  x.save(); x.strokeStyle = C.paper; x.lineWidth = 2; x.globalAlpha = 0.7;
+  for (let i = 0; i < 3; i++) { const o = (now * 60 + i * 20) % 50; x.beginPath(); x.moveTo(fx + 28 + o, fy - 10 + i * 10); x.lineTo(fx + 40 + o, fy - 12 + i * 10); x.stroke(); }
+  x.restore();
+}
+
+function drawSparks(x) {
+  for (const s of sparks) {
+    const [tx, ty] = tileCenter(s.k), f = Math.min(1, s.t / 0.25);
+    const [fx, fy] = s.from;
+    const px = fx + (tx - fx) * f, py = fy + (ty - 40 - fy) * f;
+    x.save(); x.translate(px, py); x.rotate(now * 20);
+    ink(x, P(p => { for (let i = 0; i < 8; i++) { const r = i % 2 ? 3 : 9; p.lineTo(Math.cos(i * Math.PI / 4) * r, Math.sin(i * Math.PI / 4) * r); } p.closePath(); }), s.by === 'intern' ? C.paper : C.pink, { lw: 1.2 });
+    x.restore();
+  }
+  for (const f of floats) {
+    x.save(); x.globalAlpha = Math.max(0, 1 - f.t / 1.2);
+    text(x, f.s, f.x, f.y - f.t * 26, { font: '400 14px "Bowlby One", sans-serif', align: 'center', color: C.navy });
+    x.restore();
+  }
+}
+
+function drawSelected(x) {
+  if (!sel || !S.grid[sel] || selT <= 0) return;
+  const [tx, ty] = tileXY(sel), t = S.grid[sel], n = E.stack(S, sel);
+  let lines;
+  if (t === 'wheel') lines = [`${n} wheel${n > 1 ? 's' : ''} on a trolley`, `${E.pots(S, sel)} pot${E.pots(S, sel) === 1 ? '' : 's'} beside`, `${E.plates(S, sel).toFixed(1)} covers a lighting`];
+  else if (t === 'pot') lines = [`${n} pot${n > 1 ? 's' : ''} on the range`, `+${(E.potBonus(S) * n).toFixed(1)} covers a lighting`, 'to each wheel beside'];
+  else lines = [`${n} intern${n > 1 ? 's' : ''} at the desk`, `${n} spark${n > 1 ? 's' : ''} every ${E.internT(S)} s`, 'to dark wheels beside'];
+  const bx = Math.min(W - 152, Math.max(4, tx + TW / 2 - 74)), by = ty > GY + TH ? ty - 50 : ty + TH + 2;
+  ink(x, rect(bx, by, 148, 46), C.paper, { lw: 2 });
+  lines.forEach((s, i) => text(x, s, bx + 6, by + 13 + i * 12, { font: '700 10px "Courier Prime", monospace' }));
+}
+
+function drawEnding(x) {
+  // Irene at the board, mug in hand, the rings lining up; the tiny wheel lit on the pass, one small plate.
+  ink(x, rect(278, 88, 262, 178), C.paper, { lw: 2.5 });
+  ink(x, rect(278, 88, 262, 178), tone(C.pink, 0.15, 5), { key: null });
+  drawIrene(x, 292, 128);
+  // the memo, held up big
+  x.save(); x.translate(370, 116); x.rotate(-0.04);
+  ink(x, rect(0, 0, 130, 120), C.paper, { lw: 2.2 });
+  text(x, 'I bet you can\'t', 8, 22, { font: '400 17px "Reenie Beanie", cursive' });
+  text(x, 'serve 1 cover', 8, 42, { font: '400 20px "Reenie Beanie", cursive' });
+  text(x, 'w/o that machine.', 8, 60, { font: '400 16px "Reenie Beanie", cursive' });
+  [46, 58, 74, 86, 98].forEach(rx => ring(x, rx + 10, 88, 7, 0.85));
+  text(x, '↑ mug', 22, 112, { font: '400 15px "Reenie Beanie", cursive', color: C.pink });
+  x.restore();
+  drawWheel(x, 500, 40, 9, 3.4, 6);
+  drawFlame(x, 500, 40, E.burn(S), 0.4);
+  ink(x, ell(530, 56, 10, 3), C.paper, { lw: 1.4 });
+  text(x, 'one small plate', 545, 52, { font: '400 16px "Reenie Beanie", cursive', color: C.navy });
+}
+function draw() {
+  const x = ctx;
+  x.setTransform(dpr, 0, 0, dpr, 0, 0);
+  x.fillStyle = C.paper; x.fillRect(0, 0, W, H);
+  drawFloor(x);
+  drawShelf(x);
+  drawStations(x);
+  drawHand(x);
+  drawBoard(x);
+  drawIgniter(x, 12, 378);
+  if (E.lv(S, 'sign')) {
+    x.save(); x.translate(64, 372); x.rotate(0.08);
+    ink(x, rect(-34, -10, 68, 22), C.paper, { lw: 1.8 }); text(x, 'OUT OF ORDER', 0, 5, { font: '400 8px "Bowlby One", sans-serif', align: 'center', color: C.pink });
+    x.restore();
+  }
+  drawFan(x);
+  drawCrank(x);
+  if (S.ended) drawEnding(x);
+  drawSparks(x);
+  drawSelected(x);
+  grain(x, W, H, { amount: 0.07 });
+}
+
+// ---------- The crank ----------
+let lightsSinceLog = 0, fizzN = 0;
+function doTurn() {
+  if (S.ended) return;
+  const lit = E.turn(S);
+  if (!S.started) S.started = true;
+  if (!lit.length) {
+    if (E.wheels(S).length) { sfx.fizzle(); fizz.push({ t: 0 }); fizzN++; if (!S.seenFizz && fizzN > 6 && S.v >= E.cost(S, 'wheel')) { S.seenFizz = true; say(...FIZZ_LINES[0], 'u'); } }
+    return;
+  }
+  clap = 1;
+  for (const l of lit) {
+    sparks.push({ k: l.k, t: 0, from: [CRANK.x + 44, CRANK.y + 14], by: 'crank' });
+    const [cx, cy] = tileCenter(l.k);
+    floats.push({ x: cx, y: cy - 50, s: `+${fmt(Math.round(l.covers * 10) / 10)}`, t: -0.2 });
+  }
+  sfx.fwoomp(S.lit);
+  if (!S.firstLit) { S.firstLit = true; say('MEMO', 'FWOOMP. The wheel is lit, the rigatoni goes in, the first plate goes out. Ecco! Flo claps. Keep cranking: a wheel burns a few seconds, then needs another spark.'); }
+  else if (++lightsSinceLog > 40 && Math.random() < 0.06) { lightsSinceLog = 0; say(...pick(LIGHT_LINES)); }
+  renderHud();
+}
+let quarter = 0;
+function addTurn(rad) {
+  crankAngle += rad;
+  // a click every quarter turn, a spark every full turn
+  while (crankAngle >= Math.PI / 2) { crankAngle -= Math.PI / 2; sfx.click(quarter); quarter++; if (quarter % 4 === 0) doTurn(); }
+}
+const toCanvas = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height]; };
+const tileAt = (px, py) => {
+  const c = Math.floor((px - GX) / TW), r = Math.floor((py - GY) / TH), [w, h] = E.size(S);
+  return c >= 0 && r >= 0 && c < w && r < h ? E.key(c, r) : null;
+};
+const inCrank = (px, py) => px < GX - 6 && py > 150 && py < 376;
+let drag = null;
+cv.addEventListener('pointerdown', e => {
+  if (S.ended) return;
+  A.unlock();
+  const [px, py] = toCanvas(e);
+  if (inCrank(px, py)) {
+    drag = { kind: 'crank', a: Math.atan2(py - CRANK.y, px - CRANK.x), moved: 0 };
+    cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing';
+    return;
+  }
+  const k = tileAt(px, py);
+  if (!k) return;
+  if (S.hand.length) { placeAt(k); return; }
+  if (S.grid[k]) { carry = { k, moved: false }; drag = { kind: 'move' }; cv.setPointerCapture(e.pointerId); }
+});
+cv.addEventListener('pointermove', e => {
+  if (!drag) return;
+  const [px, py] = toCanvas(e);
+  if (drag.kind === 'crank') {
+    const a = Math.atan2(py - CRANK.y, px - CRANK.x);
+    let d = a - drag.a; if (d > Math.PI) d -= Math.PI * 2; if (d < -Math.PI) d += Math.PI * 2;
+    drag.a = a;
+    // Either direction turns a magneto; the handle shows which way you went.
+    if (Math.hypot(px - CRANK.x, py - CRANK.y) > 10) { drag.moved += Math.abs(d); crankVis += d; addTurn(Math.abs(d)); }
+  } else if (drag.kind === 'move' && carry) {
+    const k = tileAt(px, py);
+    if (k && k !== carry.k) carry.moved = true;
+    carry.over = k;
+  }
+});
+function endDrag(e) {
+  if (!drag) return;
+  if (drag.kind === 'crank') {
+    // A tap on the crank nudges it a quarter turn.
+    if (drag.moved < 0.4) { crankVis += Math.PI / 2; addTurn(Math.PI / 2 + 1e-6); }
+    cv.style.cursor = 'grab';
+  } else if (drag.kind === 'move' && carry) {
+    if (carry.moved && carry.over && carry.over !== carry.k) {
+      if (E.move(S, carry.k, carry.over)) { sfx.place(); sel = carry.over; selT = 3; say('RE: SEATING', 'Moved. The floor plan has been updated and circulated to nobody.'); save(); }
+    } else { sel = sel === carry.k && selT > 0 ? null : carry.k; selT = 4; }
+    carry = null;
+  }
+  drag = null;
+}
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
+// Keyboard: space or enter turns the crank a quarter turn.
+cv.addEventListener('keydown', e => {
+  if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); A.unlock(); crankVis += Math.PI / 2; addTurn(Math.PI / 2 + 1e-6); }
+  if (e.key === 'b' && S.hand.length) placeBest();
+});
+
+// ---------- Placing stations ----------
+const NAMES = { wheel: 'cheese wheel', pot: 'pasta pot', intern: 'intern' };
+function placeAt(k) {
+  const type = S.hand[0];
+  if (!E.fits(S, type, k)) { sfx.deny(); return; }
+  E.place(S, k, type); sfx.place(); sel = k; selT = 3;
+  const n = E.stack(S, k);
+  say(type === 'wheel' ? 'RE: WHEELS' : type === 'pot' ? 'RE: POTS' : 'RE: INTERNS', placeLine(type, n, k));
+  renderHold(); renderShop(); save();
+}
+function placeLine(type, n, k) {
+  if (type === 'wheel') return n > 1 ? `A wheel stacked on the trolley: ${n} high. One spark lights the lot, and every one of them sends out plates.` : `New wheel on the floor. ${E.pots(S, k) ? 'A pot beside it: more plates a lighting.' : 'Put pots beside your wheels and every lighting sends out more plates.'}`;
+  if (type === 'pot') return n > 1 ? `${n} pots on the range. Every wheel beside it gets ${(E.potBonus(S) * n).toFixed(1)} more covers a lighting.` : 'A pot of rigatoni at a rolling boil. Each wheel beside it gets more covers a lighting.';
+  return n > 1 ? `${n} interns at the desk, ${n} little cranks. They relight the wheels beside them.` : 'An intern sits down with a little crank. When a wheel beside them goes dark, they light it again. Unsupervised.';
+}
+function placeBest() { const k = E.bestTile(S, S.hand[0]); if (k) placeAt(k); }
+$('bestBtn').addEventListener('click', placeBest);
+function renderHold() {
+  const h = !!S.hand.length && !S.ended;
+  $('hold').hidden = !h;
+  if (h) $('holdTxt').textContent = `Place the ${NAMES[S.hand[0]]}${S.hand.length > 1 ? ` (+${S.hand.length - 1} more)` : ''}: tap a dashed spot`;
+}
+
+// ---------- HUD ----------
+const hist = [];   // [time, covers] for the covers-a-minute readout
+function renderHud() {
+  $('vouch').textContent = fmt(S.v);
+  $('cTxt').textContent = `${fmt(Math.min(E.GOAL, S.covers))} covers`;
+  $('cBar').style.width = `${Math.min(100, S.covers / E.GOAL * 100).toFixed(2)}%`;
+  const ws = E.wheels(S), litN = ws.filter(k => E.isLit(S, k)).length;
+  const first = hist[0], rate = first && now - first[0] > 3 ? (S.covers - first[1]) / (now - first[0]) * 60 : 0;
+  const bits = [];
+  bits.push(`Crank <b>${E.sparksPerTurn(S)}</b> spark${E.sparksPerTurn(S) > 1 ? 's' : ''} a turn`);
+  if (E.internRate(S) > 0) bits.push(`Interns <b>${E.internRate(S).toFixed(2)}</b> sparks/s`);
+  bits.push(`Wheels lit <b>${litN}/${ws.length}</b>`);
+  bits.push(`<b>${E.price(S)}</b> voucher${E.price(S) > 1 ? 's' : ''} a cover`);
+  bits.push(`<b>${fmt(rate)}</b> covers/min`);
+  $('sub').innerHTML = bits.join(' · ');
+}
+for (let i = 1; i < 10; i++) { const n = document.createElement('b'); n.style.left = `${i * 10}%`; $('meter').append(n); }
+
+// ---------- Shop ----------
+const shop = $('shop');
+const newUntil = {};
+let shopSig = '';
+const clone = () => E.load(JSON.parse(JSON.stringify(S)));
+function cellName(it) {
+  if (it.kind === 'lv') return it.id === 'annex' ? `Annex: ${E.ROOMS[E.lv(S, 'annex') + 1]}` : it.levels[E.lv(S, it.id)];
+  return it.name;
+}
+function cellCost(it) {
+  const c = E.short(E.cost(S, it.id));
+  if (it.kind === 'station') return E.roomFor(S, it.id) > 0 ? `${c} · ×${S.owned[it.id] || 0}` : `no room · ×${S.owned[it.id] || 0}`;
+  return c;
+}
+function renderShop() {
+  const fresh = S.ended ? [] : E.reveal(S);
+  const all = S.ended ? [] : E.visible(S);
+  for (const id of fresh) { if (S.started) sfx.unlock(); newUntil[id] = performance.now() + 9000; }
+  const sig = all.map(i => `${i.id}:${cellName(i)}:${cellCost(i)}`).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    const groups = [['Stations · stack 4 a spot', all.filter(i => i.kind === 'station')], ['Memos to approve', all.filter(i => i.kind !== 'station')]];
+    for (const [title, list] of groups) {
+      if (!list.length) continue;
+      const h = document.createElement('div'); h.className = 'shead'; h.textContent = title; shop.append(h);
+      const g = document.createElement('div'); g.className = 'grid2'; shop.append(g);
+      for (const it of list) {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'up' + (it.kind === 'odd' ? ' odd' : '');
+        b.dataset.id = it.id;
+        b.innerHTML = '<b></b><em></em>';
+        b.querySelector('b').textContent = cellName(it);
+        b.querySelector('em').textContent = cellCost(it);
+        b.setAttribute('aria-describedby', 'tip');
+        b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, upTip(it.id)); });
+        b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+        b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, upTip(it.id)); });
+        b.addEventListener('blur', hideTip);
+        b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+        b.addEventListener('click', () => {
+          A.unlock();
+          if (b.dataset.touch && tipFor !== it.id) { showTip(b, upTip(it.id)); return; }
+          if (b.getAttribute('aria-disabled') !== 'true') doBuy(it.id); else sfx.deny();
+        });
+        g.append(b);
+      }
+    }
+  }
+  const t = performance.now();
+  let n = 0;
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = E.canBuy(S, b.dataset.id);
+    n += can ? 1 : 0;
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > t;
+    b.classList.toggle('new', isNew);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  document.querySelector('aside h2').hidden = !all.length;
+  renderShelf();
+  $('col').hidden = !all.length && shelfEl.hidden;
+}
+const r2 = v => v.toFixed(v < 10 ? 2 : 1);
+function effect(id) {
+  const it = E.BY_ID[id], T2 = clone();
+  if (it.kind === 'odd') return 'Changes nothing in the numbers. Goes in the picture, for good.';
+  T2.v = Infinity;
+  if (it.kind === 'station') {
+    if (E.roomFor(S, id) <= 0) return `No room: every spot is full and every ${id === 'wheel' ? 'trolley' : id === 'pot' ? 'range' : 'desk'} has four. Annex the next room.`;
+    E.buy(T2, id); E.place(T2, E.bestTile(T2, id), id);
+    if (id === 'intern') return `Interns: ${r2(E.internRate(S))} → ${r2(E.internRate(T2))} sparks a second (best spot: ${r2(E.value(S))} → ${r2(E.value(T2))} covers/s)`;
+    return `Floor at full burn: ${r2(E.rateCap(S))} → ${r2(E.rateCap(T2))} covers a second (best spot)`;
+  }
+  E.buy(T2, id);
+  if (id === 'menu') return `Vouchers a cover: ${E.price(S)} → ${E.price(T2)}`;
+  if (id === 'annex') { const [a, b] = E.size(S), [c, d] = E.size(T2); return `Floor: ${a}×${b} → ${c}×${d} (${a * b} → ${c * d} spots)`; }
+  if (id === 'crank') return `Sparks a turn: ${E.sparksPerTurn(S)} → ${E.sparksPerTurn(T2)}`;
+  if (id === 'grappa') return `A wheel is ready to light again after ${E.burn(S)} s → ${E.burn(T2)} s (full burn: ${r2(E.rateCap(S))} → ${r2(E.rateCap(T2))} covers/s)`;
+  if (id === 'paddles') return `Each pot adds ${E.potBonus(S)} → ${E.potBonus(T2)} covers a lighting to each wheel beside it (full burn: ${r2(E.rateCap(S))} → ${r2(E.rateCap(T2))}/s)`;
+  if (id === 'lanyard') return `An intern sparks every ${E.internT(S)} s → ${E.internT(T2)} s (interns: ${r2(E.internRate(S))} → ${r2(E.internRate(T2))} sparks/s)`;
+  if (id === 'fan') return `Covers a lighting ×${E.fan(S)} → ×${E.fan(T2)} (full burn: ${r2(E.rateCap(S))} → ${r2(E.rateCap(T2))} covers/s)`;
+  if (id === 'bellows') return 'Wheels that catch from one spark: 1 → 1 + every dark wheel beside it';
+  return '';
+}
+let tipFor = null;
+function upTip(id) {
+  const it = E.BY_ID[id];
+  const l = it.kind === 'lv' ? ` · ${E.lv(S, id) + 1} of ${E.max(it)}` : it.kind === 'station' ? ` · you have ${S.owned[id] || 0}` : '';
+  const name = cellName(it);
+  const desc = it.kind === 'lv' ? `${it.desc}` : it.desc;
+  return { id, hd: it.kind === 'odd' ? 'MEMO · NON-ESSENTIAL' : it.kind === 'station' ? 'MEMO · RE: STATIONS' : 'MEMO · FOR APPROVAL', name, desc, fx: effect(id), joke: it.kind === 'lv' ? it.jokes[E.lv(S, id)] : it.joke, foot: `${fmt(E.cost(S, id))} vouchers${l}` };
+}
+function showTip(b, it) {
+  if (!it) return;
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<span class="hd"></span><b></b><span class="d"></span><span class="fx"></span><i></i><small></small>';
+  tip.querySelector('.hd').textContent = it.hd || 'MEMO';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('.d').textContent = it.desc;
+  tip.querySelector('.fx').textContent = it.fx || '';
+  tip.querySelector('.fx').hidden = !it.fx;
+  tip.querySelector('i').textContent = it.joke || '';
+  tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || '';
+  tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== shelfEl) shelfEl.after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  if (b.closest('#side') && r.left > t.width + 24 && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 14}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - t.width - 8, r.left))}px`;
+    tip.style.top = `${r.bottom + 8 + t.height < innerHeight ? r.bottom + 8 : Math.max(8, r.top - t.height - 8)}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+let tipMoved = 0;
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .bought')) hideTip(); });
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!S.boughtOpen === shelfEl.open) return;
+  S.boughtOpen = shelfEl.open; save();
+});
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(i => i.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (it.kind === 'odd' ? ' odd' : '');
+    b.textContent = it.name; b.dataset.id = it.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, { id: 'bought:' + it.id, hd: 'MEMO · APPROVED', name: it.name, desc: it.desc, joke: it.joke, foot: it.kind === 'odd' ? 'for the picture' : 'bought', inline: true }); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + it.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+function doBuy(id) {
+  const it = E.BY_ID[id];
+  const lvBefore = E.lv(S, id);
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  hideTip(true);
+  if (it.kind === 'station') {
+    sfx.buy();
+    renderHold();
+    if (!S.placedHint) { S.placedHint = true; say('ACTION ITEM', `New ${NAMES[id]} delivered. Tap a dashed spot on the floor to put it down (the pink one helps most), or press Best spot. Drag anything on the floor to move it.`, 'p'); }
+  } else if (id === 'annex') {
+    sfx.annex();
+    say('RE: SPACE', it.jokes[lvBefore], 'u');
+  } else {
+    sfx.buy();
+    if (it.kind === 'lv') say(`APPROVED: ${it.levels[lvBefore].toUpperCase()}`, it.jokes[lvBefore], 'u');
+    else say(it.kind === 'odd' ? 'NON-ESSENTIAL' : 'APPROVED', it.joke, it.kind === 'odd' ? 'p' : 'u');
+  }
+  renderShop(); renderHud(); refreshMusic(); save();
+}
+
+// ---------- The clock ----------
+let lastIdleLog = 0, internLit = 0, nextIrene = (S.time || 0) + 150 + Math.random() * 120;
+function tick(dt) {
+  if (S.ended) return;
+  if (S.started) S.time += dt;
+  const ev = E.tick(S, dt);
+  if (ev.lit.length) {
+    internLit += ev.lit.length;
+    for (const l of ev.lit) {
+      const ik = E.adj(S, l.k).find(a => S.grid[a] === 'intern');
+      sparks.push({ k: l.k, t: 0, from: ik ? tileCenter(ik).map((v, i) => v - (i ? 30 : 0)) : [GX, 250], by: 'intern' });
+      const [cx, cy] = tileCenter(l.k);
+      floats.push({ x: cx, y: cy - 50, s: `+${fmt(l.covers)}`, t: 0 });
+    }
+    sfx.intern();
+    if (S.time - lastIdleLog > 75 && internLit >= 5) { lastIdleLog = S.time; const [t, s] = pick(IDLE_LINES); say(t, s.replace('#', fmt(internLit))); internLit = 0; }
+  }
+  if (S.started && S.time > nextIrene) {
+    nextIrene = S.time + 160 + Math.random() * 140;
+    S.irene = (S.irene || 0) + 1; sfx.mug();
+    say('SIGHTING', pick(IRENE_LINES), 'p');
+  }
+  if (S.covers >= E.GOAL) end(false);
+}
+
+function frame() {
+  const t = performance.now();
+  const dt = Math.min(0.1, (t - T0) / 1000); T0 = t; now += dt;
+  clap = Math.max(0, clap - dt * 3);
+  selT -= dt;
+  for (const s of sparks) s.t += dt;
+  while (sparks.length && sparks[0].t > 0.3) sparks.shift();
+  if (sparks.length > 40) sparks.splice(0, sparks.length - 40);
+  for (const f of floats) f.t += dt;
+  while (floats.length && floats[0].t > 1.2) floats.shift();
+  if (floats.length > 30) floats.splice(0, floats.length - 30);
+  for (const f of fizz) f.t += dt * 1.5;
+  while (fizz.length && fizz[0].t > 1) fizz.shift();
+  draw();
+  requestAnimationFrame(frame);
+}
+let T0 = performance.now();
+
+let last = performance.now(), saveT = 0;
+setInterval(() => {
+  const t = performance.now(); const dt = Math.min(60, (t - last) / 1000); last = t;
+  // the floor runs in small steps so the interns' timers stay honest after a slow frame
+  for (let left = dt; left > 0; left -= 0.25) tick(Math.min(0.25, left));
+  hist.push([now, S.covers]); while (hist.length && now - hist[0][0] > 30) hist.shift();
+  saveT += dt; if (saveT > 3) { saveT = 0; save(); }
+  refreshMusic();
+  renderHud(); renderShop();
+}, 250);
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('pagehide', save);
+
+// ---------- The end ----------
+function fullFloor() {
+  // A finished canteen for a finished save that never had one: every annex, every spot stacked.
+  S.lv = Object.assign({ annex: 6, menu: 4, crank: 3, grappa: 1, paddles: 1, lanyard: 1, fan: 1, bellows: 1, sign: 1, coaster: 1, stamp: 1, ball: 1, tiny: 1 }, S.lv);
+  const plan = ['wpwiwp', 'iwpwiw', 'wpwpwp', 'iwiwiw'];
+  S.grid = {}; S.stack = {};
+  plan.forEach((row, r) => [...row].forEach((ch, c) => { const k = E.key(c, r); S.grid[k] = { w: 'wheel', p: 'pot', i: 'intern' }[ch]; S.stack[k] = 4; }));
+}
+function end(resumed) {
+  if (!S.ended) {
+    S.ended = true; S.hand = [];
+    if (!resumed) sfx.finale();
+    save();
+  }
+  if (!Object.keys(S.grid).length || E.lv(S, 'annex') < 1) fullFloor();
+  if (!S.covers) S.covers = E.GOAL;
+  for (const k of E.wheels(S)) S.fl[k] = E.burn(S);   // everything lit, for good
+  hideTip(true); renderHold();
+  refreshMusic();
+  $('col').hidden = true;
+  renderHud();
+  say('SETTLED', 'Irene puts her mug down on the memo. Every ring fits. The bet was one. "Something light, please."', 'p');
+  const m = Math.floor(S.time / 60), s = Math.floor(S.time % 60);
+  const hm = m >= 60 ? `${Math.floor(m / 60)}h${String(m % 60).padStart(2, '0')}m` : `${m}m${String(s).padStart(2, '0')}s`;
+  $('story').innerHTML = `
+    <p>One hundred thousand covers, and at one o'clock Irene from Accounts came down the stairs with her mug, the one with the I on it. She didn't look at the floor, or the fire, or the interns. She looked at the memo on the corkboard.</p>
+    <p>Then she took it down, and set her mug on it. On the first zero. It fit exactly. She moved it along. It fit again. Five times.</p>
+    <div class="note"><small>THE MEMO, WITHOUT THE COFFEE</small>I bet you can't serve 1 cover without that machine. —I.</div>
+    <p>"You shut the canteen after the Igniter," Irene said. "You hadn't lit a wheel in a week. I didn't want a hundred thousand of anything. I wanted you cooking again." The zeros were rings. The comma was a drip. Irene has never once used a coaster.</p>
+    <p>Flo looked at the floor plan, the six annexed rooms, ${S.lit ? `the ${fmt(S.lit)} wheels lit by hand and by intern` : 'every wheel lit by hand and by intern'}, and then at the little wheel on the pass. The one bought for scale. Too small to light. "Something light, please," said Irene. So Flo lit it, with one turn of the crank, and served one small plate.</p>
+    ${S.time ? `<p>${fmt(E.GOAL)} covers · ${fmt(S.lit)} wheels lit · ${fmt(S.turns)} turns of the crank · ${hm}</p>` : ''}`;
+  $('ending').hidden = false;
+  if (!resumed && window.DailyGame) {
+    DailyGame.finish({ lines: [`⏱ ${hm}`, `🧀 100,000 covers · ${fmt(S.lit)} wheels lit`, '☕ The bet was for 1.'] });
+  }
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Start ----------
+if (S.ended) end(true);
+else {
+  // Time away: the interns kept their wheels going at a tenth of the pace, for up to two hours.
+  const away = S.savedAt ? E.away(S, (Date.now() - S.savedAt) / 1000) : null;
+  if (away && away.covers >= 1) {
+    const h = Math.floor(away.secs / 3600), mm = Math.round((away.secs % 3600) / 60);
+    say('WHILE YOU WERE OUT', `${h ? `${h} h ` : ''}${mm} min away. The interns kept their wheels lit without you: +${fmt(away.covers)} covers, +${fmt(away.v)} vouchers. (Nobody was at the crank, so it went slowly.)`, 'u');
+  } else if (away) {
+    say('WHILE YOU WERE OUT', 'Nobody was at the crank and there are no interns on the floor yet, so every wheel went dark. Welcome back.', 'u');
+  } else if (S.lastLog) say(...S.lastLog);
+  else say('MEMO', 'Flo broke the Igniter (sat on it). Matches are banned (the incident). Irene from Accounts has left a bet on the corkboard. Turn the magneto\'s crank in circles to throw a spark and light the cheese wheel.', 'u');
+  E.reveal(S);
+}
+renderHud(); renderShop(); renderHold();
+makeSprites();
+requestAnimationFrame(frame);
+if (DEBUG) Object.assign(window.__game, { end, doTurn, placeBest, E });
+</script>
+</body>
+</html>
