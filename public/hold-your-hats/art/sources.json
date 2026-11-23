@@ -1,0 +1,20 @@
+{
+  "game-icons--sparrow.svg": {
+    "icon": "game-icons:sparrow",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Lorc",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/lorc/sparrow.html"
+  },
+  "game-icons--rooster.svg": {
+    "icon": "game-icons:rooster",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Delapouite",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/delapouite/rooster.html"
+  }
+}
