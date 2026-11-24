@@ -1231,5 +1231,46 @@
     "tone": "corporate memo",
     "context": "none",
     "palette": "lava-gb"
+  },
+  {
+    "n": 33,
+    "slug": "but-wait-theres-moon",
+    "date": "2026-11-24",
+    "title": "But Wait, There's Moon",
+    "tagline": "Dudley, a firework who reads every manual, orders tangled moons from a 3 a.m. infomercial to out-light Astrid the Roman candle at the Rooftop Gala, and flicks them into the sky one knot at a time, right up to the 99 the small print allows.",
+    "emoji": "🎆🌕",
+    "scale": "tens",
+    "minutes": "25–40",
+    "seed": 1365651629,
+    "subject": {
+      "text": "a fireworks who reads every manual",
+      "emoji": "🎆",
+      "name": "fireworks",
+      "subgroup": "event",
+      "trait": "{} who reads every manual"
+    },
+    "verb": "untangling",
+    "object": "moons",
+    "interaction": "swipe/flick",
+    "arc": {
+      "drive": "rivalry",
+      "obstacle": "gravity",
+      "turn": "it all collapses beautifully",
+      "initial": "A"
+    },
+    "length": "mini (10–60 min)",
+    "structure": [
+      "distinct phases, each its own small economy"
+    ],
+    "twist": "achievements that grant multipliers",
+    "ending": "the number hits its cap and the world crunches",
+    "look": "art deco poster",
+    "music": {
+      "style": "music box lullaby",
+      "scale": "major pentatonic"
+    },
+    "tone": "late-night infomercial",
+    "context": "none",
+    "palette": "curiosities"
   }
 ]

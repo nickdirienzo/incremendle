@@ -1,0 +1,38 @@
+{
+  "mdi--phone-classic.svg": {
+    "icon": "mdi:phone-classic",
+    "set": "Material Design Icons",
+    "setUrl": "https://github.com/Templarian/MaterialDesign",
+    "author": "Pictogrammers",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/mdi/phone-classic/"
+  },
+  "mdi--hand-pointing-up.svg": {
+    "icon": "mdi:hand-pointing-up",
+    "set": "Material Design Icons",
+    "setUrl": "https://github.com/Templarian/MaterialDesign",
+    "author": "Pictogrammers",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/mdi/hand-pointing-up/"
+  },
+  "game-icons--magnifying-glass.svg": {
+    "icon": "game-icons:magnifying-glass",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Lorc",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/lorc/magnifying-glass.html"
+  },
+  "game-icons--comb.svg": {
+    "icon": "game-icons:comb",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Lorc",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/lorc/comb.html"
+  }
+}
