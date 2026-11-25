@@ -1,0 +1,59 @@
+{
+  "libs": [
+    {
+      "name": "@strudel/web",
+      "version": "1.3.0",
+      "license": "AGPL-3.0-or-later",
+      "what": "pattern music: synths, samples, Tidal mini-notation",
+      "home": "https://strudel.cc",
+      "support": "https://opencollective.com/tidalcycles"
+    }
+  ],
+  "art": [
+    {
+      "set": "IconPark Solid",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://github.com/bytedance/IconPark/blob/master/LICENSE",
+      "home": "https://github.com/bytedance/IconPark",
+      "support": "https://github.com/bytedance/IconPark",
+      "icons": [
+        {
+          "icon": "icon-park-solid:trophy",
+          "author": "ByteDance",
+          "source": "https://icon-sets.iconify.design/icon-park-solid/trophy/"
+        }
+      ]
+    },
+    {
+      "set": "Material Design Icons",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+      "home": "https://github.com/Templarian/MaterialDesign",
+      "support": "https://github.com/Templarian/MaterialDesign",
+      "icons": [
+        {
+          "icon": "mdi:food-turkey",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/food-turkey/"
+        }
+      ]
+    }
+  ],
+  "fonts": [
+    {
+      "name": "Pixelify Sans",
+      "license": "OFL-1.1",
+      "home": "https://fonts.google.com/specimen/Pixelify+Sans"
+    },
+    {
+      "name": "Silkscreen",
+      "license": "OFL-1.1",
+      "home": "https://fonts.google.com/specimen/Silkscreen"
+    }
+  ],
+  "palette": {
+    "name": "JustParchment8",
+    "author": "JustJimmy",
+    "home": "https://lospec.com/palette-list/justparchment8"
+  }
+}

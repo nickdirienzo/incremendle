@@ -1,0 +1,22 @@
+import { chromium } from 'playwright';
+import fs from 'node:fs';
+import { serve } from '/Users/nickdirienzo/code/nickdirienzo/dailyincrementalgame-nightly/tools/serve.mjs';
+const srv = await serve(process.cwd() + '/public'); const base = `http://127.0.0.1:${srv.address().port}`;
+const b = await chromium.launch();
+const card = JSON.parse(fs.readFileSync('tools/cards.json','utf8'))['al-dente-encounters'];
+const run = async (name, save, fn, vp = { width: 1280, height: 900 }) => {
+  const ctx = await b.newContext({ viewport: vp }); const p = await ctx.newPage();
+  p.on('console', m => { if (m.type() === 'error' || m.type()==='warning') console.log(name, m.type(), m.text()); });
+  p.on('response', r => { if (r.status() >= 400) console.log(name, r.status(), r.url()); }); p.on('pageerror', e => console.log(name, 'PAGEERROR', e.message));
+  if (save) await ctx.addInitScript(s => { if (!sessionStorage.getItem('x')) { sessionStorage.setItem('x',1); localStorage.setItem('di:34:save', s); } }, JSON.stringify(save));
+  await p.goto(base + '/al-dente-encounters/' + (name === 'sprites' ? '?sprites' : '?debug')); await p.waitForTimeout(1000);
+  if (fn) await fn(p);
+  await p.screenshot({ path: `/tmp/ade/${name}.png` }); await ctx.close();
+};
+await run('fresh', null, async p => { const c = await p.locator('#stage').boundingBox(); for (let i = 0; i < 60; i++) { await p.mouse.move(c.x + c.width * (0.3 + 0.3 * Math.sin(i / 6)), c.y + c.height * 0.75); await p.waitForTimeout(150); } });
+await run('mid', card, async p => { const c = await p.locator('#stage').boundingBox(); for (let i = 0; i < 30; i++) { await p.mouse.move(c.x + c.width * (0.3 + 0.2 * Math.sin(i / 5)), c.y + c.height * 0.78); await p.waitForTimeout(150); } await p.hover('#shop .up >> nth=0'); await p.waitForTimeout(300); });
+await run('sunday', { ...card, day: 6, wave: 52, best: 52, big: 0 }, async p => { const c = await p.locator('#stage').boundingBox(); await p.mouse.move(c.x + 200, c.y + 300); await p.waitForTimeout(4000); });
+await run('ended', { ended: true });
+await run('sprites', null);
+await run('phone', card, null, { width: 390, height: 844 });
+await b.close(); srv.close?.(); process.exit(0);

@@ -1272,5 +1272,51 @@
     "tone": "late-night infomercial",
     "context": "none",
     "palette": "curiosities"
+  },
+  {
+    "n": 34,
+    "slug": "al-dente-encounters",
+    "date": "2026-11-25",
+    "title": "Al Dente Encounters",
+    "tagline": "Wibble, a jittery flying saucer, knocked its shrink ray to GROW on live TV, and now a borrowed kitchen's pot boils giant noodles over in waves. The inspector comes Sunday, so Wibble steers over the counter shrinking every last one back to bite size.",
+    "emoji": "🛸🍜",
+    "scale": "millions",
+    "minutes": "240–360",
+    "seed": 2285291030,
+    "subject": {
+      "text": "a jittery flying saucer",
+      "emoji": "🛸",
+      "name": "flying saucer",
+      "subgroup": "transport-air",
+      "trait": "jittery {}"
+    },
+    "verb": "shrinking",
+    "object": "noodles",
+    "interaction": "steer something",
+    "arc": {
+      "drive": "a deadline",
+      "obstacle": "an inspector",
+      "turn": "it was the wrong goal all along",
+      "initial": "E"
+    },
+    "length": "story (3–10 hours, over several sittings)",
+    "structure": [
+      "reset loop (prestige for a permanent bonus)",
+      "auto-battle waves of enemies"
+    ],
+    "twist": "decay: things break or spoil",
+    "ending": "the game ends itself",
+    "look": "1-bit classic Mac",
+    "music": {
+      "style": "dub",
+      "scale": "whole tone"
+    },
+    "tone": "cooking show",
+    "context": {
+      "kind": "calendar",
+      "nod": "a household ritual of that time of year",
+      "topic": "thawing the Thanksgiving turkey in cold water, changing it every 30 minutes (the day before Thanksgiving)"
+    },
+    "palette": "justparchment8"
   }
 ]

@@ -1,0 +1,978 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Al Dente Encounters · Incremendle</title>
+<meta name="description" content="A jittery flying saucer shrinks giant noodles back to bite size before the inspector arrives on Sunday. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Al Dente Encounters">
+<meta property="og:description" content="Wibble, a jittery flying saucer, knocked its shrink ray to GROW on live TV, and now a borrowed kitchen's pot boils giant noodles over in waves. The inspector comes Sunday, so Wibble steers over the counter shrinking every last one back to bite size.">
+<meta property="og:url" content="https://incremendle.com/al-dente-encounters/">
+<meta property="og:image" content="https://incremendle.com/al-dente-encounters/og.png?v=26b6eb34">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Al Dente Encounters: Wibble, a jittery flying saucer, knocked its shrink ray to GROW on live TV, and now a borrowed kitchen's pot boils giant noodles over in waves. The inspector comes Sunday, so Wibble steers over the counter shrinking every last one back to bite size.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/pixelify-sans/font.css">
+<link rel="stylesheet" href="/shared/fonts/silkscreen/font.css">
+<style>
+  /* 1-bit classic Mac in JustParchment8: everything is ink (#292418) on paper (#e6ceac), greys are dither patterns.
+     The desktop behind the windows is the palette's tan, checkered a pixel at a time. */
+  :root {
+    --ink: #292418; --paper: #e6ceac; --tan: #bda583; --tan2: #cdba94;
+    --ui: 'Pixelify Sans', ui-monospace, monospace; --tiny: 'Silkscreen', ui-monospace, monospace;
+    color-scheme: light;
+  }
+  html, body { background: var(--tan); color: var(--ink); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 15px/1.35 var(--ui);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(8px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+    background-image: conic-gradient(var(--tan2) 25%, var(--tan) 0 50%, var(--tan2) 0 75%, var(--tan) 0); background-size: 2px 2px;
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 16px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } }
+  main { min-width: 0; }
+
+  /* Mac windows: a one-pixel frame, a striped title bar with a close box, a hard drop shadow. */
+  .win { background: var(--paper); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+  .bar { position: relative; display: flex; align-items: center; justify-content: center; height: 22px; border-bottom: 2px solid var(--ink);
+    background: repeating-linear-gradient(var(--paper) 0 3px, var(--ink) 3px 4px) 0 4px / 100% calc(100% - 8px) no-repeat, var(--paper); }
+  .bar::before { content: ''; position: absolute; left: 9px; top: 4px; width: 11px; height: 11px; border: 2px solid var(--ink); background: var(--paper); box-shadow: 0 0 0 3px var(--paper); }
+  .bar h1, .bar h2 { margin: 0; padding: 0 10px; background: var(--paper); font: 600 15px/22px var(--ui); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100% - 60px); }
+  .bar h1 { font-size: 17px; }
+  header.win { margin: 0 0 10px; }
+  header .tag { display: flex; justify-content: space-between; gap: 12px; padding: 3px 10px; font: 12px/1.3 var(--tiny); }
+  @media (max-width: 520px) { header .tag span:last-child { display: none; } }
+
+  .play { padding: 0 0 6px; }
+  .hud { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; align-items: center; padding: 6px 10px 5px; border-bottom: 2px solid var(--ink); }
+  .res { font: 600 24px/1 var(--ui); white-space: nowrap; }
+  .res small { font: 12px/1 var(--tiny); }
+  .week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; font: 11px/1 var(--tiny); text-align: center; }
+  .week span { border: 2px solid var(--ink); padding: 3px 0 2px; position: relative; overflow: hidden; }
+  .week span.past { background: repeating-linear-gradient(45deg, var(--ink) 0 1px, transparent 1px 4px); }
+  .week span.today { background: var(--ink); color: var(--paper); }
+  .goal { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font: 13px/1.2 var(--ui); }
+  .goal span { white-space: nowrap; }
+  .meter { position: relative; flex: 1; min-width: 50px; height: 12px; border: 2px solid var(--ink); background: var(--paper); }
+  .meter i { position: absolute; inset: 0 auto 0 0; width: 0; background: repeating-conic-gradient(var(--ink) 0 25%, var(--paper) 0 50%) 0 0 / 2px 2px; transition: width .3s; }
+  .sub { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0 14px; font: 13px/1.45 var(--ui); min-height: 38px; align-content: flex-start; }
+  .sub b { font-weight: 600; }
+  @media (max-width: 520px) { .hud { grid-template-columns: 1fr; } }
+  canvas#stage { display: block; width: 100%; max-width: calc((100vh - 250px) * 760 / 470); min-width: min(100%, 440px); margin: 0 auto; aspect-ratio: 760 / 470; touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; cursor: crosshair; image-rendering: pixelated; }
+  canvas#stage:focus-visible { outline: 2px dotted var(--ink); outline-offset: -4px; }
+  .log { margin: 0; min-height: 2.8em; font: 14px/1.4 var(--ui); padding: 6px 10px 0; border-top: 2px solid var(--ink); }
+  .log b { font: 11px/1 var(--tiny); color: var(--paper); background: var(--ink); padding: 2px 5px 1px; margin-right: 8px; }
+
+  aside { position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow: auto; scrollbar-width: thin; padding: 0 5px 6px 0; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  .col { padding-bottom: 8px; }
+  .colin { padding: 8px 9px 0; }
+  #afford { font: 11px/1 var(--tiny); }
+  .btn { font: 600 15px/1.1 var(--ui); color: var(--ink); background: var(--paper); border: 2px solid var(--ink); border-radius: 8px; padding: 7px 10px; cursor: pointer; box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink); }
+  .btn[aria-disabled="true"] { color: #29241899; box-shadow: none; border-style: dotted; cursor: default; }
+  .btn:not([aria-disabled="true"]):active { background: var(--ink); color: var(--paper); }
+  #wrapBtn { display: block; width: calc(100% - 8px); margin: 4px 4px 10px; text-align: center; }
+  #wrapBtn small { display: block; font: 11px/1.3 var(--tiny); margin-top: 2px; }
+  .tabs { display: flex; gap: 0; margin: 0 0 8px; border-bottom: 2px solid var(--ink); }
+  .tabs button { flex: 1; font: 600 14px/1 var(--ui); color: var(--ink); background: var(--paper); border: 2px solid var(--ink); border-bottom: 0; border-radius: 6px 6px 0 0; padding: 6px 4px 5px; cursor: pointer; margin-right: -2px; position: relative; }
+  .tabs button[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+  .tabs button .n { font: 11px/1 var(--tiny); }
+  .tabs button .dot { position: absolute; top: 3px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  @media (max-width: 760px) and (min-width: 520px) { .grid2 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up { position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 13px/1.2 var(--ui); color: #29241888; background: var(--paper);
+    border: 2px dotted #29241888; padding: 4px 7px 5px; cursor: pointer; }
+  .up b { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up.can { color: var(--ink); border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up.odd b::before, .bought.odd::before { content: '✱ '; }
+  .up .tag { position: absolute; top: -8px; right: 4px; font: 10px/1 var(--tiny); font-style: normal; color: var(--paper); background: var(--ink); padding: 2px 4px 1px; }
+  .up.new { animation: blink 1s steps(2) 8; }
+  @keyframes blink { 50% { background: var(--ink); color: var(--paper); } }
+  .up:focus-visible, .bought:focus-visible, .btn:focus-visible, .tabs button:focus-visible { outline: 2px dotted var(--ink); outline-offset: 2px; }
+  .empty { font: 13px/1.4 var(--ui); margin: 4px 2px 0; }
+  #tip { position: fixed; z-index: 50; width: 268px; padding: 3px; pointer-events: none; font: 14px/1.35 var(--ui); color: var(--ink);
+    background: var(--paper); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+  #tip .in { border: 2px solid var(--ink); padding: 7px 10px 8px; }
+  #tip .hd { display: block; font: 10px/1.3 var(--tiny); border-bottom: 2px solid var(--ink); padding-bottom: 3px; margin-bottom: 5px; }
+  #tip b { display: block; font: 600 17px/1.1 var(--ui); margin-bottom: 4px; }
+  #tip .fx { display: block; margin-top: 6px; padding: 3px 6px; color: var(--paper); background: var(--ink); }
+  #tip i { display: block; margin-top: 7px; padding-top: 5px; border-top: 2px dotted var(--ink); font-style: normal; }
+  #tip small { display: block; margin-top: 6px; font: 12px/1.2 var(--tiny); }
+  #tip.inline { position: static; width: auto; margin: 8px 0 0; }
+  #bought { margin: 12px 0 0; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 600 14px/1 var(--ui); cursor: pointer; list-style: none; padding: 3px 2px; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: '▸'; transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 2px dotted var(--ink); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 2px 2px; }
+  .bought { max-width: 100%; font: 12.5px/1.1 var(--ui); color: var(--ink); background: var(--paper); border: 2px solid var(--ink); border-radius: 5px; padding: 3px 7px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { border-style: dashed; }
+  .bought:hover, .bought.on { background: var(--ink); color: var(--paper); }
+
+  #ending { margin: 20px auto 0; max-width: 720px; }
+  #ending .body { padding: 10px 22px 18px; }
+  #ending h2.big { font: 600 30px/1.1 var(--ui); margin: 6px 0 10px; }
+  #ending p { margin: 9px 0; }
+  .cert { margin: 14px 0; padding: 4px; border: 2px solid var(--ink); }
+  .cert div { border: 4px double var(--ink); padding: 10px 14px; text-align: center; }
+  .cert small { display: block; font: 11px/1.4 var(--tiny); }
+  .cert strong { display: block; font: 600 26px/1.15 var(--ui); margin: 4px 0; }
+  #shareBtn, #againBtn { font: 600 16px/1 var(--ui); margin: 12px 14px 0 4px; }
+  #againBtn { box-shadow: none; }
+  @media (prefers-reduced-motion: reduce) { .up.new { animation: none; } .meter i, #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="34" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="win">
+    <div class="bar"><h1>Al Dente Encounters</h1></div>
+    <div class="tag"><span>Wibble's Little Kitchen · live from Earth</span><span>a borrowed kitchen · noodle week</span></div>
+  </header>
+  <div class="game">
+    <main>
+      <div class="win play">
+        <div class="bar"><h2 id="winTitle">Monday's Episode · ON AIR</h2></div>
+        <div class="hud">
+          <div class="res" title="Bites: shrunk noodles, chopped. The crew is paid in them: one feeds a stagehand for a week."><span id="bites">0</span> <small>bites</small></div>
+          <div class="week" id="week" title="The week. Inspector E. of the G.B.R. visits on Sunday. Each episode you wrap is one day."></div>
+          <div class="goal" title="Today's running order: get this far, then you can wrap the episode."><span id="waveTxt">Boil-over 1</span><div class="meter"><i id="waveBar"></i></div><span id="quotaTxt">wave 8</span></div>
+          <div class="sub" id="sub"></div>
+        </div>
+        <canvas id="stage" tabindex="0" aria-label="A borrowed Earth kitchen. A giant pot on the stove on the left boils over; noodles slither along the counter toward the sink on the right, where a turkey is thawing. Wibble, a flying saucer, hovers over the counter: move the mouse, drag, or use the arrow keys to steer it, and its beam shrinks the noodles under it to bite size."></canvas>
+        <p class="log" id="log" aria-live="polite"></p>
+      </div>
+    </main>
+    <aside id="side">
+      <div class="win col" id="col">
+        <div class="bar"><h2>Props Dept. <span id="afford"></span></h2></div>
+        <div class="colin">
+          <button id="wrapBtn" class="btn" type="button" aria-describedby="tip" hidden><span id="wrapTxt">Wrap the episode</span><small id="wrapSub"></small></button>
+          <div class="tabs" id="tabs" role="tablist" hidden></div>
+          <div id="shop"></div>
+          <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+        </div>
+      </div>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" class="win" hidden>
+    <div class="bar"><h2>Sunday's Episode · That's a Wrap</h2></div>
+    <div class="body">
+      <h2 class="big">It was never a health inspection.</h2>
+      <div id="story"></div>
+      <button id="shareBtn" class="btn" type="button">Share result</button>
+    </div>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DEBUG = location.search.includes('debug');
+const INK = '#292418', PAPER = '#e6ceac';
+
+// ---------- State ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:34:save';
+let raw = null;
+try { raw = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+const S = E.load(raw);
+const save = () => { S.savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound: whole tone on D, the soundtrack's scale ----------
+const A = createAudio({ sfxTrim: 1, musicTrim: 1 });
+const LV = {};
+let gainNow = 1;
+const T = o => A.tone({ ...o, vol: o.vol * gainNow });
+const N = (kind, o = {}) => A.noiseHit(kind, { ...o, vol: (o.vol ?? 0.25) * gainNow });
+const notes = scale('whole tone', 62);   // D E F# G# A# C
+const rl = {};
+const limit = (k, ms) => { const t = performance.now(); if (t - (rl[k] || 0) < ms && !DEBUG) return false; rl[k] = t; return true; };
+let popStep = 0;
+const sfx = {
+  // The beam on a noodle: a soft wobbling hum, a step down the scale as it shrinks.
+  zap() { if (!limit('zap', 160)) return; T({ type: 'sine', freq: notes(10 - (popStep % 6)), dur: 0.12, vol: 0.05, glide: 0.94, cutoff: 1800 }); },
+  // Shrunk to bite size: a little plink, walking up the whole-tone scale.
+  pop() { if (!limit('pop', 70)) return; popStep++; T({ type: 'pluck', freq: notes(6 + (popStep % 6)), dur: 0.08, vol: 0.1, cutoff: 3200 }); },
+  // A sous-saucer's pop, while you're busy: quieter, higher.
+  drone() { if (!limit('dr', 240)) return; T({ type: 'bell', freq: notes(12 + Math.floor(Math.random() * 6)), dur: 0.06, vol: 0.035 }); },
+  // Into the sink with the turkey: a splash and a sad slide.
+  splash() { if (!limit('sp', 250)) return; N('whoosh', { vol: 0.09, dur: 0.25 }); T({ type: 'triangle', freq: notes(3), dur: 0.25, vol: 0.08, glide: 0.5 }); },
+  // A boil-over cleared: three rising notes.
+  wave() { [0, 2, 4].forEach((d, i) => T({ type: 'keys', freq: notes(d + 6), dur: 0.1, vol: 0.06, at: A.now + i * 0.08 })); },
+  buy() { [0, 1, 2, 3, 5].forEach((d, i) => T({ type: 'pulse', freq: notes(d + 6), dur: 0.05, vol: 0.04, cutoff: 3000, at: A.now + i * 0.05 })); },
+  unlock() { T({ type: 'bell', freq: notes(13), dur: 0.25, vol: 0.06 }); T({ type: 'bell', freq: notes(15), dur: 0.35, vol: 0.05, at: A.now + 0.12 }); },
+  deny() { T({ type: 'square', freq: notes(-2), dur: 0.07, vol: 0.05, cutoff: 700 }); },
+  // That's a wrap: a clapperboard and a little sting.
+  wrap() { const t0 = A.now; N('snare', { vol: 0.12, at: t0 }); [0, 2, 4, 6, 9].forEach((d, i) => T({ type: 'keys', freq: notes(d), dur: 0.3, vol: 0.06, at: t0 + 0.12 + i * 0.1 })); },
+  // The doorbell: two notes a whole tone apart, of course.
+  bell() { T({ type: 'bell', freq: notes(9), dur: 0.5, vol: 0.08 }); T({ type: 'bell', freq: notes(7), dur: 0.7, vol: 0.08, at: A.now + 0.45 }); },
+  // The end: a whole-tone cloud settling, and one last plink.
+  finale() {
+    const t0 = A.now;
+    [0, 1, 2, 3, 4, 5, 6, 7, 8].forEach((d, i) => T({ type: 'bell', freq: notes(d + 3), dur: 0.4, vol: 0.05, at: t0 + i * 0.14 }));
+    [[0, 2, 4], [1, 3, 5], [0, 2, 4, 6]].forEach((ch, k) => ch.forEach(d => T({ type: 'pad', freq: notes(d - 6), dur: 1.3, vol: 0.025, attack: 0.3, at: t0 + 0.4 + k * 1.2 })));
+    T({ type: 'pluck', freq: notes(12), dur: 0.2, vol: 0.08, at: t0 + 4.2 });
+  },
+};
+for (const [name, f] of Object.entries(sfx)) sfx[name] = (...a) => { gainNow = LV[name] ?? 1; try { f(...a); } finally { gainNow = 1; } };
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'wrap', 'bell'], S: () => S, E };
+
+// ---------- Music ----------
+const phaseKey = () => S.ended ? 'end' : S.day >= 6 ? 'sunday' : S.day >= 4 ? 'late' : S.day >= 2 ? 'mid' : 'early';
+let music = null, soundtrack = null, makeSoundtrack = null;
+function song() { return (soundtrack ??= makeSoundtrack(music.strudel))(phaseKey()); }
+import('./music.mjs').then(m => { makeSoundtrack = m.createSoundtrack; return createMusic(A, { song }); })
+  .then(m => { music = m; music.update(); if (DEBUG) window.__game.music = m; }).catch(e => console.warn('music', e));
+let lastPhase = phaseKey();
+const refreshMusic = () => { const k = phaseKey(); if (k !== lastPhase) { lastPhase = k; if (music) music.update(); } };
+
+// ---------- Log ----------
+const logEl = $('log');
+function say(tag, text) {
+  logEl.innerHTML = '<b></b><span></span>';
+  logEl.querySelector('b').textContent = tag;
+  logEl.querySelector('span').textContent = text;
+  S.lastLog = [tag, text];
+}
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const fmt = n => Math.floor(n).toLocaleString('en-US');
+const cm = n => n >= 1e5 ? `${E.short(n / 100)} m` : `${fmt(n)} cm`;
+const POP_LINES = ['And, pop: bite-sized. Lovely.', 'Here\'s one I shrank earlier. And here\'s one I shrank just now.', 'Into the bowl it goes. Don\'t be shy with the ray.',
+  'See how it firms up? That\'s what we\'re after.', 'Gently, gently... and done. Peppercorn-plate size.', 'A little zap, a little patience. That\'s the whole secret, viewers.'];
+const WAVE_LINES = ['Boil-over #, done and dusted. Not a drop in the sink.', 'That\'s boil-over # cleared. Ooh, aren\'t we good.', 'Boil-over #, shrunk to the last strand. And the pot rumbles again...',
+  'Boil-over # done. If yours went a bit soggy, don\'t worry: nobody at home can tell.'];
+const SPLASH_LINES = ['Oh dear: one\'s gone in the sink with the turkey. We\'ll take that boil-over again from the top.', 'Splash. A noodle in the turkey\'s water. Back to the start of that boil-over, viewers, nobody saw.',
+  'And one gets away, into the sink. The turkey doesn\'t mind. The running order does. Again!'];
+const CREW_LINES = ['The sous-saucers have shrunk # on their own. Teamwork, viewers.', '# noodles shrunk by the crew while Wibble wasn\'t looking. Wibble pretends it was.', 'Behind the camera, the sous-saucers zap away: # done. They hum while they work.'];
+
+// ---------- Canvas & 1-bit drawing ----------
+const cv = $('stage'), ctx = cv.getContext('2d');
+const W = 760, H = 470, F = E.FIELD;
+function fit() { const d = Math.min(2, window.devicePixelRatio || 1); cv.width = W * d; cv.height = H * d; }
+fit(); addEventListener('resize', fit);
+// MacPaint patterns, one ink on paper.
+const pats = {};
+function pat(name) {
+  if (pats[name]) return pats[name];
+  const rows = {
+    p50: ['10', '01'], p25: ['1000', '0000', '0010', '0000'], p12: ['10000000', '00000000', '00001000', '00000000'], p75: ['01', '11'],
+    diag: ['1000', '0100', '0010', '0001'], hline: ['1', '0', '0'], tile: ['1111111111111111', ...Array(7).fill('1000000000000000')],
+    brick: ['11111111', '10000000', '10000000', '10000000', '11111111', '00001000', '00001000', '00001000'], wave: ['1100', '0011', '0000', '0000'],
+    grid: ['111111', '100000', '100000', '100000', '100000', '100000'],
+  }[name];
+  const c = Sprites.canvas(rows[0].length, rows.length), x = c.getContext('2d');
+  x.fillStyle = PAPER; x.fillRect(0, 0, c.width, c.height); x.fillStyle = INK;
+  rows.forEach((r, j) => [...r].forEach((b, i) => { if (b === '1') x.fillRect(i, j, 1, 1); }));
+  return (pats[name] = ctx.createPattern(c, 'repeat'));
+}
+// Fill a path in a pattern (or paper) and outline it in ink, crisp.
+function shape(x, path, fill = PAPER, lw = 2) {
+  x.beginPath(); path(x);
+  if (fill) { x.fillStyle = typeof fill === 'string' && fill in pats_ ? pat(fill) : fill; x.fill(); }
+  if (lw) { x.strokeStyle = INK; x.lineWidth = lw; x.lineJoin = 'round'; x.lineCap = 'round'; x.stroke(); }
+}
+const pats_ = { p50: 1, p25: 1, p12: 1, p75: 1, diag: 1, hline: 1, tile: 1, brick: 1, wave: 1, grid: 1 };
+const rect = (a, b, w, h) => x => x.rect(a, b, w, h);
+const ell = (cx, cy, rx, ry) => x => x.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+const rrect = (a, b, w, h, r) => x => x.roundRect(a, b, w, h, r);
+function text(x, s, px, py, { size = 12, font = 'Silkscreen', align = 'left', color = INK, weight = 400 } = {}) {
+  x.font = `${weight} ${size}px "${font}", monospace`; x.fillStyle = color; x.textAlign = align; x.textBaseline = 'alphabetic'; x.fillText(s, px, py);
+}
+
+// ---------- Characters and props (sprites, registered for ?sprites) ----------
+// Wibble: a saucer with a glass dome and two worried eyes, drawn by hand.
+function drawWibble(x, cx, cy, { t = 0, hat = false, auto = false, tea = false, blink = false } = {}) {
+  // underside lights
+  shape(x, ell(cx, cy + 6, 46, 13), 'p50');
+  shape(x, ell(cx, cy, 52, 14), PAPER);
+  shape(x, x => { x.moveTo(cx - 52, cy); x.quadraticCurveTo(cx, cy + 10, cx + 52, cy); }, null, 2);
+  for (let i = -2; i <= 2; i++) { const lit = Math.floor(t * 6 + i) % 2 === 0; shape(x, ell(cx + i * 18, cy + 4 - Math.abs(i), 3.5, 2.5), lit ? INK : PAPER, 1.5); }
+  // dome
+  shape(x, x => { x.moveTo(cx - 28, cy - 6); x.bezierCurveTo(cx - 28, cy - 40, cx + 28, cy - 40, cx + 28, cy - 6); x.closePath(); }, PAPER);
+  shape(x, x => { x.moveTo(cx - 18, cy - 22); x.quadraticCurveTo(cx - 14, cy - 31, cx - 5, cy - 32); }, null, 2);
+  // eyes, a little worried
+  if (blink) { shape(x, x => { x.moveTo(cx - 9, cy - 16); x.lineTo(cx - 3, cy - 16); x.moveTo(cx + 4, cy - 16); x.lineTo(cx + 10, cy - 16); }, null, 2); }
+  else { shape(x, ell(cx - 6, cy - 16, 3.2, 4.2), INK, 0); shape(x, ell(cx + 7, cy - 16, 3.2, 4.2), INK, 0); x.fillStyle = PAPER; x.fillRect(cx - 6, cy - 19, 1.5, 1.5); x.fillRect(cx + 7, cy - 19, 1.5, 1.5); }
+  shape(x, x => { x.moveTo(cx - 11, cy - 21); x.lineTo(cx - 3, cy - 25); x.moveTo(cx + 12, cy - 21); x.lineTo(cx + 4, cy - 25); }, null, 1.5);
+  shape(x, x => { x.moveTo(cx - 4, cy - 9); x.lineTo(cx - 1, cy - 11); x.lineTo(cx + 2, cy - 9); x.lineTo(cx + 5, cy - 11); }, null, 1.5);
+  if (hat) {
+    shape(x, rect(cx - 13, cy - 44, 26, 8), PAPER);
+    shape(x, x => { x.moveTo(cx - 14, cy - 43); x.bezierCurveTo(cx - 26, cy - 52, cx - 16, cy - 68, cx - 6, cy - 60); x.bezierCurveTo(cx - 2, cy - 72, cx + 12, cy - 70, cx + 10, cy - 58); x.bezierCurveTo(cx + 22, cy - 64, cx + 26, cy - 48, cx + 14, cy - 43); x.closePath(); }, PAPER);
+  } else {
+    shape(x, x => { x.moveTo(cx, cy - 37); x.lineTo(cx, cy - 46); }, null, 2); shape(x, ell(cx, cy - 48, 3, 3), INK, 0);
+  }
+  if (auto) {
+    shape(x, x => { x.moveTo(cx + 22, cy - 14); x.lineTo(cx + 34, cy - 40); }, null, 2);
+    shape(x, x => { x.moveTo(cx + 34, cy - 40); x.lineTo(cx + 54, cy - 36); x.lineTo(cx + 33, cy - 31); x.closePath(); }, PAPER, 1.5);
+    text(x, 'AUTO', cx + 36, cy - 34, { size: 6 });
+  }
+  if (tea) { // a thimble of chamomile on the rim, steaming
+    shape(x, rect(cx - 46, cy - 12, 9, 8), 'p25', 1.5);
+    shape(x, x => { x.moveTo(cx - 42, cy - 15); x.quadraticCurveTo(cx - 39, cy - 19, cx - 42, cy - 23); }, null, 1);
+  }
+}
+function drawDrone(x, cx, cy, { t = 0, i = 0, lens = 0, crew = false } = {}) {
+  shape(x, ell(cx, cy + 2, 17, 5), 'p50', 1.5);
+  shape(x, ell(cx, cy, 19, 6), PAPER, 1.5);
+  shape(x, x => { x.moveTo(cx - 9, cy - 3); x.bezierCurveTo(cx - 9, cy - 16, cx + 9, cy - 16, cx + 9, cy - 3); x.closePath(); }, PAPER, 1.5);
+  x.fillStyle = INK; x.fillRect(cx - 3, cy - 9, 2, 3); x.fillRect(cx + 2, cy - 9, 2, 3);
+  // the lens on its belly grows with polishing
+  const lr = 2 + Math.min(4, lens / 4);
+  shape(x, ell(cx, cy + 6, lr, lr * 0.7), Math.floor(t * 4 + i) % 2 ? INK : PAPER, 1.2);
+  if (crew) { shape(x, x => { x.arc(cx, cy - 8, 9, Math.PI * 1.05, Math.PI * 1.95); }, null, 1.5); shape(x, rect(cx + 8, cy - 9, 3, 5), INK, 0); }
+}
+function drawPot(x, big) {
+  // The stove and the giant pot (it's the ray's fault it's this big), lid rattling.
+  shape(x, rect(-4, 300, 116, 175), 'p25');
+  shape(x, rect(8, 318, 92, 16), PAPER, 2);
+  for (let i = 0; i < 4; i++) shape(x, ell(22 + i * 22, 326, 5, 5), PAPER, 1.5);
+  shape(x, rect(20, 352, 70, 100), 'grid', 2);
+  shape(x, x => { x.moveTo(-6, 296); x.lineTo(118, 296); x.lineTo(124, 110); x.lineTo(-10, 110); x.closePath(); }, PAPER, 3);
+  shape(x, rect(-10, 140, 134, 10), 'p50', 2);
+  shape(x, rect(-10, 240, 134, 8), 'p50', 2);
+  shape(x, rect(-14, 104, 142, 10), PAPER, 3);
+  text(x, 'POT', 40, 205, { size: 16 });
+  // boiling foam over the rim
+  const foam = x => { for (let i = 0; i < 7; i++) x.ellipse(i * 20 - 2, 102 - (i % 2) * 6, 14, 10, 0, 0, Math.PI * 2); };
+  shape(x, foam, PAPER, 2);
+}
+function drawSink(x, s, now) {
+  // The sink: the family's turkey thawing in cold water in its bag (the packet says change it every 30 minutes).
+  shape(x, x => { x.moveTo(668, 300); x.lineTo(760, 300); x.lineTo(760, 446); x.lineTo(676, 446); x.closePath(); }, 'p12', 3);
+  shape(x, x => { x.moveTo(684, 318); x.lineTo(752, 318); x.lineTo(752, 430); x.lineTo(690, 430); x.closePath(); }, 'hline', 2);
+  if (SP.turkey) x.drawImage(SP.turkey, 690, 340);
+  // faucet
+  shape(x, x => { x.moveTo(740, 230); x.lineTo(740, 270); x.quadraticCurveTo(740, 284, 726, 284); x.lineTo(716, 284); }, null, 6);
+  shape(x, x => { x.moveTo(740, 230); x.lineTo(740, 270); x.quadraticCurveTo(740, 284, 726, 284); x.lineTo(716, 284); }, null, 0);
+  if (s.odd.water) {
+    for (let i = 0; i < 5; i++) { const by = 420 - ((now * 30 + i * 22) % 90); shape(x, ell(700 + i * 11, by, 2.5, 2.5), PAPER, 1); }
+    shape(x, rect(712, 248, 34, 22), PAPER, 1.5); text(x, 'CHANGED', 714, 257, { size: 6 }); text(x, s.waterAt || '4:30', 716, 266, { size: 7 });
+  }
+}
+
+const SP = {};
+function mk(name, w, h, draw) { const c = Sprites.canvas(w, h); draw(c.getContext('2d'), w, h); SP[name] = c; Sprites.register(name, c); return c; }
+// The inspector: a tall, kind, very precise woman with a clipboard and a tape measure.
+function drawEunice(x, ox, oy) {
+  shape(x, x => { x.moveTo(ox + 8, oy + 150); x.lineTo(ox + 14, oy + 56); x.quadraticCurveTo(ox + 34, oy + 44, ox + 54, oy + 56); x.lineTo(ox + 60, oy + 150); x.closePath(); }, 'diag', 2);
+  shape(x, ell(ox + 34, oy + 34, 15, 18), PAPER, 2);
+  shape(x, x => { x.moveTo(ox + 18, oy + 30); x.quadraticCurveTo(ox + 34, oy + 6, ox + 50, oy + 30); x.quadraticCurveTo(ox + 34, oy + 18, ox + 18, oy + 30); }, INK, 2);
+  shape(x, ell(ox + 28, oy + 36, 4, 3.5), PAPER, 1.4); shape(x, ell(ox + 40, oy + 36, 4, 3.5), PAPER, 1.4);
+  shape(x, x => { x.moveTo(ox + 29, oy + 45); x.quadraticCurveTo(ox + 34, oy + 48, ox + 39, oy + 45); }, null, 1.4);
+  shape(x, rect(ox + 46, oy + 70, 22, 28), PAPER, 2); text(x, 'GBR', ox + 48, oy + 82, { size: 7 });
+  shape(x, ell(ox + 10, oy + 92, 9, 9), 'p50', 2);
+  shape(x, x => { x.moveTo(ox + 10, oy + 101); x.lineTo(ox - 30, oy + 140); }, null, 2);
+}
+function makeSprites() {
+  mk('wibble', 130, 96, x => drawWibble(x, 65, 70, { hat: false }));
+  mk('wibble-dressed', 130, 120, x => drawWibble(x, 62, 94, { hat: true, auto: true, tea: true }));
+  mk('drone', 50, 36, x => drawDrone(x, 25, 20, { lens: 8 }));
+  mk('drone-crew', 50, 36, x => drawDrone(x, 25, 22, { lens: 8, crew: true }));
+  mk('eunice', 80, 156, x => drawEunice(x, 6, 4));
+  mk('pot', 140, 380, x => { x.translate(10, -100); drawPot(x); });
+  Promise.all(['mdi--food-turkey.svg', 'icon-park-solid--trophy.svg'].map(n => Sprites.loadSvg(`./art/${n}`)
+    .then(svg => Sprites.svgToCanvas(Sprites.recolor(svg, INK), 56, 56)))).then(([t0, r0]) => {
+    // Restyled to 1-bit: the turkey in its thawing bag, pixelated, ink on paper; the crest's trophy, tiny.
+    mk('turkey', 56, 64, x => { x.fillStyle = PAPER; x.beginPath(); x.ellipse(28, 38, 27, 20, 0, 0, 7); x.fill(); x.imageSmoothingEnabled = false; x.drawImage(Sprites.pixelate(t0, 28, [INK, PAPER]), 0, 6, 56, 56); x.strokeStyle = INK; x.lineWidth = 1.5; x.setLineDash([3, 2]); x.beginPath(); x.ellipse(28, 38, 27, 20, 0, 0, 7); x.stroke(); x.setLineDash([]); });
+    mk('trophy', 24, 24, x => (x.imageSmoothingEnabled = false, x).drawImage(Sprites.pixelate(r0, 12, [INK, PAPER]), 0, 0, 24, 24));
+    if (Sprites.sheetRequested()) Sprites.showSheet();
+  }).catch(e => { console.warn('art', e); if (Sprites.sheetRequested()) Sprites.showSheet(); });
+}
+
+// ---------- The scene ----------
+let B = E.battle();
+let pos = [380, 370], target = [380, 370], jit = [0, 0], now = 0, lastSteer = -99, steering = false;
+const pops = [], floats = [], splashes = [];
+let signT = 0, bigT = 0, ending = null;
+function drawWall(x) {
+  x.fillStyle = pat('tile'); x.fillRect(0, 0, W, 300);
+  // the window over the sink, a dark November evening outside
+  shape(x, rect(612, 40, 128, 150), 'p75', 3);
+  shape(x, x => { x.moveTo(676, 40); x.lineTo(676, 190); x.moveTo(612, 115); x.lineTo(740, 115); }, null, 3);
+  shape(x, ell(708, 72, 7, 7), PAPER, 1.5);
+  // the calendar: the week of the inspection
+  shape(x, rect(140, 26, 112, 86), PAPER, 2);
+  text(x, 'THIS WEEK', 152, 40, { size: 8 });
+  for (let d = 0; d < 7; d++) {
+    const cx = 148 + (d % 4) * 25, cy = 48 + Math.floor(d / 4) * 30;
+    shape(x, rect(cx, cy, 22, 26), d === S.day && !S.ended ? 'p25' : PAPER, 1.5);
+    text(x, E.DAYS[d].slice(0, 2).toUpperCase(), cx + 4, cy + 10, { size: 7 });
+    if (d < S.day || S.ended) shape(x, x => { x.moveTo(cx + 3, cy + 13); x.lineTo(cx + 19, cy + 24); x.moveTo(cx + 19, cy + 13); x.lineTo(cx + 3, cy + 24); }, null, 2);
+    if (d === 6) shape(x, ell(cx + 11, cy + 18, 9, 7), null, 1.5);
+  }
+  // the letter (framed, once bought)
+  const fx = 268, fy = 30;
+  if (S.odd.frame) shape(x, rect(fx - 8, fy - 8, 86, 104), 'diag', 3);
+  shape(x, rect(fx, fy, 70, 88), PAPER, 1.5);
+  if (S.odd.frame && SP.trophy) x.drawImage(SP.trophy, fx + 26, fy + 3, 18, 18); else shape(x, ell(fx + 35, fy + 11, 6, 6), 'p50', 1);
+  text(x, 'G.B.R.', fx + 35, fy + 30, { size: 8, align: 'center' });
+  for (let i = 0; i < 6; i++) shape(x, x => { x.moveTo(fx + 8, fy + 40 + i * 7); x.lineTo(fx + 62 - (i === 5 ? 24 : 0), fy + 40 + i * 7); }, null, 1);
+  text(x, 'SUNDAY', fx + 35, fy + 84, { size: 7, align: 'center' });
+  if (!S.odd.frame) shape(x, ell(fx + 35, fy + 2, 3, 3), INK, 0);
+  // the APPLAUSE sign (wired to the wrong switch)
+  if (S.odd.sign) {
+    const lit = signT > 0 && Math.floor(signT * 6) % 2 === 0;
+    shape(x, rrect(380, 14, 120, 28, 6), lit ? INK : PAPER, 3);
+    text(x, 'APPLAUSE', 440, 34, { size: 14, align: 'center', color: lit ? PAPER : INK });
+  }
+  // Fan Mail: letters pinned up, one per episode wrapped; the fan club pennant; the fan's drawing
+  for (let i = 0; i < Math.min(12, S.wraps); i++) {
+    const lx = 372 + (i % 6) * 22, ly = 60 + Math.floor(i / 6) * 22 + (i % 2) * 3;
+    shape(x, rect(lx, ly, 18, 13), PAPER, 1.5); shape(x, x => { x.moveTo(lx, ly); x.lineTo(lx + 9, ly + 7); x.lineTo(lx + 18, ly); }, null, 1);
+  }
+  if (E.lv(S, 'club')) {
+    shape(x, x => { x.moveTo(510, 52); x.lineTo(596, 62); x.lineTo(510, 76); x.closePath(); }, 'p25', 2);
+    text(x, 'FAN CLUB', 516, 67, { size: 8 });
+    for (let i = 0; i < Math.min(8, E.lv(S, 'club')); i++) shape(x, ell(516 + i * 10, 88, 3.5, 3.5), 'p50', 1.2);
+  }
+  if (S.odd.crayon) {
+    shape(x, rect(510, 110, 80, 60), PAPER, 1.5);
+    shape(x, x => { x.moveTo(520, 150); x.quadraticCurveTo(540, 124, 556, 146); x.quadraticCurveTo(572, 166, 600, 132); }, null, 4);
+    shape(x, ell(530, 128, 12, 4), PAPER, 1.5); shape(x, ell(530, 125, 5, 4), PAPER, 1.5);
+    text(x, 'BEST!!', 556, 122, { size: 8 });
+  }
+  if (E.lv(S, 'order')) { // the running order clipboard
+    shape(x, rect(142, 128, 44, 58), PAPER, 2); shape(x, rect(155, 124, 18, 8), INK, 0);
+    for (let i = 0; i < 3 + E.lv(S, 'order'); i++) shape(x, x => { x.moveTo(148, 142 + i * 8); x.lineTo(180, 142 + i * 8); }, null, 1);
+  }
+  if (E.lv(S, 'nerve') >= 2) { shape(x, rect(204, 140, 50, 34), PAPER, 1.5); text(x, 'IN  4', 210, 154, { size: 8 }); text(x, 'OUT 4', 210, 166, { size: 8 }); }
+  // the cold rinse tap over the counter
+  if (E.lv(S, 'rinse') >= 1) {
+    shape(x, x => { x.moveTo(340, 200); x.lineTo(340, 232); x.quadraticCurveTo(340, 246, 354, 246); x.lineTo(362, 246); }, null, 5);
+    shape(x, rect(330, 190, 20, 10), PAPER, 2);
+    for (let i = 0; i < 3; i++) { const dy = (now * 90 + i * 20) % 50; shape(x, ell(362, 250 + dy, 1.5, 2.5), INK, 0); }
+  }
+}
+function drawCounter(x) {
+  // the counter top, in perspective, and its front
+  shape(x, x => { x.moveTo(100, F.y0 - 8); x.lineTo(676, F.y0 - 8); x.lineTo(676, F.y1 + 6); x.lineTo(100, F.y1 + 6); x.closePath(); }, PAPER, 3);
+  x.save(); x.globalAlpha = 0.55; x.fillStyle = pat('p12'); x.fillRect(102, F.y0 - 6, 572, F.y1 - F.y0 + 10); x.restore();
+  shape(x, rect(100, F.y1 + 6, 576, 30), 'hline', 3);
+  // the backsplash edge
+  shape(x, x => { x.moveTo(100, F.y0 - 8); x.lineTo(676, F.y0 - 8); }, null, 3);
+}
+function drawProps(x) {
+  // Things on the back of the counter.
+  const R = E.lv(S, 'rinse');
+  if (R >= 2) { // colander
+    shape(x, x => { x.moveTo(420, 268); x.lineTo(470, 268); x.quadraticCurveTo(468, 292, 445, 293); x.quadraticCurveTo(422, 292, 420, 268); }, PAPER, 2);
+    for (let i = 0; i < 5; i++) shape(x, ell(430 + i * 7, 278 + (i % 2) * 5, 1.2, 1.2), INK, 0);
+  }
+  if (R >= 3) { // ice bucket by the pot
+    shape(x, x => { x.moveTo(118, 252); x.lineTo(152, 252); x.lineTo(148, 290); x.lineTo(122, 290); x.closePath(); }, 'hline', 2);
+    for (let i = 0; i < 3; i++) shape(x, rect(122 + i * 9, 244 - (i % 2) * 4, 8, 8), PAPER, 1.5);
+  }
+  if (S.odd.ruler) { // the ruler, propped against the backsplash
+    shape(x, x => { x.moveTo(176, 286); x.lineTo(300, 260); x.lineTo(302, 268); x.lineTo(178, 294); x.closePath(); }, PAPER, 1.5);
+    for (let i = 1; i < 12; i++) { const px = 178 + i * 10.3, py = 293 - i * 2.13; shape(x, x => { x.moveTo(px, py); x.lineTo(px + 0.6, py - (i % 2 ? 3 : 5)); }, null, 1); }
+  }
+  const chop = E.lv(S, 'chop');
+  if (chop) { // the chopping board, with its pile of tiny bits
+    shape(x, rrect(486, 262, 64, 26, 4), 'wave', 2);
+    shape(x, x => { x.moveTo(500, 258); x.lineTo(538, 250); x.lineTo(540, 255); x.lineTo(504, 262); x.closePath(); }, PAPER, 1.5);
+    for (let i = 0; i < Math.min(16, chop); i++) x.fillRect(494 + (i * 7) % 48, 272 + Math.floor(i / 7) * 4, 3, 2);
+  }
+  // the bowl of bites, filling up
+  shape(x, x => { x.moveTo(566, 264); x.lineTo(636, 264); x.quadraticCurveTo(632, 296, 601, 296); x.quadraticCurveTo(570, 296, 566, 264); }, PAPER, 2.5);
+  const fill = Math.min(1, Math.log10(1 + S.bites) / 8);
+  if (fill > 0.02) shape(x, ell(601, 264 - fill * 8, 34 * (0.6 + fill * 0.4), 4 + fill * 4), 'p50', 1.5);
+  text(x, 'BITES', 601, 286, { size: 7, align: 'center' });
+  if (E.lv(S, 'tips')) { shape(x, x => { x.moveTo(646, 270); x.lineTo(662, 270); x.lineTo(660, 290); x.lineTo(648, 290); x.closePath(); }, 'p25', 1.5); text(x, 'TIPS', 654, 266, { size: 6, align: 'center' }); }
+  if (E.lv(S, 'nerve') >= 3) shape(x, ell(240, 284, 30, 7), PAPER, 2), shape(x, ell(240, 284, 16, 3.5), null, 1);
+  if (E.lv(S, 'night')) { shape(x, rect(650, 236, 14, 20), PAPER, 1.5); shape(x, ell(657, 242, 4, 4), 'p25', 1); }
+}
+function noodlePath(n) {
+  // A noodle as a wiggle trailing behind its head, length by its size, shrinking as it's zapped.
+  const base = Math.min(170, 20 + 26 * Math.log10(1 + n.L0));
+  const len = Math.max(6, base * Math.pow(Math.max(0.02, n.L / n.L0), 0.55));
+  const k = Math.max(3, Math.round(len / 7)), seg = len / k, pts = [];
+  for (let i = 0; i <= k; i++) pts.push([n.x - i * seg, n.y + Math.sin(i * 0.9 + n.age * 4 + n.ph) * (3 + Math.min(6, len / 20))]);
+  return pts;
+}
+function drawNoodle(x, n) {
+  const soggy = Math.min(1, Math.max(0, (n.L / n.L0 - 1) / (E.SWELL_CAP - 1)));
+  const th = (n.big ? 18 : 4 + Math.min(3, Math.log10(1 + n.L0) / 2)) + soggy * 5;
+  const pts = n.big ? bigPath(n) : noodlePath(n);
+  const line = x => { x.moveTo(...pts[0]); for (let i = 1; i < pts.length; i++) x.lineTo(...pts[i]); };
+  x.beginPath(); line(x); x.strokeStyle = INK; x.lineWidth = th + 4; x.lineJoin = x.lineCap = 'round'; x.stroke();
+  x.beginPath(); line(x); x.strokeStyle = soggy > 0.35 ? pat(soggy > 0.7 ? 'p50' : 'p25') : PAPER; x.lineWidth = th; x.stroke();
+  if (n.hit > 0 && Math.floor(now * 20) % 2) { x.beginPath(); line(x); x.strokeStyle = pat('diag'); x.lineWidth = th; x.stroke(); }
+}
+function bigPath(n) {
+  const pts = [];
+  for (let i = 0; i <= 60; i++) { const u = i / 60; pts.push([110 + u * (n.x - 110 + 420), 300 + 70 * Math.sin(u * Math.PI * 2.4 + now * 0.8) * (0.4 + u * 0.6) + 60 * u]); }
+  return pts;
+}
+function drawBeam(x, sx, sy, hx, hy) {
+  const R = E.radius(S), on = !S.ended && !ending;
+  if (!on) return;
+  const ray = E.lv(S, 'ray');
+  x.save();
+  x.beginPath(); x.moveTo(hx - 16, hy + 8); x.lineTo(hx + 16, hy + 8); x.lineTo(sx + R, sy); x.ellipse(sx, sy, R, R * 0.42, 0, 0, Math.PI); x.lineTo(sx - R, sy); x.closePath();
+  x.globalAlpha = 0.55; x.fillStyle = pat(ray >= 20 ? 'p50' : ray >= 8 ? 'p25' : 'p12'); x.fill();
+  x.globalAlpha = 1; x.strokeStyle = INK; x.lineWidth = 1.5; x.setLineDash([4, 4]); x.lineDashOffset = -now * 30; x.stroke(); x.setLineDash([]);
+  x.restore();
+  shape(x, ell(sx, sy, R, R * 0.42), null, 2);
+  for (let i = 0; i < Math.min(4, 1 + Math.floor(ray / 6)); i++) { const r = ((now * 0.8 + i / 4) % 1) * R; shape(x, ell(sx, sy, r, r * 0.42), null, 1); }
+}
+function draw() {
+  const x = ctx, d = cv.width / W;
+  x.setTransform(d, 0, 0, d, 0, 0);
+  x.fillStyle = PAPER; x.fillRect(0, 0, W, H);
+  drawWall(x);
+  drawCounter(x);
+  drawProps(x);
+  drawPot(x);
+  drawSink(x, S, now);
+  // ON AIR light
+  shape(x, rrect(10, 10, 84, 24, 5), Math.floor(now) % 2 || S.ended ? INK : PAPER, 2);
+  text(x, S.ended ? 'WRAPPED' : 'ON AIR', 52, 27, { size: 11, align: 'center', color: Math.floor(now) % 2 || S.ended ? PAPER : INK });
+  for (const n of B.noodles) drawNoodle(x, n);
+  if (S.ended && !B.noodles.length) drawNoodle(x, { big: true, x: 330, y: 380, L: 3, L0: 1, age: now, ph: 0 });
+  // drones and their zaps
+  const nd = E.drones(S), lens = E.lv(S, 'lens'), crew = E.standingCrew(S);
+  for (let i = 0; i < nd; i++) {
+    const [dx, dy] = E.dronePos(i, now);
+    const zap = lastZaps.get(i);
+    if (zap && !S.ended) { const n = B.noodles.find(n => n.id === zap); if (n) shape(x, x => { x.moveTo(dx, dy + 8); x.lineTo(n.x, n.y); }, null, 1 + Math.min(3, lens / 8)); }
+    drawDrone(x, dx, dy, { t: now, i, lens, crew: i < crew });
+  }
+  // Wibble
+  const hx = pos[0] + jit[0], hy = Math.min(pos[1] - 112, 250) + jit[1] + Math.sin(now * 2) * 3;
+  const sx = pos[0] + jit[0] * 0.6, sy = pos[1] + jit[1] * 0.6;
+  if (!ending && !S.ended) drawBeam(x, sx, sy, hx, hy);
+  const wx = S.ended ? 240 : ending ? ending.wx : hx, wy = S.ended ? 262 : ending ? ending.wy : hy;
+  drawWibble(x, wx, wy, { t: now, hat: !!S.odd.hat, auto: !!E.lv(S, 'auto'), tea: E.lv(S, 'nerve') >= 1, blink: Math.floor(now * 0.7) % 5 === 0 && now % 1.43 < 0.15 });
+  // bites flying to the bowl, splashes, floating numbers
+  for (const p of pops) { const u = Math.min(1, p.t / 0.6); const px = p.x + (601 - p.x) * u, py = p.y + (262 - p.y) * u - Math.sin(u * Math.PI) * 60; x.fillStyle = INK; x.fillRect(px - 2, py - 2, 4, 4); }
+  for (const s of splashes) for (let i = 0; i < 6; i++) { const a = -Math.PI / 2 + (i - 2.5) * 0.35, r = s.t * 70; shape(x, ell(700 + Math.cos(a) * r, 340 + Math.sin(a) * r + s.t * s.t * 80, 2, 3), PAPER, 1); }
+  for (const f of floats) text(x, f.s, f.x, f.y - f.t * 30, { size: 10, align: 'center' });
+  // Sunday: the Big One and the doorbell
+  if (B.bigOne && !S.ended) {
+    const left = Math.max(0, BIG_SECS - S.big);
+    shape(x, rrect(260, 196, 240, 40, 6), PAPER, 3);
+    text(x, `THE BIG ONE · ${cm(B.bigOne.L)}`, 380, 212, { size: 10, align: 'center' });
+    text(x, ending ? 'DING DONG' : `inspector due in 0:${String(Math.ceil(left)).padStart(2, '0')}`, 380, 228, { size: 10, align: 'center' });
+  }
+  if ((ending && ending.t > 2) || S.ended) { if (SP.eunice) x.drawImage(SP.eunice, S.ended ? 560 : Math.max(560, 760 - (ending.t - 2) * 90), 140); }
+  if (S.ended) { shape(x, rect(420, 150, 120, 60), PAPER, 3); text(x, 'CERTIFIED', 480, 172, { size: 11, align: 'center' }); text(x, 'LONGEST NOODLE', 480, 186, { size: 8, align: 'center' }); text(x, cm(S.record || 0), 480, 200, { size: 9, align: 'center' }); }
+  if (!S.started && !S.ended) {
+    shape(x, rrect(220, 330, 320, 50, 8), PAPER, 3);
+    text(x, 'Move, drag or use the arrow keys', 380, 351, { size: 15, font: 'Pixelify Sans', align: 'center' });
+    text(x, 'to steer Wibble over the noodles', 380, 370, { size: 15, font: 'Pixelify Sans', align: 'center' });
+  }
+}
+
+// ---------- Steering ----------
+const toCanvas = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height]; };
+function aim(p) { target = E.clampSpot(p); lastSteer = now; if (!S.started && !S.ended) { S.started = true; say('ON AIR', 'Welcome back, viewers! Today: noodles. Steer the saucer over them and the ray shrinks them to bite size. Mind the soggy ones: a noodle left out swells.'); } }
+cv.addEventListener('pointerdown', e => { A.unlock(); steering = true; cv.setPointerCapture?.(e.pointerId); aim(toCanvas(e)); });
+cv.addEventListener('pointermove', e => { if (steering || e.pointerType === 'mouse') aim(toCanvas(e)); });
+const stop = () => { steering = false; };
+cv.addEventListener('pointerup', stop); cv.addEventListener('pointercancel', stop);
+const keys = new Set();
+cv.addEventListener('keydown', e => { const k = { ArrowLeft: 1, ArrowRight: 1, ArrowUp: 1, ArrowDown: 1, a: 1, d: 1, w: 1, s: 1 }[e.key]; if (k) { keys.add(e.key); e.preventDefault(); } });
+cv.addEventListener('keyup', e => keys.delete(e.key));
+cv.addEventListener('blur', () => keys.clear());
+
+// ---------- HUD ----------
+let bpsAcc = 0, bpsT = 0, crewPops = 0, lastCrewLog = 0;
+const lastZaps = new Map();
+function renderHud() {
+  $('bites').textContent = E.short(S.bites);
+  $('week').innerHTML = E.DAYS.map((d, i) => `<span class="${i < S.day || S.ended ? 'past' : i === S.day ? 'today' : ''}">${d.slice(0, 3)}</span>`).join('');
+  const q = E.quota(S);
+  $('winTitle').textContent = S.ended ? 'Sunday\'s Episode · Wrapped' : `${E.DAYS[S.day]}'s Episode · ON AIR`;
+  if (S.ended) { $('waveTxt').textContent = 'The Big One'; $('quotaTxt').textContent = 'certified'; }
+  else if (S.day === 6) { $('waveTxt').textContent = B.bigOne ? 'The Big One' : `Boil-over ${S.wave}`; $('quotaTxt').textContent = 'the Big One'; }
+  else { $('waveTxt').textContent = `Boil-over ${S.wave}`; $('quotaTxt').textContent = S.best >= q ? `wave ${q} ✓` : `wave ${q}`; }
+  $('waveBar').style.width = `${Math.min(100, (S.ended ? 1 : S.best / q) * 100)}%`;
+  const nd = E.drones(S), sp = E.waveSpec(S.wave);
+  $('sub').innerHTML = [
+    `Ray <b>${cm(E.rayDps(S))}/s</b>`,
+    nd ? `Sous-saucers <b>${nd} × ${cm(E.droneDps(S))}/s</b>` : '',
+    `Soggy <b>+${(E.swell(S) * 100).toFixed(1)}%/s</b>`,
+    `Noodles <b>${cm(sp.L)}</b> → <b>${E.short(sp.bites * E.biteMult(S))} bites</b>`,
+    S.bps ? `<b>${E.short(S.bps)}</b> bites/s` : '',
+    S.fanTotal ? `Fan Mail <b>${fmt(S.fan)}</b>` : '',
+  ].filter(Boolean).map(s => `<span>${s}</span>`).join('');
+}
+
+// ---------- Shop ----------
+const shop = $('shop');
+const newUntil = {};
+let shopSig = '';
+const clone = () => E.load(JSON.parse(JSON.stringify(S)));
+const cellName = it => it.levels ? it.levels[Math.min(it.levels.length - 1, E.lv(S, it.id))] : it.name;
+const cur = it => it.cur === 'fan' ? 'fan mail' : 'bites';
+function cellCost(it) {
+  const c = `${E.short(E.cost(S, it.id))} ${it.cur === 'fan' ? '✉' : ''}`.trim();
+  return it.kind === 'odd' || it.max === 1 || it.levels ? c : `${c} · lv ${E.lv(S, it.id)}`;
+}
+const tabOf = it => it.cur === 'fan' ? 'fan' : 'bites';
+const seenTab = { bites: new Set(), fan: new Set() };
+function renderShop() {
+  const fresh = S.ended ? [] : E.reveal(S);
+  const all = S.ended ? [] : E.visible(S);
+  for (const id of fresh) { if (S.started) sfx.unlock(); newUntil[id] = performance.now() + 9000; S.newSeen.push(id); }
+  const hasFan = S.fanTotal > 0;
+  if (!hasFan) S.tab = 'bites';
+  const list = all.filter(i => tabOf(i) === S.tab);
+  const sig = S.tab + '|' + list.map(i => `${i.id}:${cellName(i)}:${cellCost(i)}`).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    const g = document.createElement('div'); g.className = 'grid2'; shop.append(g);
+    if (!list.length) { const p = document.createElement('p'); p.className = 'empty'; p.textContent = S.tab === 'fan' ? 'Nothing left to spend Fan Mail on.' : 'More props turn up as the boil-overs get bigger.'; shop.append(p); }
+    for (const it of list) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (it.kind === 'odd' ? ' odd' : '');
+      b.dataset.id = it.id;
+      b.innerHTML = '<b></b><em></em>';
+      b.querySelector('b').textContent = cellName(it);
+      b.querySelector('em').textContent = cellCost(it);
+      b.setAttribute('aria-describedby', 'tip');
+      b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, upTip(it.id)); });
+      b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+      b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, upTip(it.id)); });
+      b.addEventListener('blur', hideTip);
+      b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+      b.addEventListener('click', () => {
+        A.unlock();
+        if (b.dataset.touch && tipFor !== it.id) { showTip(b, upTip(it.id)); return; }
+        if (b.getAttribute('aria-disabled') !== 'true') doBuy(it.id); else sfx.deny();
+      });
+      g.append(b);
+    }
+  }
+  const t = performance.now();
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = E.canBuy(S, b.dataset.id);
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > t;
+    b.classList.toggle('new', isNew && !reduced);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+    if (isNew) S.newSeen = S.newSeen.filter(i => i !== b.dataset.id);
+  }
+  const count = tab => all.filter(i => tabOf(i) === tab && E.canBuy(S, i.id)).length;
+  const total = count('bites') + count('fan');
+  $('afford').textContent = total ? `· ${total} affordable` : '';
+  // tabs, one per currency, once there's Fan Mail
+  const tabs = $('tabs');
+  tabs.hidden = !hasFan || S.ended;
+  if (hasFan) {
+    const tsig = ['bites', 'fan'].map(k => `${k}${count(k)}${S.tab}${S.newSeen.some(id => tabOf(E.BY_ID[id]) === k && k !== S.tab)}`).join();
+    if (tabs.dataset.sig !== tsig) {
+      tabs.dataset.sig = tsig;
+      tabs.innerHTML = '';
+      for (const [k, label] of [['bites', 'Bites'], ['fan', 'Fan Mail']]) {
+        const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', String(S.tab === k));
+        const n = count(k), dot = k !== S.tab && S.newSeen.some(id => tabOf(E.BY_ID[id]) === k);
+        b.innerHTML = `${label} <span class="n">${n ? `(${n})` : ''}</span>${dot ? '<i class="dot" aria-label="new"></i>' : ''}`;
+        b.addEventListener('click', () => { S.tab = k; hideTip(true); renderShop(); save(); });
+        tabs.append(b);
+      }
+    }
+  }
+  renderWrap();
+  renderShelf();
+  $('col').hidden = S.ended || (!all.length && !S.fanTotal && shelfEl.hidden && $('wrapBtn').hidden);
+}
+function wrapInfo() {
+  const q = E.quota(S), f = E.fanFor(S);
+  return { id: 'wrap', hd: 'CLAPPERBOARD', name: `Wrap ${E.DAYS[S.day]}'s episode`,
+    desc: `Ends today's show and starts ${E.DAYS[S.day + 1] || 'the next'}'s. The counter is mopped: boil-overs start again from ${E.startWave({ ...S, bestPrev: S.best, perm: S.perm }) > 1 ? `boil-over ${E.startWave({ ...S, bestPrev: S.best, perm: S.perm })}` : 'the first'}, and bites and the Bites props reset${E.standingCrew(S) ? ` (your ${E.standingCrew(S)} standing crew stay)` : ''}. Fan Mail, its props and the set dressing (✱) stay all week.`,
+    fx: S.best >= q ? `Fan Mail for wrapping now: +${fmt(f)} (it grows with the furthest boil-over you reach today)` : `Today's running order: reach boil-over ${q} first (furthest so far: ${S.best}).`,
+    joke: 'The episode airs back home overnight. The fans write in by morning.', foot: S.best >= q ? `+${fmt(f)} fan mail` : `boil-over ${S.best} of ${q}` };
+}
+function renderWrap() {
+  const b = $('wrapBtn');
+  const show = !S.ended && S.day < 6 && (S.best >= E.quota(S) - 2 || S.wraps > 0 || S.day > 0);
+  b.hidden = !show;
+  if (!show) return;
+  const can = E.canWrap(S);
+  b.setAttribute('aria-disabled', String(!can));
+  $('wrapTxt').textContent = `🎬 Wrap ${E.DAYS[S.day]}'s episode`;
+  $('wrapSub').textContent = can ? `+${fmt(E.fanFor(S))} fan mail` : `reach boil-over ${E.quota(S)}`;
+  if (tipFor === 'wrap') showTip(b, wrapInfo());
+}
+let wrapTouched = false;
+$('wrapBtn').addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip($('wrapBtn'), wrapInfo()); });
+$('wrapBtn').addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+$('wrapBtn').addEventListener('focus', () => { if (!$('wrapBtn').dataset.touch) showTip($('wrapBtn'), wrapInfo()); });
+$('wrapBtn').addEventListener('blur', hideTip);
+$('wrapBtn').addEventListener('pointerdown', e => { $('wrapBtn').dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+$('wrapBtn').addEventListener('click', () => {
+  A.unlock();
+  const b = $('wrapBtn');
+  if (b.dataset.touch && !wrapTouched && tipFor !== 'wrap') { wrapTouched = true; showTip(b, wrapInfo()); return; }
+  if (!E.canWrap(S)) { sfx.deny(); showTip(b, wrapInfo()); return; }
+  doWrap();
+});
+function doWrap() {
+  const day = E.DAYS[S.day], first = S.fanTotal === 0;
+  const f = E.wrap(S);
+  B = E.battle(); hideTip(true);
+  sfx.wrap();
+  say('THAT\'S A WRAP', first
+    ? `${day}'s episode airs back home, and by morning: ${fmt(f)} fan letter${f === 1 ? '' : 's'}! Viewers LOVE the big ones. One says they've told "the Records people" about you. Spend Fan Mail in its own tab: it stays all week.`
+    : `${day}'s episode airs overnight. +${fmt(f)} fan mail by morning. ${E.DAYS[S.day]}: the pot is back on, the counter is mopped, and the running order says boil-over ${E.quota(S)}.`);
+  renderShop(); renderHud(); refreshMusic(); save();
+}
+const r2 = v => v < 10 ? v.toFixed(2) : E.short(v);
+function effect(id) {
+  const it = E.BY_ID[id], T2 = clone();
+  if (it.kind === 'odd') return 'Changes nothing in the numbers. Goes on the set, for good.';
+  T2.fan = T2.bites = Infinity; E.buy(T2, id);
+  switch (id) {
+    case 'ray': return `Ray: ${cm(E.rayDps(S))}/s → ${cm(E.rayDps(T2))}/s`;
+    case 'drone': return `Sous-saucers: ${E.drones(S)} → ${E.drones(T2)} (each ${cm(E.droneDps(S))}/s)`;
+    case 'lens': return `Each sous-saucer: ${cm(E.droneDps(S))}/s → ${cm(E.droneDps(T2))}/s`;
+    case 'beam': return `Beam width: ${E.radius(S) * 2} → ${E.radius(T2) * 2}`;
+    case 'chop': return `Bites a noodle: ×${r2(E.biteMult(S))} → ×${r2(E.biteMult(T2))}`;
+    case 'rinse': return `Soggy swelling: +${(E.swell(S) * 100).toFixed(1)}%/s → +${(E.swell(T2) * 100).toFixed(1)}%/s`;
+    case 'nerve': return `Steering speed ${E.speed(S)} → ${E.speed(T2)}; jitter ${E.jitter(S)} → ${E.jitter(T2)}`;
+    case 'auto': return 'Let go for two seconds and the saucer steers itself to the fattest noodle.';
+    case 'club': return `Every ray: ×${r2(E.fanMult(S))} → ×${r2(E.fanMult(T2))} (the saucer: ${cm(E.rayDps(S))}/s → ${cm(E.rayDps(T2))}/s)`;
+    case 'tips': return `Bites a noodle: ×${r2(E.biteMult(S))} → ×${r2(E.biteMult(T2))}`;
+    case 'order': return `A new episode starts at ${E.lv(S, 'order') ? Math.round([0, 25, 35, 45][E.lv(S, 'order')]) + '%' : 'boil-over 1'} → ${[0, 25, 35, 45][E.lv(T2, 'order')]}% of the day before's furthest boil-over, with the bites those would have paid`;
+    case 'crew': return `Sous-saucers that stay between episodes: ${E.standingCrew(S)} → ${E.standingCrew(T2)}`;
+    case 'night': return `While you're away the crew earns ${Math.round(E.offlineRate(S) * 100)}% → ${Math.round(E.offlineRate(T2) * 100)}% of your bites a second (up to 6 hours)`;
+  }
+  return '';
+}
+let tipFor = null;
+function upTip(id) {
+  const it = E.BY_ID[id], l = E.lv(S, id);
+  const lvl = it.kind === 'odd' ? '' : it.max === 1 ? '' : ` · level ${l}${it.max <= 6 ? ` of ${it.max}` : ''}`;
+  return { id, hd: it.kind === 'odd' ? 'SET DRESSING · STAYS ALL WEEK' : it.cur === 'fan' ? 'FAN MAIL · STAYS ALL WEEK' : 'PROPS · RESET EACH EPISODE', name: cellName(it), desc: it.desc, fx: effect(id),
+    joke: it.jokes ? it.jokes[Math.min(it.jokes.length - 1, l)] : it.joke, foot: `${fmt(E.cost(S, id))} ${cur(it)}${lvl}` };
+}
+function showTip(b, it) {
+  if (!it) return;
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<div class="in"><span class="hd"></span><b></b><span class="d"></span><span class="fx"></span><i></i><small></small></div>';
+  tip.querySelector('.hd').textContent = it.hd || '';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('.d').textContent = it.desc;
+  tip.querySelector('.fx').textContent = it.fx || ''; tip.querySelector('.fx').hidden = !it.fx;
+  tip.querySelector('i').textContent = it.joke || ''; tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || ''; tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline && innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { if (tip.previousElementSibling !== shelfEl) shelfEl.after(tip); } else if (tip.parentElement !== document.body) { document.body.append(tip); tipMoved = performance.now(); }
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  if (b.closest('#side') && r.left > t.width + 24 && innerWidth > 760) {
+    const col = $('side').getBoundingClientRect();
+    tip.style.left = `${col.left - t.width - 14}px`;
+    tip.style.top = `${Math.max(8, Math.min(innerHeight - t.height - 8, r.top + r.height / 2 - t.height / 2))}px`;
+  } else {
+    tip.style.left = `${Math.max(8, Math.min(innerWidth - t.width - 8, r.left))}px`;
+    tip.style.top = `${r.bottom + 8 + t.height < innerHeight ? r.bottom + 8 : Math.max(8, r.top - t.height - 8)}px`;
+  }
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && force !== true) return;
+  tip.hidden = true; tip.classList.remove('inline'); tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+let tipMoved = 0;
+addEventListener('scroll', () => { if (performance.now() - tipMoved > 400) hideTip(); }, true);
+addEventListener('resize', () => { if (innerWidth > 760) hideTip(true); });
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .bought, #wrapBtn')) hideTip(); });
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!S.boughtOpen === shelfEl.open) return;
+  S.boughtOpen = shelfEl.open; save();
+});
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(i => i.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (it.kind === 'odd' ? ' odd' : '');
+    b.textContent = it.levels ? it.levels[it.levels.length - 1] : it.name; b.dataset.id = it.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const joke = it.jokes ? it.jokes.join(' ') : it.joke;
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, { id: 'bought:' + it.id, hd: it.kind === 'odd' ? 'SET DRESSING · ON THE SET' : it.cur === 'fan' ? 'FAN MAIL · KEPT' : 'PROPS · THIS EPISODE', name: b.textContent, desc: it.desc, joke, foot: it.kind === 'odd' ? 'for the picture' : 'bought', inline: true }); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', hideTip);
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + it.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+function doBuy(id) {
+  const it = E.BY_ID[id], before = E.lv(S, id);
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  hideTip(true); sfx.buy();
+  if (id === 'water') { const d = new Date(); S.waterAt = `${d.getHours() % 12 || 12}:${String(d.getMinutes()).padStart(2, '0')}`; }
+  const joke = it.jokes ? it.jokes[Math.min(it.jokes.length - 1, before)] : it.joke;
+  say(it.kind === 'odd' ? 'SET DRESSING' : it.cur === 'fan' ? 'FAN MAIL' : 'FROM THE PROPS DEPT.', `${it.levels ? it.levels[Math.min(it.levels.length - 1, before)] : it.name}${it.max > 1 && !it.levels ? ` (level ${before + 1})` : ''}: ${joke}`);
+  renderShop(); renderHud(); save();
+}
+
+// ---------- The clock ----------
+const BIG_SECS = 25;
+let waveLogT = 0, popLogT = 0, swellHint = false;
+function tick(dt) {
+  if (S.ended) return;
+  if (ending) { ending.t += dt; ending.wx += (240 - ending.wx) * Math.min(1, dt * 1.5); ending.wy += (262 - ending.wy) * Math.min(1, dt * 1.5); if (ending.t > 6) end(false); return; }
+  if (!S.started) return;
+  S.time += dt;
+  // steering: keys move the target; the autopilot takes over when you let go
+  if (keys.size) {
+    const v = E.speed(S) * dt; let [tx, ty] = target;
+    if (keys.has('ArrowLeft') || keys.has('a')) tx -= v; if (keys.has('ArrowRight') || keys.has('d')) tx += v;
+    if (keys.has('ArrowUp') || keys.has('w')) ty -= v; if (keys.has('ArrowDown') || keys.has('s')) ty += v;
+    target = E.clampSpot([tx, ty]); lastSteer = now;
+  } else if (E.lv(S, 'auto') && now - lastSteer > 2 && !steering) {
+    const n = E.fattest(B); if (n) target = E.clampSpot([n.big ? n.x : n.x + 20, n.y]);
+  }
+  pos = E.fly(S, pos, target, dt);
+  const j = E.jitter(S);
+  jit = [jit[0] * 0.6 + (Math.random() - 0.5) * j * 0.8, jit[1] * 0.6 + (Math.random() - 0.5) * j * 0.5];
+  const spot = [pos[0] + jit[0] * 0.6, pos[1] + jit[1] * 0.6];
+  const ev = E.step(S, B, dt, spot, now);
+  lastZaps.clear(); for (const [i, id] of ev.zaps) lastZaps.set(i, id);
+  if (B.noodles.some(n => n.hit > 0.1)) sfx.zap();
+  for (const p of ev.pops) {
+    pops.push({ x: p.x, y: p.y, t: 0 }); floats.push({ x: p.x, y: p.y - 14, s: `+${E.short(p.b)}`, t: 0 });
+    bpsAcc += p.b;
+    const byBeam = Math.hypot(p.x - spot[0], p.y - spot[1]) < E.radius(S) + 20;
+    if (byBeam) sfx.pop(); else { sfx.drone(); crewPops++; }
+  }
+  if (ev.pops.length && now - popLogT > 40 && Math.random() < 0.3) { popLogT = now; say('CHEF WIBBLE', pick(POP_LINES)); }
+  if (crewPops >= 12 && now - lastCrewLog > 70) { lastCrewLog = now; say('BEHIND THE CAMERA', pick(CREW_LINES).replace('#', fmt(crewPops))); crewPops = 0; }
+  if (ev.escapes) { sfx.splash(); for (let i = 0; i < ev.escapes; i++) splashes.push({ t: 0 }); signT = S.odd.sign ? 1.6 : 0; }
+  if (ev.failed) { say(S.odd.sign ? 'APPLAUSE (WRONG SWITCH)' : 'SPLASH', pick(SPLASH_LINES)); if (!swellHint && S.wave >= 4) { swellHint = true; } }
+  if (ev.cleared) { sfx.wave(); if (now - waveLogT > 20) { waveLogT = now; say('BOIL-OVER CLEARED', pick(WAVE_LINES).replace('#', ev.cleared)); } if (S.best === E.quota(S) && S.day < 6) say('RUNNING ORDER', `That's today's running order done: boil-over ${E.quota(S)}. Wrap the episode (top of the Props Dept.) for Fan Mail, or keep going: the further you get today, the more mail.`); }
+  if (!swellHint && B.noodles.some(n => n.L > n.L0 * 1.6)) { swellHint = true; say('TIP', 'See that one going fat and dotty? Noodles left on the counter drink and swell. Get to the soggy ones first.'); }
+  // Sunday's Big One, and the doorbell on the dot
+  if (B.bigOne) {
+    if (!S.big) { say('SUNDAY', 'The pot gives one last enormous heave... and out comes THE BIG ONE. The inspector is due any moment. Shrink, Wibble, shrink!'); sfx.bell && null; }
+    S.big += dt;
+    if (S.big >= BIG_SECS) startEnding();
+  }
+  bpsT += dt; if (bpsT >= 10) { const r = bpsAcc / bpsT; S.bps = S.bps ? S.bps * 0.7 + r * 0.3 : r; bpsAcc = 0; bpsT = 0; }
+}
+function startEnding() {
+  // The game ends itself: the doorbell goes, the ray switches off, and nobody is steering any more.
+  S.record = B.bigOne.L;
+  ending = { t: 0, wx: pos[0] + jit[0], wy: Math.min(pos[1] - 112, 250) };
+  sfx.bell();
+  say('DING DONG', 'The doorbell. Sunday, on the dot. Someone switches the ray off at the wall, and Wibble drifts down, very slowly, to the counter.');
+  save();
+}
+
+function frame() {
+  const t = performance.now();
+  const dt = Math.min(0.1, (t - T0) / 1000); T0 = t; now += dt;
+  signT = Math.max(0, signT - dt);
+  for (const a of [pops, floats, splashes]) { for (const p of a) p.t += dt; while (a.length && a[0].t > 1) a.shift(); if (a.length > 40) a.splice(0, a.length - 40); }
+  draw();
+  requestAnimationFrame(frame);
+}
+let T0 = performance.now();
+let last = performance.now(), saveT = 0, uiT = 0;
+setInterval(() => {
+  const t = performance.now(); const dt = Math.min(30, (t - last) / 1000); last = t;
+  for (let left = dt; left > 0; left -= 0.05) tick(Math.min(0.05, left));
+  saveT += dt; if (saveT > 3) { saveT = 0; save(); }
+  uiT += dt; if (uiT > 0.25) { uiT = 0; refreshMusic(); renderHud(); renderShop(); }
+}, 50);
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('pagehide', save);
+
+// ---------- The end ----------
+function finishedSet() {
+  // A finished save that never played: the whole week's set, everything on it.
+  S.day = 6; S.wraps = Math.max(S.wraps, 6);
+  for (const id of ['hat', 'sign', 'water', 'ruler', 'frame', 'crayon']) S.odd[id] = 1;
+  S.perm = Object.assign({ club: 8, tips: 4, order: 3, crew: 3, night: 2 }, S.perm);
+  S.lv = Object.assign({ ray: 30, drone: 6, lens: 25, beam: 5, chop: 14, rinse: 3, nerve: 3, auto: 1 }, S.lv);
+  if (!S.record) S.record = E.waveSpec(E.BIG_WAVE).L * 8 * 2.4;
+  if (!S.shrunk) S.shrunk = 4.2e7;
+}
+function end(resumed) {
+  const first = !S.ended;
+  S.ended = true; ending = null;
+  if (first && !resumed) sfx.finale();
+  if (!S.time || !S.record) finishedSet();
+  B = E.battle();
+  hideTip(true); refreshMusic(); renderShop(); renderHud(); save();
+  say('THAT\'S A WRAP', 'Inspector Eunice, Galactic Book of Records, unrolls her tape measure along the Big One. It takes her quite a while.');
+  const m = Math.floor(S.time / 60), hm = m >= 60 ? `${Math.floor(m / 60)}h${String(m % 60).padStart(2, '0')}m` : `${m}m`;
+  $('story').innerHTML = `
+    <p>Sunday, on the dot, the doorbell went. Inspector Eunice was tall, kind and very precise, and she was carrying a tape measure, not a clipboard. On her badge: <b>G.B.R.</b> The Galactic Book of Records.</p>
+    <p>"Your viewers wrote to us," she said. "Hundreds of them. They said you'd grown the longest noodle anyone has ever seen. I came to certify it." Wibble looked at the bowl of ${fmt(S.noodles || 0)} tiny noodles, shrunk one by one all week, ${cm(S.shrunk || 0)} of noodle in all, and then at the ruler, and then at the letter in its frame, with the little trophy at the top. It had never been a health inspection. It was never meant to shrink them at all.</p>
+    <p>But it hadn't finished the Big One. The doorbell had seen to that.</p>
+    <div class="cert"><div><small>THE GALACTIC BOOK OF RECORDS · CERTIFIED</small><strong>Longest Noodle Ever Grown</strong><strong>${cm(S.record || 0)}</strong><small>grown live on television in a borrowed Earth kitchen by Wibble, a flying saucer (nervous)</small></div></div>
+    <p>Eunice wrote out a second certificate too, for the most noodles ever shrunk on live television, because she was kind and because it was true. Wibble didn't jitter once. The pot, finally, was turned off. The turkey, finally, was thawed.</p>
+    ${S.time ? `<p>${cm(S.shrunk || 0)} shrunk · ${fmt(S.noodles || 0)} noodles · ${fmt(S.splashes || 0)} in the sink · ${hm} on air</p>` : ''}`;
+  $('ending').hidden = false;
+  if (first && !resumed && window.DailyGame) {
+    DailyGame.finish({ lines: [`⏱ ${hm} on air`, `📏 Longest noodle ever: ${cm(S.record)}`, `🛸 ${cm(S.shrunk)} shrunk for nothing`] });
+  }
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Start ----------
+makeSprites();
+if (S.ended) end(true);
+else {
+  const away = S.savedAt ? E.away(S, (Date.now() - S.savedAt) / 1000) : null;
+  if (away && away.bites >= 1) {
+    const h = Math.floor(away.secs / 3600), mm = Math.round((away.secs % 3600) / 60);
+    say('WHILE YOU WERE OUT', `${h ? `${h} h ` : ''}${mm} min off air. ${E.drones(S) ? 'The sous-saucers kept the counter clear' : 'The pot simmered and a few noodles shrank in the draught'}: +${E.short(away.bites)} bites. (Nobody was steering, so it went slowly.)`);
+  } else if (S.lastLog) say(...S.lastLog);
+  else say('WIBBLE\'S LITTLE KITCHEN', 'Noodle week! Wibble knocked the shrink ray to GROW on the pot, live, and the dial snapped off. The inspector comes Sunday. Steer the saucer over the noodles to shrink them back to bite size.');
+  if (S.started && S.day === 6 && S.wave >= E.BIG_WAVE && S.big >= BIG_SECS) { S.record = S.record || E.waveSpec(E.BIG_WAVE).L * 8; end(false); }
+  E.reveal(S);
+}
+renderHud(); renderShop();
+requestAnimationFrame(frame);
+if (DEBUG) Object.assign(window.__game, { end, doWrap, B: () => B });
+</script>
+</body>
+</html>

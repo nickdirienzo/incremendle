@@ -3335,5 +3335,65 @@
   ],
   "seenKnotTip": true,
   "savedAt": 0
+ },
+ "al-dente-encounters": {
+  "day": 3,
+  "wave": 27,
+  "best": 29,
+  "bites": 48200,
+  "fan": 12,
+  "fanTotal": 61,
+  "wraps": 3,
+  "started": true,
+  "time": 5400,
+  "lv": {
+   "ray": 15,
+   "drone": 4,
+   "lens": 11,
+   "beam": 3,
+   "chop": 6,
+   "rinse": 2,
+   "nerve": 2,
+   "auto": 1
+  },
+  "perm": {
+   "club": 3,
+   "tips": 2,
+   "order": 1,
+   "crew": 1
+  },
+  "odd": {
+   "hat": 1,
+   "sign": 1,
+   "water": 1,
+   "ruler": 1,
+   "crayon": 1
+  },
+  "seen": [
+   "ray",
+   "drone",
+   "lens",
+   "beam",
+   "chop",
+   "rinse",
+   "nerve",
+   "auto",
+   "hat",
+   "sign",
+   "water",
+   "ruler",
+   "frame",
+   "club",
+   "tips",
+   "order",
+   "crew",
+   "night",
+   "crayon"
+  ],
+  "shrunk": 2300000,
+  "noodles": 2400,
+  "bps": 160,
+  "bestPrev": 24,
+  "waterAt": "4:30"
  }
 }
