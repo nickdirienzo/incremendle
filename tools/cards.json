@@ -3395,5 +3395,80 @@
   "bps": 160,
   "bestPrev": 24,
   "waterAt": "4:30"
+ },
+ "set-the-table": {
+  "started": true,
+  "time": 1050,
+  "total": 2600000.0,
+  "thanks": 1100000.0,
+  "own": {
+   "crab": 30,
+   "flam": 24,
+   "atlas": 15,
+   "dolph": 7,
+   "ball": 1
+  },
+  "up": {
+   "platter": true,
+   "kneepads": true,
+   "gravy": true,
+   "shells": true,
+   "legday": true,
+   "hat": true,
+   "fog": true,
+   "laser": true
+  },
+  "fork": {
+   "tower": "tall",
+   "wind": null
+  },
+  "seen": [
+   "platter",
+   "kneepads",
+   "gravy",
+   "crab",
+   "flam",
+   "shells",
+   "atlas",
+   "hat",
+   "legday",
+   "fog",
+   "dolph",
+   "shoulder",
+   "whistle",
+   "sync",
+   "laser",
+   "ball"
+  ],
+  "toppled": {
+   "flam": 18
+  },
+  "tower": [
+   {
+    "x": 0,
+    "d": -1
+   },
+   {
+    "x": 0.1,
+    "d": 2
+   },
+   {
+    "x": 0.2,
+    "d": 0
+   },
+   {
+    "x": 0.15,
+    "d": 5
+   },
+   {
+    "x": 0.3,
+    "d": 1
+   }
+  ],
+  "lastLog": [
+   "ON THE TABLE",
+   "The flamingos stand very still, lemons on their heads. A gull lands on one. It does not move."
+  ],
+  "boughtOpen": false
  }
 }

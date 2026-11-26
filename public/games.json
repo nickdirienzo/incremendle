@@ -1318,5 +1318,50 @@
       "topic": "thawing the Thanksgiving turkey in cold water, changing it every 30 minutes (the day before Thanksgiving)"
     },
     "palette": "justparchment8"
+  },
+  {
+    "n": 35,
+    "slug": "set-the-table",
+    "date": "2026-11-26",
+    "title": "Set the Table",
+    "tagline": "Bumpkin, a cursed volleyball, turned every dish on Palm Grove's coast-long Thanksgiving table into a lemon. A lemon held up high remembers what it was, so Bumpkin stacks them, then the whole beach does, racing Wilhelmina the West Wind's gale to set the table by sundown.",
+    "emoji": "🏐🍋",
+    "scale": "billions",
+    "minutes": "30–45",
+    "seed": 3713167204,
+    "subject": {
+      "text": "a cursed volleyball",
+      "emoji": "🏐",
+      "name": "volleyball",
+      "subgroup": "sport",
+      "trait": "cursed {}"
+    },
+    "verb": "repairing",
+    "object": "lemons",
+    "interaction": "stack and balance",
+    "arc": {
+      "drive": "a promise",
+      "obstacle": "the weather",
+      "turn": "a huge pointless spectacle",
+      "initial": "W"
+    },
+    "length": "mini (10–60 min)",
+    "structure": [
+      "the core action goes obsolete; you manage automation"
+    ],
+    "twist": "hard tradeoffs",
+    "ending": "outpace a rival's ticking meter",
+    "look": "vaporwave",
+    "music": {
+      "style": "bossa nova",
+      "scale": "blues"
+    },
+    "tone": "fairy tale narrator",
+    "context": {
+      "kind": "holiday",
+      "holiday": "Thanksgiving",
+      "date": "2026-11-26"
+    },
+    "palette": "endesga-32"
   }
 ]
