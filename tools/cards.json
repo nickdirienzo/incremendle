@@ -3470,5 +3470,147 @@
    "The flamingos stand very still, lemons on their heads. A gull lands on one. It does not move."
   ],
   "boughtOpen": false
+ },
+ "lost-your-marbles": {
+  "v": 1,
+  "started": true,
+  "ended": false,
+  "time": 640,
+  "now": 128,
+  "record": 172,
+  "earned": 0,
+  "spent": 0,
+  "grid": [
+   {
+    "t": "ruler",
+    "d": 1
+   },
+   {
+    "t": "comb",
+    "k": 0
+   },
+   {
+    "t": "comb",
+    "k": 1
+   },
+   {
+    "t": "comb",
+    "k": 2
+   },
+   null,
+   null,
+   {
+    "t": "desk",
+    "k": 0,
+    "n": 0,
+    "busy": 0
+   },
+   null,
+   null,
+   null,
+   null,
+   {
+    "t": "desk",
+    "k": 0,
+    "n": 0,
+    "busy": 0
+   },
+   {
+    "t": "desk",
+    "k": 1,
+    "n": 0,
+    "busy": 0
+   },
+   {
+    "t": "desk",
+    "k": 2,
+    "n": 0,
+    "busy": 0
+   },
+   null,
+   null,
+   null,
+   {
+    "t": "desk",
+    "k": 1,
+    "n": 0,
+    "busy": 0
+   },
+   {
+    "t": "desk",
+    "k": 2,
+    "n": 0,
+    "busy": 0
+   },
+   null
+  ],
+  "own": {
+   "ruler": 2,
+   "comb": 3,
+   "desk": 6
+  },
+  "up": {
+   "sign": true,
+   "patch": true,
+   "hatch1": true,
+   "stamp1": true,
+   "star": true,
+   "aerial1": true,
+   "request": true,
+   "patter1": true,
+   "fanmail": true,
+   "hatch2": true,
+   "recorder": true
+  },
+  "items": [],
+  "mat": [
+   1,
+   3,
+   0
+  ],
+  "jars": [
+   64,
+   51,
+   17,
+   4
+  ],
+  "tray": 3,
+  "stamped": 120,
+  "swaps": [
+   80,
+   40,
+   6
+  ],
+  "arrAcc": 0,
+  "tickAcc": 0,
+  "stampAcc": 0,
+  "nextId": 1,
+  "lost": 0,
+  "handSorted": 0,
+  "seen": [
+   "ruler",
+   "sign",
+   "comb",
+   "patch",
+   "desk",
+   "hatch1",
+   "stamp1",
+   "star",
+   "aerial1",
+   "request",
+   "patter1",
+   "fanmail",
+   "hatch2",
+   "recorder",
+   "aerial2",
+   "stamp2"
+  ],
+  "told": [],
+  "talk": 0,
+  "lastLog": [
+   "LIVE SWAP",
+   "\"Three clearies for a cat's eye, a straight swap with Priya in 5C!\""
+  ],
+  "boughtOpen": false
  }
 }

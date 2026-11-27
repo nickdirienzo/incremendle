@@ -1363,5 +1363,46 @@
       "date": "2026-11-26"
     },
     "palette": "endesga-32"
+  },
+  {
+    "n": 36,
+    "slug": "lost-your-marbles",
+    "date": "2026-11-27",
+    "title": "Lost Your Marbles",
+    "tagline": "Gamp, an umbrella in a school's Lost Property, lost a bet and must keep shut until the whole school knows its name. Nobody said anything about radio, so it runs Radio Rummage, a pirate marble swap shop, with Mrs. Pettigrew demanding a Claim Form for every swap.",
+    "emoji": "🌂🔮",
+    "scale": "hundreds",
+    "minutes": "20–30",
+    "seed": 643226831,
+    "subject": {
+      "text": "a closed umbrella who lost a bet",
+      "emoji": "🌂",
+      "name": "closed umbrella",
+      "subgroup": "sky & weather",
+      "trait": "{} who lost a bet"
+    },
+    "verb": "trading",
+    "object": "marbles",
+    "interaction": "sort into bins",
+    "arc": {
+      "drive": "fame",
+      "obstacle": "paperwork",
+      "turn": "everyone else joins in",
+      "initial": "R"
+    },
+    "length": "mini (10–60 min)",
+    "structure": [
+      "a production chain on a small belt grid you lay out"
+    ],
+    "twist": "you pay with something you need (time, light, health)",
+    "ending": "an ending you have to be talked out of",
+    "look": "paper cutout",
+    "music": {
+      "style": "gamelan",
+      "scale": "minor pentatonic"
+    },
+    "tone": "pirate radio",
+    "context": "none",
+    "palette": "island-joy-16"
   }
 ]

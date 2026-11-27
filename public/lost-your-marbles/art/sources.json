@@ -1,0 +1,38 @@
+{
+  "game-icons--rotary-phone.svg": {
+    "icon": "game-icons:rotary-phone",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Caro Asercion",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/caro-asercion/rotary-phone.html"
+  },
+  "game-icons--kite.svg": {
+    "icon": "game-icons:kite",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Delapouite",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/delapouite/kite.html"
+  },
+  "game-icons--microphone.svg": {
+    "icon": "game-icons:microphone",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Delapouite",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/delapouite/microphone.html"
+  },
+  "game-icons--envelope.svg": {
+    "icon": "game-icons:envelope",
+    "set": "Game Icons",
+    "setUrl": "https://github.com/game-icons/icons",
+    "author": "Lorc",
+    "license": "CC-BY-3.0",
+    "licenseUrl": "https://github.com/game-icons/icons/blob/master/license.txt",
+    "source": "https://game-icons.net/1x1/lorc/envelope.html"
+  }
+}

@@ -1,0 +1,1160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lost Your Marbles · Incremendle</title>
+<meta name="description" content="Gamp, an umbrella who lost a bet, must keep shut until the whole school knows its name. So it runs a pirate marble swap shop from Lost Property. Incremendle.">
+<meta property="og:site_name" content="Incremendle">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lost Your Marbles">
+<meta property="og:description" content="Gamp, an umbrella in a school's Lost Property, lost a bet and must keep shut until the whole school knows its name. Nobody said anything about radio, so it runs Radio Rummage, a pirate marble swap shop, with Mrs. Pettigrew demanding a Claim Form for every swap.">
+<meta property="og:url" content="https://incremendle.com/lost-your-marbles/">
+<meta property="og:image" content="https://incremendle.com/lost-your-marbles/og.png?v=220bd974">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Lost Your Marbles: Gamp, an umbrella in a school's Lost Property, lost a bet and must keep shut until the whole school knows its name. Nobody said anything about radio, so it runs Radio Rummage, a pirate marble swap shop, with Mrs. Pettigrew demanding a Claim Form for every swap.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/shared/fonts/lilita-one/font.css">
+<link rel="stylesheet" href="/shared/fonts/patrick-hand/font.css">
+<style>
+  :root {
+    --white: #ffffff; --mint: #6df7c1; --teal: #11adc1; --slate: #606c81; --night: #393457; --green: #1e8875; --leaf: #5bb361;
+    --lime: #a1e55a; --yellow: #f7e476; --orange: #f99252; --rose: #cb4d68; --plum: #6a3771; --mag: #c92464; --pink: #f48cb6;
+    --peach: #f7b69e; --khaki: #9b9c82;
+    --ui: 'Patrick Hand', 'Comic Sans MS', system-ui, sans-serif; --head: 'Lilita One', 'Arial Black', sans-serif;
+    color-scheme: dark;
+  }
+  html, body { background: var(--night); color: var(--night); }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; font: 19px/1.25 var(--ui);
+    background: var(--night) radial-gradient(circle at 20% 0%, #6a377188, transparent 60%) fixed;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(12px, env(safe-area-inset-top, 0px)) max(40px, env(safe-area-inset-bottom, 0px));
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; }
+  header { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 16px; margin: 0 0 10px; }
+  h1 { margin: 0; font: 400 34px/1 var(--head); display: flex; flex-wrap: wrap; gap: 6px 12px; }
+  h1 .w { display: inline-flex; gap: 3px; }
+  h1 .w span { display: inline-block; padding: 2px 5px 0; box-shadow: 2px 3px 0 #0006; }
+  header p { margin: 0; font: 400 15px/1.1 var(--head); color: var(--yellow); letter-spacing: 2px; }
+  .game { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .game { grid-template-columns: 1fr; } h1 { font-size: 26px; } header p { font-size: 12px; letter-spacing: 1px; } }
+
+  /* Construction paper */
+  .paper { background: var(--white); box-shadow: 4px 5px 0 #1a142899; clip-path: polygon(0 1%, 3% 0, 30% 1%, 62% 0, 97% 1%, 100% 0, 99.5% 30%, 100% 70%, 99% 100%, 70% 99%, 35% 100%, 2% 99%, 0 100%, .6% 60%); }
+  main { min-width: 0; }
+  .play { padding: 8px 8px 8px; background: var(--peach); }
+  .hud { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; padding: 0 4px 6px; align-items: center; }
+  .res { font: 400 32px/1 var(--head); white-space: nowrap; color: var(--night); }
+  .res small { font: 19px/1 var(--ui); }
+  .onair { display: inline-block; vertical-align: 4px; font: 13px/1 var(--head); letter-spacing: 1px; color: var(--white); background: var(--mag); padding: 3px 5px 2px; margin-right: 6px; transition: opacity .2s; }
+  .onair.off { background: var(--slate); }
+  .rate { font: 18px/1.15 var(--ui); text-align: right; }
+  .rate b { font-weight: 400; color: var(--mag); }
+  .goal { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font: 18px/1.1 var(--ui); }
+  .goal > span:first-child { width: 64px; flex: none; font: 15px/1 var(--head); letter-spacing: .5px; }
+  .goal .end { white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis; max-width: 52%; }
+  .meter { position: relative; flex: 1; height: 16px; background: var(--white); min-width: 80px; box-shadow: inset 2px 2px 0 #39345733; }
+  .meter i { position: absolute; inset: 0 auto 0 0; width: 0; background: repeating-linear-gradient(90deg, var(--teal) 0 10px, var(--mint) 10px 13px); }
+  .meter b { position: absolute; top: -3px; bottom: -3px; width: 3px; background: var(--mag); }
+  .meter.tray i { background: repeating-linear-gradient(90deg, var(--orange) 0 10px, var(--yellow) 10px 13px); }
+  .meter.tray.full i { background: repeating-linear-gradient(90deg, var(--rose) 0 10px, var(--mag) 10px 13px); }
+  canvas#stage { display: block; width: 100%; max-width: calc((100vh - 250px) * 760 / 560); min-width: min(100%, 440px); margin: 0 auto; aspect-ratio: 760 / 560; touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; background: var(--plum); }
+  @media (max-width: 760px) { canvas#stage { min-width: 0; max-width: none; } }
+  canvas#stage:focus-visible { outline: 3px dashed var(--mag); outline-offset: 2px; }
+  .log { margin: 8px 2px 0; min-height: 2.6em; padding: 6px 10px; font: 19px/1.25 var(--ui); background: var(--white); box-shadow: 2px 3px 0 #39345755; }
+  .log b { font: 400 14px/1 var(--head); color: var(--white); background: var(--mag); padding: 2px 6px 1px; margin-right: 7px; letter-spacing: 1px; }
+
+  aside { position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow: auto; scrollbar-width: thin; padding: 0 8px 10px 0; }
+  @media (max-width: 760px) { aside { position: static; max-height: none; overflow: visible; } }
+  .col { padding: 10px 10px 10px; background: var(--yellow); }
+  .col h2 { margin: 0 0 8px; font: 400 22px/1 var(--head); color: var(--night); }
+  #afford { font: 17px/1 var(--ui); color: var(--plum); }
+  .btn { font: 400 19px/1.05 var(--head); color: var(--white); background: var(--mag); border: 0; box-shadow: 3px 3px 0 var(--night); padding: 9px 12px 7px; cursor: pointer; }
+  .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--night); }
+  #talk { margin: 0 0 10px; }
+  #talk .btn { width: 100%; font-size: 21px; }
+  #talk p { margin: 6px 2px 0; font: 17px/1.2 var(--ui); }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  @media (max-width: 760px) and (min-width: 520px) { .grid2 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .up { position: relative; display: flex; flex-direction: column; min-width: 0; text-align: left; font: 18px/1.05 var(--ui); color: #39345799; background: #ffffffaa;
+    border: 0; box-shadow: 2px 2px 0 #39345744; padding: 4px 7px 5px; cursor: pointer; }
+  .up b { font: 400 16px/1.1 var(--head); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .up em { font-style: normal; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: inherit; }
+  .up.can { color: var(--night); background: var(--white); box-shadow: 3px 3px 0 var(--night); }
+  .up.can em { color: var(--mag); }
+  .up[aria-disabled="true"] { cursor: default; }
+  .up.odd { background-image: repeating-linear-gradient(135deg, transparent 0 7px, #f48cb622 7px 10px); }
+  .up.odd b::before, .bought.odd::before { content: '✂ '; }
+  .up .tag { position: absolute; top: -8px; right: 4px; font: 400 12px/1 var(--head); font-style: normal; color: var(--white); background: var(--mag); padding: 2px 5px 1px; transform: rotate(4deg); }
+  .up.new { animation: glow 1.1s ease-in-out 7; }
+  @keyframes glow { 50% { background: var(--mint); box-shadow: 0 0 0 3px var(--mag); } }
+  .up:focus-visible, .bought:focus-visible, .btn:focus-visible { outline: 3px dashed var(--mag); outline-offset: 2px; }
+  .empty { font: 17px/1.3 var(--ui); margin: 2px 2px 0; }
+  #tip { position: fixed; z-index: 50; width: 270px; pointer-events: none; font: 17px/1.2 var(--ui); color: var(--night); background: var(--white); box-shadow: 4px 5px 0 #1a1428aa; transform: rotate(-.6deg); }
+  #tip .hd { display: block; font: 400 13px/1.3 var(--head); color: var(--white); background: var(--teal); padding: 2px 8px 1px; letter-spacing: 1px; }
+  #tip .in { padding: 6px 10px 9px; }
+  #tip b { display: block; font: 400 21px/1.05 var(--head); margin-bottom: 4px; }
+  #tip .fx { display: block; margin-top: 6px; padding: 3px 6px; background: var(--mint); }
+  #tip i { display: block; margin-top: 6px; padding-top: 5px; border-top: 2px dashed var(--khaki); font-style: normal; color: var(--plum); }
+  #tip small { display: block; margin-top: 5px; font: 16px/1.1 var(--ui); color: var(--mag); }
+  #tip.inline { position: static; width: auto; margin: 8px 0 0; transform: none; }
+  #bought { margin: 10px 0 0; }
+  #bought summary { display: flex; align-items: center; gap: 6px; font: 400 17px/1 var(--head); cursor: pointer; list-style: none; padding: 3px 2px; }
+  #bought summary::-webkit-details-marker { display: none; }
+  #bought summary::before { content: '▸'; transition: transform .2s; }
+  #bought[open] summary::before { transform: rotate(90deg); }
+  #bought summary:focus-visible { outline: 3px dashed var(--mag); outline-offset: 2px; }
+  .shelf { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 2px 2px; }
+  .bought { max-width: 100%; font: 16px/1 var(--ui); color: var(--night); background: var(--white); border: 0; box-shadow: 2px 2px 0 #39345766; padding: 4px 7px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bought.odd { background: var(--pink); }
+  .bought:hover, .bought.on { background: var(--teal); color: var(--white); }
+
+  #ending { margin: 18px 0 0; max-width: 780px; background: var(--white); padding: 14px 24px 20px; }
+  #ending h2 { font: 400 32px/1.1 var(--head); color: var(--mag); margin: 4px 0 10px; }
+  #ending p { margin: 9px 0; font: 21px/1.35 var(--ui); }
+  #shareBtn, #againBtn { margin: 12px 14px 0 0; }
+  #againBtn { background: var(--teal); }
+  @media (prefers-reduced-motion: reduce) { .up.new { animation: none; } #bought summary::before { transition: none; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "@strudel/web": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/core": "/shared/lib/@strudel/web@1.3.0/index.mjs",
+  "@strudel/webaudio": "/shared/lib/@strudel/web@1.3.0/index.mjs"
+} }
+</script>
+<script src="/shared/daily.js" data-day="36" data-credits data-why></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 aria-label="Lost Your Marbles"><span class="w"><span style="background:#f7e476;transform:rotate(-3deg)">L</span><span style="background:#6df7c1;transform:rotate(2deg)">o</span><span style="background:#f48cb6;transform:rotate(-1deg)">s</span><span style="background:#ffffff;transform:rotate(3deg)">t</span></span><span class="w"><span style="background:#f99252;transform:rotate(-2deg)">Y</span><span style="background:#a1e55a;transform:rotate(3deg)">o</span><span style="background:#11adc1;color:#fff;transform:rotate(-3deg)">u</span><span style="background:#f7e476;transform:rotate(1deg)">r</span></span><span class="w"><span style="background:#c92464;color:#fff;transform:rotate(2deg)">M</span><span style="background:#ffffff;transform:rotate(-2deg)">a</span><span style="background:#6df7c1;transform:rotate(3deg)">r</span><span style="background:#f7b69e;transform:rotate(-1deg)">b</span><span style="background:#f99252;transform:rotate(2deg)">l</span><span style="background:#a1e55a;transform:rotate(-3deg)">e</span><span style="background:#f48cb6;transform:rotate(1deg)">s</span></span></h1>
+    <p>RADIO RUMMAGE · LIVE FROM LOST PROPERTY</p>
+  </header>
+  <div class="game">
+    <main>
+      <div class="paper play">
+        <div class="hud">
+          <div class="res" title="Listeners: everyone tuned in to Radio Rummage right now. Every piece you build costs some of them (dead air). Your record never drops."><span class="onair" id="onair">ON AIR</span><span id="now">0</span> <small>listening</small></div>
+          <div class="rate" id="rate"></div>
+          <div class="goal" title="The forfeit: Gamp keeps shut until the whole school knows its name. That's 360 pupils, all listening at once."><span>RECORD</span><div class="meter"><i id="recBar"></i><b id="nowMark"></b></div><span class="end" id="recTxt"></span></div>
+          <div class="goal" id="trayRow" hidden title="Every swap makes a Claim Form, because nothing leaves Lost Property without one. Mrs. Pettigrew stamps them one at a time. If her In Tray fills up, she suspends swaps until she catches up. Tap the In Tray to stamp one yourself."><span>IN TRAY</span><div class="meter tray" id="trayMeter"><i id="trayBar"></i></div><span class="end" id="trayTxt"></span></div>
+        </div>
+        <canvas id="stage" tabindex="0" aria-label="The Lost Property cupboard. Marbles drop through the hatch at the top left and roll down a floor of squares into jars: clearies, cat's eyes, swirls and steelies. Strays land on the mat at the bottom: drag each one to its jar. Drag rulers, comb gates and swap desks from the tray at the bottom right onto the floor; tap a piece to turn it."></canvas>
+        <p class="log" id="log" aria-live="polite"></p>
+      </div>
+    </main>
+    <aside id="side">
+      <div class="paper col" id="col">
+        <div id="talk" hidden><button id="openBtn" class="btn" type="button" aria-describedby="tip">☂ Open up and sign off</button><p id="talkTxt"></p></div>
+        <h2 id="shopHead">Swap Shop <span id="afford"></span></h2>
+        <div id="shop"></div>
+        <details id="bought" hidden><summary>Bought · <span id="boughtN">0</span></summary><div class="shelf" id="shelf"></div></details>
+      </div>
+      <div id="tip" role="tooltip" hidden></div>
+    </aside>
+  </div>
+  <section id="ending" class="paper" hidden>
+    <h2>Still shut. Still on air.</h2>
+    <div id="story"></div>
+    <button id="shareBtn" class="btn" type="button">Share result</button>
+  </section>
+</div>
+<script type="module">
+import { createAudio, scale } from '/shared/kit/audio.mjs';
+import { createMusic } from '/shared/kit/music.mjs';
+import * as Sprites from '/shared/kit/sprites.mjs';
+import * as FX from '/shared/kit/fx.mjs';
+import * as E from './economy.mjs';
+
+const $ = id => document.getElementById(id);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DEBUG = location.search.includes('debug');
+// Island Joy 16
+const C = {
+  white: '#ffffff', mint: '#6df7c1', teal: '#11adc1', slate: '#606c81', night: '#393457', green: '#1e8875', leaf: '#5bb361', lime: '#a1e55a',
+  yellow: '#f7e476', orange: '#f99252', rose: '#cb4d68', plum: '#6a3771', mag: '#c92464', pink: '#f48cb6', peach: '#f7b69e', khaki: '#9b9c82',
+};
+const SHADOW = 'rgba(26,20,40,0.38)';
+
+// ---------- State ----------
+const KEY = window.DailyGame ? DailyGame.storageKey('save') : 'di:36:save';
+let raw = null;
+try { raw = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+const S = E.load(raw);
+const save = () => { S.savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+// ---------- Sound: D minor pentatonic (D F G A C), the gamelan's scale ----------
+const A = createAudio({ sfxTrim: 1, musicTrim: 4.8 });
+// Per-effect levels, measured with npm run mix (each peaks near -10 dBFS; the hatch clink, desk catches and stamps sit a little under).
+const LV = { arrive: 4, jar: 6, mat: 4.17, pick: 6.17, wrong: 4.95, place: 3.39, turn: 4.3, catch: 5.8, swap: 7.08, stamp: 4.5, bonk: 2.8, suspend: 3.55, buy: 2.0, unlock: 5.9, deny: 8.3, kind: 2.79, jingle: 4.6, talk: 1.86, finale: 1.46 };
+let gainNow = 1;
+const T = o => A.tone({ ...o, vol: o.vol * gainNow });
+const N = (kind, o = {}) => A.noiseHit(kind, { ...o, vol: (o.vol ?? 0.25) * gainNow });
+const notes = scale('minor pentatonic', 62);
+const rl = {};
+const limit = (k, ms) => { const t = performance.now(); if (t - (rl[k] || 0) < ms && !DEBUG) return false; rl[k] = t; return true; };
+const sfx = {
+  // A marble clinks through the hatch.
+  arrive() { if (!limit('arrive', 140)) return; T({ type: 'bell', freq: notes(8 + Math.floor(Math.random() * 3)), dur: 0.03, vol: 0.035, cutoff: 3400 }); },
+  // Into its own jar: a glassy plink, higher for fancier marbles.
+  jar(k = 0) { if (!limit('jar', 70)) return; T({ type: 'pluck', freq: notes(5 + k * 2 + Math.floor(Math.random() * 2)), dur: 0.08, vol: 0.12, cutoff: 3600 }); },
+  // Onto the mat: a soft bump on the rug.
+  mat() { if (!limit('mat', 120)) return; T({ type: 'triangle', freq: notes(-2), dur: 0.08, vol: 0.12, glide: 0.7, cutoff: 900 }); },
+  // Picked up by hand.
+  pick() { T({ type: 'sine', freq: notes(7), dur: 0.04, vol: 0.08 }); },
+  // The wrong jar: the marble hops back out.
+  wrong() { T({ type: 'triangle', freq: notes(1), dur: 0.06, vol: 0.1, glide: 1.3, cutoff: 1400 }); T({ type: 'triangle', freq: notes(0), dur: 0.08, vol: 0.08, at: A.now + 0.07, cutoff: 1200 }); },
+  // A piece put down on the floor: a cardboard knock.
+  place() { T({ type: 'pluck', freq: notes(-3), dur: 0.08, vol: 0.16, cutoff: 1800 }); N('snare', { vol: 0.03, dur: 0.04 }); },
+  // A piece turned round.
+  turn() { T({ type: 'pluck', freq: notes(3), dur: 0.05, vol: 0.1, cutoff: 2400 }); },
+  // A desk catches a marble.
+  catch(n = 1) { if (!limit('catch', 90)) return; T({ type: 'sine', freq: notes(2 + n), dur: 0.05, vol: 0.06 }); },
+  // Live on air: a little bonang flourish.
+  swap(k = 0) { if (!limit('swap', 160)) return; const t0 = A.now; [0, 2, 4].forEach((d, i) => T({ type: 'bell', freq: notes(5 + k * 2 + d), dur: 0.1, vol: 0.05, at: t0 + i * 0.07 })); T({ type: 'sine', freq: notes(-5 + k), dur: 0.5, vol: 0.06, at: t0 + 0.2 }); },
+  // Mrs. Pettigrew stamps a form: a padded thump.
+  stamp() { if (!limit('stamp', 150)) return; T({ type: 'sine', freq: notes(-5), dur: 0.08, vol: 0.1, glide: 0.6 }); N('snare', { vol: 0.02, dur: 0.04 }); },
+  // Gamp stamps one itself (falls on it).
+  bonk() { T({ type: 'sine', freq: notes(-5), dur: 0.12, vol: 0.12, glide: 0.6 }); T({ type: 'pluck', freq: notes(0), dur: 0.08, vol: 0.1 }); },
+  // Swaps suspended: two low notes, sternly.
+  suspend() { T({ type: 'triangle', freq: notes(0), dur: 0.2, vol: 0.12, cutoff: 900 }); T({ type: 'triangle', freq: notes(-2), dur: 0.35, vol: 0.12, at: A.now + 0.22, cutoff: 900 }); },
+  // Dead air while Gamp builds, then the purchase chime.
+  buy() { const t0 = A.now; N('whoosh', { vol: 0.03, dur: 0.18, at: t0 }); [0, 2, 4].forEach((d, i) => T({ type: 'keys', freq: notes(d + 5), dur: 0.09, vol: 0.08, at: t0 + 0.12 + i * 0.07 })); },
+  unlock() { T({ type: 'bell', freq: notes(9), dur: 0.25, vol: 0.06 }); T({ type: 'bell', freq: notes(11), dur: 0.35, vol: 0.05, at: A.now + 0.12 }); },
+  deny() { T({ type: 'square', freq: notes(-3), dur: 0.06, vol: 0.04, cutoff: 700 }); },
+  // A new kind of marble turns up: a gong and a run.
+  kind() { const t0 = A.now; T({ type: 'sine', freq: notes(-10), dur: 1.6, vol: 0.12, at: t0 }); [5, 6, 7, 8, 9].forEach((d, i) => T({ type: 'bell', freq: notes(d), dur: 0.14, vol: 0.05, at: t0 + 0.1 + i * 0.08 })); },
+  // The Recorder plays the station jingle.
+  jingle() { const t0 = A.now; [5, 6, 7, 6, 5, 8].forEach((d, i) => T({ type: 'triangle', freq: notes(d), dur: i === 5 ? 0.5 : 0.16, vol: 0.09, attack: 0.03, at: t0 + i * 0.18, cutoff: 2200 })); },
+  // Someone talks Gamp out of it.
+  talk(i = 0) { const t0 = A.now; [0, 2, 4].forEach(d => T({ type: 'keys', freq: notes(d + i), dur: 0.5, vol: 0.05, at: t0 })); T({ type: 'bell', freq: notes(7 + i), dur: 0.3, vol: 0.05, at: t0 + 0.25 }); },
+  // The finale: the whole cupboard comes on air.
+  finale() {
+    const t0 = A.now;
+    T({ type: 'sine', freq: notes(-10), dur: 2.5, vol: 0.14, at: t0 });
+    for (let i = 0; i < 11; i++) T({ type: 'bell', freq: notes(i), dur: 0.25, vol: 0.045, at: t0 + 0.2 + i * 0.11 });
+    [[0, 2, 4], [1, 3, 5], [0, 2, 4, 7]].forEach((ch, k) => ch.forEach(d => T({ type: 'keys', freq: notes(d), dur: 1.1, vol: 0.04, at: t0 + 1.6 + k * 1.1 })));
+    [5, 6, 7, 6, 5, 8].forEach((d, i) => T({ type: 'triangle', freq: notes(d + 5), dur: 0.16, vol: 0.06, attack: 0.03, at: t0 + 5 + i * 0.18, cutoff: 2600 }));
+    T({ type: 'sine', freq: notes(-10), dur: 3, vol: 0.12, at: t0 + 6.2 });
+  },
+};
+for (const [name, f] of Object.entries(sfx)) sfx[name] = (...a) => { gainNow = LV[name] ?? 1; try { f(...a); } finally { gainNow = 1; } };
+if (DEBUG) window.__game = { A, sfx, long: ['finale', 'jingle', 'kind'], S: () => S, E };
+
+// ---------- Music ----------
+const phaseKey = () => S.ended || S.talk > 0 || E.done(S) ? 'end' : S.record >= 200 ? 'rush' : S.own.desk > 0 ? 'run' : 'hand';
+let music = null, soundtrack = null, makeSoundtrack = null;
+function song() { return (soundtrack ??= makeSoundtrack(music.strudel))(phaseKey(), !!S.up.recorder); }
+import('./music.mjs').then(m => { makeSoundtrack = m.createSoundtrack; return createMusic(A, { song }); })
+  .then(m => { music = m; music.update(); if (DEBUG) window.__game.music = m; }).catch(e => console.warn('music', e));
+let lastPhase = null;
+const refreshMusic = () => { const k = phaseKey() + (S.up.recorder ? '+r' : ''); if (k !== lastPhase) { lastPhase = k; if (music) music.update(); } };
+
+// ---------- Log ----------
+const logEl = $('log');
+let lastSay = 0;
+function say(tag, text) {
+  logEl.innerHTML = '<b></b><span></span>';
+  logEl.querySelector('b').textContent = tag;
+  logEl.querySelector('span').textContent = text;
+  S.lastLog = [tag, text]; lastSay = performance.now();
+}
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const told = new Set(S.told);
+function once(k, tag, text) { if (told.has(k)) return false; told.add(k); S.told = [...told]; say(tag, text); return true; }
+const KIDS = ['Jordan in 3B', 'Priya in 5C', 'Ollie in 2A', 'Tamsin in 4B', 'Kwame in 6A', 'Esme in 1C', 'Big Dev in 6B', 'Little Dev in 2B', 'Hattie in 5A', 'Mo in 3C', 'Rosa in 4A', 'Finn in 1A'];
+
+// ---------- Canvas geometry ----------
+const cv = $('stage'), W = 760, H = 560;
+const ctx = cv.getContext('2d');
+function fit() { const d = Math.min(2, window.devicePixelRatio || 1); cv.width = W * d; cv.height = H * d; staticSig = ''; }
+const GX = 112, GY = 100, CELL = 84;
+const cellX = c => GX + c * CELL, cellY = r => GY + r * CELL;
+const JAR_Y = GY + E.ROWS * CELL + 8, JAR_H = 66;
+const MAT = { x: GX, y: JAR_Y + JAR_H + 6, w: 5 * CELL, h: 38 };
+const matSlot = i => [MAT.x + 22 + i * 41.6, MAT.y + 19];
+const TRAY = { x: 8, y: 300, w: 96, h: 58 };      // Mrs. Pettigrew's In Tray
+const HATCH = { x: GX, y: 14, w: CELL, h: 78 };
+const BOX = { x: 548, y: 470, w: 204, h: 86 };    // the tray of pieces
+const SLOT = t => ({ ruler: 0, comb: 1, desk: 2 })[t];
+const slotRect = i => ({ x: BOX.x + 6 + i * 66, y: BOX.y + 18, w: 60, h: 62 });
+const GAMP = { x: 668, top: 132, bottom: 420 };
+
+// ---------- Paper ----------
+let seedN = 1;
+const hash = (a, b) => { let h = (a * 374761393 + b * 668265263) ^ 0x5bd1e995; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+// A scissor-cut polygon: corners nudged a little (always the same way for the same seed), with a hard shadow.
+function cut(x, pts, fill, seed = seedN++, sh = 3, wob = 1.4) {
+  const p = pts.map(([px, py], i) => [px + (hash(seed, i * 2) - 0.5) * wob * 2, py + (hash(seed, i * 2 + 1) - 0.5) * wob * 2]);
+  const path = () => { x.beginPath(); p.forEach(([a, b], i) => (i ? x.lineTo(a, b) : x.moveTo(a, b))); x.closePath(); };
+  if (sh) { x.save(); x.translate(sh, sh); path(); x.fillStyle = SHADOW; x.fill(); x.restore(); }
+  path(); x.fillStyle = fill; x.fill();
+}
+const rect = (x0, y0, w, h) => [[x0, y0], [x0 + w * 0.5, y0 - 0.6], [x0 + w, y0], [x0 + w + 0.5, y0 + h * 0.5], [x0 + w, y0 + h], [x0 + w * 0.5, y0 + h + 0.5], [x0, y0 + h], [x0 - 0.5, y0 + h * 0.5]];
+const ring = (cx, cy, rx, ry = rx, n = 16, rot = 0) => Array.from({ length: n }, (_, i) => { const a = rot + i / n * Math.PI * 2; return [cx + Math.cos(a) * rx, cy + Math.sin(a) * ry]; });
+const cutRect = (x, x0, y0, w, h, fill, seed, sh = 3) => cut(x, rect(x0, y0, w, h), fill, seed, sh);
+const cutCircle = (x, cx, cy, r, fill, seed, sh = 3, n = 14) => cut(x, ring(cx, cy, r, r, n), fill, seed, sh, Math.min(1.4, r * 0.08));
+function text(x, s, px, py, { size = 16, font = 'head', color = C.night, align = 'center', rot = 0 } = {}) {
+  x.save(); x.translate(px, py); x.rotate(rot);
+  x.font = `${size}px ${font === 'head' ? "'Lilita One', 'Arial Black', sans-serif" : "'Patrick Hand', 'Comic Sans MS', sans-serif"}`;
+  x.textAlign = align; x.textBaseline = 'middle'; x.fillStyle = color; x.fillText(s, 0, 0); x.restore();
+}
+// Ransom-note letters, each on its own scrap of paper.
+function ransom(x, s, px, py, size = 14) {
+  const cols = [C.yellow, C.mint, C.pink, C.white, C.orange, C.lime, C.teal, C.peach];
+  x.font = `${size}px 'Lilita One', 'Arial Black', sans-serif`;
+  const ws = [...s].map(ch => ch === ' ' ? size * 0.35 : x.measureText(ch).width + 5);
+  let cx = px - ws.reduce((a, b) => a + b, 0) / 2;
+  [...s].forEach((ch, i) => {
+    if (ch !== ' ') {
+      const w = ws[i], bg = cols[(i * 5) % cols.length], rot = (hash(i, s.length) - 0.5) * 0.3;
+      x.save(); x.translate(cx + w / 2, py); x.rotate(rot);
+      cutRect(x, -w / 2, -size * 0.62, w, size * 1.2, bg, i + 900, 1.5);
+      text(x, ch, 0, 1, { size, color: bg === C.teal ? C.white : C.night });
+      x.restore();
+    }
+    cx += ws[i];
+  });
+}
+
+// ---------- Sprites ----------
+const SP = {};
+function mk(name, w, h, draw) { const c = Sprites.canvas(w, h); draw(c.getContext('2d'), w, h); SP[name] = c; Sprites.register(name, c); return c; }
+const MARBLE_COL = [[C.mint, C.teal], [C.teal, C.orange], [C.pink, C.mag], [C.slate, C.white]];
+function marble(x, k, cx, cy, r) {
+  const [base, accent] = MARBLE_COL[k];
+  cutCircle(x, cx, cy, r, base, 400 + k, Math.max(1, r * 0.18), 12);
+  x.save(); x.beginPath(); x.arc(cx, cy, r * 0.92, 0, Math.PI * 2); x.clip();
+  if (k === 0) { x.fillStyle = '#ffffff66'; x.beginPath(); x.arc(cx - r * 0.2, cy + r * 0.25, r * 0.55, 0, Math.PI * 2); x.fill(); }
+  if (k === 1) { cut(x, [[cx - r * 0.15, cy - r], [cx + r * 0.25, cy - r * 0.2], [cx + r * 0.05, cy + r], [cx - r * 0.35, cy + r * 0.1]], accent, 410, 0, 0.4); }
+  if (k === 2) { x.strokeStyle = accent; x.lineWidth = r * 0.28; x.beginPath(); x.arc(cx + r * 0.25, cy, r * 0.62, 2.2, 5.4); x.stroke(); x.strokeStyle = C.white; x.lineWidth = r * 0.16; x.beginPath(); x.arc(cx - r * 0.3, cy + r * 0.1, r * 0.5, -1, 1.9); x.stroke(); }
+  if (k === 3) { x.fillStyle = C.khaki; x.beginPath(); x.arc(cx + r * 0.25, cy + r * 0.3, r * 0.7, 0, Math.PI * 2); x.fill(); x.fillStyle = C.slate; x.beginPath(); x.arc(cx, cy, r * 0.75, 0, Math.PI * 2); x.fill(); }
+  x.restore();
+  cutCircle(x, cx - r * 0.35, cy - r * 0.38, r * 0.22, C.white, 420 + k, 0, 6);
+}
+function formSprite(x, cx, cy, s = 1) {
+  x.save(); x.translate(cx, cy); x.scale(s, s);
+  cut(x, [[-11, -8], [11, -9], [12, 8], [-10, 9]], C.white, 431, 1.5);
+  x.fillStyle = C.slate; for (let i = 0; i < 3; i++) x.fillRect(-7, -4 + i * 4, 12 - i * 3, 1.3);
+  x.fillStyle = C.mag; x.fillRect(4, 3, 5, 4);
+  x.restore();
+}
+function rulerPiece(x, cx, cy, d, s = 1) {
+  x.save(); x.translate(cx, cy); x.scale(s * d, s);
+  cut(x, rect(-36, -10, 72, 20), C.yellow, 440, 3);
+  x.fillStyle = C.night; for (let i = 0; i < 12; i++) x.fillRect(-32 + i * 5.6, -10, 1.4, i % 2 ? 4 : 7);
+  cut(x, [[8, 1], [24, 1], [24, -4], [33, 4], [24, 12], [24, 7], [8, 7]], C.mag, 441, 0, 0.6);
+  x.restore();
+}
+function combPiece(x, cx, cy, k, s = 1) {
+  x.save(); x.translate(cx, cy); x.scale(s, s);
+  cut(x, rect(-30, -24, 60, 14), C.orange, 450, 3);
+  for (let i = 0; i < 9; i++) cut(x, [[-28 + i * 7, -11], [-24 + i * 7, -11], [-25 + i * 7, 14], [-27 + i * 7, 14]], C.orange, 451 + i, 2, 0.5);
+  if (k === 4) formSprite(x, 0, 24, 0.8);
+  else if (k !== undefined) marble(x, k, 0, 26, 9);
+  x.restore();
+}
+function deskPiece(x, cx, cy, k, s = 1, busy = 0, n = 0, sus = false) {
+  x.save(); x.translate(cx, cy); x.scale(s, s);
+  cut(x, rect(-34, -12, 68, 34), sus ? C.slate : C.teal, 460, 3);
+  cut(x, [[-34, -12], [-26, -26], [26, -26], [34, -12]], sus ? C.khaki : C.mint, 461, 2);
+  x.fillStyle = C.night; x.fillRect(-28, -2, 56, 3);
+  if (k !== undefined) {
+    for (let i = 0; i < 3; i++) { if (i < n) marble(x, k, -14 + i * 14, 10, 5.5); else { x.strokeStyle = '#39345766'; x.lineWidth = 1.2; x.beginPath(); x.arc(-14 + i * 14, 10, 5, 0, Math.PI * 2); x.stroke(); } }
+    marble(x, Math.min(3, k + 1), 26, -19, 6);
+    text(x, '→', 14, -19, { size: 11, color: C.night });
+    marble(x, k, -24, -19, 5);
+    text(x, '×3', -12, -19, { size: 10, color: C.night });
+  }
+  if (busy > 0) { x.fillStyle = C.mag; x.fillRect(-30, 24, 60 * Math.min(1, busy), 3); }
+  if (sus) { x.save(); x.rotate(-0.12); cutRect(x, -30, -6, 60, 15, C.white, 462, 1); text(x, 'SUSPENDED', 0, 2, { size: 9, color: C.rose }); x.restore(); }
+  x.restore();
+}
+async function makeSprites() {
+  for (let k = 0; k < 4; k++) mk(`marble-${E.KINDS[k].id}`, 40, 40, x => marble(x, k, 18, 18, 14));
+  mk('form', 34, 26, x => formSprite(x, 16, 12));
+  mk('ruler', 84, 32, x => rulerPiece(x, 40, 14, 1));
+  mk('comb', 70, 70, x => combPiece(x, 33, 34, 0));
+  mk('desk', 80, 70, x => deskPiece(x, 38, 38, 0, 1, 0, 2));
+  // Iconify shapes, recoloured to the palette and cut out of paper (a hard shadow, no outline).
+  const paperize = (src, color) => Sprites.shadow(Sprites.silhouette(src, color), SHADOW, 3, 3);
+  const svg = async (file, color, w, h) => Sprites.svgToCanvas(Sprites.recolor(await Sprites.loadSvg(`./art/${file}`), color), w, h);
+  try {
+    SP.phone = Sprites.register('phone', paperize(await svg('game-icons--rotary-phone.svg', C.rose, 52, 52), C.rose));
+    SP.kite = Sprites.register('kite', paperize(await svg('game-icons--kite.svg', C.yellow, 70, 70), C.yellow));
+    SP.mic = Sprites.register('mic', paperize(await svg('game-icons--microphone.svg', C.slate, 40, 40), C.slate));
+    SP.letter = Sprites.register('letter', paperize(await svg('game-icons--envelope.svg', C.white, 30, 30), C.white));
+  } catch (e) { console.warn('art', e); }
+  mk('gamp', 90, 330, x => drawGamp(x, 45, 20, 300, { patch: true }));
+  mk('recorder', 40, 200, x => drawRecorder(x, 20, 10, 0, false));
+  mk('pettigrew', 100, 150, x => drawPettigrew(x, 50, 20));
+}
+
+// ---------- Characters ----------
+function drawGamp(x, cx, top, bottom, o = {}) {
+  const h = bottom - top;
+  // the metal tip (the aerial), then the furled canopy, widest low down
+  cutRect(x, cx - 2, top - 26, 4, 30, C.slate, 500, 2);
+  cutCircle(x, cx, top - 28, 4, C.white, 501, 1, 8);
+  const canopy = [[cx - 3, top], [cx + 3, top], [cx + 12, top + h * 0.35], [cx + 22, top + h * 0.8], [cx + 15, bottom], [cx - 15, bottom], [cx - 22, top + h * 0.8], [cx - 12, top + h * 0.35]];
+  cut(x, canopy, C.night, 502, 4);
+  // folds
+  x.strokeStyle = C.plum; x.lineWidth = 3;
+  for (const f of [-0.5, 0.15, 0.6]) { x.beginPath(); x.moveTo(cx + f * 3, top + 8); x.lineTo(cx + f * 19, bottom - 4); x.stroke(); }
+  // the strap that keeps it shut: the forfeit
+  cutRect(x, cx - 20, top + h * 0.56, 40, 11, C.rose, 503, 2);
+  cutCircle(x, cx + 12, top + h * 0.56 + 5.5, 3.5, C.yellow, 504, 1, 8);
+  // the face
+  const fy = top + h * 0.36;
+  cutCircle(x, cx - 6, fy, 6, C.white, 505, 1, 10);
+  cutCircle(x, cx + 7, fy, 6, C.white, 506, 1, 10);
+  const look = o.look || 0;
+  x.fillStyle = C.night; x.beginPath(); x.arc(cx - 6 + look, fy + 1, 2.6, 0, 7); x.arc(cx + 7 + look, fy + 1, 2.6, 0, 7); x.fill();
+  if (o.patch) {
+    cut(x, [[cx - 14, fy - 9], [cx + 14, fy - 12], [cx + 14, fy - 10], [cx - 14, fy - 7]], C.night, 507, 0, 0.3);
+    cutCircle(x, cx + 7, fy, 7.5, C.night, 508, 1, 8);
+    x.strokeStyle = C.night; x.lineWidth = 2; x.beginPath(); x.moveTo(cx - 13, fy - 8); x.lineTo(cx + 15, fy - 11); x.stroke();
+  }
+  // mouth: pressed shut (it's the forfeit), or open when talking
+  x.strokeStyle = C.pink; x.lineWidth = 2.5; x.lineCap = 'round';
+  x.beginPath();
+  if (o.talking) { x.fillStyle = C.mag; x.ellipse(cx, fy + 14, 5, 3.5 + Math.abs(Math.sin(o.talking * 18)) * 2, 0, 0, 7); x.fill(); }
+  else { x.moveTo(cx - 6, fy + 13); x.quadraticCurveTo(cx, fy + 15, cx + 6, fy + 12); x.stroke(); }
+}
+function drawRecorder(x, cx, top, lean = 0, played = false, t = 0) {
+  x.save(); x.translate(cx, top); x.rotate(lean);
+  cut(x, [[-6, 0], [6, 0], [7, 22], [6, 150], [10, 176], [-10, 176], [-6, 150], [-7, 22]], C.white, 520, 3);
+  cut(x, [[-6, 0], [6, 0], [4, 12], [-4, 12]], C.peach, 521, 0, 0.4);
+  x.fillStyle = C.night; for (let i = 0; i < 6; i++) { x.beginPath(); x.arc(0, 52 + i * 15, 2.4, 0, 7); x.fill(); }
+  // its face
+  x.fillStyle = C.night; x.beginPath(); x.arc(-3, 26, 1.6, 0, 7); x.arc(3, 26, 1.6, 0, 7); x.fill();
+  x.strokeStyle = C.rose; x.lineWidth = 1.6; x.beginPath();
+  if (played) x.arc(0, 32, 3, 0.1, Math.PI - 0.1); else { x.moveTo(-3, 33); x.lineTo(3, 33); }
+  x.stroke();
+  x.restore();
+  if (played) for (let i = 0; i < 2; i++) {
+    const p = (t * 0.5 + i * 0.5) % 1;
+    text(x, i ? '♫' : '♪', cx - 14 - p * 20, top + 120 - p * 70, { size: 16, color: `rgba(201,36,100,${1 - p})` });
+  }
+}
+function drawPettigrew(x, cx, top, stamp = 0, t = 0) {
+  // bun, face, glasses, cardigan
+  cutCircle(x, cx + 2, top + 2, 13, C.slate, 530, 2);
+  cutCircle(x, cx, top + 30, 22, C.peach, 531, 3);
+  cut(x, [[cx - 24, top + 22], [cx - 10, top + 8], [cx + 14, top + 8], [cx + 24, top + 24], [cx + 18, top + 16], [cx - 18, top + 17]], C.slate, 532, 0, 0.6);
+  x.strokeStyle = C.teal; x.lineWidth = 2.4;
+  x.beginPath(); x.arc(cx - 8, top + 31, 6, 0, 7); x.moveTo(cx + 14, top + 31); x.arc(cx + 8, top + 31, 6, 0, 7); x.moveTo(cx - 2, top + 31); x.lineTo(cx + 2, top + 31); x.stroke();
+  x.fillStyle = C.night; x.beginPath(); x.arc(cx - 8, top + 32, 1.8, 0, 7); x.arc(cx + 8, top + 32, 1.8, 0, 7); x.fill();
+  x.strokeStyle = C.rose; x.lineWidth = 2; x.beginPath(); x.moveTo(cx - 5, top + 44); x.lineTo(cx + 5, top + 43); x.stroke();
+  cut(x, [[cx - 34, top + 98], [cx - 26, top + 58], [cx, top + 52], [cx + 26, top + 58], [cx + 34, top + 98]], C.green, 533, 3);
+  x.fillStyle = C.white; for (let i = 0; i < 3; i++) { x.beginPath(); x.arc(cx, top + 64 + i * 11, 2, 0, 7); x.fill(); }
+}
+
+// ---------- The static scene (redrawn when a purchase changes it) ----------
+let staticCv = null, staticSig = '';
+function drawStatic() {
+  const sig = JSON.stringify([S.up, cv.width, S.ended, E.kindOpen(S, 2), E.kindOpen(S, 3)]);
+  if (sig === staticSig && staticCv) return;
+  staticSig = sig;
+  staticCv ??= document.createElement('canvas');
+  staticCv.width = cv.width; staticCv.height = cv.height;
+  const x = staticCv.getContext('2d');
+  x.setTransform(cv.width / W, 0, 0, cv.height / H, 0, 0);
+  seedN = 1;
+  // the cupboard wall
+  x.fillStyle = C.plum; x.fillRect(0, 0, W, H);
+  x.fillStyle = '#5c2f63'; for (let i = 0; i < 12; i++) x.fillRect(i * 66 + 20, 0, 3, H);
+  // the window onto the playground, where the listeners crowd
+  cutRect(x, 206, 8, 330, 84, C.white, 2, 4);
+  cutRect(x, 212, 14, 318, 72, C.teal, 3, 0);
+  x.fillStyle = C.mint; x.fillRect(212, 66, 318, 20);
+  cutRect(x, 212, 47, 318, 4, C.white, 4, 0);
+  // Mrs. Pettigrew's office hatch, on the left
+  cutRect(x, 4, 110, 104, 184, C.khaki, 10, 4);
+  cutRect(x, 10, 116, 92, 120, C.yellow, 11, 0);
+  text(x, 'OFFICE', 56, 128, { size: 13, color: C.night });
+  // the In Tray: wire rack
+  cutRect(x, TRAY.x, TRAY.y + 30, TRAY.w, 28, C.slate, 12, 3);
+  cutRect(x, TRAY.x + 4, TRAY.y + 34, TRAY.w - 8, 20, C.night, 13, 0);
+  text(x, 'IN TRAY', TRAY.x + TRAY.w / 2, TRAY.y + 45, { size: 12, color: C.white });
+  // the Lost Property hatch, over the first square
+  cutRect(x, HATCH.x - 4, HATCH.y - 4, HATCH.w + 8, HATCH.h + 8, C.orange, 20, 4);
+  cutRect(x, HATCH.x + 4, HATCH.y + 30, HATCH.w - 8, 40, C.night, 21, 0);
+  text(x, 'LOST', HATCH.x + HATCH.w / 2, HATCH.y + 8, { size: 13 });
+  text(x, 'PROPERTY', HATCH.x + HATCH.w / 2, HATCH.y + 21, { size: 11 });
+  if (S.up.hatch3) { cutRect(x, HATCH.x - 30, HATCH.y + 24, 24, 50, C.orange, 22, 2); cutRect(x, HATCH.x + HATCH.w + 6, HATCH.y + 24, 24, 50, C.orange, 23, 2); }
+  else if (S.up.hatch2) { cutRect(x, HATCH.x + 22, HATCH.y + 34, 40, 32, C.khaki, 24, 2); x.strokeStyle = C.night; x.lineWidth = 2; x.strokeRect(HATCH.x + 24, HATCH.y + 36, 36, 28); }
+  if (S.up.hatch1 && !S.up.hatch3) { x.fillStyle = C.yellow; for (let i = 0; i < 18; i++) x.fillRect(HATCH.x + 8 + i * 4, HATCH.y + 30, 2, 9 + (i % 3) * 2); }
+  // the cloakroom floor: a 5x4 grid of card squares
+  for (let r = 0; r < E.ROWS; r++) for (let c = 0; c < E.COLS; c++) cutRect(x, cellX(c) + 2, cellY(r) + 2, CELL - 4, CELL - 4, (r + c) % 2 ? C.khaki : '#a9aa90', 30 + r * 5 + c, 2);
+  // under the floor: the doormat drop, then the jars
+  cutRect(x, cellX(0) + 6, JAR_Y + 4, CELL - 12, JAR_H - 10, C.rose, 60, 2);
+  text(x, 'MAT', cellX(0) + CELL / 2, JAR_Y + 20, { size: 15, color: C.white });
+  text(x, '↓', cellX(0) + CELL / 2, JAR_Y + 42, { size: 18, color: C.white });
+  for (let k = 0; k < 4; k++) {
+    const jx = cellX(k + 1), open = E.kindOpen(S, k);
+    cut(x, [[jx + 12, JAR_Y], [jx + CELL - 12, JAR_Y], [jx + CELL - 8, JAR_Y + 10], [jx + CELL - 8, JAR_Y + JAR_H], [jx + 8, JAR_Y + JAR_H], [jx + 8, JAR_Y + 10]], open ? '#ffffffcc' : '#ffffff55', 61 + k, 3);
+    cutRect(x, jx + 10, JAR_Y - 4, CELL - 20, 8, C.slate, 66 + k, 1);
+    if (open) { cutRect(x, jx + 12, JAR_Y + JAR_H - 22, CELL - 24, 16, C.yellow, 70 + k, 1); text(x, E.KINDS[k].many.toUpperCase(), jx + CELL / 2, JAR_Y + JAR_H - 14, { size: k === 1 ? 9.5 : 11 }); }
+    else { x.save(); x.translate(jx + CELL / 2, JAR_Y + 32); x.rotate(-0.15); cutRect(x, -32, -10, 64, 20, C.white, 75 + k, 2); text(x, `AT ${E.OPEN_AT[k]}`, 0, 1, { size: 12, color: C.rose }); x.restore(); }
+  }
+  // the doormat
+  cut(x, rect(MAT.x, MAT.y, MAT.w, MAT.h), C.rose, 80, 3);
+  x.fillStyle = C.pink; for (let i = 0; i < 20; i++) x.fillRect(MAT.x + 6 + i * 21, MAT.y + 4, 9, MAT.h - 8);
+  // the shelf with the radio
+  cutRect(x, 548, 106, 204, 10, C.khaki, 90, 3);
+  // the radio (drawn by hand)
+  cutRect(x, 556, 44, 116, 64, C.orange, 91, 3);
+  cutRect(x, 564, 52, 56, 48, C.night, 92, 0);
+  x.fillStyle = C.slate; for (let i = 0; i < 6; i++) x.fillRect(568, 56 + i * 7.5, 48, 3);
+  cutRect(x, 626, 52, 40, 20, C.white, 93, 1);
+  x.fillStyle = C.mag; x.fillRect(640, 54, 2, 16);
+  cutCircle(x, 636, 88, 8, C.yellow, 94, 2); cutCircle(x, 656, 88, 8, C.yellow, 95, 2);
+  // the umbrella stand
+  cut(x, [[620, 400], [716, 400], [708, 470], [628, 470]], C.teal, 96, 4);
+  x.fillStyle = C.green; x.fillRect(624, 412, 88, 6); x.fillRect(626, 446, 84, 6);
+  // the tray of pieces
+  cutRect(x, BOX.x, BOX.y, BOX.w, BOX.h, C.white, 97, 4);
+  text(x, 'DRAG ONTO THE FLOOR', BOX.x + BOX.w / 2, BOX.y + 9, { size: 11, color: C.plum });
+  // silly ones and upgrades that live in the static scene
+  if (S.up.sign) ransom(x, 'LOST YOUR MARBLES?', 371, 100, 12);
+  if (S.up.star) { const sx = TRAY.x + 80, sy = TRAY.y + 26; cut(x, Array.from({ length: 10 }, (_, i) => { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? 6 : 13; return [sx + Math.cos(a) * rr, sy + Math.sin(a) * rr]; }), C.yellow, 98, 2); }
+  if (S.up.request && SP.phone) { x.drawImage(SP.phone, 690, 58, 50, 50); x.strokeStyle = C.rose; x.lineWidth = 2; x.beginPath(); x.moveTo(700, 104); x.bezierCurveTo(690, 130, 660, 120, 664, 106); x.stroke(); }
+  if (S.up.fanmail) {
+    x.strokeStyle = C.white; x.lineWidth = 1.5; x.beginPath(); x.moveTo(722, 150); x.lineTo(758, 140); x.stroke();
+    cutRect(x, 730, 136, 8, 18, C.leaf, 99, 1);
+    if (SP.letter) for (let i = 0; i < 3; i++) { x.save(); x.translate(728 + i * 8, 150 + i * 16); x.rotate((i - 1) * 0.2); x.drawImage(SP.letter, -12, 0, 26, 26); x.restore(); }
+  }
+  if (S.up.patter1 && SP.mic) { cutRect(x, 616, 300, 3, 100, C.slate, 100, 2); x.drawImage(SP.mic, 600, 272, 36, 36); }
+  if (S.up.patter2) { x.save(); x.translate(732, 330); x.rotate(0.1); cutRect(x, -22, -14, 44, 28, C.white, 101, 2); text(x, 'NO', 0, -5, { size: 11, color: C.rose }); text(x, 'UMS', 0, 7, { size: 11, color: C.rose }); x.restore(); }
+  FX.grain(x, W, H, { amount: 0.05 });
+}
+
+// ---------- Moving things ----------
+const fly = [];   // marbles and forms in flight (to a jar, the mat, the In Tray)
+const pops = [];
+let t = 0, drag = null, selected = -1, deadAir = 0;
+function pop(s, px, py, c = C.white) { pops.push({ s, x: px, y: py, life: 1.2, c }); }
+const itemXY = (c, r) => [cellX(c) + CELL / 2, r < 0 ? HATCH.y + 50 : cellY(r) + CELL / 2];
+
+function drawPieces(x) {
+  for (let r = 0; r < E.ROWS; r++) for (let c = 0; c < E.COLS; c++) {
+    const g = S.grid[E.cell(c, r)];
+    if (!g || (drag && drag.from && drag.from[0] === c && drag.from[1] === r && drag.moved)) continue;
+    const [px, py] = [cellX(c) + CELL / 2, cellY(r) + CELL / 2];
+    drawPiece(x, g, px, py);
+  }
+}
+function drawPiece(x, g, px, py, s = 1) {
+  if (g.t === 'ruler') rulerPiece(x, px, py, g.d, s);
+  else if (g.t === 'comb') combPiece(x, px, py - 6, g.k, s);
+  else deskPiece(x, px, py + 2, g.k, s, g.busy / E.busySecs(S), g.n, E.suspended(S));
+}
+function drawItems(x) {
+  const f = Math.min(1, S.tickAcc / E.TICK);
+  for (const it of S.items) {
+    const [ax, ay] = itemXY(it.pc, it.pr), [bx, by] = itemXY(it.c, it.r);
+    marble(x, it.k, ax + (bx - ax) * f, ay + (by - ay) * f, 10);
+  }
+}
+function drawJars(x) {
+  for (let k = 0; k < 4; k++) {
+    if (!E.kindOpen(S, k)) continue;
+    const jx = cellX(k + 1), n = Math.min(14, Math.ceil(Math.sqrt(S.jars[k]) * 1.6));
+    for (let i = 0; i < n; i++) marble(x, k, jx + 20 + (i % 5) * 11 + ((i / 5 | 0) % 2) * 5, JAR_Y + JAR_H - 30 - (i / 5 | 0) * 9, 5);
+    if (S.jars[k]) text(x, String(S.jars[k]), jx + CELL / 2, JAR_Y + 10, { size: 12, color: C.night });
+  }
+  // the mat
+  S.mat.forEach((k, i) => {
+    if (drag && drag.type === 'marble' && drag.idx === i && drag.moved) return;
+    const [mx, my] = matSlot(i);
+    const bob = selected === i ? Math.sin(t * 8) * 2 - 3 : 0;
+    marble(x, k, mx, my + bob, 12);
+    if (selected === i) { x.strokeStyle = C.yellow; x.lineWidth = 2; x.beginPath(); x.arc(mx, my + bob, 16, 0, 7); x.stroke(); }
+  });
+}
+function drawTrayBox(x) {
+  for (const p of E.PIECES) {
+    const i = SLOT(p.id), R = slotRect(i), n = E.spare(S, p.id), own = S.own[p.id];
+    if (!own) { x.strokeStyle = '#39345744'; x.setLineDash([4, 4]); x.strokeRect(R.x + 4, R.y + 4, R.w - 8, R.h - 8); x.setLineDash([]); continue; }
+    x.globalAlpha = n > 0 ? 1 : 0.35;
+    if (p.id === 'ruler') rulerPiece(x, R.x + R.w / 2, R.y + 26, 1, 0.75);
+    else if (p.id === 'comb') combPiece(x, R.x + R.w / 2, R.y + 22, undefined, 0.75);
+    else deskPiece(x, R.x + R.w / 2, R.y + 28, undefined, 0.75);
+    x.globalAlpha = 1;
+    text(x, `${p.name.split(' ')[0]} ×${n}`, R.x + R.w / 2, R.y + R.h - 6, { size: 11, font: 'head', color: n > 0 ? C.mag : C.slate });
+  }
+}
+function drawListeners(x) {
+  // one paper head per ten listeners, crowding the playground window
+  const n = Math.min(36, Math.floor(S.now / 10)), cols = [C.peach, C.orange, C.khaki, C.pink, C.yellow];
+  for (let i = 0; i < n; i++) {
+    const row = i < 18 ? 0 : 1, j = i % 18;
+    const hx = 222 + j * 17.5 + row * 8, hy = 74 - row * 16 + Math.sin(t * 2 + i) * (reduced ? 0 : 1);
+    cutCircle(x, hx, hy, 8, cols[i % 5], 200 + i, 2, 9);
+    x.fillStyle = [C.night, C.orange, C.slate, C.plum][i % 4]; x.beginPath(); x.arc(hx, hy - 3, 8, Math.PI, 0); x.fill();
+    if (i % 3 === 0) { cutRect(x, hx - 4, hy + 6, 8, 6, C.slate, 260 + i, 1); }
+  }
+  if (!n) text(x, S.started ? 'nobody listening yet' : 'the playground', 371, 40, { size: 14, color: C.white, font: 'ui' });
+}
+function drawGampCorner(x) {
+  // aerial upgrades on the tip
+  const tipY = GAMP.top - 28;
+  if (S.up.aerial3 && SP.kite) {
+    const kx = 700 + Math.sin(t * 0.9) * (reduced ? 0 : 8), ky = 6 + Math.cos(t * 1.3) * (reduced ? 0 : 4);
+    x.strokeStyle = C.white; x.lineWidth = 1; x.beginPath(); x.moveTo(GAMP.x, tipY - 30); x.quadraticCurveTo(GAMP.x + 30, 60, kx + 20, ky + 50); x.stroke();
+    x.drawImage(SP.kite, kx - 10, ky - 6, 62, 62);
+  }
+  if (S.up.aerial1) {
+    x.strokeStyle = C.white; x.lineWidth = 3; x.beginPath();
+    x.moveTo(GAMP.x, tipY + 4); x.lineTo(GAMP.x, tipY - 12); x.lineTo(GAMP.x - 26, tipY - 30); x.lineTo(GAMP.x + 26, tipY - 30); x.closePath(); x.stroke();
+  }
+  if (S.up.aerial2) { cut(x, [[GAMP.x - 7, tipY - 14], [GAMP.x + 7, tipY - 14], [GAMP.x + 9, tipY + 8], [GAMP.x - 9, tipY + 8]], '#d8dce6', 540, 2, 1.5); x.fillStyle = C.white; x.fillRect(GAMP.x - 5, tipY - 10, 3, 14); }
+  // the wire from the tip to the radio
+  x.strokeStyle = C.yellow; x.lineWidth = 1.6; x.beginPath(); x.moveTo(GAMP.x, tipY + 2); x.quadraticCurveTo(650, 120, 640, 104); x.stroke();
+  // ON AIR
+  const on = deadAir <= 0 && (S.started || S.ended);
+  cutRect(x, 566, 8, 66, 26, on ? C.mag : C.slate, 541, 2);
+  text(x, on ? 'ON AIR' : deadAir > 0 ? 'DEAD AIR' : 'ON AIR', 599, 22, { size: deadAir > 0 ? 12 : 14, color: on ? C.white : '#ffffff88' });
+  // the kid at the hatch who wants to take Gamp home
+  if (E.done(S) && !S.ended) {
+    const kx = HATCH.x + HATCH.w / 2, ky = HATCH.y + 56;
+    cutCircle(x, kx, ky, 14, C.peach, 545, 2); x.fillStyle = C.orange; x.beginPath(); x.arc(kx, ky - 4, 14, Math.PI, 0); x.fill();
+    cutCircle(x, kx - 16, ky - 8, 5, C.orange, 546, 1, 8); cutCircle(x, kx + 16, ky - 8, 5, C.orange, 547, 1, 8);
+    x.fillStyle = C.night; x.beginPath(); x.arc(kx - 5, ky + 2, 1.8, 0, 7); x.arc(kx + 5, ky + 2, 1.8, 0, 7); x.fill();
+    if (S.talk === 0) bubble(x, kx + 110, ky + 2, 'Can I have the famous umbrella?', 9);
+  }
+  // the Recorder, leaning on the stand; played once you buy it
+  drawRecorder(x, 600, 236, 0.12, !!S.up.recorder, t);
+  // Gamp, swaying a little while it talks on air
+  const talking = (swapGlow > 0 || S.talk > 0) && !reduced ? t : 0;
+  x.save(); x.translate(GAMP.x, GAMP.bottom); x.rotate(reduced ? 0 : Math.sin(t * 1.4) * 0.015); x.translate(-GAMP.x, -GAMP.bottom);
+  drawGamp(x, GAMP.x, GAMP.top, GAMP.bottom, { patch: !!S.up.patch, talking, look: Math.sin(t * 0.6) * 1.5 });
+  x.restore();
+  // the stand's front lip over Gamp's foot
+  cut(x, [[618, 398], [718, 398], [716, 412], [620, 412]], C.teal, 542, 0);
+}
+function drawPettigrewCorner(x) {
+  drawPettigrew(x, 56, 150);
+  // her stamp (it changes as you buy better ones)
+  const stamping = stampAnim > 0 ? Math.sin(stampAnim * Math.PI) : 0;
+  const sx = 82, sy = 268 - stamping * -24;
+  if (S.up.stamp3) { cutRect(x, sx - 2, sy - 70, 4, 70, C.yellow, 550, 2); x.fillStyle = C.night; for (let i = 0; i < 7; i++) x.fillRect(sx - 2, sy - 66 + i * 10, 4, 1.2); }
+  if (S.up.stamp2) { cutRect(x, 14, 262, 30, 12, C.night, 555, 2); cutRect(x, 17, 264, 24, 6, C.mag, 556, 0); }   // its own ink pad
+  if (S.up.stamp1) { cutRect(x, sx - 9, sy - 2, 18, 14, S.up.stamp2 ? C.mag : C.rose, 551, 2); cutCircle(x, sx, sy - 8, 7, C.orange, 552, 2, 9); cutRect(x, sx - 11, sy + 12, 22, 5, C.night, 553, 1); }
+  else { x.strokeStyle = C.night; x.lineWidth = 3; x.beginPath(); x.moveTo(sx - 6, sy - 14); x.lineTo(sx + 4, sy + 14); x.stroke(); }   // a biro
+  // the forms waiting in her tray
+  for (let i = 0; i < Math.min(8, S.tray); i++) formSprite(x, TRAY.x + 30 + (i % 2) * 6, TRAY.y + 24 - i * 4, 1);
+  if (E.suspended(S) && !S.ended) { x.save(); x.translate(56, 108); x.rotate(-0.06); cutRect(x, -50, -11, 100, 22, C.white, 554, 2); text(x, 'SWAPS SUSPENDED', 0, 1, { size: 11, color: C.rose }); x.restore(); }
+  if (S.tray > 0 && !S.ended) text(x, 'tap to stamp', TRAY.x + TRAY.w / 2, TRAY.y + 70, { size: 13, font: 'ui', color: C.yellow });
+}
+let swapGlow = 0, stampAnim = 0;
+
+function draw() {
+  drawStatic();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.drawImage(staticCv, 0, 0);
+  ctx.setTransform(cv.width / W, 0, 0, cv.height / H, 0, 0);
+  const x = ctx;
+  drawListeners(x);
+  drawPettigrewCorner(x);
+  drawGampCorner(x);
+  drawJars(x);
+  drawPieces(x);
+  drawItems(x);
+  drawTrayBox(x);
+  // things in flight
+  for (const f of fly) {
+    const p = Math.min(1, f.p), e = p * p * (3 - 2 * p);
+    const fx = f.x0 + (f.x1 - f.x0) * e, fy = f.y0 + (f.y1 - f.y0) * e - Math.sin(p * Math.PI) * (f.arc || 0);
+    if (f.k === 'form') formSprite(x, fx, fy, 0.9); else marble(x, f.k, fx, fy, f.r || 9);
+  }
+  for (const p of pops) text(x, p.s, p.x, p.y, { size: 16, color: p.c });
+  // dragging
+  if (drag && drag.moved) {
+    if (drag.type === 'marble') marble(x, S.mat[drag.idx], drag.x, drag.y, 13);
+    else if (drag.type === 'piece' || drag.type === 'placed') {
+      const [c, r] = gridAt(drag.x, drag.y);
+      if (c >= 0) { x.strokeStyle = S.grid[E.cell(c, r)] ? C.rose : C.yellow; x.lineWidth = 3; x.setLineDash([6, 4]); x.strokeRect(cellX(c) + 4, cellY(r) + 4, CELL - 8, CELL - 8); x.setLineDash([]); }
+      x.globalAlpha = 0.85; drawPiece(x, drag.g, drag.x, drag.y); x.globalAlpha = 1;
+    }
+  }
+  if (S.talk > 0 || E.done(S) || S.ended) drawTalk(x);
+  // a hint on an empty floor
+  if (!S.ended && S.own.ruler && !S.grid.some(Boolean) && !drag) {
+    x.save(); x.globalAlpha = 0.6 + Math.sin(t * 4) * 0.3;
+    text(x, 'drag a piece onto a square ↖', BOX.x + BOX.w / 2, BOX.y - 12, { size: 15, font: 'ui', color: C.yellow });
+    x.restore();
+  }
+}
+// The talk-out: speech bubbles for whoever is talking Gamp out of it, and in the end everyone on air.
+const TALKERS = [
+  { who: 'Mrs. Pettigrew', x: 108, y: 160, line: 'Form 9! Leaving Lost Property. In triplicate.' },
+  { who: 'The kids', x: 380, y: 96, line: 'Who\'ll do the swap shop?!' },
+  { who: 'The Recorder', x: 600, y: 230, line: 'You\'re the only one who ever played me.' },
+];
+function drawTalk(x) {
+  const n = S.ended ? 3 : S.talk;
+  for (let i = 0; i < n; i++) {
+    const T0 = TALKERS[i];
+    if (S.ended && i < 2) continue;
+    bubble(x, T0.x, T0.y, T0.line, i);
+  }
+  if (S.ended) {
+    // everyone else joins in: every lost thing in the cupboard, on air
+    const crowd = [['PE shorts', C.lime], ['a welly', C.green], ['one glove', C.orange], ['a lunchbox', C.pink], ['the comb', C.yellow], ['a kite', C.mint], ['a recorder', C.white]];
+    crowd.forEach(([who, col], i) => {
+      const cx = 140 + i * 56, cy = 300 + Math.sin(t * 2 + i) * (reduced ? 0 : 4);
+      x.save(); x.translate(cx, cy); x.rotate((i % 2 ? 1 : -1) * 0.06);
+      cutRect(x, -26, -16, 52, 32, col, 600 + i, 3);
+      text(x, who, 0, -2, { size: 11, color: C.night, font: 'ui' });
+      text(x, '🎙', 0, 10, { size: 10 });
+      x.restore();
+    });
+    x.save(); x.translate(320, 236); x.rotate(-0.04); cutRect(x, -150, -18, 300, 36, C.mag, 620, 4); text(x, 'RADIO RUMMAGE · ALL OF US', 0, 1, { size: 18, color: C.white }); x.restore();
+  }
+}
+function bubble(x, bx, by, s, seed) {
+  x.font = "17px 'Patrick Hand', 'Comic Sans MS', sans-serif";
+  const w = Math.min(260, x.measureText(s).width + 20);
+  const lx = Math.max(8, Math.min(W - w - 8, bx - w / 2));
+  cut(x, [...rect(lx, by - 16, w, 32), [bx + 6, by + 16], [bx, by + 28], [bx - 6, by + 16]].slice(0, 8), C.white, 700 + seed, 3);
+  cut(x, [[bx - 8, by + 14], [bx + 8, by + 14], [bx - 2, by + 30]], C.white, 710 + seed, 2);
+  text(x, s, lx + w / 2, by, { size: 17, font: 'ui', color: C.night });
+}
+
+// ---------- Input ----------
+function canvasPoint(e) { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * W, (e.clientY - r.top) / r.height * H]; }
+const inR = (px, py, R) => px >= R.x && px <= R.x + R.w && py >= R.y && py <= R.y + R.h;
+function gridAt(px, py) { const c = Math.floor((px - GX) / CELL), r = Math.floor((py - GY) / CELL); return c >= 0 && c < E.COLS && r >= 0 && r < E.ROWS ? [c, r] : [-1, -1]; }
+function jarAt(px, py) { if (py < JAR_Y - 10 || py > JAR_Y + JAR_H + 6) return -1; const c = Math.floor((px - GX) / CELL); return c >= 1 && c < E.COLS ? c : -1; }
+function matAt(px, py) {
+  if (py < MAT.y - 10 || py > MAT.y + MAT.h + 10) return -1;
+  let best = -1, bd = 26;
+  S.mat.forEach((_, i) => { const [mx, my] = matSlot(i); const d = Math.hypot(px - mx, py - my); if (d < bd) { bd = d; best = i; } });
+  return best;
+}
+cv.addEventListener('pointerdown', e => {
+  if (S.ended || E.done(S)) return;
+  if (!S.started) { S.started = true; save(); }
+  const [px, py] = canvasPoint(e);
+  cv.setPointerCapture?.(e.pointerId);
+  const mi = matAt(px, py);
+  if (mi >= 0) { drag = { type: 'marble', idx: mi, x: px, y: py, sx: px, sy: py, moved: false }; sfx.pick(); return; }
+  const jc = jarAt(px, py);
+  if (jc >= 0 && selected >= 0) { tryJar(selected, jc); selected = -1; return; }
+  if (inR(px, py, { x: TRAY.x, y: TRAY.y - 30, w: TRAY.w, h: TRAY.h + 50 }) && S.tray > 0) { stampByHand(); return; }
+  for (const p of E.PIECES) if (inR(px, py, slotRect(SLOT(p.id))) && E.spare(S, p.id) > 0) {
+    drag = { type: 'piece', t: p.id, g: p.id === 'ruler' ? { t: 'ruler', d: 1 } : { t: p.id, k: p.id === 'comb' ? 0 : 0, n: 0, busy: 0 }, x: px, y: py, sx: px, sy: py, moved: false }; return;
+  }
+  const [c, r] = gridAt(px, py);
+  if (c >= 0 && S.grid[E.cell(c, r)]) { drag = { type: 'placed', from: [c, r], g: S.grid[E.cell(c, r)], x: px, y: py, sx: px, sy: py, moved: false }; return; }
+  selected = -1;
+});
+cv.addEventListener('pointermove', e => {
+  if (!drag) return;
+  const [px, py] = canvasPoint(e);
+  drag.x = px; drag.y = py;
+  if (!drag.moved && Math.hypot(px - drag.sx, py - drag.sy) > 8) drag.moved = true;
+});
+cv.addEventListener('pointerup', e => {
+  if (!drag) return;
+  const d = drag; drag = null;
+  const [px, py] = canvasPoint(e);
+  if (d.type === 'marble') {
+    if (!d.moved) { selected = selected === d.idx ? -1 : d.idx; return; }
+    const jc = jarAt(px, py);
+    if (jc >= 0) tryJar(d.idx, jc); else selected = -1;
+    return;
+  }
+  const [c, r] = gridAt(px, py);
+  if (d.type === 'piece') {
+    if (!d.moved) { say('THE TRAY', 'Drag a piece out of the tray and drop it on a square of the floor.'); return; }
+    if (c >= 0 && E.place(S, d.t, c, r)) { sfx.place(); firstPlace(d.t); save(); } else sfx.deny();
+    return;
+  }
+  if (d.type === 'placed') {
+    const [c0, r0] = d.from;
+    if (!d.moved || (c === c0 && r === r0)) { E.turn(S, c0, r0); sfx.turn(); explainTurn(S.grid[E.cell(c0, r0)]); save(); return; }
+    if (c >= 0) { if (E.move(S, c0, r0, c, r)) sfx.place(); else sfx.deny(); }
+    else { E.remove(S, c0, r0); sfx.turn(); once('removed', 'BACK IN THE TRAY', 'Dropped off the floor, a piece goes back in the tray for later.'); }
+    save();
+  }
+});
+cv.addEventListener('pointercancel', () => { drag = null; });
+function tryJar(idx, col) {
+  const k = S.mat[idx];
+  const ev = E.sortHand(S, idx, col);
+  const [jx, jy] = [cellX(col) + CELL / 2, JAR_Y + 20];
+  if (ev) {
+    sfx.jar(k); pop(`+${E.fmt(ev.g)}`, jx, jy - 14, C.yellow);
+    if (!once('handsort', 'ON AIR', `"And a ${E.KINDS[k].name} for the jar, posted in by ${pick(KIDS)}. Lovely." Every marble that lands in its own jar gets read out, and somebody tunes in.`) && Math.random() < 0.05 && performance.now() - lastSay > 9000)
+      say('ON AIR', pick([`"${E.KINDS[k].name[0].toUpperCase() + E.KINDS[k].name.slice(1)}, found by ${pick(KIDS)} behind the climbing frame. Into the jar."`, `"You're listening to Radio Rummage, the only station broadcasting from under the coats."`, `"That's a ${E.KINDS[k].name}. Don't touch the dial."`]));
+  } else if (ev === false) {
+    sfx.wrong();
+    if (!E.kindOpen(S, col - 1)) say('NOT YET', `Nobody's found a ${E.KINDS[col - 1].name} yet. That jar opens when the record reaches ${E.OPEN_AT[col - 1]}.`);
+    else say('WRONG JAR', `That's a ${E.KINDS[k].name}. It wants the ${E.KINDS[k].many} jar.`);
+  }
+}
+function stampByHand() {
+  if (!E.stampHand(S)) return;
+  sfx.bonk(); stampAnim = 1;
+  once('handstamp', 'STAMPED', 'Gamp falls on a form, approximately where the stamp goes. Mrs. Pettigrew accepts it. She is not happy about it.');
+}
+function firstPlace(t0) {
+  const lines = {
+    ruler: 'A ruler on the floor. Marbles that roll onto it get pushed sideways (tap it to turn it round). Under the hatch it keeps them out of the mat.',
+    comb: 'A comb gate. Its kind falls straight through the teeth; every other kind gets pushed right. Tap it to change its kind.',
+    desk: 'A swap desk. Three of its kind go in at the top, and one better marble rolls out of the right-hand side, live on air. The Claim Form flies off to Mrs. Pettigrew. Tap it to change its kind.',
+  };
+  once('place-' + t0, 'ON THE FLOOR', lines[t0]);
+}
+function explainTurn(g) {
+  if (!g) return;
+  if (g.t === 'ruler') say('TURNED', `The ruler now pushes marbles ${g.d > 0 ? 'right →' : '← left'}.`);
+  else if (g.t === 'comb') say('COMB GATE', `${E.KINDS[g.k].many[0].toUpperCase() + E.KINDS[g.k].many.slice(1)} fall through; everything else is pushed right.`);
+  else say('SWAP DESK', `Three ${E.KINDS[g.k].many} in, one ${E.KINDS[g.k + 1].name} out to the right.`);
+}
+// Keyboard: space stamps a form, S sorts the first stray onto its jar.
+cv.addEventListener('keydown', e => {
+  if (S.ended) return;
+  if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); if (S.tray > 0) stampByHand(); else if (S.mat.length) tryJar(0, S.mat[0] + 1); }
+});
+
+// ---------- HUD ----------
+const gains = [];   // [time, amount] for the per-minute readout
+function renderHud() {
+  $('now').textContent = Math.floor(S.now);
+  $('onair').classList.toggle('off', deadAir > 0);
+  $('onair').textContent = deadAir > 0 ? 'DEAD AIR' : 'ON AIR';
+  const tnow = S.time; while (gains.length && gains[0][0] < tnow - 30) gains.shift();
+  const perMin = gains.reduce((a, g) => a + g[1], 0) * 2;
+  const arrive = E.arrivalRate(S) * 60;
+  $('rate').innerHTML = `<b>+${perMin >= 10 ? Math.round(perMin) : perMin.toFixed(1)}</b> listeners/min<br>${Math.round(arrive)} marbles/min posted in`;
+  const rec = Math.min(E.GOAL, S.record);
+  $('recBar').style.width = `${rec / E.GOAL * 100}%`;
+  $('nowMark').style.left = `calc(${Math.min(1, S.now / E.GOAL) * 100}% - 1px)`;
+  const nextK = [2, 3].find(k => !E.kindOpen(S, k));
+  $('recTxt').textContent = S.ended ? 'the whole school' : `${Math.floor(rec)} / ${E.GOAL}` + (nextK ? ` · ${E.KINDS[nextK].many} at ${E.OPEN_AT[nextK]}` : ' · the whole school');
+  $('trayRow').hidden = !(S.own.desk > 0 || S.tray > 0) || S.ended;
+  $('trayBar').style.width = `${Math.min(1, S.tray / E.TRAY_CAP) * 100}%`;
+  $('trayMeter').classList.toggle('full', E.suspended(S));
+  $('trayTxt').textContent = E.suspended(S) ? `${S.tray}/${E.TRAY_CAP} · swaps suspended!` : `${S.tray}/${E.TRAY_CAP} forms · she stamps 1 per ${E.stampSecs(S)}s`;
+}
+
+// ---------- The shop ----------
+const shop = $('shop');
+let shopSig = '', newUntil = {}, tipFor = null;
+const isPiece = it => it.kind === 'piece';
+function cellCost(it) { const c = `${E.cost(S, it.id)} listeners`; return isPiece(it) ? `${E.cost(S, it.id)} · own ${S.own[it.id]}` : c; }
+function renderShop() {
+  const freshIds = S.ended ? [] : E.reveal(S);
+  for (const id of freshIds) { if (S.started) sfx.unlock(); newUntil[id] = performance.now() + 8000; }
+  const finale = E.done(S) || S.talk > 0;
+  const all = S.ended || finale ? [] : E.visible(S);
+  const sig = all.map(i => `${i.id}:${cellCost(i)}`).join('|');
+  if (sig !== shopSig) {
+    shopSig = sig;
+    shop.innerHTML = '';
+    const g = document.createElement('div'); g.className = 'grid2'; shop.append(g);
+    if (!all.length && S.started && !S.ended && !finale) { const p = document.createElement('p'); p.className = 'empty'; p.textContent = 'Nothing left to build. Keep the marbles coming.'; shop.append(p); }
+    for (const it of all) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'up' + (it.kind === 'odd' ? ' odd' : '');
+      b.dataset.id = it.id;
+      b.innerHTML = '<b></b><em></em>';
+      b.querySelector('b').textContent = it.name;
+      b.querySelector('em').textContent = cellCost(it);
+      b.setAttribute('aria-describedby', 'tip');
+      hookTip(b, () => upTip(it.id), () => { if (b.getAttribute('aria-disabled') !== 'true') doBuy(it.id); else sfx.deny(); });
+      g.append(b);
+    }
+  }
+  const tm = performance.now();
+  for (const b of shop.querySelectorAll('button.up')) {
+    const can = E.canBuy(S, b.dataset.id);
+    b.setAttribute('aria-disabled', String(!can)); b.classList.toggle('can', can);
+    const isNew = (newUntil[b.dataset.id] || 0) > tm;
+    b.classList.toggle('new', isNew && !reduced);
+    let tag = b.querySelector('.tag');
+    if (isNew && !tag) { tag = document.createElement('i'); tag.className = 'tag'; tag.textContent = 'new'; b.append(tag); }
+    if (!isNew && tag) tag.remove();
+  }
+  const n = all.filter(i => E.canBuy(S, i.id)).length;
+  $('afford').textContent = n ? `· ${n} affordable` : '';
+  $('shopHead').hidden = finale && !S.ended;
+  $('talk').hidden = !finale || S.ended;
+  if (tipFor && !tipFor.startsWith('bought:') && !tipFor.startsWith('talk')) { const b = shop.querySelector(`[data-id="${tipFor}"]`); if (b) showTip(b, upTip(tipFor)); }
+  renderShelf();
+  $('col').hidden = S.ended || (!all.length && shelfEl.hidden && !finale);
+}
+function hookTip(b, info, act) {
+  b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') showTip(b, info()); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(); });
+  b.addEventListener('focus', () => { if (!b.dataset.touch) showTip(b, info()); });
+  b.addEventListener('blur', () => hideTip());
+  b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+  b.addEventListener('click', () => {
+    const it = info();
+    if (b.dataset.touch && tipFor !== it.id && !(it.id === 'talk' && S.talkTipSeen)) { showTip(b, it); if (it.id === 'talk') S.talkTipSeen = true; return; }
+    act();
+  });
+}
+const clone = () => E.load(JSON.parse(JSON.stringify(S)));
+function effect(id) {
+  const it = E.BY_ID[id], T2 = clone();
+  T2.now = 1e9; E.buy(T2, id);
+  if (it.kind === 'odd') return id === 'recorder' ? 'Changes no numbers. Changes the music.' : 'Changes no numbers. Stays in the cupboard for good.';
+  if (isPiece(it)) return `In the tray: ${E.spare(S, id)} → ${E.spare(S, id) + 1} · on the floor: ${E.placed(S, id)}`;
+  const id0 = id.replace(/\d$/, '');
+  switch (id0) {
+    case 'hatch': return `Marbles posted in: ${Math.round(E.arrivalRate(S) * 60)}/min → ${Math.round(E.arrivalRate(T2) * 60)}/min`;
+    case 'aerial': return `Every mention ×${E.fameMult(S)} → ×${E.fameMult(T2)}: a clearie read out ${(E.LIST[0] * E.fameMult(S)).toFixed(2)} → ${(E.LIST[0] * E.fameMult(T2)).toFixed(2)} listeners, a cat's-eye swap ${(E.SWAP[1] * E.fameMult(S)).toFixed(1)} → ${(E.SWAP[1] * E.fameMult(T2)).toFixed(1)}`;
+    case 'stamp': return `Mrs. Pettigrew stamps one form every ${E.stampSecs(S)}s → ${E.stampSecs(T2)}s`;
+    case 'patter': return `A desk is busy after each swap for ${E.busySecs(S)}s → ${E.busySecs(T2)}s`;
+    case 'request': { const a = E.mix(S), b = E.mix(T2); return `Posted in: cat's eyes ${Math.round(a[1] * 100)}% → ${Math.round(b[1] * 100)}%` + (a[2] ? `, swirls ${Math.round(a[2] * 100)}% → ${Math.round(b[2] * 100)}%` : '') + (a[3] ? `, steelies ${Math.round(a[3] * 100)}% → ${Math.round(b[3] * 100)}%` : ''); }
+  }
+  return '';
+}
+const HD = { piece: 'FOR THE FLOOR', up: 'FOR THE STATION', odd: 'FOR THE PICTURE' };
+function upTip(id) {
+  const it = E.BY_ID[id];
+  return { id, hd: isPiece(it) ? `${HD.piece} · ${S.own[id]} OWNED` : HD[it.kind], name: it.name, desc: it.desc, fx: effect(id), joke: it.joke,
+    foot: `${E.cost(S, id)} listeners. Dead air while Gamp builds it: they tune out, but your record stays.` };
+}
+function showTip(b, it) {
+  const tip = $('tip'); tipFor = it.id;
+  tip.innerHTML = '<span class="hd"></span><div class="in"><b></b><span class="d"></span><span class="fx"></span><i></i><small></small></div>';
+  tip.querySelector('.hd').textContent = it.hd || '';
+  tip.querySelector('b').textContent = it.name;
+  tip.querySelector('.d').textContent = it.desc;
+  tip.querySelector('.fx').textContent = it.fx || ''; tip.querySelector('.fx').hidden = !it.fx;
+  tip.querySelector('i').textContent = it.joke || ''; tip.querySelector('i').hidden = !it.joke;
+  tip.querySelector('small').textContent = it.foot || ''; tip.querySelector('small').hidden = !it.foot;
+  const inline = !!it.inline || innerWidth <= 760;
+  tip.classList.toggle('inline', inline);
+  if (!it.inline) for (const o of document.querySelectorAll('.bought.on')) o.classList.remove('on');
+  if (inline) { const anchor = it.inline ? shelfEl : b.closest('#talk') || shop; if (tip.previousElementSibling !== anchor) anchor.after(tip); }
+  else if (tip.parentElement !== document.body) document.body.append(tip);
+  tip.hidden = false;
+  if (inline) { tip.style.left = tip.style.top = ''; if (it.inline) tip.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const r = b.getBoundingClientRect(), tr = tip.getBoundingClientRect(), col = $('side').getBoundingClientRect();
+  tip.style.left = `${col.left - tr.width - 14}px`;
+  tip.style.top = `${Math.max(8, Math.min(innerHeight - tr.height - 8, r.top + r.height / 2 - tr.height / 2))}px`;
+}
+function hideTip(force) {
+  const tip = $('tip');
+  if (tip.classList.contains('inline') && tipFor && tipFor.startsWith('bought:') && force !== true) return;
+  tip.hidden = true; tipFor = null;
+  for (const b of document.querySelectorAll('.bought.on')) b.classList.remove('on');
+}
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.up, .bought, #openBtn')) hideTip(true); });
+
+// ---------- The Bought shelf ----------
+const shelfEl = $('bought');
+shelfEl.open = !!S.boughtOpen;
+shelfEl.addEventListener('toggle', () => {
+  if (!shelfEl.open) hideTip(true);
+  if (!!S.boughtOpen === shelfEl.open) return;
+  S.boughtOpen = shelfEl.open; save();
+});
+let shelfSig = null;
+function renderShelf() {
+  const list = S.ended ? [] : E.bought(S);
+  const sig = list.map(i => i.id).join('|');
+  if (sig === shelfSig) return;
+  shelfSig = sig;
+  shelfEl.hidden = !list.length;
+  $('boughtN').textContent = list.length;
+  $('shelf').replaceChildren(...list.map(it => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'bought' + (it.kind === 'odd' ? ' odd' : '');
+    b.textContent = it.name; b.dataset.id = it.id;
+    b.setAttribute('aria-describedby', 'tip');
+    const show = () => { hideTip(true); b.classList.add('on'); showTip(b, { id: 'bought:' + it.id, hd: it.kind === 'odd' ? 'IN THE CUPBOARD, FOR GOOD' : 'BOUGHT', name: it.name, desc: it.desc, joke: it.joke, foot: it.kind === 'odd' ? 'for the picture' : 'bought', inline: true }); };
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hideTip(true); });
+    b.addEventListener('focus', () => { if (!b.dataset.touch) show(); });
+    b.addEventListener('blur', () => hideTip(true));
+    b.addEventListener('pointerdown', e => { b.dataset.touch = e.pointerType !== 'mouse' ? '1' : ''; });
+    b.addEventListener('click', () => { if (tipFor === 'bought:' + it.id && b.dataset.touch) hideTip(true); else show(); });
+    return b;
+  }));
+}
+function doBuy(id) {
+  const it = E.BY_ID[id], first = isPiece(it) && S.own[id] === 0;
+  if (!E.buy(S, id)) { sfx.deny(); return; }
+  hideTip(true); sfx.buy(); deadAir = 1.2;
+  if (isPiece(it)) say(first ? 'NEW IN THE TRAY' : 'DEAD AIR', first ? `${it.desc} ${it.joke}` : pick([`Another ${it.one} in the tray. Some listeners tuned out while Gamp fetched it. They'll be back.`, `One more ${it.one}. "Sorry about the dead air, Rummagers."`, `A ${it.one}, out of the box of lost things. Drag it onto the floor.`]));
+  else say(it.kind === 'odd' ? 'FOR THE PICTURE' : 'DEAD AIR', `${it.name}: ${it.joke}`);
+  if (id === 'recorder') { sfx.jingle(); refreshMusic(); }
+  renderShop(); renderHud(); save();
+}
+
+// ---------- The talk-out ending ----------
+const TALK_BUTTON = ['☂ Open up and sign off', '☂ Open up anyway', '☂ Open up. Really.', '☂ Stay shut. Stay on air.'];
+const TALK_LINES = [
+  'Gamp undoes its strap. Then Mrs. Pettigrew\'s hand comes through the office hatch: "Not without a Form 9: Leaving Lost Property. In triplicate. I\'ll need to stamp all three." The strap goes back on, for now.',
+  'Gamp undoes its strap again. The whole playground groans at the window: "But who\'ll do the swap shop? Who\'ll read out the cat\'s eyes?" Nobody else can do the voices.',
+  'Gamp undoes its strap a third time. The Recorder clears its throat, which for a recorder is a squeak. "You\'re the only one who ever played me." Gamp stops.',
+];
+function renderTalk() {
+  const i = Math.min(3, S.talk);
+  $('openBtn').textContent = TALK_BUTTON[i];
+  $('talkTxt').textContent = i === 0 ? 'The whole school is listening. The forfeit is over: Gamp can open up at last, and a kid at the hatch wants to take it home.' : i < 3 ? 'Somebody is talking Gamp out of it.' : 'Everybody is talking Gamp out of it.';
+}
+function talkTip() {
+  const i = Math.min(3, S.talk);
+  return { id: 'talk', hd: i < 3 ? 'THE FORFEIT IS OVER' : 'TALKED OUT OF IT', name: TALK_BUTTON[i].slice(2),
+    desc: i < 3 ? 'Undo the strap, open up and go home with the kid at the hatch, off the air for good. An umbrella, at last.' : 'Keep the strap done up. A shut umbrella is an aerial, and the station needs one.',
+    joke: i < 3 ? 'Six years in Lost Property. Somebody finally wants it.' : 'Everyone else is coming on air too.', foot: i < 3 ? 'the end of the show?' : 'the end' };
+}
+hookTip($('openBtn'), talkTip, () => {
+  if (S.ended) return;
+  hideTip(true);
+  if (S.talk < 3) { sfx.talk(S.talk); say(['MRS. PETTIGREW', 'THE PLAYGROUND', 'THE RECORDER'][S.talk], TALK_LINES[S.talk]); S.talk++; renderTalk(); refreshMusic(); save(); return; }
+  end(false);
+});
+
+// ---------- The clock ----------
+let lastKinds = [E.kindOpen(S, 2), E.kindOpen(S, 3)], wasSuspended = E.suspended(S), helperLogT = performance.now(), finaleSaid = false;
+function tick(dt) {
+  if (S.ended) return;
+  const ev = E.step(S, dt);
+  for (const e of ev) {
+    if (e.type === 'arrive') sfx.arrive();
+    else if (e.type === 'jar') { gains.push([S.time, e.g]); sfx.jar(e.k); const [ax] = itemXY(e.col, 0); fly.push({ k: e.k, x0: ax, y0: cellY(E.ROWS - 1) + CELL / 2, x1: ax + (Math.random() - 0.5) * 20, y1: JAR_Y + JAR_H - 24, p: 0, sp: 4 }); if (e.k >= 1 && Math.random() < 0.4) pop(`+${E.fmt(e.g)}`, ax, JAR_Y - 6, C.yellow); }
+    else if (e.type === 'mat') {
+      sfx.mat();
+      const [ax, ay] = e.r >= E.ROWS ? [cellX(Math.max(0, Math.min(4, e.c))) + CELL / 2, cellY(E.ROWS - 1) + CELL / 2] : itemXY(Math.max(0, Math.min(4, e.c)), Math.max(0, e.r));
+      const [mx, my] = matSlot(e.slot); fly.push({ k: e.k, x0: ax, y0: ay, x1: mx, y1: my, p: 0, sp: 3, arc: 30, r: 11 });
+      if (e.why === 'door') once('door', 'OOPS', 'Everything posted in drops straight down onto the mat. Drag each marble into its own jar, and Gamp reads it out on air. (Or tap a marble, then tap its jar.)');
+      else if (e.why === 'jar') once('wrongjar', 'WRONG JAR', 'A marble rolled into the wrong jar and hopped back out onto the mat. Comb gates keep the kinds apart.');
+      else if (e.why === 'edge') once('edge', 'OFF THE EDGE', 'A marble rolled off the side of the floor onto the mat.');
+    }
+    else if (e.type === 'lost') { if (!told.has('lost') || performance.now() - lastSay > 15000) { told.add('lost'); S.told = [...told]; say('UNDER THE RADIATOR', pick(['The mat is full, and a marble rolls under the radiator. Lost Property has its own Lost Property.', 'Another one under the radiator. Clear the mat.'])); } }
+    else if (e.type === 'catch') sfx.catch(e.n);
+    else if (e.type === 'swap') {
+      gains.push([S.time, e.g]); sfx.swap(e.k); swapGlow = 1.2;
+      const [dx, dy] = [cellX(e.c) + CELL / 2, cellY(e.r) + CELL / 2];
+      pop(`+${E.fmt(e.g)}`, dx, dy - 30, C.yellow);
+      fly.push({ k: 'form', x0: dx - 20, y0: dy, x1: TRAY.x + 34, y1: TRAY.y + 20, p: 0, sp: 1.6, arc: 40 });
+      if (!once('swap', 'LIVE SWAP', `"Three ${E.KINDS[e.k].many} for a ${E.KINDS[e.k + 1].name}, a straight swap with ${pick(KIDS)}!" Every swap on air wins listeners, and every swap needs a Claim Form, because nothing leaves Lost Property without one.`) && performance.now() - lastSay > 14000 && Math.random() < 0.35)
+        say('LIVE SWAP', pick([`"${pick(KIDS)} swaps three ${E.KINDS[e.k].many} for a ${E.KINDS[e.k + 1].name}. Pleasure doing business."`, `"Another swap, live and slightly illegal, on Radio Rummage."`, `"Three ${E.KINDS[e.k].many} out, a ${E.KINDS[e.k + 1].name} in. Mrs. Pettigrew, there's a form coming."`]));
+    }
+    else if (e.type === 'stamp') { sfx.stamp(); stampAnim = 1; }
+  }
+  // occasional DJ chatter about what's running by itself
+  if (S.own.desk && performance.now() - helperLogT > 45000 && performance.now() - lastSay > 22000) {
+    helperLogT = performance.now();
+    const perMin = Math.round(gains.reduce((a, g) => a + g[1], 0) * 2);
+    say('RADIO RUMMAGE', pick([
+      `"It's Radio Rummage, broadcasting from under the coats. ${perMin} new listeners a minute, and the desks are doing all the talking."`,
+      `"${S.swaps.reduce((a, b) => a + b, 0)} swaps so far. Mrs. Pettigrew has stamped ${S.stamped} forms and would like a word."`,
+      `"Shout-out to ${pick(KIDS)}, who has posted in eleven clearies and one rubber. We're keeping the rubber."`,
+      `"Coming up: more marbles. After that: more marbles."`,
+    ]));
+  }
+  const sus = E.suspended(S);
+  if (sus && !wasSuspended) { sfx.suspend(); say('SWAPS SUSPENDED', '"Swaps are SUSPENDED," says Mrs. Pettigrew, "until I have stamped these forms." The desks let everything fall past them. Tap the In Tray to help her.'); }
+  wasSuspended = sus;
+  for (const [i, k] of [[0, 2], [1, 3]]) if (!lastKinds[i] && E.kindOpen(S, k)) {
+    lastKinds[i] = true; sfx.kind(); staticSig = '';
+    say('NEW IN', k === 2 ? 'With this many listening, kids are hunting under the benches, and SWIRLS start turning up. The swirls jar is open. Set a comb or desk to swirls by tapping it.' : 'STEELIES! Ball bearings from the bike shed, and the whole school wants them. The steelies jar is open, and a swap desk set to swirls makes them.');
+  }
+  if (E.done(S) && !finaleSaid) {
+    finaleSaid = true;
+    say('THE WHOLE SCHOOL', `${E.GOAL} listening at once: every pupil in the school knows Gamp's name. The forfeit is over, and a kid comes to the hatch: "Can I have the famous umbrella?" Gamp could open up and go home with her.`);
+    sfx.kind(); renderTalk(); refreshMusic(); save();
+  }
+  refreshMusic();
+}
+let lastFrame = performance.now(), logicT = performance.now(), saveT = 0;
+function frame(now) {
+  const real = Math.min(0.25, Math.max(0, (now - lastFrame) / 1000)); lastFrame = now; t += real;
+  for (let i = fly.length - 1; i >= 0; i--) { fly[i].p += real * fly[i].sp; if (fly[i].p >= 1) fly.splice(i, 1); }
+  for (let i = pops.length - 1; i >= 0; i--) { pops[i].y -= 26 * real; pops[i].life -= real; if (pops[i].life <= 0) pops.splice(i, 1); }
+  if (deadAir > 0) deadAir -= real;
+  if (swapGlow > 0) swapGlow -= real;
+  if (stampAnim > 0) stampAnim = Math.max(0, stampAnim - real * 4);
+  draw();
+  requestAnimationFrame(frame);
+}
+// The economy runs on a timer, so the station keeps going in a background tab.
+setInterval(() => {
+  const now = performance.now(), dt = Math.min(1, (now - logicT) / 1000); logicT = now;
+  if (!S.ended && S.started) tick(dt);
+  renderHud(); renderShop();
+  saveT += dt; if (saveT > 5) { saveT = 0; save(); }
+}, 100);
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+addEventListener('pagehide', save);
+
+// ---------- The end ----------
+const PLAN = { ruler: [[0, 0, 1]], comb: [[1, 0, 0], [2, 0, 1], [3, 0, 2]], desk: [[1, 1, 0], [2, 2, 1], [1, 2, 0], [2, 3, 1], [3, 2, 2], [3, 3, 2], [1, 3, 0], [2, 1, 1]] };
+function finishedWorld() {
+  // A finished save draws the whole cupboard: everything bought, the floor laid out, the jars full.
+  for (const it of E.ITEMS) if (it.kind !== 'piece') S.up[it.id] = true;
+  for (const t0 of ['ruler', 'comb', 'desk']) {
+    S.own[t0] = Math.max(S.own[t0], PLAN[t0].length);
+    if (!S.grid.some(g => g && g.t === t0)) for (const [c, r, k] of PLAN[t0]) if (!S.grid[E.cell(c, r)]) E.place(S, t0, c, r, k);
+  }
+  S.record = Math.max(S.record, E.GOAL); S.now = Math.max(S.now, E.GOAL);
+  S.jars = S.jars.map((n, k) => Math.max(n, [140, 120, 60, 40][k]));
+  S.items = []; S.mat = []; S.tray = 0;
+}
+function end(resumed) {
+  const firstTime = !S.ended;
+  S.ended = true; S.talk = 3; finishedWorld();
+  if (S.finishedAt == null) S.finishedAt = S.time;
+  save();
+  $('col').hidden = true; hideTip(true);
+  const mins = Math.max(1, Math.round((S.finishedAt || 0) / 60));
+  const swaps = S.swaps.reduce((a, b) => a + b, 0);
+  const story = [
+    `Gamp did the strap back up. The kid at the hatch was a little disappointed, until Gamp offered her the Friday slot.`,
+    `Because a shut umbrella is an aerial, and the station needs one. And then everybody else wanted on. The PE shorts read the weather. The odd welly does the sport, badly. The lunchbox has a cookery segment, which is mostly about what is still inside it. Mrs. Pettigrew reads out the forms of the day, and stamps them on air, which is the most popular thing on the station.`,
+    `The Recorder plays the jingle, every hour, on the hour. It has never been happier, or more out of tune.`,
+    `Radio Rummage now broadcasts from the whole Lost Property cupboard, seven days a week. Nobody has claimed anything in years. Nobody wants to miss the show.`,
+    `As for the bet: the Recorder has offered Gamp a rematch. Double or nothing. Gamp has, very wisely, kept its mouth shut.`,
+  ];
+  $('story').replaceChildren(...story.map(s => { const p = document.createElement('p'); p.textContent = s; return p; }));
+  $('ending').hidden = false;
+  say('STILL ON AIR', 'Gamp keeps shut, and everyone else comes on air.');
+  renderHud(); refreshMusic(); staticSig = '';
+  if (!resumed && firstTime) {
+    sfx.finale();
+    if (window.DailyGame) DailyGame.finish({ lines: [
+      `🌂 Lost Your Marbles in ${mins} min`,
+      `📻 the whole school tuned in · ${swaps} swaps on air`,
+      `🔮 ${S.jars[3]} steelies · ${S.stamped} forms stamped`,
+      `🤐 talked out of it 3×`,
+    ] });
+  }
+  if (!resumed) $('ending').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+}
+$('shareBtn').addEventListener('click', () => window.DailyGame && DailyGame.share());
+
+// ---------- Start ----------
+fit(); addEventListener('resize', fit);
+document.fonts?.ready.then(() => { staticSig = ''; });
+makeSprites().then(() => {
+  if (Sprites.sheetRequested()) Sprites.showSheet();
+  if (S.ended) end(true);
+  else if (S.lastLog) say(S.lastLog[0], S.lastLog[1]);
+  else say('RADIO RUMMAGE', 'Gamp the umbrella lost a bet and has to keep shut until the whole school knows its name. It said nothing about radio. Marbles drop through the Lost Property hatch: drag each one into its own jar to read it out on air.');
+  if (E.done(S) && !S.ended) { finaleSaid = true; renderTalk(); }
+  lastPhase = phaseKey() + (S.up.recorder ? '+r' : '');
+  renderHud(); renderShop();
+  requestAnimationFrame(t0 => { lastFrame = t0; requestAnimationFrame(frame); });
+});
+cv.addEventListener('pointerdown', () => { if (!S.started && !S.ended) { S.started = true; save(); } }, { capture: true });
+</script>
+</body>
+</html>
