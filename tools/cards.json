@@ -3612,5 +3612,67 @@
    "\"Three clearies for a cat's eye, a straight swap with Priya in 5C!\""
   ],
   "boughtOpen": false
+ },
+ "knock-on-wood": {
+  "started": true,
+  "knocks": 63.4,
+  "ghosts": 27,
+  "stationed": 66,
+  "hands": 21,
+  "home": 38,
+  "owed": 71,
+  "lentTotal": 24,
+  "lends": 2,
+  "open": 7,
+  "rooms": [
+   0,
+   0,
+   0,
+   1,
+   2,
+   4,
+   8,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  "up": {
+   "cosy": true,
+   "brass": true,
+   "mat": true,
+   "chalk": true,
+   "clock": true,
+   "specs": true,
+   "lantern": true,
+   "cards": true,
+   "tags": true,
+   "string": true
+  },
+  "seen": {
+   "cosy": true,
+   "brass": true,
+   "mat": true,
+   "chalk": true,
+   "clock": true,
+   "specs": true,
+   "lantern": true,
+   "cards": true,
+   "tags": true,
+   "string": true,
+   "lion": true,
+   "milk": true,
+   "trolley": true,
+   "ink": true
+  },
+  "earned": 3000,
+  "tapped": 1500,
+  "perfect": 600,
+  "time": 4000,
+  "lastLog": [
+   "A CUP COMES HOME",
+   "\"Found it in the Nursery,\" says the ghost. \"Exactly where the map said.\" It was not where the map said."
+  ]
  }
 }

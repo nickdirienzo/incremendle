@@ -1404,5 +1404,47 @@
     "tone": "pirate radio",
     "context": "none",
     "palette": "island-joy-16"
+  },
+  {
+    "n": 37,
+    "slug": "knock-on-wood",
+    "date": "2026-11-28",
+    "title": "Knock on Wood",
+    "tagline": "Cobwell House's ledger can't say no, so it lent all 99 teacups to the dead. Cornelius, the house map, dared it to get them back, and he is cheerfully wrong about every room. So the ledger knocks, in time, and the ghosts who answer go and fetch.",
+    "emoji": "📒👻",
+    "scale": "tens",
+    "minutes": "180–240",
+    "seed": 1773262177,
+    "subject": {
+      "text": "a ledger who can't say no",
+      "emoji": "📒",
+      "name": "ledger",
+      "subgroup": "book-paper",
+      "trait": "{} who can't say no"
+    },
+    "verb": "collecting",
+    "object": "teacups",
+    "interaction": "rhythm taps",
+    "arc": {
+      "drive": "a dare",
+      "obstacle": "a bad map",
+      "turn": "the obstacle switches sides",
+      "initial": "C"
+    },
+    "length": "story (3–10 hours, over several sittings)",
+    "structure": [
+      "stacked currencies (A makes B, B makes C)",
+      "sacrifice part of your progress to multiply the rest"
+    ],
+    "twist": "milestones: every 25 owned doubles it",
+    "ending": "one last purchase that costs everything",
+    "look": "comic book",
+    "music": {
+      "style": "marimba minimalism",
+      "scale": "harmonic minor"
+    },
+    "tone": "mild horror",
+    "context": "none",
+    "palette": "downgraded-32"
   }
 ]

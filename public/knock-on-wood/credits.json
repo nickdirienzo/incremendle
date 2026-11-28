@@ -1,0 +1,124 @@
+{
+  "libs": [
+    {
+      "name": "@strudel/web",
+      "version": "1.3.0",
+      "license": "AGPL-3.0-or-later",
+      "what": "pattern music: synths, samples, Tidal mini-notation",
+      "home": "https://strudel.cc",
+      "support": "https://opencollective.com/tidalcycles"
+    }
+  ],
+  "art": [
+    {
+      "set": "Pinhead Map Icons",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "home": "https://github.com/waysidemapping/pinhead",
+      "support": "https://github.com/waysidemapping/pinhead",
+      "icons": [
+        {
+          "icon": "pinhead:handled-teacup",
+          "author": "Quincy Morgan",
+          "source": "https://icon-sets.iconify.design/pinhead/handled-teacup/"
+        }
+      ]
+    },
+    {
+      "set": "Material Design Icons",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+      "home": "https://github.com/Templarian/MaterialDesign",
+      "support": "https://github.com/Templarian/MaterialDesign",
+      "icons": [
+        {
+          "icon": "mdi:hand-back-right",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/hand-back-right/"
+        },
+        {
+          "icon": "mdi:glasses",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/glasses/"
+        },
+        {
+          "icon": "mdi:compass",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/compass/"
+        },
+        {
+          "icon": "mdi:ghost",
+          "author": "Pictogrammers",
+          "source": "https://icon-sets.iconify.design/mdi/ghost/"
+        }
+      ]
+    },
+    {
+      "set": "MingCute Icon",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://github.com/Richard9394/MingCute/blob/main/LICENSE",
+      "home": "https://github.com/Richard9394/MingCute",
+      "support": "https://github.com/Richard9394/MingCute",
+      "icons": [
+        {
+          "icon": "mingcute:lantern-fill",
+          "author": "MingCute Design",
+          "source": "https://icon-sets.iconify.design/mingcute/lantern-fill/"
+        }
+      ]
+    },
+    {
+      "set": "Akar Icons",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/artcoholic/akar-icons/blob/master/LICENSE",
+      "home": "https://github.com/artcoholic/akar-icons",
+      "support": "https://github.com/artcoholic/akar-icons",
+      "icons": [
+        {
+          "icon": "akar-icons:yarn-fill",
+          "author": "Arturo Wibawa",
+          "source": "https://icon-sets.iconify.design/akar-icons/yarn-fill/"
+        }
+      ]
+    },
+    {
+      "set": "Material Symbols",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://github.com/google/material-design-icons/blob/master/LICENSE",
+      "home": "https://github.com/google/material-design-icons",
+      "support": "https://github.com/google/material-design-icons",
+      "icons": [
+        {
+          "icon": "material-symbols:trolley",
+          "author": "Google",
+          "source": "https://icon-sets.iconify.design/material-symbols/trolley/"
+        }
+      ]
+    }
+  ],
+  "sounds": [
+    {
+      "name": "Versilian Community Sample Library",
+      "license": "CC0-1.0",
+      "home": "https://github.com/sgossner/VCSL",
+      "author": "Versilian Studios"
+    }
+  ],
+  "fonts": [
+    {
+      "name": "Bangers",
+      "license": "OFL-1.1",
+      "home": "https://fonts.google.com/specimen/Bangers"
+    },
+    {
+      "name": "Comic Neue",
+      "license": "OFL-1.1",
+      "home": "https://fonts.google.com/specimen/Comic+Neue"
+    }
+  ],
+  "palette": {
+    "name": "downgraded 32",
+    "author": "downgraded",
+    "home": "https://lospec.com/palette-list/downgraded-32"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "pinhead--handled-teacup.svg": {
+    "icon": "pinhead:handled-teacup",
+    "set": "Pinhead Map Icons",
+    "setUrl": "https://github.com/waysidemapping/pinhead",
+    "author": "Quincy Morgan",
+    "license": "CC0-1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://icon-sets.iconify.design/pinhead/handled-teacup/"
+  },
+  "mdi--hand-back-right.svg": {
+    "icon": "mdi:hand-back-right",
+    "set": "Material Design Icons",
+    "setUrl": "https://github.com/Templarian/MaterialDesign",
+    "author": "Pictogrammers",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/mdi/hand-back-right/"
+  },
+  "mdi--glasses.svg": {
+    "icon": "mdi:glasses",
+    "set": "Material Design Icons",
+    "setUrl": "https://github.com/Templarian/MaterialDesign",
+    "author": "Pictogrammers",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/mdi/glasses/"
+  },
+  "mdi--compass.svg": {
+    "icon": "mdi:compass",
+    "set": "Material Design Icons",
+    "setUrl": "https://github.com/Templarian/MaterialDesign",
+    "author": "Pictogrammers",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/mdi/compass/"
+  },
+  "mdi--ghost.svg": {
+    "icon": "mdi:ghost",
+    "set": "Material Design Icons",
+    "setUrl": "https://github.com/Templarian/MaterialDesign",
+    "author": "Pictogrammers",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/Templarian/MaterialDesign/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/mdi/ghost/"
+  },
+  "mingcute--lantern-fill.svg": {
+    "icon": "mingcute:lantern-fill",
+    "set": "MingCute Icon",
+    "setUrl": "https://github.com/Richard9394/MingCute",
+    "author": "MingCute Design",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/Richard9394/MingCute/blob/main/LICENSE",
+    "source": "https://icon-sets.iconify.design/mingcute/lantern-fill/"
+  },
+  "akar-icons--yarn-fill.svg": {
+    "icon": "akar-icons:yarn-fill",
+    "set": "Akar Icons",
+    "setUrl": "https://github.com/artcoholic/akar-icons",
+    "author": "Arturo Wibawa",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/artcoholic/akar-icons/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/akar-icons/yarn-fill/"
+  },
+  "material-symbols--trolley.svg": {
+    "icon": "material-symbols:trolley",
+    "set": "Material Symbols",
+    "setUrl": "https://github.com/google/material-design-icons",
+    "author": "Google",
+    "license": "Apache-2.0",
+    "licenseUrl": "https://github.com/google/material-design-icons/blob/master/LICENSE",
+    "source": "https://icon-sets.iconify.design/material-symbols/trolley/"
+  }
+}
